@@ -10,9 +10,9 @@ IncidentRoute.route('/')
 .post(requireAuth, Incident.reportIncident);
 
 IncidentRoute.route('/:id')
-.get(requireAuth)
-.put(requireAuth)
-.delete(requireAuth);
+.get(requireAuth, Incident.getIncidentById)
+.put(requireAuth, Incident.updateIncident)
+.delete(requireAuth, Incident.deleteIncident);
 
 IncidentRoute.route('/page/:pageNumber/:itemPerPage')
 .get(requireAuth, Incident.getLatestIncidentByPage);

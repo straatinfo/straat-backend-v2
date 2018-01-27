@@ -153,5 +153,8 @@ module.exports = {
   getLatestIncident: getLatestIncident,
   getLatestIncidentByPage: getLatestIncidentByPage,
   getIncidentByIncidentType: getIncidentByIncidentType,
-  getIncidentByIncidentTypeByPage: getIncidentByIncidentTypeByPage
+  getIncidentByIncidentTypeByPage: getIncidentByIncidentTypeByPage,
+  getIncidentById: getIncidentById,
+  updateIncident: updateIncident,
+  deleteIncident: deleteIncident
 };
