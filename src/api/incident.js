@@ -52,7 +52,7 @@ const reportIncident = async (req, res, next) => {
 };
 
 // route: /:id
-const getIncidentDetails = async (req, res, next) => {
+const getIncidentById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const getIncident = await IncidentHelper.getIncidentById(id);
@@ -151,7 +151,7 @@ const getIncidentByIncidentTypeByPage = async (req, res, next) => {
 module.exports = {
   reportIncident: reportIncident,
   getLatestIncident: getLatestIncident,
-  getLatestIncidentByPage: getLatestIncidentByPage,
+  getIncidentByPage: getIncidentByPage,
   getIncidentByIncidentType: getIncidentByIncidentType,
   getIncidentByIncidentTypeByPage: getIncidentByIncidentTypeByPage,
   getIncidentById: getIncidentById,

@@ -15,7 +15,7 @@ IncidentRoute.route('/:id')
 .delete(requireAuth, Incident.deleteIncident);
 
 IncidentRoute.route('/page/:pageNumber/:itemPerPage')
-.get(requireAuth, Incident.getLatestIncidentByPage);
+.get(requireAuth, Incident.getIncidentByPage);
 
 IncidentRoute.route('/category/:incidentType')
 .get(requireAuth, Incident.getIncidentByIncidentType);
