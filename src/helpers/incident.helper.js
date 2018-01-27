@@ -11,7 +11,7 @@ const incidentIdGenerator = (incidentTypeId) => {
       }
       const date = new Date();
       const dateString = date.getFullYear() + '' + (date.getMonth() + 1) + '' + date.getDate();
-      const incidents = db.incident.findAll({
+      const incidents = await db.incident.findAll({
         where: {
           [Op.and]: [
             { createdAt: { [Op.gte]: Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) } },
@@ -181,9 +181,139 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
   });
 };
 
+const getIncidentById = (id) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const incident = await db.findOne({
+        where: {id},
+        include: [
+          {
+            model: db.user, as: 'reporter',
+            attributes: [
+              'id', 'institutionName', 'fname',
+              'lname', 'email', 'username',
+              'address', 'gender', 'postalCode',
+              'city', 'nickName'
+            ],
+            include: [
+              { model: db.role },
+              { model: db.userLeader, include: [{ model: db.team }] },
+              { model: db.userMemeber, include: [{ model: db.team}] }
+            ]
+          }, {
+            model: db.user, as: 'host',
+            attributes: [
+              'id', 'institutionName', 'fname',
+              'lname', 'email', 'username',
+              'address', 'gender', 'postalCode',
+              'city', 'nickName'
+            ],
+            include: [
+              { model: db.role },
+              { model: db.userLeader, include: [{ model: db.team }] },
+              { model: db.userMemeber, include: [{ model: db.team }] }
+            ]
+          }, {
+            model: db.subCategory,
+            incude: [{ model: db.mainCategory }]
+          }, {
+            model: db.incidentType
+          }, {
+            model: db.urgency
+          }
+        ]
+      });
+      if (!incident) {
+        resolve({err: `Incident ID: ${id} does not exist`});
+        return;
+      }
+      resolve({err: null, incident: incident});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const updateIncident = (id, note, status ) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const updateIncident = await db.incident.update({id, note, status},{
+        where: {id}, returning: true
+      });
+      if (!updateIncident[1][0]) {
+        resolve({err: `Incident ID: ${id} was not updated`});
+        return;
+      }
+      const incident = await db.incident.findOne({
+        where: {id: updateIncident[1][0].id},
+        include: [
+          {
+            model: db.user, as: 'reporter',
+            attributes: [
+              'id', 'institutionName', 'fname',
+              'lname', 'email', 'username',
+              'address', 'gender', 'postalCode',
+              'city', 'nickName'
+            ],
+            include: [
+              { model: db.role },
+              { model: db.userLeader, include: [{ model: db.team }] },
+              { model: db.userMemeber, include: [{ model: db.team}] }
+            ]
+          }, {
+            model: db.user, as: 'host',
+            attributes: [
+              'id', 'institutionName', 'fname',
+              'lname', 'email', 'username',
+              'address', 'gender', 'postalCode',
+              'city', 'nickName'
+            ],
+            include: [
+              { model: db.role },
+              { model: db.userLeader, include: [{ model: db.team }] },
+              { model: db.userMemeber, include: [{ model: db.team }] }
+            ]
+          }, {
+            model: db.subCategory,
+            incude: [{ model: db.mainCategory }]
+          }, {
+            model: db.incidentType
+          }, {
+            model: db.urgency
+          }
+        ]
+      });
+      resolve({err: null, incident: incident});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const deleteIncident = (id) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const deleteIncident = await db.incident.destroy({where: {id}, returning: true});
+      if (deleteIncident !== 1) {
+        resolve({err: `Incident ID ${id} does not exist`});
+        return;
+      }
+      resolve({err: null, affectedRows: deleteIncident});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   incidentIdGenerator: incidentIdGenerator,
   reportIncident: reportIncident,
   getLatestIncident: getLatestIncident,
-  getLatestIncidentByPage: getLatestIncidentByPage
+  getLatestIncidentByPage: getLatestIncidentByPage,
+  getIncidentById: getIncidentById,
+  updateIncident: updateIncident,
+  deleteIncident: deleteIncident
 };
