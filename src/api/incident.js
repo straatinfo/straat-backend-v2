@@ -51,6 +51,53 @@ const reportIncident = async (req, res, next) => {
   }
 };
 
+// route: /:id
+const getIncidentDetails = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const getIncident = await IncidentHelper.getIncidentById(id);
+    if (getIncident.err) {
+      ErrorHelper.clientError(res, 400, getIncident.err);
+      return;
+    }
+    res.status(200).send(getIncident.incident);
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+};
+
+const updateIncident = async (req, res, next) => {
+  const { id } = req.params;
+  const { note, status } = req.body;
+  try {
+    const updateIncident = await IncidentHelper.updateIncident(id, note, status);
+    if (updateIncident.err) {
+      ErrorHelper.clientError(res, 400, updateIncident.err);
+      return;
+    }
+    res.status(200).send(updateIncident.incident);
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+};
+
+const deleteIncident = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deleteIncident = await IncidentHelper.deleteIncident(id);
+    if (deleteIncident.err) {
+      ErrorHelper.clientError(res, 400, deleteIncident.err);
+      return;
+    }
+    res.status(200).send({affectedRows:deleteIncident.affectedRows});
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+};
+
 // route: /page/:pageNumber/:itemPerPage
 const getIncidentByPage = async (req, res, next) => {
   const { pageNumber, itemPerPage } = req.params;

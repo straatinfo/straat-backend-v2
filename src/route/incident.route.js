@@ -9,6 +9,11 @@ IncidentRoute.route('/')
 .get(requireAuth, Incident.getLatestIncident) // will get the latest 100 reports
 .post(requireAuth, Incident.reportIncident);
 
+IncidentRoute.route('/:id')
+.get(requireAuth)
+.put(requireAuth)
+.delete(requireAuth);
+
 IncidentRoute.route('/page/:pageNumber/:itemPerPage')
 .get(requireAuth, Incident.getLatestIncidentByPage);
 
