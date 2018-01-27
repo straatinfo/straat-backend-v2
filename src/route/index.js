@@ -3,6 +3,7 @@ const AuthRoute = require('./authentication.route');
 const IncidentRoute = require('./incident.route');
 const IncidentTypeRoute = require('./incidentType.route');
 const CategoryRoute = require('./category.route');
+const UrgencyRoute = require('./urgency.route');
 
 module.exports = (app) => {
   app.get('/', welcomePage);
@@ -10,6 +11,7 @@ module.exports = (app) => {
   app.use('/v1/api/incident', IncidentRoute);
   app.use('/v1/api/incidentType', IncidentTypeRoute);
   app.use('/v1/api/category', CategoryRoute);
+  app.use('/v1/api/urgency', UrgencyRoute);
 };
 
 const welcomePage = (req, res, next) => {
