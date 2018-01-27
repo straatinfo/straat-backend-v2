@@ -21,12 +21,16 @@ const checkUserExistence = (email, username) => {
 };
 
 const createUser = (
-  institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, roleId, password
+  institutionName, fname, lname, gender, email,
+  username, address, postalCode, city, nickName,
+  roleId, password, lat, long
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
       const newUser = await db.user.create({
-        institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, roleId, password
+        institutionName, fname, lname, gender, email,
+        username, address, postalCode, city, nickName,
+        roleId, password, lat, long
       });
       if (!newUser) {
         resolve({err: 'Invalid Input'});

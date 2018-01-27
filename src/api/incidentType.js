@@ -38,12 +38,13 @@ const updateIncidentType = async (req, res, next) => {
   try {
     const updatedIncidentType = await IncdentTypeHelper.updateIncidentType(id, code, name, description);
     if (updatedIncidentType.err) {
-      ErrorHelper.clientError(res, 200, updatedIncidentType.err);
+      ErrorHelper.clientError(res, 400, updatedIncidentType.err);
       return;
     }
-    res.satus(200).send(updatedIncidentType.incidentType);
+    res.status(200).send(updatedIncidentType.incidentType);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.serverError(res);
   }
 };
@@ -56,7 +57,7 @@ const deleteIncidentType = async (req, res, next) => {
       ErrorHelper.clientError(res, 400, deletedIncidentType.err);
       return;
     }
-    res.satus(200).send({affectedRows: deletedIncidentType.affectedRows});
+    res.status(200).send({affectedRows: deletedIncidentType.affectedRows});
   }
   catch (e) {
     ErrorHelper.serverError(res);

@@ -24,7 +24,9 @@ const login = async (req, res, next) => {
 /* register API */
 const register = async (req, res, next) => {
   const {
-    institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, roleId, password, confirmedPassword
+    institutionName, fname, lname, gender, email,
+    username, address, postalCode, city, nickName,
+    roleId, password, confirmedPassword, lat, long
   } = req.body;
 
   try {
@@ -48,7 +50,9 @@ const register = async (req, res, next) => {
     }
     // register user
     const newUser = await UserHelper.createUser(
-      institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, getRoleId, password
+      institutionName, fname, lname, gender, email,
+      username, address, postalCode, city, nickName,
+      getRoleId, password, lat, long
     );
     if (newUser.err) {
       ErrorHelper.clientError(res, 400, newUser.err);

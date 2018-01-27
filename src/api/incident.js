@@ -5,12 +5,12 @@ const db = require('../models');
 // route: /
 const getLatestIncident = async (req, res, next) => {
   try {
-    const getReport = await IncidentHelper.getLatestIncident(null);
+    const getReport = await IncidentHelper.getLatestIncident();
     if (getReport.err) {
       ErrorHelper.clientError(res, 400, 'Cannot Get Incidents');
       return;
     }
-    res.status(200).send(getReport.reports);
+    res.status(200).send(getReport.incidents);
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -32,12 +32,12 @@ const reportIncident = async (req, res, next) => {
       return;
     }
 
-    const incidentId = generateIncidentId.incidentId;
+    const incidentReportId = generateIncidentId.incidentReportId;
 
     const createReport = await IncidentHelper.reportIncident(
       title, description, location, lat, long, isVehicleInvolved,
       isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-      reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentId
+      reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId
     );
 
     if (createReport.err) {
@@ -47,6 +47,7 @@ const reportIncident = async (req, res, next) => {
     res.status(200).send(createReport.report);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.serverError(res);
   }
 };
@@ -107,24 +108,25 @@ const getIncidentByPage = async (req, res, next) => {
       ErrorHelper.clientError(res, 400, getReports.err);
       return;
     }
-    res.status(200).send(getReports.reports);
+    res.status(200).send(getReports.incidents);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-// route: /category/:incidentType
+// route: /category/:incidentTypeId
 const getIncidentByIncidentType = async (req, res, next) => {
-  const { incidentType } = req.params;
+  const { incidentTypeId } = req.params;
   try {
-    const queryOption = { incidentType: incidentType };
+    const queryOption = { incidentTypeId: incidentTypeId };
     const getReports = await IncidentHelper.getLatestIncident(queryOption);
     if (getReports.err) {
       ErrorHelper.clientError(res, 400, 'Invalid Arguments');
       return;
     }
-    res.status(200).send(getReports.reports);
+    console.log(getReports);
+    res.status(200).send(getReports.incidents);
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -133,15 +135,15 @@ const getIncidentByIncidentType = async (req, res, next) => {
 
 // route: /category/:inidentType/page/:pageNumber/:itemPerPage
 const getIncidentByIncidentTypeByPage = async (req, res, next) => {
-  const { incidentType, pageNumber, itemPerPage } = req.params;
+  const { incidentTypeId, pageNumber, itemPerPage } = req.params;
   try {
-    const queryOption = { incidentType: incidentType };
+    const queryOption = { incidentTypeId: incidentTypeId };
     const getReports = await IncidentHelper.getLatestIncidentByPage(itemPerPage, pageNumber, queryOption);
     if (getReports.err) {
       ErrorHelper.clientError(res, 400, 'Invalid Arguments');
       return;
     }
-    res.status(200).send(getReports.reports);
+    res.status(200).send(getReports.incidents);
   }
   catch (e) {
     ErrorHelper.serverError(res);

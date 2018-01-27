@@ -17,10 +17,10 @@ IncidentRoute.route('/:id')
 IncidentRoute.route('/page/:pageNumber/:itemPerPage')
 .get(requireAuth, Incident.getIncidentByPage);
 
-IncidentRoute.route('/category/:incidentType')
+IncidentRoute.route('/category/:incidentTypeId')
 .get(requireAuth, Incident.getIncidentByIncidentType);
 
-IncidentRoute.route('/category/:incidentType/page/:pageNumber/:itemPerPage')
+IncidentRoute.route('/category/:incidentTypeId/page/:pageNumber/:itemPerPage')
 .get(requireAuth, Incident.getIncidentByIncidentTypeByPage);
 
 module.exports = IncidentRoute;

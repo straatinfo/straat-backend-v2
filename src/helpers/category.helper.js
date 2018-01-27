@@ -118,7 +118,7 @@ const createSubCategory = (mainCategoryId, name, description) => {
         resolve({err: 'Invalid Input'});
         return;
       }
-      const subCategory = await db.findOne({
+      const subCategory = await db.subCategory.findOne({
         where: {id: createSubCategory.id},
         include: [
           { model: db.mainCategory }
