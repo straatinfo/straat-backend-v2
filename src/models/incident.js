@@ -1,0 +1,29 @@
+module.exports = (sequelize, DataTypes) => {
+  const incident = sequelize.define('incident', {
+    incidentId: { type: DataTypes.STRING },
+    title: { type: DataTypes.STRING, allowNull: false },
+    description: { type: DataTypes.TEXT },
+    location: { type: DataTypes.STRING }, // should use the google format
+    lat: { type: DataTypes.DOUBLE }, // latitude
+    long: { type: DataTypes.DOUBLE }, // longtitude
+    note: { type: DataTypes.STRING },
+    status: { type: DataTypes.STRING },
+    isVehicleInvolved: { type: DataTypes.BOOLEAN },
+    isPeopleInvolved: { type: DataTypes.BOOLEAN },
+    vehicleInvolvedDescription: { type: DataTypes.STRING },
+    peopleInvolvedCount: { type: DataTypes.INTEGER }
+  });
+
+  // location format
+  // House Number, Street Direction, Street Name, Street Suffix, City, State, Zip, Country
+
+  incident.associate = models => {
+    incident.belongsTo(models.user, { as: 'host' });
+    incident.belongsTo(models.user, { as: 'reporter' });
+    incident.belongsTo(models.subCategory); // this should default to 1 = general
+    incident.belongsTo(models.incidentType);
+    incident.belongsTo(models.urgency);
+  };
+
+  return incident;
+};
