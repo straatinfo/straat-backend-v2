@@ -2,7 +2,7 @@
 module.exports = (sequelize, DataTypes) => {
   const subCategory = sequelize.define('subCategory', {
     name: { type: DataTypes.STRING },
-    description: { type: DataTypes.STRING }
+    description: { type: DataTypes.TEXT }
   });
 
   subCategory.associate = models => {
