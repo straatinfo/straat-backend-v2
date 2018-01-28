@@ -14,7 +14,7 @@ const login = async (req, res, next) => {
     }
     const user = await UserHelper.getUserInfo(req.user.id);
     // give user token
-    res.status(200).send({user: user, token: jwtService.tokenForUser(req.user)});
+    res.status(200).send({user: user.user, token: jwtService.tokenForUser(req.user)});
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -24,7 +24,9 @@ const login = async (req, res, next) => {
 /* register API */
 const register = async (req, res, next) => {
   const {
-    institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, roleId, password, confirmedPassword
+    institutionName, fname, lname, gender, email,
+    username, address, postalCode, city, nickName,
+    roleId, password, confirmedPassword, lat, long
   } = req.body;
 
   try {
@@ -48,7 +50,9 @@ const register = async (req, res, next) => {
     }
     // register user
     const newUser = await UserHelper.createUser(
-      institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, getRoleId, password
+      institutionName, fname, lname, gender, email,
+      username, address, postalCode, city, nickName,
+      getRoleId, password, lat, long
     );
     if (newUser.err) {
       ErrorHelper.clientError(res, 400, newUser.err);
@@ -64,7 +68,6 @@ const register = async (req, res, next) => {
     res.status(200).send({ user:user.user, token: jwtService.tokenForUser(user.user) });
   }
   catch (e) {
-    console.log(e);
     ErrorHelper.serverError(res);
   }
 }
