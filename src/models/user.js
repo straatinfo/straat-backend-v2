@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     incidentId: { type: DataTypes.STRING }, // computer generated ID
     institutionName: { type: DataTypes.STRING }, // for institutions
     fname: { type: DataTypes.STRING },// for users
-    email: { type: DataTypes.STRING },
+    email: { type: DataTypes.STRING, allowNull: false },
     username: { type: DataTypes.STRING },
     lname: { type: DataTypes.STRING},
     gender: { type: DataTypes.STRING },

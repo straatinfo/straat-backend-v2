@@ -14,7 +14,7 @@ const login = async (req, res, next) => {
     }
     const user = await UserHelper.getUserInfo(req.user.id);
     // give user token
-    res.status(200).send({user: user, token: jwtService.tokenForUser(req.user)});
+    res.status(200).send({user: user.user, token: jwtService.tokenForUser(req.user)});
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -68,7 +68,6 @@ const register = async (req, res, next) => {
     res.status(200).send({ user:user.user, token: jwtService.tokenForUser(user.user) });
   }
   catch (e) {
-    console.log(e);
     ErrorHelper.serverError(res);
   }
 }
