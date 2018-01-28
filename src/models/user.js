@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt-nodejs');
 
 module.exports = (sequelize, DataTypes) => {
   const user = sequelize.define('user', {
-    incidentId: { type: DataTypes.STRING }, // computer generated ID
     institutionName: { type: DataTypes.STRING }, // for institutions
     fname: { type: DataTypes.STRING },// for users
     email: { type: DataTypes.STRING, allowNull: false },
