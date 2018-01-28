@@ -6,8 +6,8 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   team.associate = models => {
-    team.hasMany(models.userMember);
-    team.hasMany(models.userLeader);
+    team.hasMany(models.userTeam, { as: leader });
+    team.hasMany(models.userTeam, { as: 'member' });
   };
 
   return team;

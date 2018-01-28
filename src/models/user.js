@@ -24,8 +24,8 @@ module.exports = (sequelize, DataTypes) => {
     user.belongsTo(models.role);
     user.hasMany(models.incident, { as: 'reporter' });
     user.hasMany(models.incident, { as: 'host' });
-    user.hasMany(models.userLeader);
-    user.hasMany(models.userMember);
+    user.hasMany(models.userTeam, { as: 'leader' });
+    user.hasMany(models.userTeam, { as: 'member' });
   };
 
   user.beforeSave(user => {

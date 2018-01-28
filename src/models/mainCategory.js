@@ -7,6 +7,8 @@ module.exports = (sequelize, DataTypes) => {
 
   mainCategory.associate = models => {
     mainCategory.belongsTo(models.user, { as: 'host' });
+    mainCategory.belongsTo(models.incidentType);
+    mainCateory.hasMany(models.incident);
     mainCategory.hasMany(models.subCategory, { onDelete: 'CASCADE'});
   };
 

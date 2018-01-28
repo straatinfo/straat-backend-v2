@@ -20,8 +20,9 @@ module.exports = (sequelize, DataTypes) => {
   incident.associate = models => {
     incident.belongsTo(models.user, { as: 'host' });
     incident.belongsTo(models.user, { as: 'reporter' });
-    incident.belongsTo(models.subCategory); // this should default to 1 = general
     incident.belongsTo(models.incidentType);
+    incident.belongsTo(models.mainCategory);
+    incident.belongsTo(models.subCategory);
     incident.belongsTo(models.urgency);
   };
 

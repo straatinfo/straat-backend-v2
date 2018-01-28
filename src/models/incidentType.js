@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
 
   incidentType.associate = models => {
     incidentType.hasMany(models.incident);
+    incidentType.hasMany(models.mainCategory);
   };
 
   return incidentType;
