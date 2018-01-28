@@ -1,13 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
   const incident = sequelize.define('incident', {
-    incidentId: { type: DataTypes.STRING },
+    incidentReportId: { type: DataTypes.STRING },
     title: { type: DataTypes.STRING, allowNull: false },
     description: { type: DataTypes.TEXT },
     location: { type: DataTypes.STRING }, // should use the google format
     lat: { type: DataTypes.DOUBLE }, // latitude
     long: { type: DataTypes.DOUBLE }, // longtitude
     note: { type: DataTypes.STRING },
-    status: { type: DataTypes.STRING },
+    status: { type: DataTypes.STRING, defaultValue: 'Unresolved' },
     isVehicleInvolved: { type: DataTypes.BOOLEAN },
     isPeopleInvolved: { type: DataTypes.BOOLEAN },
     vehicleInvolvedDescription: { type: DataTypes.STRING },

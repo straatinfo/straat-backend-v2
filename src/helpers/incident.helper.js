@@ -10,7 +10,11 @@ const incidentIdGenerator = (incidentTypeId) => {
         return;
       }
       const date = new Date();
-      const dateString = date.getFullYear() + '' + (date.getMonth() + 1) + '' + date.getDate();
+      const monthstr = "" + (date.getMonth() + 1);
+      const monthPad = "00";
+      const monthFormat = monthPad.substring(0, monthPad.length - monthstr.length) + monthstr;
+      console.log(monthFormat);
+      const dateString = date.getFullYear() + '' + monthFormat + '' + date.getDate();
       const incidents = await db.incident.findAll({
         where: {
           [Op.and]: [
@@ -19,12 +23,12 @@ const incidentIdGenerator = (incidentTypeId) => {
           ]
         }
       });
-      const incidentCount = incidents.length;
+      const incidentCount = incidents.length + 1;
       const str = "" + incidentCount;
       const pad = "00000"
       const countFormat = pad.substring(0, pad.length - str.length) + str;
-      const incidentId = incidentType.code + dateString + countFormat;
-      resolve({err: null, incidentId: incidentId});
+      const incidentReportId = incidentType.code + dateString + '_' + countFormat;
+      resolve({err: null, incidentReportId: incidentReportId});
     }
     catch (e) {
       reject(e);
@@ -35,23 +39,30 @@ const incidentIdGenerator = (incidentTypeId) => {
 const reportIncident = (
   title, description, location, lat, long, isVehicleInvolved,
   isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-  reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentId
+  reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const report = await db.incident.create({
-        title, description, location, lat, long, isVehicleInvolved,
-        isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-        reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentId
-      });
       // set the default subCategory 1 is for general
+      let defaultSubCategoryId, defaultUrgencyId;
       if (!subCategoryId) {
-        subCategoryId = 1;
+        defaultSubCategoryId = 1;
+      } else {
+        defaultSubCategoryId = subCategoryId;
       }
       // set the default urgencyId
       if (!urgencyId) {
-        urgencyId = 1;
+        defaultUrgencyId = 1;
+      } else {
+        defaultUrgencyId = urgencyId;
       }
+
+      const report = await db.incident.create({
+        title, description, location, lat, long, isVehicleInvolved,
+        isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
+        reporterId, hostId, subCategoryId: defaultSubCategoryId, incidentTypeId,
+        urgencyId: defaultUrgencyId, incidentReportId, status: 'Unresolved'
+      });
       if (!report) {
         resolve({err: 'Was not able to send Report'});
         return;
@@ -68,7 +79,7 @@ const getLatestIncident = (queryOption) => {
   return new Promise(async(resolve, reject) => {
     try {
       const getLatestIncident = await db.incident.findAll({
-        where: {...queryOption},
+        where: queryOption,
         order: [
           ['createdAt', 'DESC']
         ],
@@ -83,9 +94,7 @@ const getLatestIncident = (queryOption) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team}] }
+              {all: true}
             ]
           }, {
             model: db.user, as: 'host',
@@ -96,9 +105,7 @@ const getLatestIncident = (queryOption) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team}] }
+              { all: true }
             ]
           }, {
             model: db.subCategory,
@@ -129,8 +136,8 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
         items = itemPerPage;
       }
       offset = items * pageNumber;
-      const reports = db.incident.findAll({
-        where: {...queryOption},
+      const reports = await db.incident.findAll({
+        where: queryOption,
         order: [
           ['createdAt', 'DESC']
         ],
@@ -146,9 +153,7 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team}] }
+              { all: true }
             ]
           }, {
             model: db.user, as: 'host',
@@ -159,9 +164,7 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team }] }
+              { all: true }
             ]
           }, {
             model: db.subCategory,
@@ -173,7 +176,7 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
           }
         ]
       });
-      resolve({err: null, reports: reports});
+      resolve({err: null, incidents: reports});
     }
     catch (e) {
       reject(e);
@@ -184,7 +187,7 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
 const getIncidentById = (id) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const incident = await db.findOne({
+      const incident = await db.incident.findOne({
         where: {id},
         include: [
           {
@@ -196,9 +199,7 @@ const getIncidentById = (id) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team}] }
+              {all: true}
             ]
           }, {
             model: db.user, as: 'host',
@@ -209,9 +210,7 @@ const getIncidentById = (id) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team }] }
+              { all: true }
             ]
           }, {
             model: db.subCategory,
@@ -257,9 +256,7 @@ const updateIncident = (id, note, status ) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team}] }
+              { all: true }
             ]
           }, {
             model: db.user, as: 'host',
@@ -270,9 +267,7 @@ const updateIncident = (id, note, status ) => {
               'city', 'nickName'
             ],
             include: [
-              { model: db.role },
-              { model: db.userLeader, include: [{ model: db.team }] },
-              { model: db.userMemeber, include: [{ model: db.team }] }
+              { all: true }
             ]
           }, {
             model: db.subCategory,
