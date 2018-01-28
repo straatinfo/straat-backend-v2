@@ -21,7 +21,7 @@ const reportIncident = async (req, res, next) => {
   const {
     title, description, location, lat, long, isVehicleInvolved,
     isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-    reporterId, hostId, subCategoryId, incidentTypeId, urgencyId
+    reporterId, hostId, mainCategoryId,  subCategoryId, incidentTypeId, urgencyId
   } = req.body;
 
   try {
@@ -37,7 +37,7 @@ const reportIncident = async (req, res, next) => {
     const createReport = await IncidentHelper.reportIncident(
       title, description, location, lat, long, isVehicleInvolved,
       isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-      reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId
+      reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId, mainCategoryId
     );
 
     if (createReport.err) {

@@ -39,7 +39,7 @@ const incidentIdGenerator = (incidentTypeId) => {
 const reportIncident = (
   title, description, location, lat, long, isVehicleInvolved,
   isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-  reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId
+  reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId, mainCategoryId
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -61,7 +61,7 @@ const reportIncident = (
         title, description, location, lat, long, isVehicleInvolved,
         isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
         reporterId, hostId, subCategoryId: defaultSubCategoryId, incidentTypeId,
-        urgencyId: defaultUrgencyId, incidentReportId, status: 'Unresolved'
+        urgencyId: defaultUrgencyId, incidentReportId, status: 'Unresolved', mainCategoryId
       });
       if (!report) {
         resolve({err: 'Was not able to send Report'});
