@@ -54,6 +54,42 @@ const getHostById = async (req, res, next) => {
   }
 };
 
+const updateHost = async (req, res, next) => {
+  const { id } = req.params;
+  const {
+    hostName, email, username, address, postalCode, city,  nickName, long, lat
+  } = req.body;
+  try {
+    const updateH = await HostHelper.updateHost(
+      id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+    );
+    if (updateH.err) {
+      ErrorHelper.clientError(res, 400, updateH.err);
+      return;
+    }
+    res.status(200).send(updateH.host);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.serverError(res);
+  }
+};
+
+const deleteHost = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deleteH = await HostHelper.deleteHost(id);
+    if (deleteH.err) {
+      ErrorHelper.clientError(res, 400, deleteH.err);
+      return;
+    }
+    res.status(200).send({affectedRows: deleteH.affectedRows});
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+};
+
 // route /page/:pageNumber/:itemPerPage
 const getHostByPage = async (req, res, next) => {
   const { page, pageNumber, itemPerPage } = req.params;
@@ -74,5 +110,7 @@ module.exports = {
   getHostWithinRadius: getHostWithinRadius,
   getHostById: getHostById,
   getHosts: getHosts,
-  getHostByPage: getHostByPage
+  getHostByPage: getHostByPage,
+  updateHost: updateHost,
+  deleteHost: deleteHost
 };

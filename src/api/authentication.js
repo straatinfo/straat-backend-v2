@@ -68,6 +68,7 @@ const register = async (req, res, next) => {
     res.status(200).send({ user:user.user, token: jwtService.tokenForUser(user.user) });
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.serverError(res);
   }
 }

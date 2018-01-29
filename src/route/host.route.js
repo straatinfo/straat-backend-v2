@@ -9,7 +9,9 @@ HostRoute.route('/')
 .get(requireAuth, Host.getHosts);
 
 HostRoute.route('/:id')
-.get(requireAuth, Host.getHostById);
+.get(requireAuth, Host.getHostById)
+.put(requireAuth, Host.updateHost)
+.delete(requireAuth, Host.deleteHost);
 
 HostRoute.route('/page/:pageNumber/:itemPerPage')
 .get(requireAuth, Host.getHostByPage);

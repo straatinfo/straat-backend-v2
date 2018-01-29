@@ -11,6 +11,9 @@ const getHost = () => {
           'email', 'username', 'address', 'postalCode', 'city',
           'nickName', 'roleId', 'long', 'lat'
         ],
+        order: [
+          ['hostName', 'ASC']
+        ],
         include: [
           { model: db.role }
         ]
@@ -130,9 +133,58 @@ const getHostById = (id) => {
   });
 };
 
+const updateHost = (
+  id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const updatedHost = await db.user.update({
+        id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+      }, {where: {id}, returning: true });
+      if (!updatedHost[1][0]) {
+        resolve({err: `Host ID: ${id} was not updated`});
+        return;
+      }
+      const host = await db.user.findOne({
+        where: {id: updatedHost[1][0].id},
+        attributes: [
+          'id', 'hostName', 'email', 'username',
+          'address', 'postalCode', 'city',
+          'nickName', 'roleId', 'long', 'lat'
+        ],
+        include: [
+          { model: db.role }
+        ]
+      });
+      resolve({err: null, host: host});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const deleteHost = (id) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const deleteH = await db.user.destroy({where: {id}});
+      if (deleteH === 0) {
+        resolve({err: `Host ID: ${id} does not exist`});
+        return;
+      }
+      resolve({err: null, affectedRows: deleteH});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getHostWithinRadius: getHostWithinRadius,
   getHostById: getHostById,
   getHost: getHost,
-  getHostPerPage: getHostPerPage
+  getHostPerPage: getHostPerPage,
+  updateHost: updateHost,
+  deleteHost: deleteHost
 };
