@@ -10,7 +10,8 @@ const getMainCategories = (hostId) => {
           { model: db.user, as: 'host',
             attributes: ['id', 'lname', 'fname', 'institutionName', 'email', 'lat', 'long', 'username'] 
           },
-          { model: db.subCategory }
+          { model: db.subCategory },
+          { model: db.incidentType }
         ]
       });
       resolve({err: null, mainCategories: mainCategories});
@@ -21,10 +22,10 @@ const getMainCategories = (hostId) => {
   });
 };
 
-const createMainCategory = (hostId, name, description) => {
+const createMainCategory = (hostId, name, description, incidentTypeId) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const createMainCategory = await db.mainCategory.create({hostId, name, description});
+      const createMainCategory = await db.mainCategory.create({hostId, name, description, incidentTypeId});
       if (!createMainCategory) {
         resolve({err: 'Invalid Input'});
         return;
@@ -35,7 +36,8 @@ const createMainCategory = (hostId, name, description) => {
           { model: db.user, as: 'host',
             attributes: ['id', 'lname', 'fname', 'institutionName', 'email', 'lat', 'long', 'username'] 
           },
-          { model: db.subCategory }
+          { model: db.subCategory },
+          { model: db.incidentType }
         ]
       });
       resolve({err: null, mainCategory: mainCategory});
@@ -62,7 +64,9 @@ const updateMainCategory = (mainCategoryId, name, description) => {
           { model: db.user, as: 'host',
             attributes: ['id', 'lname', 'fname', 'institutionName', 'email', 'lat', 'long', 'username'] 
           },
-          { model: db.subCategory }
+          { model: db.subCategory },
+          { model: db.incidentType },
+          { model: db.incidentType }
         ]
       });
       resolve({err: null, mainCategory: mainCategory});
@@ -99,7 +103,12 @@ const getSubCategories = (mainCategoryId) => {
       const getSubCategories = await db.subCategory.findAll({
         where: {mainCategoryId},
         include: [
-          { model: db.mainCategory }
+          {
+            model: db.mainCategory,
+            include: [
+              { model: db.incidentType }
+            ]
+          }
         ]
       });
       resolve({err: null, subCategories: getSubCategories});
@@ -121,7 +130,12 @@ const createSubCategory = (mainCategoryId, name, description) => {
       const subCategory = await db.subCategory.findOne({
         where: {id: createSubCategory.id},
         include: [
-          { model: db.mainCategory }
+          {
+            model: db.mainCategory,
+            include: [
+              { model: db.incidentType }
+            ]
+          }
         ]
       });
       resolve({err: null, subCategory: subCategory});
@@ -145,7 +159,12 @@ const updateSubCategory = (subCategoryId, name, description) => {
       const subCategory = await db.subCategory.findOne({
         where: {id: updatedSubCategory[1][0].id},
         include: [
-          { model: db.mainCategory }
+          {
+            model: db.mainCategory,
+            include: [
+              { model: db.incidentType }
+            ]
+          }
         ]
       });
       resolve({err: null, subCategory: subCategory});

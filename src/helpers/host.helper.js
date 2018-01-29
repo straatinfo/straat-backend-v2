@@ -1,6 +1,63 @@
 const db = require('../models');
 const Op = require('sequelize').Op;
 
+const getHost = () => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const hosts = await db.user.findAll({
+        where: {roleId: 2},
+        attributes: [
+          'id', 'institutionName', 'fname', 'lname', 'gender',
+          'email', 'username', 'address', 'postalCode', 'city',
+          'nickName', 'roleId', long, lat
+        ],
+        include: [
+          { model: db.role }
+        ]
+      });
+      resolve({err: null, hosts: hosts});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
+const getHostPerPage = (itemPerPage, pageNumber) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      let items, offset;
+      // limit the number of items to 20
+      if (itemPerPage > 20) {
+        items = 20;
+      } else {
+        items = itemPerPage;
+      }
+      offset = items * pageNumber;
+      const hosts = await db.user.findAll({
+        where: {roleId: 2},
+        order: [
+          ['instituteName', 'ASC']
+        ],
+        limit: items,
+        offset: offset,
+        attributes: [
+          'id', 'institutionName', 'fname', 'lname', 'gender',
+          'email', 'username', 'address', 'postalCode', 'city',
+          'nickName', 'roleId', long, lat
+        ],
+        include: [
+          { model: db.role }
+        ]
+      });
+      resolve({err: null, hosts: hosts});
+    }
+    catch (e) {
+
+    }
+  });
+}
+
 const getHostWithinRadius = (long, lat, radius) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -33,12 +90,10 @@ const getHostWithinRadius = (long, lat, radius) => {
         attributes: [
           'id', 'institutionName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId'
+          'nickName', 'roleId', long, lat
         ],
         include: [
-          { model: db.role },
-          { model: db.userLeader, include: [{ model: db.team }] },
-          { model: db.userMemeber, include: [{ model: db.team }] }
+          { model: db.role }
         ]
       });
       resolve({err: null, hosts: hosts});
@@ -57,12 +112,10 @@ const getHostById = (id) => {
         attributes: [
           'id', 'institutionName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId'
+          'nickName', 'roleId', long, lat
         ],
         include: [
-          { model: db.role },
-          { model: db.userLeader, include: [{ model: db.team }] },
-          { model: db.userMemeber, include: [{ model: db.team }] }
+          { model: db.role }
         ]
       });
       if (!host) {
@@ -79,5 +132,7 @@ const getHostById = (id) => {
 
 module.exports = {
   getHostWithinRadius: getHostWithinRadius,
-  getHostById: getHostById
+  getHostById: getHostById,
+  getHost: getHost,
+  getHostPerPage: getHostPerPage
 };

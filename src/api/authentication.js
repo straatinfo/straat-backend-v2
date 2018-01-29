@@ -58,7 +58,7 @@ const register = async (req, res, next) => {
       ErrorHelper.clientError(res, 400, newUser.err);
       return;
     }
-    // trim the user information
+
     const user = await UserHelper.getUserInfo(newUser.user.id);
     if (user.err) {
       ErrorHelper.clientError(res, 400, 'User was not registered.');
