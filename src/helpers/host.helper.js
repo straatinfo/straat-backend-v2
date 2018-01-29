@@ -7,7 +7,7 @@ const getHost = () => {
       const hosts = await db.user.findAll({
         where: {roleId: 2},
         attributes: [
-          'id', 'institutionName', 'fname', 'lname', 'gender',
+          'id', 'hostName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
           'nickName', 'roleId', 'long', 'lat'
         ],
@@ -42,7 +42,7 @@ const getHostPerPage = (itemPerPage, pageNumber) => {
         limit: items,
         offset: offset,
         attributes: [
-          'id', 'institutionName', 'fname', 'lname', 'gender',
+          'id', 'hostName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
           'nickName', 'roleId', 'long', 'lat'
         ],
@@ -88,7 +88,7 @@ const getHostWithinRadius = (long, lat, radius) => {
           ]
         },
         attributes: [
-          'id', 'institutionName', 'fname', 'lname', 'gender',
+          'id', 'hostName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
           'nickName', 'roleId', 'long', 'lat'
         ],
@@ -110,7 +110,7 @@ const getHostById = (id) => {
       const host = await db.user.findOne({
         where: {id},
         attributes: [
-          'id', 'institutionName', 'fname', 'lname', 'gender',
+          'id', 'hostName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
           'nickName', 'roleId', 'long', 'lat'
         ],
