@@ -12,6 +12,7 @@ const getHosts = async (req, res, next) => {
     res.status(200).send(getHosts.hosts);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.serverError(res);
   }
 };

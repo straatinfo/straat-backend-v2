@@ -9,7 +9,7 @@ const getHost = () => {
         attributes: [
           'id', 'institutionName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', long, lat
+          'nickName', 'roleId', 'long', 'lat'
         ],
         include: [
           { model: db.role }
@@ -44,7 +44,7 @@ const getHostPerPage = (itemPerPage, pageNumber) => {
         attributes: [
           'id', 'institutionName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', long, lat
+          'nickName', 'roleId', 'long', 'lat'
         ],
         include: [
           { model: db.role }
@@ -90,7 +90,7 @@ const getHostWithinRadius = (long, lat, radius) => {
         attributes: [
           'id', 'institutionName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', long, lat
+          'nickName', 'roleId', 'long', 'lat'
         ],
         include: [
           { model: db.role }
@@ -112,7 +112,7 @@ const getHostById = (id) => {
         attributes: [
           'id', 'institutionName', 'fname', 'lname', 'gender',
           'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', long, lat
+          'nickName', 'roleId', 'long', 'lat'
         ],
         include: [
           { model: db.role }
