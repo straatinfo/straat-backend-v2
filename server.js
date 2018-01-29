@@ -28,6 +28,7 @@ apiRoutes(app);
 
 db.sequelize.sync()
 .then(() => {
+  console.log(process.env.NODE_ENV);
   app.listen(PORT, () => {
     console.log(`Listening on PORT ${PORT}`);
   });
