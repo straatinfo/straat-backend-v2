@@ -19,9 +19,9 @@ const getMainCategories = async (req, res, next) => {
 
 const createMainCategory = async (req, res, next) => {
   const { hostId } = req.params;
-  const { name, description } = req.body;
+  const { name, description, reportTypeId } = req.body;
   try {
-    const createMainCategory = await CategoryHelper.createMainCategory(hostId, name, description);
+    const createMainCategory = await CategoryHelper.createMainCategory(hostId, name, description, reportTypeId);
     if (createMainCategory.err) {
       ErrorHelper.clientError(res, 400, createMainCategory.err);
       return;
