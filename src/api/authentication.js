@@ -14,7 +14,7 @@ const login = async (req, res, next) => {
     }
     const user = await UserHelper.getUserInfo(req.user.id);
     // give user token
-    res.status(200).send({user: user, token: jwtService.tokenForUser(req.user)});
+    res.status(200).send({user: user.user, token: jwtService.tokenForUser(req.user)});
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -24,7 +24,9 @@ const login = async (req, res, next) => {
 /* register API */
 const register = async (req, res, next) => {
   const {
-    institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, roleId, password, confirmedPassword
+    hostName, fname, lname, gender, email,
+    username, address, postalCode, city, nickName,
+    roleId, password, confirmedPassword, lat, long
   } = req.body;
 
   try {
@@ -48,13 +50,15 @@ const register = async (req, res, next) => {
     }
     // register user
     const newUser = await UserHelper.createUser(
-      institutionName, fname, lname, gender, email, username, address, postalCode, city, nickName, getRoleId, password
+      hostName, fname, lname, gender, email,
+      username, address, postalCode, city, nickName,
+      getRoleId, password, lat, long
     );
     if (newUser.err) {
       ErrorHelper.clientError(res, 400, newUser.err);
       return;
     }
-    // trim the user information
+
     const user = await UserHelper.getUserInfo(newUser.user.id);
     if (user.err) {
       ErrorHelper.clientError(res, 400, 'User was not registered.');
