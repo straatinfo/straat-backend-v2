@@ -9,7 +9,7 @@ var config    = require('../config/config.json')[env];
 var db        = {};
 
 if (env === 'production') {
-  var sequelize = new Sequelize(process.env.DATABASE_POSTGRES_URL);
+  var sequelize = new Sequelize(process.env.DATABASE_URL);
 } else {
   var sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
