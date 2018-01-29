@@ -3,15 +3,15 @@ const passport = require('passport');
 const passportService = require('../services/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const AdminMiddleware = require('../middlewares/admin.middleware');
-const IncidentType = require('../api/incidentType');
-const IncidentTypeRoute = express.Router();
+const ReportType = require('../api/reportType');
+const ReportTypeRoute = express.Router();
 
-IncidentTypeRoute.route('/')
-.get(requireAuth, IncidentType.getIncidentTypes) // get the list of incident Type for the reporter to choose.
-.post(requireAuth, AdminMiddleware.checkIfAdmin, IncidentType.createdIncidentType); // the admin can add incident type.
+ReportTypeRoute.route('/')
+.get(requireAuth, ReportType.getReportTypes) // get the list of report Type for the reporter to choose.
+.post(requireAuth, AdminMiddleware.checkIfAdmin, ReportType.createdReportType); // the admin can add report type.
 
-IncidentTypeRoute.route('/:id')
-.put(requireAuth, AdminMiddleware.checkIfAdmin, IncidentType.updateIncidentType) // Admin can edit the incident type.
-.delete(requireAuth, AdminMiddleware.checkIfAdmin, IncidentType.deleteIncidentType); // Admin can delete incident Type
+ReportTypeRoute.route('/:id')
+.put(requireAuth, AdminMiddleware.checkIfAdmin, ReportType.updateReportType) // Admin can edit the report type.
+.delete(requireAuth, AdminMiddleware.checkIfAdmin, ReportType.deleteReportType); // Admin can delete report Type
 
-module.exports = IncidentTypeRoute;
+module.exports = ReportTypeRoute;

@@ -1,12 +1,12 @@
 const db = require('../models');
 const Op = require('sequelize').Op;
-const incidentIdGenerator = (incidentTypeId) => {
-  // incidentId format A20170924_00001
+const reportIdGenerator = (reportTypeId) => {
+  // reportId format A20170924_00001
   return new Promise(async(resolve, reject) => {
     try {
-      const incidentType = await db.incidentType.findOne({where: {id: incidentTypeId}});
-      if (!incidentType) {
-        resolve({err: 'Invalid Incident Type ID'});
+      const reportType = await db.reportType.findOne({where: {id: reportTypeId}});
+      if (!reportType) {
+        resolve({err: 'Invalid report Type ID'});
         return;
       }
       const date = new Date();
@@ -15,7 +15,7 @@ const incidentIdGenerator = (incidentTypeId) => {
       const monthFormat = monthPad.substring(0, monthPad.length - monthstr.length) + monthstr;
       console.log(monthFormat);
       const dateString = date.getFullYear() + '' + monthFormat + '' + date.getDate();
-      const incidents = await db.incident.findAll({
+      const reports = await db.report.findAll({
         where: {
           [Op.and]: [
             { createdAt: { [Op.gte]: Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) } },
@@ -23,12 +23,12 @@ const incidentIdGenerator = (incidentTypeId) => {
           ]
         }
       });
-      const incidentCount = incidents.length + 1;
-      const str = "" + incidentCount;
+      const reportCount = reports.length + 1;
+      const str = "" + reportCount;
       const pad = "00000"
       const countFormat = pad.substring(0, pad.length - str.length) + str;
-      const incidentReportId = incidentType.code + dateString + '_' + countFormat;
-      resolve({err: null, incidentReportId: incidentReportId});
+      const generatedReportId = reportType.code + dateString + '_' + countFormat;
+      resolve({err: null, generatedReportId: generatedReportId});
     }
     catch (e) {
       reject(e);
@@ -36,10 +36,10 @@ const incidentIdGenerator = (incidentTypeId) => {
   });
 }
 
-const reportIncident = (
+const createReport = (
   title, description, location, lat, long, isVehicleInvolved,
   isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-  reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId, mainCategoryId
+  reporterId, hostId, subCategoryId, reportTypeId, urgencyId, generatedReportId, mainCategoryId
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -57,11 +57,11 @@ const reportIncident = (
         defaultUrgencyId = urgencyId;
       }
 
-      const report = await db.incident.create({
+      const report = await db.report.create({
         title, description, location, lat, long, isVehicleInvolved,
         isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-        reporterId, hostId, subCategoryId: defaultSubCategoryId, incidentTypeId,
-        urgencyId: defaultUrgencyId, incidentReportId, status: 'Unresolved', mainCategoryId
+        reporterId, hostId, subCategoryId: defaultSubCategoryId, reportTypeId,
+        urgencyId: defaultUrgencyId, reportReportId, status: 'Unresolved', mainCategoryId
       });
       if (!report) {
         resolve({err: 'Was not able to send Report'});
@@ -75,10 +75,10 @@ const reportIncident = (
   });
 };
 
-const getLatestIncident = (queryOption) => {
+const getLatestreport = (queryOption) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const getLatestIncident = await db.incident.findAll({
+      const getLatestreport = await db.report.findAll({
         where: queryOption,
         order: [
           ['createdAt', 'DESC']
@@ -111,13 +111,13 @@ const getLatestIncident = (queryOption) => {
             model: db.subCategory,
             incude: [{ model: db.mainCategory }]
           }, {
-            model: db.incidentType
+            model: db.reportType
           }, {
             model: db.urgency
           }
         ]
       });
-      resolve({err: null, incidents: getLatestIncident});
+      resolve({err: null, reports: getLatestreport});
     }
     catch (e) {
       reject(e);
@@ -125,7 +125,7 @@ const getLatestIncident = (queryOption) => {
   });
 };
 
-const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
+const getLatestreportByPage = (itemPerPage, pageNumber, queryOption) => {
   return new Promise(async(resolve, reject) => {
     try {
       let items, offset;
@@ -136,7 +136,7 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
         items = itemPerPage;
       }
       offset = items * pageNumber;
-      const reports = await db.incident.findAll({
+      const reports = await db.report.findAll({
         where: queryOption,
         order: [
           ['createdAt', 'DESC']
@@ -170,13 +170,13 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
             model: db.subCategory,
             incude: [{ model: db.mainCategory }]
           }, {
-            model: db.incidentType
+            model: db.reportType
           }, {
             model: db.urgency
           }
         ]
       });
-      resolve({err: null, incidents: reports});
+      resolve({err: null, reports: reports});
     }
     catch (e) {
       reject(e);
@@ -184,10 +184,10 @@ const getLatestIncidentByPage = (itemPerPage, pageNumber, queryOption) => {
   });
 };
 
-const getIncidentById = (id) => {
+const getreportById = (id) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const incident = await db.incident.findOne({
+      const report = await db.report.findOne({
         where: {id},
         include: [
           {
@@ -216,17 +216,17 @@ const getIncidentById = (id) => {
             model: db.subCategory,
             incude: [{ model: db.mainCategory }]
           }, {
-            model: db.incidentType
+            model: db.reportType
           }, {
             model: db.urgency
           }
         ]
       });
-      if (!incident) {
-        resolve({err: `Incident ID: ${id} does not exist`});
+      if (!report) {
+        resolve({err: `report ID: ${id} does not exist`});
         return;
       }
-      resolve({err: null, incident: incident});
+      resolve({err: null, report: report});
     }
     catch (e) {
       reject(e);
@@ -234,18 +234,18 @@ const getIncidentById = (id) => {
   });
 };
 
-const updateIncident = (id, note, status ) => {
+const updatereport = (id, note, status ) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const updateIncident = await db.incident.update({id, note, status},{
+      const updatereport = await db.report.update({id, note, status},{
         where: {id}, returning: true
       });
-      if (!updateIncident[1][0]) {
-        resolve({err: `Incident ID: ${id} was not updated`});
+      if (!updatereport[1][0]) {
+        resolve({err: `report ID: ${id} was not updated`});
         return;
       }
-      const incident = await db.incident.findOne({
-        where: {id: updateIncident[1][0].id},
+      const report = await db.report.findOne({
+        where: {id: updatereport[1][0].id},
         include: [
           {
             model: db.user, as: 'reporter',
@@ -273,13 +273,13 @@ const updateIncident = (id, note, status ) => {
             model: db.subCategory,
             incude: [{ model: db.mainCategory }]
           }, {
-            model: db.incidentType
+            model: db.reportType
           }, {
             model: db.urgency
           }
         ]
       });
-      resolve({err: null, incident: incident});
+      resolve({err: null, report: report});
     }
     catch (e) {
       reject(e);
@@ -287,15 +287,15 @@ const updateIncident = (id, note, status ) => {
   });
 };
 
-const deleteIncident = (id) => {
+const deletereport = (id) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const deleteIncident = await db.incident.destroy({where: {id}, returning: true});
-      if (deleteIncident !== 1) {
-        resolve({err: `Incident ID ${id} does not exist`});
+      const deletereport = await db.report.destroy({where: {id}, returning: true});
+      if (deletereport !== 1) {
+        resolve({err: `report ID ${id} does not exist`});
         return;
       }
-      resolve({err: null, affectedRows: deleteIncident});
+      resolve({err: null, affectedRows: deletereport});
     }
     catch (e) {
       reject(e);
@@ -304,11 +304,11 @@ const deleteIncident = (id) => {
 };
 
 module.exports = {
-  incidentIdGenerator: incidentIdGenerator,
-  reportIncident: reportIncident,
-  getLatestIncident: getLatestIncident,
-  getLatestIncidentByPage: getLatestIncidentByPage,
-  getIncidentById: getIncidentById,
-  updateIncident: updateIncident,
-  deleteIncident: deleteIncident
+  reportIdGenerator: reportIdGenerator,
+  reportreport: reportreport,
+  getLatestreport: getLatestreport,
+  getLatestreportByPage: getLatestreportByPage,
+  getreportById: getreportById,
+  updatereport: updatereport,
+  deletereport: deletereport
 };

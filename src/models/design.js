@@ -1,5 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
   const design = sequelize.define('design', {
+    designName: { type: DataTypes.STRING },
     buttonBGC: { type: DataTypes.STRING },
     buttonTC: { type: DataTypes.STRING },
     pageBGC: { type: DataTypes.STRING },

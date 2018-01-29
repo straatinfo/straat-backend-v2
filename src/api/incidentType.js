@@ -1,30 +1,30 @@
 const ErrorHelper = require('../helpers/error.helper');
-const IncdentTypeHelper = require('../helpers/incidentType.helper');
+const ReportTypeHelper = require('../helpers/reportType.helper');
 
 // route: /
-const getIncidentTypes = async (req, res, next) => {
+const getReportTypes = async (req, res, next) => {
   try {
-    const getIncidentTypes = await IncdentTypeHelper.getIncidentTypes();
-    if (getIncidentTypes.err) {
-      ErrorHelper.clientError(res, 400, getIncidentTypes.err);
+    const getReportTypes = await ReportTypeHelper.getReportTypes();
+    if (getReportTypes.err) {
+      ErrorHelper.clientError(res, 400, getReportTypes.err);
       return;
     }
-    res.status(200).send(getIncidentTypes.incidentTypes);
+    res.status(200).send(getReportTypes.reportTypes);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-const createIncidentType = async (req, res, next) => {
+const createReportType = async (req, res, next) => {
   const { code, name, description } = req.body;
   try {
-    const createdIncidentType = await IncdentTypeHelper.createIncidentType(code, name, description);
-    if (createdIncidentType.err) {
-      ErrorHelper.clientError(res, 400, createdIncidentType.err);
+    const createdReportType = await ReportTypeHelper.createReportType(code, name, description);
+    if (createdReportType.err) {
+      ErrorHelper.clientError(res, 400, createdReportType.err);
       return;
     }
-    res.status(200).send(createdIncidentType.incidentType);
+    res.status(200).send(createdReportType.reportType);
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -32,16 +32,16 @@ const createIncidentType = async (req, res, next) => {
 };
 
 // route: /:id
-const updateIncidentType = async (req, res, next) => {
+const updateReportType = async (req, res, next) => {
   const { id } = req.params;
   const { code, name, description } = req.body;
   try {
-    const updatedIncidentType = await IncdentTypeHelper.updateIncidentType(id, code, name, description);
-    if (updatedIncidentType.err) {
-      ErrorHelper.clientError(res, 400, updatedIncidentType.err);
+    const updatedReportType = await ReportTypeHelper.updateReportType(id, code, name, description);
+    if (updatedReportType.err) {
+      ErrorHelper.clientError(res, 400, updatedReportType.err);
       return;
     }
-    res.status(200).send(updatedIncidentType.incidentType);
+    res.status(200).send(updatedReportType.reportType);
   }
   catch (e) {
     console.log(e);
@@ -49,15 +49,15 @@ const updateIncidentType = async (req, res, next) => {
   }
 };
 
-const deleteIncidentType = async (req, res, next) => {
+const deleteReportType = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deletedIncidentType = await IncdentTypeHelper.deleteIncidentType(id);
-    if (deletedIncidentType.err) {
-      ErrorHelper.clientError(res, 400, deletedIncidentType.err);
+    const deletedReportType = await ReportTypeHelper.deleteReportType(id);
+    if (deletedReportType.err) {
+      ErrorHelper.clientError(res, 400, deletedReportType.err);
       return;
     }
-    res.status(200).send({affectedRows: deletedIncidentType.affectedRows});
+    res.status(200).send({affectedRows: deletedReportType.affectedRows});
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -66,8 +66,8 @@ const deleteIncidentType = async (req, res, next) => {
 
 
 module.exports = {
-  getIncidentTypes: getIncidentTypes,
-  createdIncidentType: createIncidentType,
-  updateIncidentType: updateIncidentType,
-  deleteIncidentType: deleteIncidentType
+  getReportTypes: getReportTypes,
+  createdReportType: createReportType,
+  updateReportType: updateReportType,
+  deleteReportType: deleteReportType
 };

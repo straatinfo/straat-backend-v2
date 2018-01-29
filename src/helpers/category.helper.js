@@ -11,7 +11,7 @@ const getMainCategories = (hostId) => {
             attributes: ['id', 'lname', 'fname', 'institutionName', 'email', 'lat', 'long', 'username'] 
           },
           { model: db.subCategory },
-          { model: db.incidentType }
+          { model: db.reportType }
         ]
       });
       resolve({err: null, mainCategories: mainCategories});
@@ -22,10 +22,10 @@ const getMainCategories = (hostId) => {
   });
 };
 
-const createMainCategory = (hostId, name, description, incidentTypeId) => {
+const createMainCategory = (hostId, name, description, reportTypeId) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const createMainCategory = await db.mainCategory.create({hostId, name, description, incidentTypeId});
+      const createMainCategory = await db.mainCategory.create({hostId, name, description, reportTypeId});
       if (!createMainCategory) {
         resolve({err: 'Invalid Input'});
         return;
@@ -37,7 +37,7 @@ const createMainCategory = (hostId, name, description, incidentTypeId) => {
             attributes: ['id', 'lname', 'fname', 'institutionName', 'email', 'lat', 'long', 'username'] 
           },
           { model: db.subCategory },
-          { model: db.incidentType }
+          { model: db.reportType }
         ]
       });
       resolve({err: null, mainCategory: mainCategory});
@@ -65,8 +65,8 @@ const updateMainCategory = (mainCategoryId, name, description) => {
             attributes: ['id', 'lname', 'fname', 'institutionName', 'email', 'lat', 'long', 'username'] 
           },
           { model: db.subCategory },
-          { model: db.incidentType },
-          { model: db.incidentType }
+          { model: db.reportType },
+          { model: db.reportType }
         ]
       });
       resolve({err: null, mainCategory: mainCategory});
@@ -106,7 +106,7 @@ const getSubCategories = (mainCategoryId) => {
           {
             model: db.mainCategory,
             include: [
-              { model: db.incidentType }
+              { model: db.reportType }
             ]
           }
         ]
@@ -133,7 +133,7 @@ const createSubCategory = (mainCategoryId, name, description) => {
           {
             model: db.mainCategory,
             include: [
-              { model: db.incidentType }
+              { model: db.reportType }
             ]
           }
         ]
@@ -162,7 +162,7 @@ const updateSubCategory = (subCategoryId, name, description) => {
           {
             model: db.mainCategory,
             include: [
-              { model: db.incidentType }
+              { model: db.reportType }
             ]
           }
         ]

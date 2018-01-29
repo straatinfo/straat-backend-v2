@@ -2,25 +2,25 @@ const express = require('express');
 const passport = require('passport');
 const passportService = require('../services/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
-const Incident = require('../api/incident');
-const IncidentRoute = express.Router();
+const Report = require('../api/report');
+const ReportRoute = express.Router();
 
-IncidentRoute.route('/')
-.get(requireAuth, Incident.getLatestIncident) // will get the latest 100 reports
-.post(requireAuth, Incident.reportIncident);
+ReportRoute.route('/')
+.get(requireAuth, Report.getLatestReport) // will get the latest 100 reports
+.post(requireAuth, Report.reportReport);
 
-IncidentRoute.route('/:id')
-.get(requireAuth, Incident.getIncidentById)
-.put(requireAuth, Incident.updateIncident)
-.delete(requireAuth, Incident.deleteIncident);
+ReportRoute.route('/:id')
+.get(requireAuth, Report.getReportById)
+.put(requireAuth, Report.updateReport)
+.delete(requireAuth, Report.deleteReport);
 
-IncidentRoute.route('/page/:pageNumber/:itemPerPage')
-.get(requireAuth, Incident.getIncidentByPage);
+ReportRoute.route('/page/:pageNumber/:itemPerPage')
+.get(requireAuth, Report.getReportByPage);
 
-IncidentRoute.route('/category/:incidentTypeId')
-.get(requireAuth, Incident.getIncidentByIncidentType);
+ReportRoute.route('/category/:reportTypeId')
+.get(requireAuth, Report.getReportByReportType);
 
-IncidentRoute.route('/category/:incidentTypeId/page/:pageNumber/:itemPerPage')
-.get(requireAuth, Incident.getIncidentByIncidentTypeByPage);
+ReportRoute.route('/category/:reportTypeId/page/:pageNumber/:itemPerPage')
+.get(requireAuth, Report.getReportByReportTypeByPage);
 
-module.exports = IncidentRoute;
+module.exports = ReportRoute;

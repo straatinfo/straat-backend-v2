@@ -1,43 +1,43 @@
 const ErrorHelper = require('../helpers/error.helper');
-const IncidentHelper = require('../helpers/incident.helper');
+const ReportHelper = require('../helpers/report.helper');
 const db = require('../models');
 
 // route: /
-const getLatestIncident = async (req, res, next) => {
+const getLatestReport = async (req, res, next) => {
   try {
-    const getReport = await IncidentHelper.getLatestIncident();
+    const getReport = await ReportHelper.getLatestReport();
     if (getReport.err) {
-      ErrorHelper.clientError(res, 400, 'Cannot Get Incidents');
+      ErrorHelper.clientError(res, 400, 'Cannot Get Reports');
       return;
     }
-    res.status(200).send(getReport.incidents);
+    res.status(200).send(getReport.reports);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-const reportIncident = async (req, res, next) => {
+const reportReport = async (req, res, next) => {
   const {
     title, description, location, lat, long, isVehicleInvolved,
     isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-    reporterId, hostId, mainCategoryId,  subCategoryId, incidentTypeId, urgencyId
+    reporterId, hostId, mainCategoryId,  subCategoryId, reportTypeId, urgencyId
   } = req.body;
 
   try {
-    const generateIncidentId = await IncidentHelper.incidentIdGenerator(incidentTypeId);
+    const generateReportId = await ReportHelper.reportIdGenerator(reportTypeId);
 
-    if (generateIncidentId.err) {
-      ErrorHelper.clientError(res, 400, generateIncidentId.err);
+    if (generateReportId.err) {
+      ErrorHelper.clientError(res, 400, generateReportId.err);
       return;
     }
 
-    const incidentReportId = generateIncidentId.incidentReportId;
+    const generatedReportId = generateReportId.generatedReportId;
 
-    const createReport = await IncidentHelper.reportIncident(
+    const createReport = await ReportHelper.reportReport(
       title, description, location, lat, long, isVehicleInvolved,
       isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-      reporterId, hostId, subCategoryId, incidentTypeId, urgencyId, incidentReportId, mainCategoryId
+      reporterId, hostId, subCategoryId, reportTypeId, urgencyId, generatedReportId, mainCategoryId
     );
 
     if (createReport.err) {
@@ -53,46 +53,46 @@ const reportIncident = async (req, res, next) => {
 };
 
 // route: /:id
-const getIncidentById = async (req, res, next) => {
+const getReportById = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const getIncident = await IncidentHelper.getIncidentById(id);
-    if (getIncident.err) {
-      ErrorHelper.clientError(res, 400, getIncident.err);
+    const getReport = await ReportHelper.getReportById(id);
+    if (getReport.err) {
+      ErrorHelper.clientError(res, 400, getReport.err);
       return;
     }
-    res.status(200).send(getIncident.incident);
+    res.status(200).send(getReport.report);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-const updateIncident = async (req, res, next) => {
+const updateReport = async (req, res, next) => {
   const { id } = req.params;
   const { note, status } = req.body;
   try {
-    const updateIncident = await IncidentHelper.updateIncident(id, note, status);
-    if (updateIncident.err) {
-      ErrorHelper.clientError(res, 400, updateIncident.err);
+    const updateReport = await ReportHelper.updateReport(id, note, status);
+    if (updateReport.err) {
+      ErrorHelper.clientError(res, 400, updateReport.err);
       return;
     }
-    res.status(200).send(updateIncident.incident);
+    res.status(200).send(updateReport.report);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-const deleteIncident = async (req, res, next) => {
+const deleteReport = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deleteIncident = await IncidentHelper.deleteIncident(id);
-    if (deleteIncident.err) {
-      ErrorHelper.clientError(res, 400, deleteIncident.err);
+    const deleteReport = await ReportHelper.deleteReport(id);
+    if (deleteReport.err) {
+      ErrorHelper.clientError(res, 400, deleteReport.err);
       return;
     }
-    res.status(200).send({affectedRows:deleteIncident.affectedRows});
+    res.status(200).send({affectedRows:deleteReport.affectedRows});
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -100,33 +100,33 @@ const deleteIncident = async (req, res, next) => {
 };
 
 // route: /page/:pageNumber/:itemPerPage
-const getIncidentByPage = async (req, res, next) => {
+const getReportByPage = async (req, res, next) => {
   const { pageNumber, itemPerPage } = req.params;
   try {
-    const getReports = await IncidentHelper.getLatestIncidentByPage(itemPerPage, pageNumber);
+    const getReports = await ReportHelper.getLatestReportByPage(itemPerPage, pageNumber);
     if (getReports.err) {
       ErrorHelper.clientError(res, 400, getReports.err);
       return;
     }
-    res.status(200).send(getReports.incidents);
+    res.status(200).send(getReports.reports);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-// route: /category/:incidentTypeId
-const getIncidentByIncidentType = async (req, res, next) => {
-  const { incidentTypeId } = req.params;
+// route: /category/:reportTypeId
+const getReportByReportType = async (req, res, next) => {
+  const { reportTypeId } = req.params;
   try {
-    const queryOption = { incidentTypeId: incidentTypeId };
-    const getReports = await IncidentHelper.getLatestIncident(queryOption);
+    const queryOption = { reportTypeId: reportTypeId };
+    const getReports = await ReportHelper.getLatestReport(queryOption);
     if (getReports.err) {
       ErrorHelper.clientError(res, 400, 'Invalid Arguments');
       return;
     }
     console.log(getReports);
-    res.status(200).send(getReports.incidents);
+    res.status(200).send(getReports.reports);
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -134,16 +134,16 @@ const getIncidentByIncidentType = async (req, res, next) => {
 };
 
 // route: /category/:inidentType/page/:pageNumber/:itemPerPage
-const getIncidentByIncidentTypeByPage = async (req, res, next) => {
-  const { incidentTypeId, pageNumber, itemPerPage } = req.params;
+const getReportByReportTypeByPage = async (req, res, next) => {
+  const { reportTypeId, pageNumber, itemPerPage } = req.params;
   try {
-    const queryOption = { incidentTypeId: incidentTypeId };
-    const getReports = await IncidentHelper.getLatestIncidentByPage(itemPerPage, pageNumber, queryOption);
+    const queryOption = { reportTypeId: reportTypeId };
+    const getReports = await ReportHelper.getLatestReportByPage(itemPerPage, pageNumber, queryOption);
     if (getReports.err) {
       ErrorHelper.clientError(res, 400, 'Invalid Arguments');
       return;
     }
-    res.status(200).send(getReports.incidents);
+    res.status(200).send(getReports.reports);
   }
   catch (e) {
     ErrorHelper.serverError(res);
@@ -151,12 +151,12 @@ const getIncidentByIncidentTypeByPage = async (req, res, next) => {
 };
 
 module.exports = {
-  reportIncident: reportIncident,
-  getLatestIncident: getLatestIncident,
-  getIncidentByPage: getIncidentByPage,
-  getIncidentByIncidentType: getIncidentByIncidentType,
-  getIncidentByIncidentTypeByPage: getIncidentByIncidentTypeByPage,
-  getIncidentById: getIncidentById,
-  updateIncident: updateIncident,
-  deleteIncident: deleteIncident
+  reportReport: reportReport,
+  getLatestReport: getLatestReport,
+  getReportByPage: getReportByPage,
+  getReportByReportType: getReportByReportType,
+  getReportByReportTypeByPage: getReportByReportTypeByPage,
+  getReportById: getReportById,
+  updateReport: updateReport,
+  deleteReport: deleteReport
 };
