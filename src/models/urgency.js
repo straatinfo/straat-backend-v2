@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   urgency.associate = models => {
-    urgency.hasMany(models.incident);
+    urgency.hasMany(models.report);
   };
 
   return urgency;
