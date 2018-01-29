@@ -7,7 +7,7 @@ const ReportRoute = express.Router();
 
 ReportRoute.route('/')
 .get(requireAuth, Report.getLatestReport) // will get the latest 100 reports
-.post(requireAuth, Report.reportReport);
+.post(requireAuth, Report.createReport);
 
 ReportRoute.route('/:id')
 .get(requireAuth, Report.getReportById)

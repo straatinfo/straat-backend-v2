@@ -17,7 +17,7 @@ const getLatestReport = async (req, res, next) => {
   }
 };
 
-const reportReport = async (req, res, next) => {
+const createReport = async (req, res, next) => {
   const {
     title, description, location, lat, long, isVehicleInvolved,
     isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
@@ -25,14 +25,14 @@ const reportReport = async (req, res, next) => {
   } = req.body;
 
   try {
-    const generateReportId = await ReportHelper.reportIdGenerator(reportTypeId);
+    const generateId = await ReportHelper.reportIdGenerator(reportTypeId);
 
-    if (generateReportId.err) {
-      ErrorHelper.clientError(res, 400, generateReportId.err);
+    if (generateId.err) {
+      ErrorHelper.clientError(res, 400, generatedReportId.err);
       return;
     }
 
-    const generatedReportId = generateReportId.generatedReportId;
+    const generatedReportId = generateId.generatedReportId;
 
     const createReport = await ReportHelper.reportReport(
       title, description, location, lat, long, isVehicleInvolved,
@@ -151,7 +151,7 @@ const getReportByReportTypeByPage = async (req, res, next) => {
 };
 
 module.exports = {
-  reportReport: reportReport,
+  createReport: createReport,
   getLatestReport: getLatestReport,
   getReportByPage: getReportByPage,
   getReportByReportType: getReportByReportType,

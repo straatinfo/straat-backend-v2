@@ -75,10 +75,10 @@ const createReport = (
   });
 };
 
-const getLatestreport = (queryOption) => {
+const getLatestReport = (queryOption) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const getLatestreport = await db.report.findAll({
+      const getLatestReport = await db.report.findAll({
         where: queryOption,
         order: [
           ['createdAt', 'DESC']
@@ -88,7 +88,7 @@ const getLatestreport = (queryOption) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -99,7 +99,7 @@ const getLatestreport = (queryOption) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -117,7 +117,7 @@ const getLatestreport = (queryOption) => {
           }
         ]
       });
-      resolve({err: null, reports: getLatestreport});
+      resolve({err: null, reports: getLatestReport});
     }
     catch (e) {
       reject(e);
@@ -125,7 +125,7 @@ const getLatestreport = (queryOption) => {
   });
 };
 
-const getLatestreportByPage = (itemPerPage, pageNumber, queryOption) => {
+const getLatestReportByPage = (itemPerPage, pageNumber, queryOption) => {
   return new Promise(async(resolve, reject) => {
     try {
       let items, offset;
@@ -147,7 +147,7 @@ const getLatestreportByPage = (itemPerPage, pageNumber, queryOption) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -158,7 +158,7 @@ const getLatestreportByPage = (itemPerPage, pageNumber, queryOption) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -184,7 +184,7 @@ const getLatestreportByPage = (itemPerPage, pageNumber, queryOption) => {
   });
 };
 
-const getreportById = (id) => {
+const getReportById = (id) => {
   return new Promise(async(resolve, reject) => {
     try {
       const report = await db.report.findOne({
@@ -193,7 +193,7 @@ const getreportById = (id) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -204,7 +204,7 @@ const getreportById = (id) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -234,10 +234,10 @@ const getreportById = (id) => {
   });
 };
 
-const updatereport = (id, note, status ) => {
+const updateReport = (id, note, status ) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const updatereport = await db.report.update({id, note, status},{
+      const updateReport = await db.report.update({id, note, status},{
         where: {id}, returning: true
       });
       if (!updatereport[1][0]) {
@@ -250,7 +250,7 @@ const updatereport = (id, note, status ) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -261,7 +261,7 @@ const updatereport = (id, note, status ) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'institutionName', 'fname',
+              'id', 'hostName', 'fname',
               'lname', 'email', 'username',
               'address', 'gender', 'postalCode',
               'city', 'nickName'
@@ -287,15 +287,15 @@ const updatereport = (id, note, status ) => {
   });
 };
 
-const deletereport = (id) => {
+const deleteReport = (id) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const deletereport = await db.report.destroy({where: {id}, returning: true});
+      const deleteReport = await db.report.destroy({where: {id}, returning: true});
       if (deletereport !== 1) {
         resolve({err: `report ID ${id} does not exist`});
         return;
       }
-      resolve({err: null, affectedRows: deletereport});
+      resolve({err: null, affectedRows: deleteReport});
     }
     catch (e) {
       reject(e);
@@ -305,10 +305,10 @@ const deletereport = (id) => {
 
 module.exports = {
   reportIdGenerator: reportIdGenerator,
-  reportreport: reportreport,
-  getLatestreport: getLatestreport,
-  getLatestreportByPage: getLatestreportByPage,
-  getreportById: getreportById,
-  updatereport: updatereport,
-  deletereport: deletereport
+  createReport: createReport,
+  getLatestReport: getLatestReport,
+  getLatestReportByPage: getLatestReportByPage,
+  getReportById: getReportById,
+  updateReport: updateReport,
+  deleteReport: deleteReport
 };
