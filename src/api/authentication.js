@@ -47,7 +47,7 @@ const register = async (req, res, next) => {
 
   try {
     // check for require fields
-    if (!email || !address || !password || !confirmedPassword) {
+    if (!email || !password || !confirmedPassword) {
       ErrorHelper.clientError(res, 400, 'Please Complete the fields');
       return;
     }
