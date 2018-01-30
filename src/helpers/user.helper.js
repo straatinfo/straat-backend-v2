@@ -51,7 +51,7 @@ const getUserInfo = (id) => {
     try {
       const user = await db.user.findOne({
         attributes: [
-          'id', 'fname', 'lname', 'gender',
+          'id', 'hostName', 'fname', 'lname', 'gender',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
           'country','lat', 'long', 'nickName', 'roleId'
