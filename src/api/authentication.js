@@ -21,11 +21,20 @@ const login = async (req, res, next) => {
   }
 };
 
+// houseNumber: { type: DataTypes.STRING },
+//     streetName: { type: DataTypes.STRING },
+//     city: { type: DataTypes.STRING },
+//     state: { type: DataTypes.STRING },
+//     zip: { type: DataTypes.STRING },
+//     country: { type: DataTypes.STRING },
+//     phoneNumber: { type: DataTypes.STRING },
+
 /* register API */
 const register = async (req, res, next) => {
   const {
     hostName, fname, lname, gender, email,
-    username, address, postalCode, city, nickName,
+    username, postalCode, houseNumber, streetName, city,
+    state, zip, country, phoneNumber, nickName,
     roleId, password, confirmedPassword, lat, long
   } = req.body;
 
@@ -51,8 +60,9 @@ const register = async (req, res, next) => {
     // register user
     const newUser = await UserHelper.createUser(
       hostName, fname, lname, gender, email,
-      username, address, postalCode, city, nickName,
-      getRoleId, password, lat, long
+      username, postalCode, houseNumber, streetName, city,
+      state, zip, country, phoneNumber, nickName,
+      roleId, password, confirmedPassword, lat, long
     );
     if (newUser.err) {
       ErrorHelper.clientError(res, 400, newUser.err);

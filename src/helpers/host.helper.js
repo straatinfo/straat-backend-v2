@@ -7,9 +7,9 @@ const getHost = () => {
       const hosts = await db.user.findAll({
         where: {roleId: 2},
         attributes: [
-          'id', 'hostName', 'fname', 'lname', 'gender',
-          'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', 'long', 'lat'
+          'id', 'hostName', 'email', 'username', 'postalCode', 
+          'houseNumber', 'streetName', 'city','state', 'zip',
+          'country','lat', 'long', 'nickName', 'roleId'
         ],
         order: [
           ['hostName', 'ASC']
@@ -45,9 +45,9 @@ const getHostPerPage = (itemPerPage, pageNumber) => {
         limit: items,
         offset: offset,
         attributes: [
-          'id', 'hostName', 'fname', 'lname', 'gender',
-          'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', 'long', 'lat'
+          'id', 'hostName', 'email', 'username', 'postalCode', 
+          'houseNumber', 'streetName', 'city','state', 'zip',
+          'country','lat', 'long', 'nickName', 'roleId'
         ],
         include: [
           { model: db.role }
@@ -91,9 +91,9 @@ const getHostWithinRadius = (long, lat, radius) => {
           ]
         },
         attributes: [
-          'id', 'hostName', 'fname', 'lname', 'gender',
-          'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', 'long', 'lat'
+          'id', 'hostName', 'email', 'username', 'postalCode', 
+          'houseNumber', 'streetName', 'city','state', 'zip',
+          'country','lat', 'long', 'nickName', 'roleId'
         ],
         include: [
           { model: db.role }
@@ -113,9 +113,9 @@ const getHostById = (id) => {
       const host = await db.user.findOne({
         where: {id},
         attributes: [
-          'id', 'hostName', 'fname', 'lname', 'gender',
-          'email', 'username', 'address', 'postalCode', 'city',
-          'nickName', 'roleId', 'long', 'lat'
+          'id', 'hostName', 'email', 'username', 'postalCode', 
+          'houseNumber', 'streetName', 'city','state', 'zip',
+          'country','lat', 'long', 'nickName', 'roleId'
         ],
         include: [
           { model: db.role }
@@ -148,9 +148,9 @@ const updateHost = (
       const host = await db.user.findOne({
         where: {id: updatedHost[1][0].id},
         attributes: [
-          'id', 'hostName', 'email', 'username',
-          'address', 'postalCode', 'city',
-          'nickName', 'roleId', 'long', 'lat'
+          'id', 'hostName', 'email', 'username', 'postalCode', 
+          'houseNumber', 'streetName', 'city','state', 'zip',
+          'country','lat', 'long', 'nickName', 'roleId'
         ],
         include: [
           { model: db.role }
