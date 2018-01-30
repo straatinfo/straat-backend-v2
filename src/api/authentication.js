@@ -5,6 +5,21 @@ const _ = require('lodash');
 const UserHelper = require('../helpers/user.helper');
 const ErrorHelper = require('../helpers/error.helper');
 
+const checkUserInput = async (req, res, next) => {
+  const { input } = req.params;
+  try {
+    const checkInput = await UserHelper.checkUserByInput(input);
+    if (checkInput.err) {
+      ErrorHelper.clientError(res, 400, checkInput.err);
+      return;
+    }
+    res.status(200).send({message: 'Good'});
+  }
+  catch (e) {
+    ErrorHelper.serverError(e);
+  }
+};
+
 /* login API */
 const login = async (req, res, next) => {
   try {
@@ -21,21 +36,13 @@ const login = async (req, res, next) => {
   }
 };
 
-// houseNumber: { type: DataTypes.STRING },
-//     streetName: { type: DataTypes.STRING },
-//     city: { type: DataTypes.STRING },
-//     state: { type: DataTypes.STRING },
-//     zip: { type: DataTypes.STRING },
-//     country: { type: DataTypes.STRING },
-//     phoneNumber: { type: DataTypes.STRING },
-
 /* register API */
 const register = async (req, res, next) => {
   const {
     hostName, fname, lname, gender, email,
     username, postalCode, houseNumber, streetName, city,
     state, zip, country, phoneNumber, nickName,
-    roleId, password, confirmedPassword, lat, long
+    roleId, password, confirmedPassword, long, lat
   } = req.body;
 
   try {
@@ -62,7 +69,7 @@ const register = async (req, res, next) => {
       hostName, fname, lname, gender, email,
       username, postalCode, houseNumber, streetName, city,
       state, zip, country, phoneNumber, nickName,
-      roleId, password, confirmedPassword, lat, long
+      roleId, password, confirmedPassword, long, lat
     );
     if (newUser.err) {
       ErrorHelper.clientError(res, 400, newUser.err);
@@ -85,5 +92,6 @@ const register = async (req, res, next) => {
 
 module.exports = {
   login: login,
-  register: register
+  register: register,
+  checkUserInput: checkUserInput
 };
