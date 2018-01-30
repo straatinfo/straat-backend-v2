@@ -5,6 +5,21 @@ const _ = require('lodash');
 const UserHelper = require('../helpers/user.helper');
 const ErrorHelper = require('../helpers/error.helper');
 
+const checkUserInput = async (req, res, next) => {
+  const { input } = req.params;
+  try {
+    const checkInput = await UserHelper.checkUserByInput(input);
+    if (checkInput.err) {
+      ErrorHelper.clientError(res, 400, checkInput.err);
+      return;
+    }
+    res.status(200).send({message: 'Good'});
+  }
+  catch (e) {
+    ErrorHelper.serverError(e);
+  }
+};
+
 /* login API */
 const login = async (req, res, next) => {
   try {
@@ -25,13 +40,14 @@ const login = async (req, res, next) => {
 const register = async (req, res, next) => {
   const {
     hostName, fname, lname, gender, email,
-    username, address, postalCode, city, nickName,
-    roleId, password, confirmedPassword, lat, long
+    username, postalCode, houseNumber, streetName, city,
+    state, zip, country, phoneNumber, nickName,
+    roleId, password, confirmedPassword, long, lat
   } = req.body;
 
   try {
     // check for require fields
-    if (!email || !address || !password || !confirmedPassword) {
+    if (!email || !password || !confirmedPassword) {
       ErrorHelper.clientError(res, 400, 'Please Complete the fields');
       return;
     }
@@ -51,8 +67,9 @@ const register = async (req, res, next) => {
     // register user
     const newUser = await UserHelper.createUser(
       hostName, fname, lname, gender, email,
-      username, address, postalCode, city, nickName,
-      getRoleId, password, lat, long
+      username, postalCode, houseNumber, streetName, city,
+      state, zip, country, phoneNumber, nickName,
+      roleId, password, confirmedPassword, long, lat
     );
     if (newUser.err) {
       ErrorHelper.clientError(res, 400, newUser.err);
@@ -75,5 +92,6 @@ const register = async (req, res, next) => {
 
 module.exports = {
   login: login,
-  register: register
+  register: register,
+  checkUserInput: checkUserInput
 };
