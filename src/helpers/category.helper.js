@@ -8,7 +8,12 @@ const getMainCategories = (hostId) => {
         where: {hostId},
         include: [
           { model: db.user, as: 'host',
-            attributes: ['id', 'lname', 'fname', 'hostName', 'email', 'lat', 'long', 'username'] 
+            attributes: [
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
+            ]
           },
           { model: db.subCategory },
           { model: db.reportType }
@@ -34,7 +39,12 @@ const createMainCategory = (hostId, name, description, reportTypeId) => {
         where: {id: createMainCategory.id},
         include: [
           { model: db.user, as: 'host',
-            attributes: ['id', 'lname', 'fname', 'hostName', 'email', 'lat', 'long', 'username'] 
+            attributes: [
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
+            ] 
           },
           { model: db.subCategory },
           { model: db.reportType }
@@ -62,7 +72,12 @@ const updateMainCategory = (mainCategoryId, name, description) => {
         where: {id: updatedMainCategory[1][0].id},
         include: [
           { model: db.user, as: 'host',
-            attributes: ['id', 'lname', 'fname', 'hostName', 'email', 'lat', 'long', 'username'] 
+            attributes: [
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
+            ]
           },
           { model: db.subCategory },
           { model: db.reportType },
