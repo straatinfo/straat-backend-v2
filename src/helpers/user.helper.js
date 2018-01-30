@@ -1,6 +1,31 @@
 const db = require('../models');
 const Op = require('sequelize').Op;
 
+const checkUserByInput = (input) => {
+  return new Promise (async(resolve, reject) => {
+    try {
+      const checkUser = await db.user.findOne({
+        where: {
+          [Op.or]: [
+            {username: input},
+            {email: input},
+            {hostName: input},
+            {nickName: input}
+          ]
+        }
+      });
+      if (checkUser) {
+        resolve({error: `${input} already exists`});
+        return;
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
 const checkUserExistence = (email, username) => {
   return new Promise (async(resolve, reject) => {
     try {
@@ -24,7 +49,7 @@ const createUser = (
   hostName, fname, lname, gender, email,
   username, postalCode, houseNumber, streetName, city,
   state, zip, country, phoneNumber, nickName,
-  roleId, password, confirmedPassword, lat, long
+  roleId, password, confirmedPassword, long, lat
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -32,7 +57,7 @@ const createUser = (
         hostName, fname, lname, gender, email,
         username, postalCode, houseNumber, streetName, city,
         state, zip, country, phoneNumber, nickName,
-        roleId, password, confirmedPassword, lat, long
+        roleId, password, confirmedPassword, long, lat
       });
       if (!newUser) {
         resolve({err: 'Invalid Input'});
@@ -76,5 +101,6 @@ const getUserInfo = (id) => {
 module.exports = {
   checkUserExistence: checkUserExistence,
   createUser: createUser,
-  getUserInfo: getUserInfo
+  getUserInfo: getUserInfo,
+  checkUserByInput: checkUserByInput
 };

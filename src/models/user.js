@@ -18,8 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     phoneNumber: { type: DataTypes.STRING },
     nickName: { type: DataTypes.STRING },
     password: { type: DataTypes.STRING },
-    lat: { type: DataTypes.DOUBLE },
-    long: { type: DataTypes.DOUBLE }
+    long: { type: DataTypes.DOUBLE },
+    lat: { type: DataTypes.DOUBLE }
   });
 
   // address format
