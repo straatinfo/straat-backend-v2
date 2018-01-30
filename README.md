@@ -1,10 +1,6 @@
 # README #
 
-To run the code:
-Install node or use nvm
-run npm install
 
-for Dev run npm run dev
 
 ### What is this repository for? ###
 
@@ -13,9 +9,18 @@ for Dev run npm run dev
 ### How do I get set up? ###
 
 * Summary of set up
+  - This api uses NodeJS, Postgresql and Sequelize
+  - You can also use other databases aside from postgres just change configuration on /src/config/config.json
+    then install the database you want.
+    Please refer to Sequelize documentation:
+    http://docs.sequelizejs.com/manual/installation/getting-started.html
 * Configuration
+  - there are only 2 configurations for development and production
+  - this can be set by runnin NODE_ENV=<dev env>
 * Dependencies
-* Database configuration
+  - run npm install
+* How to run in dev mode
+  - run: npm run dev
 * How to run tests
 * Deployment instructions
 
