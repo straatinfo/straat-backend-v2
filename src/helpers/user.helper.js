@@ -22,15 +22,17 @@ const checkUserExistence = (email, username) => {
 
 const createUser = (
   hostName, fname, lname, gender, email,
-  username, address, postalCode, city, nickName,
-  roleId, password, lat, long
+  username, postalCode, houseNumber, streetName, city,
+  state, zip, country, phoneNumber, nickName,
+  roleId, password, confirmedPassword, lat, long
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
       const newUser = await db.user.create({
         hostName, fname, lname, gender, email,
-        username, address, postalCode, city, nickName,
-        roleId, password, lat, long
+        username, postalCode, houseNumber, streetName, city,
+        state, zip, country, phoneNumber, nickName,
+        roleId, password, confirmedPassword, lat, long
       });
       if (!newUser) {
         resolve({err: 'Invalid Input'});
@@ -48,7 +50,12 @@ const getUserInfo = (id) => {
   return new Promise(async(resolve, reject) => {
     try {
       const user = await db.user.findOne({
-        attributes: ['id', 'hostName', 'fname', 'lname', 'gender', 'email', 'username', 'address', 'postalCode', 'city', 'nickName', 'roleId'],
+        attributes: [
+          'id', 'hostName', 'fname', 'lname', 'gender',
+          'email', 'username', 'postalCode', 
+          'houseNumber', 'streetName', 'city','state', 'zip',
+          'country','lat', 'long', 'nickName', 'roleId'
+        ],
         where: {id},
         include: [
           { model: db.role }

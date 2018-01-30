@@ -88,10 +88,10 @@ const getLatestReport = (queryOption) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               {all: true}
@@ -99,10 +99,10 @@ const getLatestReport = (queryOption) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               { all: true }
@@ -147,10 +147,10 @@ const getLatestReportByPage = (itemPerPage, pageNumber, queryOption) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               { all: true }
@@ -158,10 +158,10 @@ const getLatestReportByPage = (itemPerPage, pageNumber, queryOption) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               { all: true }
@@ -193,10 +193,10 @@ const getReportById = (id) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               {all: true}
@@ -204,10 +204,10 @@ const getReportById = (id) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               { all: true }
@@ -250,10 +250,10 @@ const updateReport = (id, note, status ) => {
           {
             model: db.user, as: 'reporter',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               { all: true }
@@ -261,10 +261,10 @@ const updateReport = (id, note, status ) => {
           }, {
             model: db.user, as: 'host',
             attributes: [
-              'id', 'hostName', 'fname',
-              'lname', 'email', 'username',
-              'address', 'gender', 'postalCode',
-              'city', 'nickName'
+              'id', 'hostName', 'fname', 'lname', 'gender',
+              'email', 'username', 'postalCode', 
+              'houseNumber', 'streetName', 'city','state', 'zip',
+              'country','lat', 'long', 'nickName', 'roleId'
             ],
             include: [
               { all: true }
