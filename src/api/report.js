@@ -21,7 +21,7 @@ const createReport = async (req, res, next) => {
   const {
     title, description, location, lat, long, isVehicleInvolved,
     isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-    reporterId, hostId, mainCategoryId,  subCategoryId, reportTypeId, urgencyId
+    reporterId, hostId, mainCategoryId,  subCategoryId, reportTypeId, priorityId
   } = req.body;
 
   try {
@@ -37,7 +37,7 @@ const createReport = async (req, res, next) => {
     const createReport = await ReportHelper.reportReport(
       title, description, location, lat, long, isVehicleInvolved,
       isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-      reporterId, hostId, subCategoryId, reportTypeId, urgencyId, generatedReportId, mainCategoryId
+      reporterId, hostId, subCategoryId, reportTypeId, priorityId, generatedReportId, mainCategoryId
     );
 
     if (createReport.err) {

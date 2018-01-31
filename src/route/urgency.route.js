@@ -3,15 +3,15 @@ const passport = require('passport');
 const passportService = require('../services/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const AdminMiddleware = require('../middlewares/admin.middleware');
-const Urgency = require('../api/urgency');
-const UrgencyRoute = express.Router();
+const Priority = require('../api/priority');
+const PriorityRoute = express.Router();
 
-UrgencyRoute.route('/')
-.get(requireAuth, Urgency.getUrgencies)
-.post(requireAuth, Urgency.createUrgency);
+PriorityRoute.route('/')
+.get(requireAuth, Priority.getUrgencies)
+.post(requireAuth, Priority.createPriority);
 
-UrgencyRoute.route('/:id')
-.put(requireAuth, Urgency.updateUrgency)
-.delete(requireAuth, Urgency.deleteUrgency);
+PriorityRoute.route('/:id')
+.put(requireAuth, Priority.updatePriority)
+.delete(requireAuth, Priority.deletePriority);
 
-module.exports = UrgencyRoute;
+module.exports = PriorityRoute;
