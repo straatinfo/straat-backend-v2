@@ -4,7 +4,7 @@ const Op = require('sequelize').Op;
 const checkUserByInput = (input) => {
   return new Promise (async(resolve, reject) => {
     try {
-      const checkUser = await db.user.findOne({
+      const checkUser = await db.user.findAll({
         where: {
           [Op.or]: [
             {username: input},
@@ -14,7 +14,7 @@ const checkUserByInput = (input) => {
           ]
         }
       });
-      if (checkUser) {
+      if (checkUser.length !== 0) {
         resolve({error: `${input} already exists`});
         return;
       }
