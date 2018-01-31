@@ -1,13 +1,13 @@
 
 module.exports = (sequelize, DataTypes) => {
-  const urgency = sequelize.define('urgency', {
+  const priority = sequelize.define('priority', {
     name: { type: DataTypes.STRING },
     description: { type: DataTypes.TEXT }
   });
 
-  urgency.associate = models => {
-    urgency.hasMany(models.report);
+  priority.associate = models => {
+    priority.hasMany(models.report);
   };
 
-  return urgency;
+  return priority;
 };
