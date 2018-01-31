@@ -17,6 +17,29 @@ const getHosts = async (req, res, next) => {
   }
 };
 
+const createHost = async (req, res, next) => {
+  const {
+    hostName, email, username, postalCode,
+    houseNumber, streetName, city, state,
+    zip, country, phoneNumber, nickName, long, lat
+  } = req.body;
+  try {
+    const createH = await HostHelper.createHost(
+      hostName, email, username, postalCode,
+      houseNumber, streetName, city, state,
+      zip, country, phoneNumber, nickName, long, lat
+    );
+    if (createH.err) {
+      ErrorHelper.clientError(res, next, createH.err);
+      return;
+    }
+    res.status(200).send(createH.host);
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+};
+
 // route: /withinRadius/:long/:lat/:radius
 const getHostWithinRadius = async (req, res, next) => {
   const { long, lat, radius } = req.params;
@@ -106,11 +129,27 @@ const getHostByPage = async (req, res, next) => {
   }
 };
 
+// route /bulk
+const bulkCreateHost = async (req, res, next) => {
+  const {
+    dataArray // array of host input fields
+  } = req.body;
+  try {
+    const processData = await HostHelper.createHostLoop(dataArray, HostHelper.createHost);
+    res.status(200).send(processData);
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+}
+
 module.exports = {
   getHostWithinRadius: getHostWithinRadius,
   getHostById: getHostById,
   getHosts: getHosts,
   getHostByPage: getHostByPage,
   updateHost: updateHost,
-  deleteHost: deleteHost
+  deleteHost: deleteHost,
+  createHost: createHost,
+  bulkCreateHost: bulkCreateHost
 };
