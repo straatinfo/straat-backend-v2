@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     nickName: { type: DataTypes.STRING },
     password: { type: DataTypes.STRING },
     long: { type: DataTypes.DOUBLE },
-    lat: { type: DataTypes.DOUBLE }
+    lat: { type: DataTypes.DOUBLE },
+    isBlocked: { type: DataTypes.BOOLEAN, defaultValue: false }
   });
 
   // address format
