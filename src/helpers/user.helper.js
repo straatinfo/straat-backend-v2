@@ -79,7 +79,7 @@ const getUserInfo = (id) => {
           'id', 'hostName', 'fname', 'lname', 'gender',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','lat', 'long', 'nickName', 'roleId'
+          'country','lat', 'long', 'nickName', 'roleId', 'isBlocked'
         ],
         where: {id},
         include: [

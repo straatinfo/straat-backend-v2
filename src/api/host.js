@@ -81,11 +81,15 @@ const getHostById = async (req, res, next) => {
 const updateHost = async (req, res, next) => {
   const { id } = req.params;
   const {
-    hostName, email, username, address, postalCode, city,  nickName, long, lat
+    hostName, email, username, postalCode,
+    houseNumber, streetName, city, state,
+    zip, country, phoneNumber, nickName, long, lat, isBlocked
   } = req.body;
   try {
     const updateH = await HostHelper.updateHost(
-      id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+      id, hostName, email, username, postalCode,
+      houseNumber, streetName, city, state,
+      zip, country, phoneNumber, nickName, long, lat, isBlocked
     );
     if (updateH.err) {
       ErrorHelper.clientError(res, 400, updateH.err);

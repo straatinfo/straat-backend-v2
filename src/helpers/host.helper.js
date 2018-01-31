@@ -10,7 +10,7 @@ const getHost = () => {
           'id', 'hostName', 'phoneNumber',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','long', 'lat', 'nickName', 'roleId'
+          'country','long', 'lat', 'nickName', 'roleId', 'isBlocked'
         ],
         order: [
           ['hostName', 'ASC']
@@ -49,7 +49,7 @@ const getHostPerPage = (itemPerPage, pageNumber) => {
           'id', 'hostName', 'phoneNumber',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','long', 'lat', 'nickName', 'roleId'
+          'country','long', 'lat', 'nickName', 'roleId', 'isBlocked'
         ],
         include: [
           { model: db.role }
@@ -96,7 +96,7 @@ const getHostWithinRadius = (long, lat, radius) => {
           'id', 'hostName', 'phoneNumber',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','long', 'lat', 'nickName', 'roleId'
+          'country','long', 'lat', 'nickName', 'roleId', 'isBlocked'
         ],
         include: [
           { model: db.role }
@@ -119,7 +119,7 @@ const getHostById = (id) => {
           'id', 'hostName', 'phoneNumber',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','long', 'lat', 'nickName', 'roleId'
+          'country','long', 'lat', 'nickName', 'roleId', 'isBlocked'
         ],
         include: [
           { model: db.role }
@@ -138,12 +138,22 @@ const getHostById = (id) => {
 };
 
 const updateHost = (
-  id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+  id, hostName, email, username, postalCode,
+  houseNumber, streetName, city, state,
+  zip, country, phoneNumber, nickName, long, lat, isBlocked
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
+      let blocked;
+      if (!isBlocked) {
+        blocked = false;
+      } else {
+        blocked = true;
+      }
       const updatedHost = await db.user.update({
-        id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+        id, hostName, email, username, postalCode,
+        houseNumber, streetName, city, state,
+        zip, country, phoneNumber, nickName, long, lat, isBlocked: blocked
       }, {where: {id}, returning: true });
       if (!updatedHost[1][0]) {
         resolve({err: `Host ID: ${id} was not updated`});
@@ -155,7 +165,7 @@ const updateHost = (
           'id', 'hostName', 'phoneNumber',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','long', 'lat', 'nickName', 'roleId'
+          'country','long', 'lat', 'nickName', 'roleId', 'isBlocked'
         ],
         include: [
           { model: db.role }
@@ -225,7 +235,7 @@ const createHost = (
           'id', 'hostName', 'phoneNumber',
           'email', 'username', 'postalCode', 
           'houseNumber', 'streetName', 'city','state', 'zip',
-          'country','long', 'lat', 'nickName', 'roleId'
+          'country','long', 'lat', 'nickName', 'roleId', 'isBlocked'
         ],
         include: [
           { model: db.role }
@@ -253,7 +263,7 @@ const createHostLoop = (dataArray = [], promiseFunction = createHost) => {
           const newCreate = await promiseFunction(
             hostName, email, username, postalCode,
             houseNumber, streetName, city, state,
-            zip, country, phoneNumber, nickName, long, lat
+            zip, country, phoneNumber, nickName, long, lat, 'isBlocked'
           );
           if (newCreate.err) {
             err.push(newCreate.err);
