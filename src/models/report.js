@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     report.belongsTo(models.reportType);
     report.belongsTo(models.mainCategory);
     report.belongsTo(models.subCategory);
-    report.belongsTo(models.urgency);
+    report.belongsTo(models.priority);
   };
 
   return report;

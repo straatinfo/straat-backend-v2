@@ -1,9 +1,9 @@
 const ErrorHelper = require('../helpers/error.helper');
-const UrgencyHelper = require('../helpers/urgency.helper');
+const PriorityHelper = require('../helpers/priority.helper');
 
 const getUrgencies = async (req, res, next) => {
   try {
-    const getU = await UrgencyHelper.getUrgencies();
+    const getU = await PriorityHelper.getUrgencies();
     if (getU.err) {
       ErrorHelper.clientError(res, 400, getU.err);
       return;
@@ -15,41 +15,41 @@ const getUrgencies = async (req, res, next) => {
   }
 };
 
-const createUrgency = async (req, res, next) => {
+const createPriority = async (req, res, next) => {
   const { name, description } = req.body;
   try {
-    const createU = await UrgencyHelper.createUrgency(name, description);
+    const createU = await PriorityHelper.createPriority(name, description);
     if (createU.err) {
       ErrorHelper.clientError(res, 400, createU.err);
       return;
     }
-    res.status(200).send(createU.urgency);
+    res.status(200).send(createU.priority);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-const updateUrgency = async (req, res, next) => {
+const updatePriority = async (req, res, next) => {
   const { id } = req.params;
   const { name, description } = req.body;
   try {
-    const updateU = await UrgencyHelper.updateUrgency(id, name, description);
+    const updateU = await PriorityHelper.updatePriority(id, name, description);
     if (updateU.err) {
       ErrorHelper.clientError(res, 400, updateU.err);
       return;
     }
-    res.status(200).send(updateU.urgency);
+    res.status(200).send(updateU.priority);
   }
   catch (e) {
     ErrorHelper.serverError(res);
   }
 };
 
-const deleteUrgency = async (req, res, next) => {
+const deletePriority = async (req, res, next) => {
   const { id } = req.params;
   try {
-    deleteU = await UrgencyHelper.deleteUrgency(id);
+    deleteU = await PriorityHelper.deletePriority(id);
     if (deleteU.err) {
       ErrorHelper.clientError(res, 400, deleteU.err);
       return;
@@ -64,7 +64,7 @@ const deleteUrgency = async (req, res, next) => {
 
 module.exports = {
   getUrgencies: getUrgencies,
-  createUrgency: createUrgency,
-  updateUrgency: updateUrgency,
-  deleteUrgency: deleteUrgency
+  createPriority: createPriority,
+  updatePriority: updatePriority,
+  deletePriority: deletePriority
 };

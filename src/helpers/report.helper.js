@@ -39,29 +39,29 @@ const reportIdGenerator = (reportTypeId) => {
 const createReport = (
   title, description, location, lat, long, isVehicleInvolved,
   isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
-  reporterId, hostId, subCategoryId, reportTypeId, urgencyId, generatedReportId, mainCategoryId
+  reporterId, hostId, subCategoryId, reportTypeId, priorityId, generatedReportId, mainCategoryId
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
       // set the default subCategory 1 is for general
-      let defaultSubCategoryId, defaultUrgencyId;
+      let defaultSubCategoryId, defaultPriorityId;
       if (!subCategoryId) {
         defaultSubCategoryId = 1;
       } else {
         defaultSubCategoryId = subCategoryId;
       }
-      // set the default urgencyId
-      if (!urgencyId) {
-        defaultUrgencyId = 1;
+      // set the default priorityId
+      if (!priorityId) {
+        defaultPriorityId = 1;
       } else {
-        defaultUrgencyId = urgencyId;
+        defaultPriorityId = priorityId;
       }
 
       const report = await db.report.create({
         title, description, location, lat, long, isVehicleInvolved,
         isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
         reporterId, hostId, subCategoryId: defaultSubCategoryId, reportTypeId,
-        urgencyId: defaultUrgencyId, reportReportId, status: 'Unresolved', mainCategoryId
+        priorityId: defaultPriorityId, reportReportId, status: 'Unresolved', mainCategoryId
       });
       if (!report) {
         resolve({err: 'Was not able to send Report'});
@@ -113,7 +113,7 @@ const getLatestReport = (queryOption) => {
           }, {
             model: db.reportType
           }, {
-            model: db.urgency
+            model: db.priority
           }
         ]
       });
@@ -172,7 +172,7 @@ const getLatestReportByPage = (itemPerPage, pageNumber, queryOption) => {
           }, {
             model: db.reportType
           }, {
-            model: db.urgency
+            model: db.priority
           }
         ]
       });
@@ -218,7 +218,7 @@ const getReportById = (id) => {
           }, {
             model: db.reportType
           }, {
-            model: db.urgency
+            model: db.priority
           }
         ]
       });
@@ -275,7 +275,7 @@ const updateReport = (id, note, status ) => {
           }, {
             model: db.reportType
           }, {
-            model: db.urgency
+            model: db.priority
           }
         ]
       });
