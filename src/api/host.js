@@ -17,6 +17,30 @@ const getHosts = async (req, res, next) => {
   }
 };
 
+const createHost = async (req, res, next) => {
+  const {
+    hostName, email, username, postalCode,
+    houseNumber, streetName, city, state,
+    zip, country, phoneNumber, nickName, long, lat
+  } = req.body;
+  try {
+    const createH = await HostHelper.createHost(
+      hostName, email, username, postalCode,
+      houseNumber, streetName, city, state,
+      zip, country, phoneNumber, nickName, long, lat
+    );
+    console.log(createH);
+    if (createH.err) {
+      ErrorHelper.clientError(res, 400, createH.err);
+      return;
+    }
+    res.status(200).send(createH.host);
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+};
+
 // route: /withinRadius/:long/:lat/:radius
 const getHostWithinRadius = async (req, res, next) => {
   const { long, lat, radius } = req.params;
@@ -96,6 +120,7 @@ const getHostByPage = async (req, res, next) => {
   try {
     const getHost = await HostHelper.getHostPerPage(itemPerPage, pageNumber, page)
     if (getHost.err) {
+      console.log(getHost);
       ErrorHelper.clientError(res, 400, getHost.err);
       return;
     }
@@ -106,11 +131,27 @@ const getHostByPage = async (req, res, next) => {
   }
 };
 
+// route /bulk
+const bulkCreateHost = async (req, res, next) => {
+  const {
+    dataArray // array of host input fields
+  } = req.body;
+  try {
+    const processData = await HostHelper.createHostLoop(dataArray, HostHelper.createHost);
+    res.status(200).send(processData);
+  }
+  catch (e) {
+    ErrorHelper.serverError(res);
+  }
+}
+
 module.exports = {
   getHostWithinRadius: getHostWithinRadius,
   getHostById: getHostById,
   getHosts: getHosts,
   getHostByPage: getHostByPage,
   updateHost: updateHost,
-  deleteHost: deleteHost
+  deleteHost: deleteHost,
+  createHost: createHost,
+  bulkCreateHost: bulkCreateHost
 };
