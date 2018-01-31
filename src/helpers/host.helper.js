@@ -138,12 +138,16 @@ const getHostById = (id) => {
 };
 
 const updateHost = (
-  id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+  id, hostName, email, username, postalCode,
+  houseNumber, streetName, city, state,
+  zip, country, phoneNumber, nickName, long, lat
 ) => {
   return new Promise(async(resolve, reject) => {
     try {
       const updatedHost = await db.user.update({
-        id, hostName, email, username, address, postalCode, city,  nickName, long, lat
+        id, hostName, email, username, postalCode,
+        houseNumber, streetName, city, state,
+        zip, country, phoneNumber, nickName, long, lat
       }, {where: {id}, returning: true });
       if (!updatedHost[1][0]) {
         resolve({err: `Host ID: ${id} was not updated`});
