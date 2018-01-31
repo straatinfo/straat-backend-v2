@@ -29,8 +29,9 @@ const createHost = async (req, res, next) => {
       houseNumber, streetName, city, state,
       zip, country, phoneNumber, nickName, long, lat
     );
+    console.log(createH);
     if (createH.err) {
-      ErrorHelper.clientError(res, next, createH.err);
+      ErrorHelper.clientError(res, 400, createH.err);
       return;
     }
     res.status(200).send(createH.host);
@@ -119,6 +120,7 @@ const getHostByPage = async (req, res, next) => {
   try {
     const getHost = await HostHelper.getHostPerPage(itemPerPage, pageNumber, page)
     if (getHost.err) {
+      console.log(getHost);
       ErrorHelper.clientError(res, 400, getHost.err);
       return;
     }
