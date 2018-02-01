@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     user.hasMany(models.teamLeader);
     user.hasMany(models.teamMember);
     user.hasMany(models.design);
-    user.hasMany(models.userSubscription);
+    user.hasMany(models.subscription);
   };
 
   user.beforeSave(user => {
