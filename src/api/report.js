@@ -34,7 +34,7 @@ const createReport = async (req, res, next) => {
 
     const generatedReportId = generateId.generatedReportId;
 
-    const createReport = await ReportHelper.reportReport(
+    const createReport = await ReportHelper.createReport(
       title, description, location, lat, long, isVehicleInvolved,
       isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
       reporterId, hostId, subCategoryId, reportTypeId, priorityId, generatedReportId, mainCategoryId

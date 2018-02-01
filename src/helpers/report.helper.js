@@ -13,13 +13,12 @@ const reportIdGenerator = (reportTypeId) => {
       const monthstr = "" + (date.getMonth() + 1);
       const monthPad = "00";
       const monthFormat = monthPad.substring(0, monthPad.length - monthstr.length) + monthstr;
-      console.log(monthFormat);
       const dateString = date.getFullYear() + '' + monthFormat + '' + date.getDate();
       const reports = await db.report.findAll({
         where: {
           [Op.and]: [
-            { createdAt: { [Op.gte]: Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) } },
-            { createdAt: { [Op.lte]: Date.UTC(date.getFullYear(), date.getMonth(), date.getDate() + 1) } }
+            { createdAt: { [Op.gte]: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } },
+            { createdAt: { [Op.lte]: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + 1) } }
           ]
         }
       });
@@ -57,11 +56,20 @@ const createReport = (
         defaultPriorityId = priorityId;
       }
 
+      // set the defalut mainCategory
+      let defaultMainCategoryId;
+      if (!mainCategoryId) {
+        defaultMainCategoryId = 1;
+      } else {
+        defaultMainCategoryId = mainCategoryId;
+      }
+
       const report = await db.report.create({
         title, description, location, lat, long, isVehicleInvolved,
         isPeopleInvolved, vehicleInvolvedDescription, peopleInvolvedCount,
         reporterId, hostId, subCategoryId: defaultSubCategoryId, reportTypeId,
-        priorityId: defaultPriorityId, reportReportId, status: 'Unresolved', mainCategoryId
+        priorityId: defaultPriorityId, generatedReportId, status: 'Unresolved',
+        mainCategoryId: defaultMainCategoryId
       });
       if (!report) {
         resolve({err: 'Was not able to send Report'});
@@ -92,9 +100,6 @@ const getLatestReport = (queryOption) => {
               'email', 'username', 'postalCode', 
               'houseNumber', 'streetName', 'city','state', 'zip',
               'country','lat', 'long', 'nickName', 'roleId'
-            ],
-            include: [
-              {all: true}
             ]
           }, {
             model: db.user, as: 'host',
@@ -103,9 +108,6 @@ const getLatestReport = (queryOption) => {
               'email', 'username', 'postalCode', 
               'houseNumber', 'streetName', 'city','state', 'zip',
               'country','lat', 'long', 'nickName', 'roleId'
-            ],
-            include: [
-              { all: true }
             ]
           }, {
             model: db.subCategory,
@@ -115,7 +117,8 @@ const getLatestReport = (queryOption) => {
           }, {
             model: db.priority
           }
-        ]
+        ],
+        raw: true
       });
       resolve({err: null, reports: getLatestReport});
     }
