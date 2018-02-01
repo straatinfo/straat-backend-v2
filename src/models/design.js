@@ -1,12 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
   const design = sequelize.define('design', {
-    designName: { type: DataTypes.STRING },
-    buttonBGC: { type: DataTypes.STRING },
-    buttonTC: { type: DataTypes.STRING },
-    pageBGC: { type: DataTypes.STRING },
-    pageTC: { type: DataTypes.STRING },
-    headerBGC: { type: DataTypes.STRING },
-    headerTC: { type: DataTypes.STRING }
+    designName: { type: DataTypes.STRING, allowNull: false },
+    designOne: DataTypes.STRING,
+    designTwo: DataTypes.STRING,
+    designThree: DataTypes.STRING,
+    designFour: DataTypes.STRING
   });
 
   design.associate = models => {
