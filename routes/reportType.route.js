@@ -12,3 +12,5 @@ ReportTypeRoute.route('/')
 ReportTypeRoute.route('/:id')
 .put(requireAuth, ReportType.updateReportType)
 .delete(requireAuth, ReportType.deleteReportType);
+
+module.exports = ReportTypeRoute;

@@ -3,6 +3,8 @@ const ReportTypeRoute = require('./reportType.route');
 const ReportRoute = require('./report.route');
 const CategoryRoute = require('./category.route');
 const HostRoute = require('./host.route');
+const TeamRoute = require('./team.route');
+const TeamInviteRoute = require('./teamInvite.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -13,4 +15,6 @@ module.exports = (app) => {
   app.use('/v1/api/report', ReportRoute);
   app.use('/v1/api/category', CategoryRoute);
   app.use('/v1/api/host', HostRoute);
+  app.use('/v1/api/team', TeamRoute);
+  app.use('/v1/api/teamInvite', TeamInviteRoute);
 };
