@@ -5,7 +5,7 @@ const teamSchema = new Schema({
   name: { type: String, required: true, unique: true, index: true },
   email: { type: String },
   description: { type: String },
-  host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   teamLeaders: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
   }],

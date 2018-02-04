@@ -7,7 +7,7 @@ const designSchema = new Schema({
   colorTwo: { type: String },
   colorThree: { type: String },
   colorFour: { type: String },
-  host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 module.exports = mongoose.model('Design', designSchema);

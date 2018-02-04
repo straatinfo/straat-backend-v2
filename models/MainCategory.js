@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const mainCategorySchema = new Schema({
   name: { type: String },
   description: { type: String },
-  host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   reportType: { type: mongoose.Schema.Types.ObjectId, ref: 'ReportType' },
   reports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'

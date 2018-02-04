@@ -14,7 +14,7 @@ const registrationFormValidator = async (req, res, next) => {
     req.checkBody('state', 'State must not be empty').notEmpty();
     req.checkBody('postalCode', 'Postal Code must not be empty').notEmpty();
     req.checkBody('role', 'Role must not be empty').notEmpty();
-    const getRole = await RoleHelper.findRoleById(req.body.role);
+    const getRole = await RoleHelper.findRoleById(req.body._role);
     if (getRole.err) {
       messages.push('Invalid Role');
       return ErrorHelper.ClientError(res, messages, 400);
@@ -55,7 +55,6 @@ const registrationFormValidator = async (req, res, next) => {
     next();
   }
   catch (e) {
-    console.log(e);
     ErrorHelper.ServerError(res);
   }
 

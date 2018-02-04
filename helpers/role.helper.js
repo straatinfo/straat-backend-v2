@@ -14,6 +14,18 @@ const findRoleById = (id) => {
   });
 };
 
+const getRoleByCode = (code =  'HOST') => {
+  return new Promise((resolve, reject) => {
+    Role.findOne({'code': code}, (err, role) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, role: role});
+    });
+  });
+};
+
 module.exports = {
-  findRoleById: findRoleById
+  findRoleById: findRoleById,
+  getRoleByCode: getRoleByCode
 };

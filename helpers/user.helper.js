@@ -25,7 +25,8 @@ const findUserById = (id) => {
       'long', 'lat', 'isBlocked', 'isPatron',
       'hostName', 'username'
     ])
-    .populate('role')
+    .populate('_role')
+    .populate('_host')
     .exec(function(err, user) {
       if (err) {
         return resolve({err: err});

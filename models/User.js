@@ -21,8 +21,8 @@ const userSchema = new Schema({
   lat: { type: Number },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
-  role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
-  host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   constituents: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'User'
   }],
