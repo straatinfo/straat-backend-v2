@@ -41,9 +41,9 @@ const getMainCategoryById = (_id) => {
 }
 
 const createMainCategory = (input) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const newMainCategory = new MainCategory(input);
-    newMainCategory.save((err, mainCategory) => {
+    newMainCategory.save(async(err, mainCategory) => {
       if (err) {
         return resolve({err: err});
       }
@@ -62,8 +62,8 @@ const createMainCategory = (input) => {
 };
 
 const updateMainCategory = (_id, input) => {
-  return new Promise(async(resolve, reject) => {
-    MainCategory.findByIdAndUpdate(_id, input, (err, mainCategory) => {
+  return new Promise((resolve, reject) => {
+    MainCategory.findByIdAndUpdate(_id, input, async(err, mainCategory) => {
       if (err) {
         return resolve({err: err});
       }
@@ -120,9 +120,9 @@ const getSubCategoryById = (_id) => {
 }
 
 const createSubcategory = (input) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const newSubCategory = new SubCategory(input);
-    newSubCategory.save((err, subCategory) => {
+    newSubCategory.save(async(err, subCategory) => {
       if (err) {
         return resolve({err: err});
       }
@@ -141,8 +141,8 @@ const createSubcategory = (input) => {
 };
 
 const updateSubCategory = (_id, input) => {
-  return new Promise(async(resolve, reject) => {
-    SubCategory.findByIdAndUpdate(_id, input, (err, subCategory) => {
+  return new Promise((resolve, reject) => {
+    SubCategory.findByIdAndUpdate(_id, input, async(err, subCategory) => {
       if (err) {
         return resolve({err: err});
       }
