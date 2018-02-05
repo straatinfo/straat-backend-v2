@@ -14,6 +14,9 @@ const reportSchema = new Schema({
   idPeopleInvolved: { type: Boolean, default: false },
   vehicleInvolvedDescription: { type: String },
   peopleInvolvedCount: { type: Number },
+  reportPhotos: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'ReportPhoto'
+  }],
   _reporter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   _reportType: { type: mongoose.Schema.Types.ObjectId, ref: 'ReportType' },

@@ -1,6 +1,7 @@
 const SuccessHelper = require('../helpers/success.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const ReportHelper = require('../helpers/report.helper');
+const ReportTypeHelper = require('../helpers/reportType.helper');
 
 const getReports = async (req, res, next) => {
   try {
@@ -59,13 +60,22 @@ const getReportsByReportType = async (req, res, next) => {
 
 const createReport = async (req, res, next) => {
   try {
-    const createR = await ReportHelper.createReport(req.body);
+    const getGeneratedCode = await ReportHelper.reportIdGenerator(req.body._reportType);
+    if (getGeneratedCode.err) {
+      return ErrorHelper.ClientError(res, {error: getGeneratedCode.err}, 400);
+    }
+    const createR = await ReportHelper.createReport({...req.body, generatedReportId: getGeneratedCode.generatedReportId});
     if (createR.err) {
       return ErrorHelper.ClientError(res, { error: getR.err }, 400);
     }
-    SuccessHelper.success(res, createR.report);
+    if (req.files.length === 0) {
+      return SuccessHelper.success(res, {report: createR.report});
+    }
+    const saveRP = await ReportHelper.saveUploadLooper(createR._id, req.dataArray, ReportHelper.saveUploadedPhotoReport);
+    return SuccessHelper.success(res, {report: createR.report, reportPhotos: saveRP.success });    
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -103,6 +113,7 @@ module.exports = {
   getReportById: getReportById,
   getReportsByHostId: getReportsByHostId,
   getReportsByReportType: getReportsByReportType,
+  createReport: createReport,
   updateReport: updateReport,
   deleteReport: deleteReport
 };

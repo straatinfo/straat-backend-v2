@@ -1,9 +1,10 @@
 const _ = require('lodash');
 
 const tokenTrimmer = (req, res, next) => {
+  console.log(req.headers['authorization']);
   if(req.headers['authorization']) {
     const token = _.trim(req.headers['authorization'], 'Bearer');
-    req.headers['authorizaion'] = token.trimLeft();
+    req.headers['authorization'] = token.trimLeft();
   }
   next();
 }

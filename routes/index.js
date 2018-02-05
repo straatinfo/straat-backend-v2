@@ -7,6 +7,8 @@ const TeamRoute = require('./team.route');
 const TeamInviteRoute = require('./teamInvite.route');
 const ConversationRoute = require('./conversation.route');
 
+const TestRoute = require('./test.route');
+
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
     res.send({message: 'Success'});
@@ -19,4 +21,6 @@ module.exports = (app) => {
   app.use('/v1/api/team', TeamRoute);
   app.use('/v1/api/teamInvite', TeamInviteRoute);
   app.use('/v1/api/conversation', ConversationRoute);
+
+  app.use('/test', TestRoute);
 };
