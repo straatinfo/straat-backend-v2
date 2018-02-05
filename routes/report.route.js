@@ -1,13 +1,13 @@
 const express = require('express');
 const passport = require('passport');
-const passportService = require('../services/passport.service');
+const passportService = require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const Report = require('../api/report');
 const ReportRoute = express.Router();
 
 ReportRoute.route('/')
 .get(requireAuth, Report.getReports)
-.post(requireAuth, Repo)
+.post(requireAuth, Report.getReports)
 
 ReportRoute.route('/:id')
 .get(requireAuth, Report.getReportById)

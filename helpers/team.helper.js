@@ -59,9 +59,9 @@ const getTeamById = (_id) => {
 
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const newTeam = new Team(input);
-    newTeam.save((err, team) => {
+    newTeam.save(async(err, team) => {
       if (err) {
         return resolve({err: err});
       }
@@ -84,8 +84,8 @@ const createTeam = (_user, input) => {
 };
 
 const updateTeam = (_id, input) => {
-  return new Promise(async(resolve, reject) => {
-    Team.findByIdAndUpdate(_id, input, (err, team) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_id, input, async(err, team) => {
       if (err) {
         return resolve({err: err});
       }
@@ -104,8 +104,8 @@ const updateTeam = (_id, input) => {
 };
 
 const deleteTeam = (_id) => {
-  return new Promise(async(resolve, reject) => {
-    Team.findByIdAndRemove(_id, (err, team) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndRemove(_id, async(err, team) => {
       if (err) {
         return resolve({err: err});
       }

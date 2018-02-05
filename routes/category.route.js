@@ -3,7 +3,6 @@ const express = require('express');
 const passport = require('passport');
 require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
-const AdminMiddleware = require('../middlewares/admin.middleware');
 
 const Category = require('../api/category');
 const CategoryRoute = express.Router();
