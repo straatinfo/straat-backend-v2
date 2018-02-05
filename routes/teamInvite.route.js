@@ -15,7 +15,7 @@ TeamInviteRoute.route('/teamRequests/:teamId')
 TeamInviteRoute.route('/userInvites/:userId')
 .get(requireAuth, TeamInvite.getUserPendingInvites);
 
-TeamInvteRoute.route('/userRequests/:userId')
+TeamInviteRoute.route('/userRequests/:userId')
 .get(requireAuth, TeamInvite.getUserPendingRequest);
 
 TeamInviteRoute.route('/sendInvite/:userId/:teamId')

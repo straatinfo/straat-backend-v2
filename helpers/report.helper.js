@@ -159,9 +159,9 @@ const getReportsByReportType = (reportTypeId) => {
 
 
 const createReport = (input) => {
-  return new Promise(async(resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const newReport = new Report(input);
-    newReport.save((err, report) => {
+    newReport.save(async(err, report) => {
       if (err) {
         return resolve({err: err});
       }
@@ -180,8 +180,8 @@ const createReport = (input) => {
 }
 
 const updateReport = (_id, input) => {
-  return new Promise(async(resolve, reject) => {
-    Report.findByIdAndUpdate(_id, input, (err, report) => {
+  return new Promise((resolve, reject) => {
+    Report.findByIdAndUpdate(_id, input, async(err, report) => {
       if (err) {
         return resolve({err: err});
       }

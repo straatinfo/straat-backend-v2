@@ -7,7 +7,7 @@ const HostRoute = express.Router();
 
 HostRoute.route('/')
 .get(requireAuth, Host.getHosts)
-.pot(requireAuth, Host.createHost);
+.post(requireAuth, Host.createHost);
 
 HostRoute.route('/:id')
 .get(requireAuth, Host.getHostById)

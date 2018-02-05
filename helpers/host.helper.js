@@ -95,8 +95,8 @@ const getHostById = (_id) => {
 };
 
 const updateHost = (_id, input) => {
-  return new Promise(async(resolve, reject) => {
-    User.findByIdAndUpdate(_id, input, (err, host) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_id, input, async(err, host) => {
       if (err) {
         return resolve({err: err});
       }
@@ -135,7 +135,7 @@ const createHost = (input) => {
       }
       _role = getRole.role._id;
       const newUser = new User({...input, '_role': _role});
-      newUser.save((err, host) => {
+      newUser.save(async(err, host) => {
         if (err) {
           return resolve({err: err});
         }
