@@ -1,4 +1,5 @@
 const Report = require('../models/Report');
+const ReportPhoto = require('../models/ReportPhoto');
 const ReportTypeHelper = require('./reportType.helper');
 
 
@@ -6,8 +7,8 @@ const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
     Report.find({
       $and: [
-        { createdAt: { [Op.gte]: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } },
-        { createdAt: { [Op.lte]: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + 1) } }
+        { createdAt: { $gte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } },
+        { createdAt: { $lte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + 1) } }
       ]
     }, (err, reports) => {
       if (err) {
@@ -30,8 +31,11 @@ const reportIdGenerator = (reportTypeId) => {
       const date = new Date();
       const monthstr = "" + (date.getMonth() + 1);
       const monthPad = "00";
+      const datestr = "" + date.getDate();
+      const datePad = "00";
+      const dateFormat = datePad.substring(0, datePad.length - datestr.length) + datestr;
       const monthFormat = monthPad.substring(0, monthPad.length - monthstr.length) + monthstr;
-      const dateString = date.getFullYear() + '' + monthFormat + '' + date.getDate();
+      const dateString = date.getFullYear() + '' + monthFormat + '' + dateFormat;
       const getReport = await getReportDateRange(date);
       if (getReport.err) {
         return resolve({err: getReport.err});
@@ -177,7 +181,44 @@ const createReport = (input) => {
       }
     });
   });
-}
+};
+
+
+const saveUploadedPhotoReport = (_report, input) => {
+  return new Promise((resolve, reject) => {
+    const newReportPhoto = new ReportPhoto({...input, '_report': _report});
+    newReportPhoto.save((err, reportPhoto) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reportPhoto: reportPhoto});
+    });
+  });
+};
+
+const saveUploadLooper = (_report, inputArray = [], saveUploadPromise = saveUploadedPhotoReport) => {
+  return new Promise(async(resolve, reject) => {
+    let error = [], success = [];
+    try {
+      const process = await Promise.all(inputArray.map(async(input) => {
+        try {
+          const saveRP = await saveUploadPromise(_report, input);
+          if (saveRP.err) {
+            return error.push(saveRP.err);
+          }
+          success.push(saveRP.reportPhoto);
+        }
+        catch (e) {
+          error.push(e);
+        }
+      }));
+      resolve({error: error, success: success});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
 
 const updateReport = (_id, input) => {
   return new Promise((resolve, reject) => {
@@ -218,6 +259,8 @@ module.exports = {
   updateReport: updateReport,
   deleteReport: deleteReport,
   getReportByHost: getReportByHost,
-  getReportsByReportType: getReportsByReportType
+  getReportsByReportType: getReportsByReportType,
+  saveUploadedPhotoReport: saveUploadedPhotoReport,
+  saveUploadLooper: saveUploadLooper
 };
 

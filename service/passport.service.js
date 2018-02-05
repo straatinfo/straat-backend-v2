@@ -16,6 +16,9 @@ const localLogin = new LocalStrategy(localOptions, async function (loginName, pa
     if (findUser.err) {
       return done(null, false);
     }
+    if (!findUser.user) {
+      return done(null, false);
+    }
     const passwordMatch = bcrypt.compareSync(password, findUser.user.password);
     if (!passwordMatch) {
       return done(null, false);
@@ -34,6 +37,7 @@ const jwtOptions = {
 
 const jwtLogin = new JwtStrategy(jwtOptions, async function (payload, done) {
   try {
+    console.log(payload);
     const findUser = await UserHelper.findUserById(payload.sub);
     if (findUser.err) { 
       return done(null, false);
