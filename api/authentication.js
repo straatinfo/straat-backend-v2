@@ -17,6 +17,7 @@ const login = async (req, res, next) => {
     SuccessHelper.success(res, data);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };

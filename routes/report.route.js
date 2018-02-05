@@ -4,10 +4,17 @@ const passportService = require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const Report = require('../api/report');
 const ReportRoute = express.Router();
+const CloudinaryService = require('../service/cloudinary.service');
+const ReportFormValidator = require('../validator/report.validator');
 
 ReportRoute.route('/')
 .get(requireAuth, Report.getReports)
-.post(requireAuth, Report.getReports)
+.post(
+  requireAuth,
+  CloudinaryService.multipleUpload('report-images', 9),
+  ReportFormValidator.reportFormValidator,
+  CloudinaryService.getMetaData, Report.createReport
+);
 
 ReportRoute.route('/:id')
 .get(requireAuth, Report.getReportById)

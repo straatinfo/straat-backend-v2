@@ -82,7 +82,7 @@ const getHostWithinRadius = (long, lat, radius) => {
 
 const getHostById = (_id) => {
   return new Promise((resolve, reject) => {
-    User.find(_id)
+    User.findById(_id)
     .populate('_role')
     .populate('design')
     .exec((err, host) => {
@@ -139,7 +139,8 @@ const createHost = (input) => {
         if (err) {
           return resolve({err: err});
         }
-        const getH = await getHostById(newUser._role);
+        const getH = await getHostById(newUser._id);
+        console.log(getH);
         if (getH.err) {
           return resolve({err: getH.err});
         }
