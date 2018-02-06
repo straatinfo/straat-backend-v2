@@ -19,7 +19,7 @@ Role.findOne({'code': 'ADMIN'}, function(err, role) {
     exit();
   }
   console.log(role);
-  users[0].password = newUser.encryptPassword('test');
+  users[0].password = newUser.encryptPassword('admin');
   users[0]._role = role.id;
   console.log(users[0]);
   users[0].save(function(err, user){
