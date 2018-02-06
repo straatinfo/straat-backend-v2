@@ -1,24 +1,28 @@
-const Reporter = require('../models/Reporter');
-const ReporterTypeHelper = require('./reportType.helper');
+const User = require('../models/User');
+const RoleHelper = require('./role.helper');
 
 const getReporters = () => {
-  return new Promise((resolve, reject) => {
-    Reporter.find()
-    .populate('_reporter', [
-      '_id', 'fname', 'lname', 'email', 'gender',
-      'username', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber'
+  return new Promise(async(resolve, reject) => {
+    const getRole = await RoleHelper.getRoleByCode('USER');
+    if (getRole.err) {
+      return resolve({err: getRole.err});
+    }
+    const _role = getRole.role._id;
+    console.log(_role);
+    User.find({'_role': _role}, [
+      '_id', 'email', 'fname', 'lname', 'gender',
+      'houseNumber', 'streetName', 'city', 'state',
+      'country', 'postalCode', 'phoneNumber',
+      'long', 'lat', 'isBlocked', 'username'
     ])
+    .populate('_role')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'city', 'state', 'country', 'postalCode', 'username',
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
     ])
-    .populate('_reportType')
-    .populate('_mainCategory')
-    .populate('_subCategory')
-    .sort([['date', -1]])
+    .populate('teamMembers')
+    .populate('teamLeaders')
     .exec((err, reporters) => {
       if (err) {
         return resolve({err: err});
@@ -28,50 +32,22 @@ const getReporters = () => {
   });
 };
 
-const getReporterByHost = (hostId) => {
-  return new Promise((resolve, reject) => {
-    Reporter.find({'_host': hostId})
-    .populate('_reporter', [
-      '_id', 'fname', 'lname', 'email', 'gender',
-      'username', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber'
-    ])
-    .populate('_host', [
-      '_id', 'hostName', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
-    ])
-    .populate('_reportType')
-    .populate('_mainCategory')
-    .populate('_subCategory')
-    .sort([['date', -1]])
-    .exec((err, reporters) => {
-      if (err) {
-        return resolve({err: err});
-      }
-      resolve({err: null, reporters: reporters});
-    });
-  });
-}
-
 const getReporterById = (_id) => {
   return new Promise((resolve, reject) => {
-    Reporter.findById(_id)
-    .populate('_reporter', [
-      '_id', 'fname', 'lname', 'email', 'gender',
-      'username', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber'
+    User.findById(_id, [
+      '_id', 'email', 'fname', 'lname', 'gender',
+      'houseNumber', 'streetName', 'city', 'state',
+      'country', 'postalCode', 'phoneNumber',
+      'long', 'lat', 'isBlocked', 'username'
     ])
+    .populate('_role')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'city', 'state', 'country', 'postalCode', 'username',
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
     ])
-    .populate('_reportType')
-    .populate('_mainCategory')
-    .populate('_subCategory')
+    .populate('teamMembers')
+    .populate('teamLeaders')
     .exec((err, reporter) => {
       if (err) {
         return resolve({err: err});
@@ -81,42 +57,64 @@ const getReporterById = (_id) => {
   });
 };
 
-const updateReporter = (_id, input) => {
-    return new Promise((resolve, reject) => {
-        Reporter.findByIdAndUpdate(_id, input, async(err, reporter) => {
-            if (err) {
-                return resolve({err: err});
-            }
-            try {
-                const getR = await getReporterById(reporter._id);
-                if (getR.err) {
-                    return resolve({err: getR.err});
-                }
-                resolve({err: null, reporter: getR.reporter});
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
-    });
-};
-
-const deleteReporter = (_id) => {
+const blockReporter = (_id) => {
   return new Promise((resolve, reject) => {
-    Reporter.findByIdAndRemove(_id, (err, reporter) => {
+    User.findByIdAndUpdate(_id, {'isBlocked': true})
+    .exec((err) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, reporter: reporter});
+      resolve({err: null});
+    });
+  });
+};
+
+const unBlockReporter = (_id) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_id, {'isBlocked': false})
+    .exec((err) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null});
+    });
+  });
+};
+
+const getReportersByHost = (_host) => {
+  return new Promise(async(resolve, reject) => {
+    const getRole = await RoleHelper.getRoleByCode('USER');
+    if (getRole.err) {
+      return resolve({err: getRole.err});
+    }
+    const _role = getRole.role._id;
+    User.find({'_role': _role, '_host': _host}, [
+      '_id', 'email', 'fname', 'lname', 'gender',
+      'houseNumber', 'streetName', 'city', 'state',
+      'country', 'postalCode', 'phoneNumber',
+      'long', 'lat', 'isBlocked', 'username'
+    ])
+    .populate('_role')
+    .populate('_host', [
+      '_id', 'hostName', 'houseNumber', 'streetName',
+      'city', 'state', 'country', 'postalCode', 'username',
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+    ])
+    .populate('teamMembers')
+    .populate('teamLeaders')
+    .exec((err, reporters) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reporters: reporters});
     });
   });
 };
 
 module.exports = {
   getReporters: getReporters,
-  getReporterById, getReporterById,
-  updateReporter: updateReporter,
-  deleteReporter: deleteReporter,
-  getReportByHost: getReportByHost,
+  getReporterById: getReporterById,
+  blockReporter: blockReporter,
+  unBlockReporter: unBlockReporter,
+  getReportersByHost: getReportersByHost
 };
-
