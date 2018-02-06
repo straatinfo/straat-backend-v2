@@ -11,8 +11,8 @@ const getHosts = () => {
       const _role = getRole.role._id;
       User.find({'_role': _role}, [
         '_id', 'hostName', 'houseNumber', 'streetName',
-        'city', 'state', 'country', 'postalCode',
-        'phoneNumber', 'long', 'lat', 'isPatron'
+        'city', 'state', 'country', 'postalCode', 'username',
+        'phoneNumber', 'long', 'lat', 'isPatron', 'email'
       ])
       .populate('_role')
       .populate('design')
@@ -61,8 +61,8 @@ const getHostWithinRadius = (long, lat, radius) => {
         ]
       }, [
         '_id', 'hostName', 'houseNumber', 'streetName',
-        'city', 'state', 'country', 'postalCode',
-        'phoneNumber', 'long', 'lat'
+        'city', 'state', 'country', 'postalCode', 'username',
+        'phoneNumber', 'long', 'lat', 'isPatron', 'email'
       ])
       .populate('_role')
       .populate('design')
@@ -96,17 +96,16 @@ const getHostById = (_id) => {
 
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
-    User.findByIdAndUpdate(_id, input, async(err, host) => {
+    User.findByIdAndUpdate(_id, {...input}, async(err, host) => {
       if (err) {
         return resolve({err: err});
       }
       try {
         const getH = await getHostById(_id);
         if (getH.err) {
-          return resolve({err: getHerr});
+          return resolve({err: getH.err});
         }
-        const host = getH.role;
-        resolve({err: null, host: host});
+        resolve({err: null, host: getH.host});
       }
       catch (e) {
         reject(e);
