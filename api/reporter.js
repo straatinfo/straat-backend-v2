@@ -1,6 +1,6 @@
-const SuccessHelper = require('../helpers/success.helper');
-const ErrorHelper = require('../helpers/error.helper');
 const ReporterHelper = require('../helpers/reporter.helper');
+const ErrorHelper = require('../helpers/error.helper');
+const SuccessHelper = require('../helpers/success.helper');
 
 const getReporters = async (req, res, next) => {
   try {
@@ -15,56 +15,56 @@ const getReporters = async (req, res, next) => {
   }
 };
 
-const getReportById = async (req, res, next) => {
+const getReporterById = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const getR = await ReporterHelper.getReporterById(id);
-    if (getR.err) {
-      return ErrorHelper.ClientError(res, {error: getR.err}, 400);
+    const getRBI = await ReporterHelper.getReporterById(id);
+    if (getRBI.err) {
+      return ErrorHelper.ClientError(res, {error: getRBI.err}, 400);
     }
-    SuccessHelper.success(res, getR.reporter);
+    SuccessHelper.success(res, getRBI.reporter);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
   }
-}
+};
 
-const getReportersByHostId = async (req, res, next) => {
+const getReportersByHost = async (req, res, next) => {
   const { hostId } = req.params;
   try {
-    const getR = await ReporterHelper.getReporterByHost(hostId);
-    if (getR.err) {
-      return ErrorHelper.ClientError(res, {error: getR.err}, 400);
+    const getRBH = await ReporterHelper.getReportersByHost(hostId);
+    if (getRBH.err) {
+      return ErrorHelper.ClientError(res, {error: getRBH.err}, 400);
     }
-    SuccessHelper.success(res, getR.reporters);
+    SuccessHelper.success(res, getRBH.reporters);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
   }
 };
 
-const updateReporter = async (req, res, next) => {
+const blockReporter = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const updateR = await ReporterHelper.updateReport(id, req.body);
-    if (updateR.err) {
-      return ErrorHelper.ClientError(res, {error: updateR.err}, 400);
+    const blockR = await ReporterHelper.blockReporter(id);
+    if (blockR.err) {
+      return ErrorHelper.ClientError(res, {error: blockR.err}, 400);
     }
-    SuccessHelper.success(res, updateR.reporter);
+    SuccessHelper.success(res, {message: `User ID: ${id} has been blocked`});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
   }
 };
 
-const deleteReporter = async (req, res, next) => {
+const unBlockReporter = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deleteR = await ReporterHelper.deleteReporter(id);
-    if (deleteR.err) {
-      return ErrorHelper.ClientError(res, { error: deleteR.err }, 400);
+    const unblockR = await ReporterHelper.unBlockReporter(id);
+    if (unblockR.err) {
+      return ErrorHelper.ClientError(res, {error: unblockR.err}, 400);
     }
-    SuccessHelper.success(res, deleteR.report);
+    SuccessHelper.success(res, {message: `User ID: ${id} has been unblocked`});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -72,9 +72,9 @@ const deleteReporter = async (req, res, next) => {
 };
 
 module.exports = {
-  getReports: getReports,
-  getReportById: getReportById,
-  getReportsByHostId: getReportsByHostId,
-  updateReport: updateReport,
-  deleteReport: deleteReport
+  getReporters: getReporters,
+  getReporterById: getReporterById,
+  blockReporter: blockReporter,
+  unBlockReporter: unBlockReporter,
+  getReportersByHost: getReportersByHost
 };

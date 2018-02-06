@@ -31,9 +31,6 @@ const findUserById = (id) => {
       if (err) {
         return resolve({err: err});
       }
-      if (user.err) {
-        return resolve({err: user.err});
-      }
       resolve({err: null, user: user});
     });
   });
