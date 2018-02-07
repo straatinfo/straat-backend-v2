@@ -12,5 +12,8 @@ module.exports = {
     SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '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',
     SENDGRID_PASSWORD: process.env.SENDGRID_PASSWORD || 'pp5ohrek8906',
     SENDGRID_USERNAME: process.env.SENDGRID_USERNAME || 'app86892324@heroku.com'
+  },
+  EMAIL_ADDRESSES: {
+    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'jaylord@globalbrainforce.com'
   }
 };

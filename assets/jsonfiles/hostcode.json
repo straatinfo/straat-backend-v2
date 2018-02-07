@@ -1,12 +1,14 @@
 [
   {
     "_id": "1",
-    "code": "ACCESSCODE1",
-    "_host": "5a7b17a3880dbb3386c1137b"
+    "code": "SeTT0",
+    "_host": "5a7b485a039e2860cf9dd19a",
+    "hostName": "Den Haag"
   },
   {
     "_id": "2",
-    "code": "ACCESSCODE2",
-    "_host": "5a7b17a3880dbb3386c1137c"
+    "code": "NyXrf",
+    "_host": "5a7b485a039e2860cf9dd19b",
+    "hostName": "Vlaardingen"
   }
 ]
