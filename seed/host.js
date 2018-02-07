@@ -8,22 +8,24 @@ var users = [
   new User({
     hostName: 'Gemeente Den Haag',
     email: 'denhaag@straat.info',
+    username: 'Gemeente Den Haag',
     streetName: 'Postbus 12600',
     city: 'S-GRAVENHAGE',
     country: 'Netherlands',
     postalCode: '2500 DJ',
     phoneNumber: '14070',
-    _role: '5a75c9de3a06a627a7e8af45' // should be changed
+    _role: '5a79be1d7d1aeb41665af29e' // should be changed
   }),
   new User({
     hostName: 'Gemeente Vlaardingen',
     email: 'vlaardingen@straat.info',
+    username: 'Gemeente Vlaardingen',
     streetName: 'Postbus 1002',
     city: 'VLAARDINGEN',
     country: 'Netherlands',
     postalCode: '3130 EB',
     phoneNumber: '(010) 248 40 00',
-    _role: '5a75c9de3a06a627a7e8af45' // should be changed
+    _role: '5a79be1d7d1aeb41665af29e' // should be changed
   })
 ];
 
