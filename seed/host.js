@@ -6,33 +6,23 @@ mongoose.connect(Config.DATA_BASE);
 
 var users = [
   new User({
-    hostName: 'host1',
-    email: 'host@test.com',
-    username: 'host1',
-    houseNumber: '34',
-    streetName: 'sesame',
-    city: 'Sample City',
-    state: 'Sample state',
-    country: 'USA',
-    postalCode: '32233',
-    phoneNumber: '232334234',
-    long: '78.25',
-    lat: '87.32',
+    hostName: 'Gemeente Den Haag',
+    email: 'denhaag@straat.info',
+    streetName: 'Postbus 12600',
+    city: 'S-GRAVENHAGE',
+    country: 'Netherlands',
+    postalCode: '2500 DJ',
+    phoneNumber: '14070',
     _role: '5a75c9de3a06a627a7e8af45' // should be changed
   }),
   new User({
-    hostName: 'host2',
-    email: 'host2@test.com',
-    username: 'host2',
-    houseNumber: '34',
-    streetName: 'sesame',
-    city: 'Sample City',
-    state: 'Sample state',
-    country: 'USA',
-    postalCode: '32233',
-    phoneNumber: '232334234',
-    long: '78.25',
-    lat: '87.32',
+    hostName: 'Gemeente Vlaardingen',
+    email: 'vlaardingen@straat.info',
+    streetName: 'Postbus 1002',
+    city: 'VLAARDINGEN',
+    country: 'Netherlands',
+    postalCode: '3130 EB',
+    phoneNumber: '(010) 248 40 00',
     _role: '5a75c9de3a06a627a7e8af45' // should be changed
   })
 ];
