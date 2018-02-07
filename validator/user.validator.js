@@ -29,6 +29,7 @@ const registrationFormValidator = async (req, res, next) => {
       req.checkBody('hostName', 'No hostname').notEmpty();
       req.checkBody('lat', 'Invalid Latitude').notEmpty();
       req.checkBody('long', 'Invalid Longitude').notEmpty();
+      req.body.username = req.body.email;
     } else {
       // validation for users
       req.checkBody('fname', 'Firstname must not be empty').notEmpty();
