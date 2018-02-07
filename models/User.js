@@ -15,7 +15,6 @@ const userSchema = new Schema({
   city: { type: String },
   state: { type: String },
   country: { type: String },
-  state: { type: String },
   postalCode: { type: String, required: true, indexed: true },
   phoneNumber: { type: String },
   long: { type: Number },
