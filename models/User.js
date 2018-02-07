@@ -20,6 +20,7 @@ const userSchema = new Schema({
   phoneNumber: { type: String },
   long: { type: Number },
   lat: { type: Number },
+  isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
