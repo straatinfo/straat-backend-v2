@@ -7,13 +7,8 @@ const designSchema = new Schema({
   colorTwo: { type: String },
   colorThree: { type: String },
   colorFour: { type: String },
-<<<<<<< HEAD
-  logoUrl: String,
-  logoSecuredUrl: String,
-=======
   url: String,
   secure_url: String,
->>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 

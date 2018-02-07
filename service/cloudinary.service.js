@@ -19,11 +19,7 @@ const storage = cloudinaryStorage({
 
 const singleUpload = (fieldName) => {
   const upload = multer({ storage: storage });
-<<<<<<< HEAD
-  return upload.singleUpload(fieldName);
-=======
   return upload.single(fieldName);
->>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
 };
 
 const multipleUpload = (fieldName, numberOfFiles) => {
