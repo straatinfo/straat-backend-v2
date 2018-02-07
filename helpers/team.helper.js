@@ -67,8 +67,8 @@ const createTeam = (_user, input) => {
       }
       try {
         const addLeader = await TeamLeaderHelper.addTeamLeader(_user, team._id);
-        if (addLeader.err || addMember.err) {
-          return resolve({err: `The team was added but member and leader failed to add.`});
+        if (addLeader.err) {
+          return resolve({err: `The team was added but leader failed to add.`});
         }
         const getTeamInfo = await getTeamById(team._id);
         if (getTeamInfo.err) {
