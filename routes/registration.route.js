@@ -9,4 +9,7 @@ const RegistrationValidator = require('../validator/registration.validator');
 RegistrationRoute.route('/')
 .post(RegistrationValidator.accessCodeRequestFormValidator, Registration.requestForCode);
 
+RegistrationRoute.route('/signup')
+.post(RegistrationValidator.registerWithCodeFormValidator, Registration.registerWithCode);
+
 module.exports = RegistrationRoute;
