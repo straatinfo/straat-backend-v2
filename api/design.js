@@ -45,12 +45,13 @@ const addLogo = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
     }
     const updateD = await DesignHelper.updateDesign(id, {'url': url, 'secure_url': secure_url});
-    if (udpateD.err) {
+    if (updateD.err) {
       return ErrorHelper.ClientError(res, {error: updateD.err}, 400);
     }
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
