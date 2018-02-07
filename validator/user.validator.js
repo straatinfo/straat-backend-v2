@@ -38,6 +38,7 @@ const registrationFormValidator = async (req, res, next) => {
       req.checkBody('username', 'Username must not be empty').notEmpty();
       req.checkBody('gender', 'Gender Must not be empty').notEmpty();
       req.checkBody('_host', 'Host ID Must not be empty').notEmpty();
+      req.checkBody('isVolunteer', 'isVolunteer field must not be empty').notEmpty();
     }
     const errors = req.validationErrors();
 
