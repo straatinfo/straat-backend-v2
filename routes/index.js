@@ -6,13 +6,9 @@ const HostRoute = require('./host.route');
 const TeamRoute = require('./team.route');
 const TeamInviteRoute = require('./teamInvite.route');
 const ConversationRoute = require('./conversation.route');
-<<<<<<< HEAD
-
-const TestRoute = require('./test.route');
-=======
 const ReporterRoute = require('./reporter.route');
 const DesignRoute = require('./design.route');
->>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
+const RegistrationRoute = require('./registration.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -26,11 +22,7 @@ module.exports = (app) => {
   app.use('/v1/api/team', TeamRoute);
   app.use('/v1/api/teamInvite', TeamInviteRoute);
   app.use('/v1/api/conversation', ConversationRoute);
-<<<<<<< HEAD
-
-  app.use('/test', TestRoute);
-=======
   app.use('/v1/api/reporter', ReporterRoute);
   app.use('/v1/api/design', DesignRoute);
->>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
+  app.use('/v1/api/registration', RegistrationRoute);
 };
