@@ -25,9 +25,7 @@ const createDesign = (_host, input) => {
       'colorOne': input.colorOne,
       'colorTwo': input.colorTwo,
       'colorThree': input.colorThree,
-      'colorFour': input.colorFour,
-      'url': input.url,
-      'secure_url': input.secure_url
+      'colorFour': input.colorFour
     });
     newDesign.save((err, design) => {
       if (err) {

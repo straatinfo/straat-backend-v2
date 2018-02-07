@@ -26,12 +26,29 @@ const createDesign = async (req, res, next) => {
     if (getD.designs.length > 4) {
       return ErrorHelper.ClientError(res, {error: 'Design storage limit has reached'});
     }
-    const input = {...req.body, url: req.file.url, secure_url: req.file.secure_url};
-    const createD = await DesignHelper.createDesign(hostId, input);
+    const createD = await DesignHelper.createDesign(hostId, req.body);
     if (createD.err) {
       return ErrorHelper.ClientError(res, {error: createD.err}, 400);
     }
     SuccessHelper.success(res, createD.design);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const addLogo = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const { url, secure_url } = req.file;
+    if (!url || !secure_url) {
+      return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
+    }
+    const updateD = await DesignHelper.updateDesign(id, {'url': url, 'secure_url': secure_url});
+    if (udpateD.err) {
+      return ErrorHelper.ClientError(res, {error: updateD.err}, 400);
+    }
+    SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -83,6 +100,7 @@ const deleteDesign = async (req, res, next) => {
 module.exports = {
   getDesigns: getDesigns,
   createDesign: createDesign,
+  addLogo: addLogo,
   getDesignById: getDesignById,
   updateDesign: updateDesign,
   deleteDesign: deleteDesign
