@@ -13,7 +13,11 @@ const registrationFormValidator = async (req, res, next) => {
     req.checkBody('country', 'Country must not be empty').notEmpty();
     req.checkBody('state', 'State must not be empty').notEmpty();
     req.checkBody('postalCode', 'Postal Code must not be empty').notEmpty();
+<<<<<<< HEAD
     req.checkBody('role', 'Role must not be empty').notEmpty();
+=======
+    req.checkBody('_role', 'Role must not be empty').notEmpty();
+>>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
     const getRole = await RoleHelper.findRoleById(req.body._role);
     if (getRole.err) {
       messages.push('Invalid Role');
@@ -37,6 +41,11 @@ const registrationFormValidator = async (req, res, next) => {
       req.checkBody('lname', 'Invalid Lastname input').isLength({ min: 2 });
       req.checkBody('username', 'Username must not be empty').notEmpty();
       req.checkBody('gender', 'Gender Must not be empty').notEmpty();
+<<<<<<< HEAD
+=======
+      req.checkBody('_host', 'Host ID Must not be empty').notEmpty();
+      req.checkBody('isVolunteer', 'isVolunteer field must not be empty').notEmpty();
+>>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
     }
     const errors = req.validationErrors();
 

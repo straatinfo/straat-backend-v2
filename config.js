@@ -8,4 +8,12 @@ module.exports = {
     api_secret: 'QOaJKE9sXc1qe4GHFYjNSFkFT68',
     url : 'cloudinary://485521389972512:QOaJKE9sXc1qe4GHFYjNSFkFT68@hvina6sjo'
   },
+<<<<<<< HEAD
+=======
+  SENDGRID: {
+    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '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',
+    SENDGRID_PASSWORD: process.env.SENDGRID_PASSWORD || 'pp5ohrek8906',
+    SENDGRID_USERNAME: process.env.SENDGRID_USERNAME || 'app86892324@heroku.com'
+  }
+>>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
 };

@@ -11,6 +11,7 @@
   "author": "John Higgins Avila",
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^6.2.1",
     "await-to-js": "^2.0.1",
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.2",

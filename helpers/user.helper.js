@@ -31,9 +31,12 @@ const findUserById = (id) => {
       if (err) {
         return resolve({err: err});
       }
+<<<<<<< HEAD
       if (user.err) {
         return resolve({err: user.err});
       }
+=======
+>>>>>>> 128f8c64d6e5a41adbb3204c31daf429df67a486
       resolve({err: null, user: user});
     });
   });
