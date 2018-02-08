@@ -1,5 +1,6 @@
 const MainCategory = require('../models/MainCategory');
 const SubCategory = require('../models/SubCategory');
+const ReportType = require('../models/ReportType');
 
 // main category helpers
 const getMainCategories = (_host) => {
@@ -43,20 +44,25 @@ const getMainCategoryById = (_id) => {
 const createMainCategory = (input) => {
   return new Promise((resolve, reject) => {
     const newMainCategory = new MainCategory(input);
-    newMainCategory.save(async(err, mainCategory) => {
+    newMainCategory.save((err, mainCategory) => {
       if (err) {
         return resolve({err: err});
       }
-      try {
-        const getMC = await getMainCategoryById(mainCategory._id);
-        if (getMC.err) {
-          return resolve({err: getMC.err});
+      ReportType.findByIdAndUpdate(input._reportType,
+      { '$addToSet': { 'mainCategories': mainCategory._id } },
+      { 'new': true, 'upsert': true },
+      async(err, reportType) => {
+        try {
+          const getMC = await getMainCategoryById(mainCategory._id);
+          if (getMC.err) {
+            return resolve({err: getMC.err});
+          }
+          resolve({err: null, mainCategory: getMC.mainCategory});
         }
-        resolve({err: null, mainCategory: getMC.mainCategory});
-      }
-      catch (e) {
-        reject(e);
-      }
+        catch (e) {
+          reject(e);
+        }
+      });
     });
   });
 };
@@ -87,7 +93,17 @@ const deleteMainCategory = (_id) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, mainCategory: mainCategory});
+      ReportType.findByIdAndUpdate(mainCategory._reportType,
+      { '$pop': { 'mainCategories': mainCategory._id } },
+      (err, reportType) => {
+        SubCategory.find({'_mainCategory': _id})
+        .remove((err) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          resolve({err: null, mainCategory: mainCategory});
+        });
+      });
     });
   });
 };
@@ -122,20 +138,25 @@ const getSubCategoryById = (_id) => {
 const createSubcategory = (input) => {
   return new Promise((resolve, reject) => {
     const newSubCategory = new SubCategory(input);
-    newSubCategory.save(async(err, subCategory) => {
+    newSubCategory.save((err, subCategory) => {
       if (err) {
         return resolve({err: err});
       }
-      try {
-        const getSC = await getSubCategoryById(subCategory._id);
-        if (getSC.err) {
-          return resolve({err: getSC.err});
+      MainCategory.findByIdAndUpdate(input._mainCategory,
+      { '$addToSet': { 'subCategories': subCategory._id } },
+      { 'new': true, 'upsert': true },
+      async (err, mainCategory) => {
+        try {
+          const getSC = await getSubCategoryById(subCategory._id);
+          if (getSC.err) {
+            return resolve({err: getSC.err});
+          }
+          resolve({err: null, subCategory: getSC.subCategory});
         }
-        resolve({err: null, subCategory: getSC.subCategory});
-      }
-      catch (e) {
-        reject(e);
-      }
+        catch (e) {
+          reject(e);
+        }
+      });
     });
   });
 };
@@ -166,7 +187,14 @@ const deleteSubCategory = (_id) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, subCategory: subCategory});
+      MainCategory.findByIdAndUpdate(subCategory._mainCategory,
+      { '$pop': { 'subCategories': subCategory._id } },
+      (err) => {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, subCategory: subCategory});
+      });
     });
   });
 };
