@@ -4,13 +4,14 @@ require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const Team = require('../api/team');
 const TeamRoute = express.Router();
-
+const CloudinaryService = require('../service/cloudinary.service');
+const TeamValidator = require('../validator/team.validator');
 
 TeamRoute.route('/')
 .get(requireAuth, Team.getTeams);
 
 TeamRoute.route('/new/:userId')
-.post(requireAuth, Team.createTeam);
+.post(CloudinaryService.singleUpload('team-logo'),TeamValidator.createTeamFormValidator, requireAuth, Team.createTeam);
 
 TeamRoute.route('/:teamId')
 .get(requireAuth, Team.getTeamById)
