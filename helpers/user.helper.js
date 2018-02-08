@@ -60,7 +60,6 @@ const addTeamToHost = (_host, _team) => {
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(_host,
     { '$addToSet': { 'teams': _team } },
-    { 'new': true, 'upsert': true },
     (err, host) => {
       if (err) {
         return resolve({err: err});
