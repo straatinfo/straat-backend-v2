@@ -60,34 +60,39 @@ const getTeamById = (_id) => {
 
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
+  console.log(input);
   return new Promise((resolve, reject) => {
     const newTeam = new Team(input);
     newTeam.save(async(err, team) => {
       if (err) {
+        console.log(err);
         return resolve({err: err});
       }
       try {
         const addLeader = await TeamLeaderHelper.addTeamLeader(_user, team._id);
         if (addLeader.err) {
+          console.log('6')
           return resolve({err: `The team was added but leader failed to add.`});
         }
         const addLeaderToTeam = await TeamLeaderHelper.addTeamLeaderToTeam(team._id, addLeader.teamLeader._id);
         const addLeaderToUser = await TeamLeaderHelper.addTeamLeaderToUser(_user, addLeader.teamLeader._id);
         if (addLeaderToTeam.err || addLeaderToUser.err) {
+          console.log('3')
           return resolve({err: 'Unable to register leader to team and user'});
         }
         const updateHost = await UserHelper.addTeamToHost(input._host, team._id);
         if (updateHost.err) {
+          console.log('4')
           return resolve({err: updateHost.err});
         }
         const getTeamInfo = await getTeamById(team._id);
         if (getTeamInfo.err) {
+          console.log('5')
           return resolve({err: null, team: team});
         }
         resolve({err: null, team: getTeamInfo.team});
       }
       catch (e) {
-        console.log(e);
         reject(e);
       }
     });
