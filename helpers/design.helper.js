@@ -1,4 +1,5 @@
 const Design = require('../models/Design');
+const User = require('../models/User');
 
 const getDesigns = (_host) => {
   return new Promise((resolve, reject) => {
@@ -31,7 +32,15 @@ const createDesign = (_host, input) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, design: design});
+      User.findByIdAndUpdate(_host,
+      { '$addToSet': { 'designs': design._id } },
+      { 'new': true, 'upsert': true },
+      (err) => {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, design: design});
+      });
     });
   });
 };
@@ -70,7 +79,14 @@ const deleteDesign = (_id) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, design: design});
+      User.findByIdAndRemove(design._host,
+      { '$pop': { 'designs': design._id } },
+      (err) => {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, design: design});
+      });
     });
   });
 };

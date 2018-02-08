@@ -1,4 +1,6 @@
 const ReportType = require('../models/ReportType');
+const MainCategory = require('../models/MainCategory');
+const CategoryHelper = require('./category.helper');
 
 const getReportTypes = () => {
   return new Promise((resolve, reject) => {
@@ -52,7 +54,18 @@ const deleteReportType = (_id) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, reportType: reportType});
+      MainCategory.find({'_reportType': _id}, async(err, mainCategories) => {
+        try {
+          const deleteMainCategories = await Promise.all(mainCategories.map(async(m) => {
+            const deleteM = await CategoryHelper.deleteMainCategory(d._id);
+            return;
+          }));
+          resolve({err: null, reportType: reportType});
+        }
+        catch (e) {
+          reject(e);
+        }
+      });
     });
   });
 };

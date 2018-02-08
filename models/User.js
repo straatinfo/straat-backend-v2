@@ -31,10 +31,10 @@ const userSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId, ref: 'Team'
   }],
   teamLeaders: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
+    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader', unique: true
   }],
   teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
+    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember', unique: true
   }],
   designs: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Design'
