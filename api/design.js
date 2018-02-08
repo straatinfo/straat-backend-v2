@@ -51,7 +51,6 @@ const addLogo = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
-    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };

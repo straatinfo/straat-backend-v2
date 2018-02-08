@@ -8,7 +8,7 @@ const reportTypeSchema = new Schema({
   reports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }],
-  mainCategory: [{
+  mainCategories: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
   }]
 });

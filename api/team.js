@@ -36,9 +36,21 @@ const createTeam = async (req, res, next) => {
     if (createT.err) {
       return ErrorHelper.ClientError(res, {error: createT.err}, 400);
     }
-    SuccessHelper.success(res, createT.team);
+    if (!req.file) {
+      return SuccessHelper.success(res, createT.team);
+    }
+    const input = {
+      'logoUrl': req.file.url,
+      'logoSecuredUrl': req.file.secure_url
+    };
+    const updateT = await TeamHelper.updateTeam(createT.team._id, input);
+    if (updateT.err) {
+      return ErrorHelper.ClientError(res, {error: 'Team was created but the logo was failed to save'});
+    }
+    SuccessHelper.success(res, updateT.team);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -64,9 +76,10 @@ const deleteTeam = async (req, res, next) => {
     if (deleteT.err) {
       return ErrorHelper.ClientError(res, {error: deleteT.err}, 400);
     }
-    SuccessHelper.success(res, delteT.team);
+    SuccessHelper.success(res, deleteT.team);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -81,6 +94,7 @@ const addLeader = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -95,6 +109,7 @@ const removeLeader = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
