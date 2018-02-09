@@ -4,7 +4,7 @@ const ReportType = require('../models/ReportType');
 
 // main category helpers
 const getMainCategories = (_host) => {
-  return new Prmise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     MainCategory.find({'_host': _host})
     .populate('_host', [
       '_id', 'hostName', 'email', 'houseNumber',
@@ -201,6 +201,7 @@ const deleteSubCategory = (_id) => {
 
 module.exports = {
   getMainCategories: getMainCategories,
+  getMainCategoryById: getMainCategoryById,
   createMainCategory: createMainCategory,
   updateMainCategory: updateMainCategory,
   deleteMainCategory: deleteMainCategory,
