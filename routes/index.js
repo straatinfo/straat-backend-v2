@@ -12,7 +12,7 @@ const RegistrationRoute = require('./registration.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
-    res.send({message: 'Success'});
+    res.send({message: 'Web API is now online, waiting for requests..', status: 1, online: true});
   });
   app.use('/v1/api/auth/', AuthRoute);
   app.use('/v1/api/reportType/', ReportTypeRoute);
