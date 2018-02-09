@@ -61,8 +61,17 @@ const getTeamById = (_id) => {
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
   console.log(input);
-  return new Promise((resolve, reject) => {
-    const newTeam = new Team(input);
+  return new Promise(async(resolve, reject) => {
+    try {
+      const findUser = UserHelper.findUserById(_user);
+      if (findUser.err) {
+        return resolve({err: findUser.err});
+      }
+    }
+    catch (e) {
+      reject(e);
+    }
+    const newTeam = new Team({...input, 'isVolunteer': findUser.user.isVolunteer});
     newTeam.save(async(err, team) => {
       if (err) {
         console.log(err);
@@ -139,9 +148,36 @@ const deleteTeam = (_id) => {
   });
 };
 
+// this function will check if the user can join the team depending on their isVolunteer status
+const checkUserIfCanJoin = (_user, _team) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const checkT = await getTeamById(_team);
+      if (checkT.err) {
+        return resolve({err: checkT.err});
+      }
+      const checkU = await UserHelper.findUserById(_user);
+      if (checkU.err) {
+        return resolve({err: checkU.err});
+      }
+      if (checkU.user.isVolunteer !== checkT.team.isVolunteer) {
+        return resolve({status: false});
+      }
+      resolve({status: true});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 const addLeader = (_user, _team) => {
   return new Promise(async(resolve, reject) => {
     try {
+      const checkIfCanJoin = await checkUserIfCanJoin(_user, _team);
+      if (checkIfCanJoin.status === false) {
+        return resolve({err: 'Cannot join the team'});
+      }
       const checkTL = await TeamLeaderHelper.checkTeamLeader(_user, _team);
       if (checkTL.err) {
         return resolve({err: checkTL.err});
@@ -196,6 +232,10 @@ const removeLeader = (_user, _team) => {
 const addMember = (_user, _team) => {
   return new Promise(async(resolve, reject) => {
     try {
+      const checkIfCanJoin = await checkUserIfCanJoin(_user, _team);
+      if (checkIfCanJoin.status === false) {
+        return resolve({err: 'Cannot join the team'});
+      }
       const checkMember = await TeamMemberHelper.checkTeamMember(_user, _team);
       if (checkMember.err) {
         return resolve({err: checkMember.err});

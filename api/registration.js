@@ -66,13 +66,13 @@ const registerWithCodeV2 = async (req, res, next) => {
     // create or join team
     let teamInput = {}, createT, requestT;
     if (req.body._team) {
-      requestT = await TeamInviteHelper.sendRequest(getU.user._id, request.body._team);
+      requestT = await TeamInviteHelper.sendRequest(getU.user._id, req.body._team);
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400);
       }
     } else {
       // if isVolunteer === true can create team and isApproved = true
-      if (req.body.isVolunteer) {
+      if (req.body.isVolunteer == true) {
         teamInput = {
           teamName: req.body.teamName,
           teamEmail: req.body.teamEmail,
