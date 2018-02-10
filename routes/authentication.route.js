@@ -10,7 +10,7 @@ AuthRoute.route('/checkInput/:input')
 .get(Authentication.checkUserInput);
 
 AuthRoute.route('/login')
-.post(requireSignin, Authentication.login);
+.post( Authentication.login);
 
 AuthRoute.route('/register')
 .post(UserValidator.registrationFormValidator, Authentication.register);

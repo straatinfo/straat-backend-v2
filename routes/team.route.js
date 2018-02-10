@@ -8,23 +8,23 @@ const CloudinaryService = require('../service/cloudinary.service');
 const TeamValidator = require('../validator/team.validator');
 
 TeamRoute.route('/')
-.get(requireAuth, Team.getTeams);
+.get(/*requireSignin,*/ Team.getTeams);
 
 TeamRoute.route('/new/:userId')
-.post(CloudinaryService.singleUpload('team-logo'),TeamValidator.createTeamFormValidator, requireAuth, Team.createTeam);
+.post(CloudinaryService.singleUpload('team-logo'),TeamValidator.createTeamFormValidator, /*requireSignin,*/ Team.createTeam);
 
 TeamRoute.route('/:teamId')
-.get(requireAuth, Team.getTeamById)
-.put(requireAuth, Team.updateTeam)
-.delete(requireAuth, Team.deleteTeam);
+.get(/*requireSignin,*/ Team.getTeamById)
+.put(/*requireSignin,*/ Team.updateTeam)
+.delete(/*requireSignin,*/ Team.deleteTeam);
 
 TeamRoute.route('/leader/:userId/:teamId')
-.get(requireAuth, Team.addLeader)
-.delete(requireAuth, Team.removeLeader);
+.get(/*requireSignin,*/ Team.addLeader)
+.delete(/*requireSignin,*/ Team.removeLeader);
 
 TeamRoute.route('/member/:userId/:teamId')
-.get(requireAuth, Team.addMember)
-.delete(requireAuth, Team.kickMember);
+.get(/*requireSignin,*/ Team.addMember)
+.delete(/*requireSignin,*/ Team.kickMember);
 
 
 module.exports = TeamRoute;
