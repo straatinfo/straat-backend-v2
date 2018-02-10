@@ -6,19 +6,19 @@ const Conversation = require('../api/conversation');
 const ConversationRoute = express.Router();
 
 ConversationRoute.route('/')
-.get(requireAuth, Conversation.getConversations)
-.post(requireAuth, Conversation.createConversation);
+.get(/*requireSignin,*/ Conversation.getConversations)
+.post(/*requireSignin,*/ Conversation.createConversation);
 
 ConversationRoute.route('/:id')
-.get(requireAuth, Conversation.getConversationById)
-.put(requireAuth, Conversation.updateConversation)
-.delete(requireAuth, Conversation.deleteConversation);
+.get(/*requireSignin,*/ Conversation.getConversationById)
+.put(/*requireSignin,*/ Conversation.updateConversation)
+.delete(/*requireSignin,*/ Conversation.deleteConversation);
 
 ConversationRoute.route('/user/:userId')
-.get(requireAuth, Conversation.getUserConversations);
+.get(/*requireSignin,*/ Conversation.getUserConversations);
 
 ConversationRoute.route('/:userId/:conversationId')
-.post(requireAuth, Conversation.addParticipant)
-.delete(requireAuth, Conversation.removeParticipant);
+.post(/*requireSignin,*/ Conversation.addParticipant)
+.delete(/*requireSignin,*/ Conversation.removeParticipant);
 
 module.exports = ConversationRoute;
