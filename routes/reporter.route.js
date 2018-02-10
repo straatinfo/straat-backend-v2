@@ -6,18 +6,18 @@ const Reporter = require('../api/reporter');
 const ReporterRoute = express.Router();
 
 ReporterRoute.route('/')
-.get(requireAuth, Reporter.getReporters);
+.get(/*requireSignin,*/ Reporter.getReporters);
 
 ReporterRoute.route('/:id')
-.get(requireAuth, Reporter.getReporterById);
+.get(/*requireSignin,*/ Reporter.getReporterById);
 
 ReporterRoute.route('/host/:hostId')
-.get(requireAuth, Reporter.getReportersByHost);
+.get(/*requireSignin,*/ Reporter.getReportersByHost);
 
 ReporterRoute.route('/block/:id')
-.put(requireAuth, Reporter.blockReporter);
+.put(/*requireSignin,*/ Reporter.blockReporter);
 
 ReporterRoute.route('/unblock/:id')
-.put(requireAuth, Reporter.unBlockReporter);
+.put(/*requireSignin,*/ Reporter.unBlockReporter);
 
 module.exports = ReporterRoute;

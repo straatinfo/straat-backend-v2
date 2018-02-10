@@ -9,7 +9,7 @@ const getMainCategories = async (req, res, next) => {
     if (getMC.err) {
       return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
     }
-    SuccessHelper.success(res, getMC.mainCategory);
+    SuccessHelper.success(res, getMC.mainCategories);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -17,8 +17,9 @@ const getMainCategories = async (req, res, next) => {
 };
 
 const createMainCategory = async (req, res, next) => {
+  const { hostId } = req.params;
   try {
-    const createMC = await CategoryHelper.createMainCategory(req.body);
+    const createMC = await CategoryHelper.createMainCategory({...req.body, '_host': hostId});
     if (createMC.err) {
       return resolve({err: createMC.err});
     }
@@ -72,8 +73,9 @@ const getSubCategories = async (req, res, next) => {
 };
 
 const createSubCategory = async (req, res, next) => {
+  const { mainCategoryId } = req.params;
   try {
-    const createSC = await CategoryHelper.createSubcategory(req.body);
+    const createSC = await CategoryHelper.createSubcategory({...req.body, '_mainCategory': mainCategoryId});
     if (createSC.err) {
       return ErrorHelper.ClientError(res, { err: createSC.err }, 400);
     }
