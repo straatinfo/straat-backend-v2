@@ -42,6 +42,9 @@ const createDesign = async (req, res, next) => {
 const addLogo = async (req, res, next) => {
   const { id } = req.params;
   try {
+    if (!req.file) {
+      return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
+    }
     const { url, secure_url } = req.file;
     if (!url || !secure_url) {
       return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
