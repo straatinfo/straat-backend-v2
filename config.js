@@ -1,6 +1,6 @@
 module.exports = {
-  DATA_BASE: 'mongodb://heroku_3mjfnk1l:iqi60fhdgbgab2ffmf3vovlff5@ds121268.mlab.com:21268/heroku_3mjfnk1l',
-  // DATA_BASE: process.env.MONGODB_URI || 'mongodb://localhost:27017/straat',
+  // DATA_BASE: 'mongodb://heroku_3mjfnk1l:iqi60fhdgbgab2ffmf3vovlff5@ds121268.mlab.com:21268/heroku_3mjfnk1l',
+  DATA_BASE: process.env.MONGODB_URI || 'mongodb://localhost:27017/straat',
   SESSION_SECRET: process.env.SESSION_SECRET || 'mysupersecretkey',
   CLOUDINARY: {
     cloud_name: 'hvina6sjo',
@@ -14,6 +14,9 @@ module.exports = {
     SENDGRID_USERNAME: process.env.SENDGRID_USERNAME || 'app86892324@heroku.com'
   },
   EMAIL_ADDRESSES: {
-    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'jaylord@globalbrainforce.com'
+    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'jaylord@globalbrainforce.com',
+    NO_REPLY: 'no-reply@straat.info',
+    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'jaylord@globalbrainforce.com', // 'seqretary@gmail.com'
+    DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'jayloard@globalbrainforce.com' // 'deletedteaam@straat.info'
   }
 };
