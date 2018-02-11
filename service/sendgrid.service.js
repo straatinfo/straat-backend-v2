@@ -1,5 +1,6 @@
 const sgMail = require('@sendgrid/mail');
 const Config = require('../config');
+
 const basicMail = (sender = 'Straat.info No reply', receiver, subject, message) => {
   return new Promise(async(resolve, reject) => {
     const msg = {
