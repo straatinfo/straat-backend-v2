@@ -8,12 +8,66 @@ const TeamInviteHelper = require('../helpers/teamInvite.helper');
 const JwtService = require('../service/jwt.service');
 
 const checkUserInput = async (req, res, next) => {
+  const { username, email, teamEmail, teamName, code } = req.body;
   try {
+    let checkUsername, checkEmail, checkTeamEmail, checkTeamName, checkCode;
+    // check for username
+    if (username) {
+      checkUsername = await UserHelper.checkUserByCredentials(username);
+      if (checkUsername.err) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+      if (checkUsername.user) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+    }
+    // check for email
+    if (email) {
+      checkEmail = await UserHelper.checkUserByCredentials(email);
+      if (checkEmail.err) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+      if (checkEmail.user) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+    }
 
+    // check for teamEmail
+    if (teamEmail) {
+      checkTeamEmail = await TeamHelper.checkTeamByCredentials(teamEmail);
+      if (checkTeamEmail.err) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+      if (checkTeamEmail.team) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+    }
+    // check teamName
+    if (teamName) {
+      checkTeamName = await TeamHelper.checkTeamByCredentials(teamName);
+      if (checkTeamName.err) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+      if (checkTeamName.team) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+    }
+    // check code
+    if (code) {
+      checkCode = await RegistrationHelper.getHostId(code);
+      if (checkCode.err) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+      if (!checkCode._host) {
+        return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 400);
+      }
+    }
+    SuccessHelper.success(res, {message: 'Valid input'});
   }
   catch (e) {
     ErrorHelper.ServerError(e);
   }
+
 };
 
 const requestForCode = async (req, res, next) => {
@@ -80,6 +134,7 @@ const registerWithCodeV2 = async (req, res, next) => {
     if (createU.err) {
       return ErrorHelper.ClientError(res, {error: createU.err}, 400);
     }
+    console.log(createU);
     const getU = await UserHelper.findUserById(createU.user._id);
 
     // create or join team
@@ -109,6 +164,7 @@ const registerWithCodeV2 = async (req, res, next) => {
       }
       createT = await TeamHelper.createTeam(getU.user._id, teamInput);
       if (createT.err) {
+        console.log(createT.err);
         return ErrorHelper.ClientError(res, {error: 'There was an error in creating team'}, 400);
       }
     }
@@ -133,5 +189,6 @@ const registerWithCodeV2 = async (req, res, next) => {
 module.exports = {
   requestForCode: requestForCode,
   registerWithCode: registerWithCode,
-  registerWithCodeV2: registerWithCodeV2
+  registerWithCodeV2: registerWithCodeV2,
+  checkUserInput: checkUserInput
 };

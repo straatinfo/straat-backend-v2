@@ -5,7 +5,7 @@ const UserHelper = require('../helpers/user.helper');
 const accessCodeRequestFormValidator = (req, res, next) => {
   const messages = [];
 
-  req.checkBody('email', 'Email must be empty').notEmpty();
+  req.checkBody('email', 'Email must not be empty').notEmpty();
   req.checkBody('email', 'Invalid Email').isEmail();
   req.checkBody('fname', 'Firstname must not be empty').notEmpty();
   req.checkBody('lname', 'Lastname must not be empty').notEmpty();
@@ -98,11 +98,11 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
     const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
 
     if (checkUser.err) {
-      ErrorHelper.ClientError(res, {error: checkUser.err}, 400);
+      return ErrorHelper.ClientError(res, {error: checkUser.err}, 400);
     }
 
     if (checkUser.user) {
-      ErrorHelper.ClientError(res, {error: 'email or username is already in used'}, 400);
+      return ErrorHelper.ClientError(res, {error: 'email or username is already in used'}, 400);
     }
 
     if (!req.body.country) {
