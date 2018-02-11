@@ -7,7 +7,7 @@ const AuthRoute = express.Router();
 const UserValidator = require('../validator/user.validator');
 
 AuthRoute.route('/login')
-.post(/*requireSignin,*/ Authentication.login);
+.post(requireSignin, Authentication.login);
 
 AuthRoute.route('/register')
 .post(UserValidator.registrationFormValidator, Authentication.register);
