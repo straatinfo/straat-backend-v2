@@ -6,18 +6,18 @@ const Host = require('../api/host');
 const HostRoute = express.Router();
 
 HostRoute.route('/')
-.get(/*requireSignin,*/ Host.getHosts)
-.post(/*requireSignin,*/ Host.createHost);
+.get(/*requireAuth,*/ Host.getHosts)
+.post(/*requireAuth,*/ Host.createHost);
 
 HostRoute.route('/:id')
-.get(/*requireSignin,*/ Host.getHostById)
-.put(/*requireSignin,*/ Host.updateHost)
-.delete(/*requireSignin,*/ Host.deleteHost);
+.get(/*requireAuth,*/ Host.getHostById)
+.put(/*requireAuth,*/ Host.updateHost)
+.delete(/*requireAuth,*/ Host.deleteHost);
 
 HostRoute.route('/withinRadius/:long/:lat/:radius')
-.get(/*requireSignin,*/ Host.getHostsWithinRadius);
+.get(/*requireAuth,*/ Host.getHostsWithinRadius);
 
 HostRoute.route('/bulk')
-.post(/*requireSignin,*/ Host.bulkCreateHost);
+.post(/*requireAuth,*/ Host.bulkCreateHost);
 
 module.exports = HostRoute;
