@@ -11,6 +11,7 @@ const DesignRoute = require('./design.route');
 const RegistrationRoute = require('./registration.route');
 const UploadRoute = require('./upload.route');
 
+
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
     res.send({message: 'Web API is now online, waiting for requests..', status: 1, online: true});
