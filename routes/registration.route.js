@@ -20,4 +20,7 @@ RegistrationRoute.route('/signupV2')
   Registration.registerWithCodeV2
 );
 
+RegistrationRoute.route('/validation')
+.post(Registration.checkUserInput);
+
 module.exports = RegistrationRoute;
