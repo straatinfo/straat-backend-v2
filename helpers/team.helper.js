@@ -87,47 +87,43 @@ const getTeamById = (_id) => {
 
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
-  console.log(input);
   return new Promise(async(resolve, reject) => {
+    const findUser = await UserHelper.findUserById(_user);
     try {
-      const findUser = UserHelper.findUserById(_user);
       if (findUser.err) {
         return resolve({err: findUser.err});
       }
+      if (!findUser.user) {
+        return resolve({err: 'Cannot find user'});
+      }
+      const newTeam = new Team({...input, 'isVolunteer': findUser.user.isVolunteer});
+      newTeam.save(async(err, team) => {
+        if (err) {
+          return resolve({err: err});
+        }
+          const addLeader = await TeamLeaderHelper.addTeamLeader(_user, team._id);
+          if (addLeader.err) {
+            return resolve({err: `The team was added but leader failed to add.`});
+          }
+          const addLeaderToTeam = await TeamLeaderHelper.addTeamLeaderToTeam(team._id, addLeader.teamLeader._id);
+          const addLeaderToUser = await TeamLeaderHelper.addTeamLeaderToUser(_user, addLeader.teamLeader._id);
+          if (addLeaderToTeam.err || addLeaderToUser.err) {
+            return resolve({err: 'Unable to register leader to team and user'});
+          }
+          const updateHost = await UserHelper.addTeamToHost(input._host, team._id);
+          if (updateHost.err) {
+            return resolve({err: updateHost.err});
+          }
+          const getTeamInfo = await getTeamById(team._id);
+          if (getTeamInfo.err) {
+            return resolve({err: null, team: team});
+          }
+          resolve({err: null, team: getTeamInfo.team});
+      });
     }
     catch (e) {
       reject(e);
     }
-    const newTeam = new Team({...input, 'isVolunteer': findUser.user.isVolunteer});
-    newTeam.save(async(err, team) => {
-      if (err) {
-        console.log(err);
-        return resolve({err: err});
-      }
-      try {
-        const addLeader = await TeamLeaderHelper.addTeamLeader(_user, team._id);
-        if (addLeader.err) {
-          return resolve({err: `The team was added but leader failed to add.`});
-        }
-        const addLeaderToTeam = await TeamLeaderHelper.addTeamLeaderToTeam(team._id, addLeader.teamLeader._id);
-        const addLeaderToUser = await TeamLeaderHelper.addTeamLeaderToUser(_user, addLeader.teamLeader._id);
-        if (addLeaderToTeam.err || addLeaderToUser.err) {
-          return resolve({err: 'Unable to register leader to team and user'});
-        }
-        const updateHost = await UserHelper.addTeamToHost(input._host, team._id);
-        if (updateHost.err) {
-          return resolve({err: updateHost.err});
-        }
-        const getTeamInfo = await getTeamById(team._id);
-        if (getTeamInfo.err) {
-          return resolve({err: null, team: team});
-        }
-        resolve({err: null, team: getTeamInfo.team});
-      }
-      catch (e) {
-        reject(e);
-      }
-    });
   });
 };
 
@@ -313,6 +309,20 @@ const kickMember = (_user, _team) => {
   });
 };
 
+const checkTeamByCredentials = (teamNameOrTeamEmail) => {
+  return new Promise((resolve, reject) => {
+    Team.findOne({$or: [
+      { 'teamName': teamNameOrTeamEmail },
+      { 'teamEmail': teamNameOrTeamEmail }
+    ]}, (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    });
+  });
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -323,5 +333,6 @@ module.exports = {
   addLeader: addLeader,
   removeLeader: removeLeader,
   addMember: addMember,
-  kickMember: kickMember
+  kickMember: kickMember,
+  checkTeamByCredentials: checkTeamByCredentials
 };
