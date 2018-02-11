@@ -10,19 +10,19 @@ const Category = require('../api/category');
 const CategoryRoute = express.Router();
 
 CategoryRoute.route('/:hostId')
-.get(/*requireSignin,*/ Category.getMainCategories)
-.post(/*requireSignin,*/MainCategoryValidator.mainCategoryFormValidator, Category.createMainCategory);
+.get(/*requireAuth,*/ Category.getMainCategories)
+.post(/*requireAuth,*/ MainCategoryValidator.mainCategoryFormValidator, Category.createMainCategory);
 
 CategoryRoute.route('/:hostId/:mainCategoryId')
-.put(/*requireSignin,*/ Category.updateMainCategory)
-.delete(/*requireSignin,*/ Category.deleteMainCategory);
+.put(/*requireAuth,*/ Category.updateMainCategory)
+.delete(/*requireAuth,*/ Category.deleteMainCategory);
 
 CategoryRoute.route('/sub/:mainCategoryId')
-.get(/*requireSignin,*/ Category.getSubCategories)
-.post(/*requireSignin,*/ SubCategoryValidator.subCategoryFormValidator, Category.createSubCategory);
+.get(/*requireAuth,*/ Category.getSubCategories)
+.post(/*requireAuth,*/ SubCategoryValidator.subCategoryFormValidator, Category.createSubCategory);
 
 CategoryRoute.route('/sub/:mainCategoryId/:subCategoryId')
-.put(/*requireSignin,*/ Category.updateSubCategory)
-.delete(/*requireSignin,*/ Category.deleteSubCategory);
+.put(/*requireAuth,*/ Category.updateSubCategory)
+.delete(/*requireAuth,*/ Category.deleteSubCategory);
 
 module.exports = CategoryRoute;

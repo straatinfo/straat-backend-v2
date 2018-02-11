@@ -31,6 +31,33 @@ const getTeams = () => {
   });
 };
 
+const getTeamWithFilter = (queryObject) => {
+  return new Promise((resolve, reject) => {
+    Team.find({'_host': queryObject._host, 'isVolunteer': queryObject.isVolunteer})
+    .populate({
+      path: 'teamleaders',
+      populate: {
+        path: '_user',
+        select: { '_id': 1, 'email': 1 }
+      }
+    })
+    .populate({
+      path: 'teamMembers',
+      populate: {
+        path: '_user',
+        select: { '_id': 1, 'email': 1 }
+      }
+    })
+    .populate('_host', [ '_id', 'hostName' ])
+    .exec((err, teams) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, teams: teams});
+    });
+  });
+};
+
 const getTeamById = (_id) => {
   return new Promise((resolve, reject) => {
     Team.findById(_id)
@@ -80,23 +107,19 @@ const createTeam = (_user, input) => {
       try {
         const addLeader = await TeamLeaderHelper.addTeamLeader(_user, team._id);
         if (addLeader.err) {
-          console.log('6')
           return resolve({err: `The team was added but leader failed to add.`});
         }
         const addLeaderToTeam = await TeamLeaderHelper.addTeamLeaderToTeam(team._id, addLeader.teamLeader._id);
         const addLeaderToUser = await TeamLeaderHelper.addTeamLeaderToUser(_user, addLeader.teamLeader._id);
         if (addLeaderToTeam.err || addLeaderToUser.err) {
-          console.log('3')
           return resolve({err: 'Unable to register leader to team and user'});
         }
         const updateHost = await UserHelper.addTeamToHost(input._host, team._id);
         if (updateHost.err) {
-          console.log('4')
           return resolve({err: updateHost.err});
         }
         const getTeamInfo = await getTeamById(team._id);
         if (getTeamInfo.err) {
-          console.log('5')
           return resolve({err: null, team: team});
         }
         resolve({err: null, team: getTeamInfo.team});
@@ -292,6 +315,7 @@ const kickMember = (_user, _team) => {
 
 module.exports = {
   getTeams: getTeams,
+  getTeamWithFilter: getTeamWithFilter,
   getTeamById: getTeamById,
   createTeam: createTeam,
   updateTeam: updateTeam,

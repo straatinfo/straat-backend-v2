@@ -10,30 +10,30 @@ TeamInviteRoute.route('/teamInvites/:teamId')
 .get(/*requireSignin,*/ TeamInvite.getTeamPendingInvites);
 
 TeamInviteRoute.route('/teamRequests/:teamId')
-.get(/*requireSignin,*/ TeamInvite.getTeamPendingRequests);
+.get(/*requireAuth,*/ TeamInvite.getTeamPendingRequests);
 
 TeamInviteRoute.route('/userInvites/:userId')
-.get(/*requireSignin,*/ TeamInvite.getUserPendingInvites);
+.get(/*requireAuth,*/ TeamInvite.getUserPendingInvites);
 
 TeamInviteRoute.route('/userRequests/:userId')
-.get(/*requireSignin,*/ TeamInvite.getUserPendingRequest);
+.get(/*requireAuth,*/ TeamInvite.getUserPendingRequest);
 
 TeamInviteRoute.route('/sendInvite/:userId/:teamId')
-.get(/*requireSignin,*/ TeamInvite.sendInvite);
+.get(/*requireAuth,*/ TeamInvite.sendInvite);
 
 TeamInviteRoute.route('/sendRequest/:userId/:teamId')
-.get(/*requireSignin,*/ TeamInvite.sendRequest);
+.get(/*requireAuth,*/ TeamInvite.sendRequest);
 
 TeamInviteRoute.route('/declineRequest/:userId/:teamId')
-.get(/*requireSignin,*/ TeamInvite.declineRequest);
+.get(/*requireAuth,*/ TeamInvite.declineRequest);
 
 TeamInviteRoute.route('/declineInvite/:userId/:teamId')
-.get(/*requireSignin,*/ TeamInvite.declineInvite);
+.get(/*requireAuth,*/ TeamInvite.declineInvite);
 
 TeamInviteRoute.route('/acceptRequest/:userId/:teamId')
-.get(/*requireSignin,*/ TeamInvite.acceptRequest);
+.get(/*requireAuth,*/ TeamInvite.acceptRequest);
 
 TeamInviteRoute.route('/acceptInvite/:userId/:teamId')
-.get(/*requireSignin,*/ TeamInvite.acceptInvite);
+.get(/*requireAuth,*/ TeamInvite.acceptInvite);
 
 module.exports = TeamInviteRoute;

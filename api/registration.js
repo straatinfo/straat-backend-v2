@@ -7,6 +7,15 @@ const TeamHelper = require('../helpers/team.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
 const JwtService = require('../service/jwt.service');
 
+const checkUserInput = async (req, res, next) => {
+  try {
+
+  }
+  catch (e) {
+    ErrorHelper.ServerError(e);
+  }
+};
+
 const requestForCode = async (req, res, next) => {
   try {
     const codeReq = await MailingHelper.sendRegistrationRequestNotif(req.body);
@@ -57,6 +66,16 @@ const registerWithCodeV2 = async (req, res, next) => {
       ...req.body,
       '_host': getHost._host
     };
+
+    const checkUsername = await UserHelper.checkUserByCredentials(input.username);
+    const checkEmail = await UserHelper.checkUserByCredentials(input.email);
+    if (checkUsername.err || checkEmail.err) {
+      return ErrorHelper.ClientError(res, {error: 'Error in checking username and email validity'}, 400);
+    }
+    if (checkUsername.user || checkEmail.user) {
+      return ErrorHelper.ClientError(res, {error: 'Username or email is already in used'});
+    }
+
     const createU = await UserHelper.createNewUser(input);
     if (createU.err) {
       return ErrorHelper.ClientError(res, {error: createU.err}, 400);
@@ -66,6 +85,7 @@ const registerWithCodeV2 = async (req, res, next) => {
     // create or join team
     let teamInput = {}, createT, requestT;
     if (req.body._team) {
+      // if there is team id
       requestT = await TeamInviteHelper.sendRequest(getU.user._id, req.body._team);
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400);
