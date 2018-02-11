@@ -32,7 +32,7 @@ const getTeamById = async (req, res, next) => {
 const getTeamWithFilter = async (req, res, next) => {
   const { queryObject } = req.body;
   try {
-    if (!queryObject || !queryObject._host || !queryObject.isVolunteer) {
+    if (!queryObject || !queryObject._host || queryObject.isVolunteer === null) {
       ErrorHelper.ClientError(res, {error: 'Invalid queryObject'}, 400);
     }
     const getTeamWF = await TeamHelper.getTeamWithFilter(queryObject);
