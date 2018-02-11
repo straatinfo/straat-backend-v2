@@ -6,16 +6,16 @@ const Message = require('../api/message');
 const MessageRoute = express.Router();
 
 MessageRoute.route('/')
-.post(/*requireSignin,*/ Message.createMessage);
+.post(/*requireAuth,*/ Message.createMessage);
 
 MessageRoute.route('/:id')
-.put(/*requireSignin,*/ Message.updateMessage)
-.delete(/*requireSignin,*/ Message.deleteMessage);
+.put(/*requireAuth,*/ Message.updateMessage)
+.delete(/*requireAuth,*/ Message.deleteMessage);
 
 MessageRoute.route('/conversation/:conversationId')
-.get(/*requireSignin,*/ Message.getConversationMessages);
+.get(/*requireAuth,*/ Message.getConversationMessages);
 
 MessageRoute.route('/conversation/:conversationId/:pageNumber')
-.get(/*requireSignin,*/ Message.getConversationMessagesByPage);
+.get(/*requireAuth,*/ Message.getConversationMessagesByPage);
 
 module.exports = MessageRoute;

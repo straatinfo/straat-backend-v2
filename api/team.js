@@ -29,6 +29,24 @@ const getTeamById = async (req, res, next) => {
   }
 };
 
+const getTeamWithFilter = async (req, res, next) => {
+  const { queryObject } = req.body;
+  try {
+    if (!queryObject || !queryObject._host || !queryObject.isVolunteer) {
+      ErrorHelper.ClientError(res, {error: 'Invalid queryObject'}, 400);
+    }
+    const getTeamWF = await TeamHelper.getTeamWithFilter(queryObject);
+    if (getTeamWF.err) {
+      ErrorHelper.ClientError(res, {error: getTeamWF.err}, 400);
+    }
+    SuccessHelper.success(res, getTeamWF.teams);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+
+};
+
 const createTeam = async (req, res, next) => {
   const { userId } = req.params;
   try {
@@ -146,6 +164,7 @@ module.exports = {
   getTeams: getTeams,
   getTeamById: getTeamById,
   createTeam: createTeam,
+  getTeamWithFilter: getTeamWithFilter,
   updateTeam: updateTeam,
   deleteTeam: deleteTeam,
   addLeader: addLeader,

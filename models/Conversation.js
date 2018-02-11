@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const conversationSchema = new Schema({
-  title: { type: String , default: '', index: true },
+  title: { type: String , default: 'untilted conversation', index: true },
   type: { type: String, enum: ['private', 'team', 'global'], default: 'team' },
   _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   participants: [{
