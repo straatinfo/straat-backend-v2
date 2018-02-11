@@ -8,24 +8,24 @@ const CloudinaryService = require('../service/cloudinary.service');
 const ReportFormValidator = require('../validator/report.validator');
 
 ReportRoute.route('/')
-.get(/*requireSignin,*/ Report.getReports)
+.get(/*requireAuth,*/ Report.getReports)
 .post(
-  /*requireSignin,*/
+  /*requireAuth,*/
   CloudinaryService.multipleUpload('report-images', 9),
   ReportFormValidator.reportFormValidator,
   CloudinaryService.getMetaData, Report.createReport
 );
 
 ReportRoute.route('/:id')
-.get(/*requireSignin,*/ Report.getReportById)
-.put(/*requireSignin,*/ Report.updateReport)
-.delete(/*requireSignin,*/ Report.deleteReport);
+.get(/*requireAuth,*/ Report.getReportById)
+.put(/*requireAuth,*/ Report.updateReport)
+.delete(/*requireAuth,*/ Report.deleteReport);
 
 
 ReportRoute.route('/category/:reportTypeId')
-.get(/*requireSignin,*/ Report.getReportsByReportType);
+.get(/*requireAuth,*/ Report.getReportsByReportType);
 
 ReportRoute.route('/host/:hostId')
-.get(/*requireSignin,*/ Report.getReportsByHostId);
+.get(/*requireAuth,*/ Report.getReportsByHostId);
 
 module.exports = ReportRoute;

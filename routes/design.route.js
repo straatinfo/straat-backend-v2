@@ -7,14 +7,14 @@ const DesignRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
 
 DesignRoute.route('/host/:hostId')
-.get(/*requireSignin,*/ Design.getDesigns)
-.post(/*requireSignin,*/ Design.createDesign);
+.get(/*requireAuth,*/ Design.getDesigns)
+.post(/*requireAuth,*/ Design.createDesign);
 
 DesignRoute.route('/:id')
-.get(/*requireSignin,*/ Design.getDesignById)
-.post(CloudinaryService.singleUpload('host-logo'), /*requireSignin,*/ Design.addLogo)
-.put(/*requireSignin,*/ Design.updateDesign)
-.delete(/*requireSignin,*/ Design.deleteDesign);
+.get(/*requireAuth,*/ Design.getDesignById)
+.post(CloudinaryService.singleUpload('host-logo'), /*requireAuth,*/Design.addLogo)
+.put(/*requireAuth,*/ Design.updateDesign)
+.delete(/*requireAuth,*/ Design.deleteDesign);
 
 
 module.exports = DesignRoute;

@@ -3,10 +3,6 @@ const SuccessHelper = require('../helpers/success.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const JwtService = require('../service/jwt.service');
 
-const checkUserInput = async (req, res, next) => {
-  res.send('success');
-};
-
 const login = async (req, res, next) => {
   try {
     const user = await UserHelper.findUserById(req.user._id);
@@ -42,7 +38,6 @@ const register = async (req, res, next) => {
 }
 
 module.exports = {
-  checkUserInput: checkUserInput,
   login: login,
   register: register
 };

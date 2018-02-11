@@ -9,6 +9,8 @@ const ConversationRoute = require('./conversation.route');
 const ReporterRoute = require('./reporter.route');
 const DesignRoute = require('./design.route');
 const RegistrationRoute = require('./registration.route');
+const LiveValidation = require('./liveValidation.route');
+
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -25,4 +27,5 @@ module.exports = (app) => {
   app.use('/v1/api/reporter', ReporterRoute);
   app.use('/v1/api/design', DesignRoute);
   app.use('/v1/api/registration', RegistrationRoute);
+  app.use('/v1/api/liveValidation', LiveValidation);
 };
