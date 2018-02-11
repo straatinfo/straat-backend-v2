@@ -6,11 +6,11 @@ const ReportType = require('../api/reportType');
 const ReportTypeRoute = express.Router();
 
 ReportTypeRoute.route('/')
-.get(/*requireSignin,*/ ReportType.getReportTypes)
-.post(/*requireSignin,*/ ReportType.createReportType);
+.get(/*requireAuth,*/ ReportType.getReportTypes)
+.post(/*requireAuth,*/ ReportType.createReportType);
 
 ReportTypeRoute.route('/:id')
-.put(/*requireSignin,*/ ReportType.updateReportType)
-.delete(/*requireSignin,*/ ReportType.deleteReportType);
+.put(/*requireAuth,*/ ReportType.updateReportType)
+.delete(/*requireAuth,*/ ReportType.deleteReportType);
 
 module.exports = ReportTypeRoute;

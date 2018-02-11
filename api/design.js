@@ -12,6 +12,7 @@ const getDesigns = async (req, res, next) => {
     SuccessHelper.success(res, getD.designs);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -33,6 +34,7 @@ const createDesign = async (req, res, next) => {
     SuccessHelper.success(res, createD.design);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -40,6 +42,9 @@ const createDesign = async (req, res, next) => {
 const addLogo = async (req, res, next) => {
   const { id } = req.params;
   try {
+    if (!req.file) {
+      return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
+    }
     const { url, secure_url } = req.file;
     if (!url || !secure_url) {
       return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
@@ -51,6 +56,7 @@ const addLogo = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -65,6 +71,7 @@ const getDesignById = async (req, res, next) => {
     SuccessHelper.success(res, getDBI.design);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -79,6 +86,7 @@ const updateDesign = async (req, res, next) => {
     SuccessHelper.success(res, updateD.design);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -93,6 +101,7 @@ const deleteDesign = async (req, res, next) => {
     SuccessHelper.success(res, deleteD.design);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };

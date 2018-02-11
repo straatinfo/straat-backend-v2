@@ -1,5 +1,6 @@
 const ErrorHelper = require('../helpers/error.helper');
 const RoleHelper = require('../helpers/role.helper');
+const UserHelper = require('../helpers/user.helper');
 
 const accessCodeRequestFormValidator = (req, res, next) => {
   const messages = [];
@@ -40,6 +41,16 @@ const registerWithCodeFormValidator = async (req, res, next) => {
     req.checkBody('gender', 'Gender Must not be empty').notEmpty();
     req.checkBody('isVolunteer', 'isVolunteer field must not be empty').notEmpty();
 
+    const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
+
+    if (checkUser.err) {
+      ErrorHelper.ClientError(res, {error: checkUser.err}, 400);
+    }
+
+    if (checkUser.user) {
+      ErrorHelper.ClientError(res, {error: 'email or username is already in used'}, 400);
+    }
+
     const errors = req.validationErrors();
 
     if (errors) {
@@ -66,6 +77,7 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
     const messages = [];
     req.checkBody('code', 'Code is required').notEmpty();
     req.checkBody('email', 'Invalid email').isEmail();
+
     req.checkBody('password', 'Invalid password').notEmpty().isLength({ min: 4 });
     req.checkBody('houseNumber', 'House Number must not be empty').notEmpty();
     req.checkBody('streetName', 'Street Name must not be empty').notEmpty();
@@ -80,8 +92,19 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
     req.checkBody('username', 'Username must not be empty').notEmpty();
     req.checkBody('gender', 'Gender Must not be empty').notEmpty();
     req.checkBody('isVolunteer', 'isVolunteer field must not be empty').notEmpty();
-    req.checkBody('long', 'Longitutude is required').notEmpty();
-    req.checkBody('lat', 'Latitude is required').notEmpty();
+    // req.checkBody('long', 'Longitutude is required').notEmpty();
+    // req.checkBody('lat', 'Latitude is required').notEmpty();
+
+    const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
+
+    if (checkUser.err) {
+      ErrorHelper.ClientError(res, {error: checkUser.err}, 400);
+    }
+
+    if (checkUser.user) {
+      ErrorHelper.ClientError(res, {error: 'email or username is already in used'}, 400);
+    }
+
     if (!req.body.country) {
       req.body.country = 'Netherlands';
     }
