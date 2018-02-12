@@ -15,7 +15,17 @@ const ClientError = (res, data, status = 400) => {
   return res.status(status).send(object);
 };
 
+const UserError = (res, data, status = 200) => {
+  const object = {
+    status: 0,
+    message: 'User Error',
+    data: data
+  };
+  return res.status(status).send(object);
+}
+
 module.exports = {
   ServerError: ServerError,
-  ClientError: ClientError
+  ClientError: ClientError,
+  UserError: UserError
 };

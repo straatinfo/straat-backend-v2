@@ -9,7 +9,7 @@ const teamSchema = new Schema({
   description: { type: String },
   isVolunteer: { type: Boolean, default: true },
   isApproved: { type: Boolean, default: false },
-  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   teamLeaders: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
   }],

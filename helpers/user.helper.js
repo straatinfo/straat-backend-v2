@@ -23,10 +23,21 @@ const findUserById = (id) => {
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked', 'isPatron',
-      'hostName', 'username'
+      'hostName', 'username', '_host', 'isVolunteer'
     ])
     .populate('_role')
-    .populate('_host')
+    .populate({
+      path: 'teamMembers',
+      populate: {
+        path: '_team'
+      }
+    })
+    .populate({
+      path: 'teamLeaders',
+      populate: {
+        path: '_team'
+      }
+    })
     .exec(function(err, user) {
       if (err) {
         return resolve({err: err});

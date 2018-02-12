@@ -1,0 +1,23 @@
+{
+  "gender": "Male",
+  "fname": "",
+  "lname": "",
+  "username": "",
+  "password": "",
+  "streetName": "",
+  "houseNumber": "",
+  "postalCode" : "",
+  "city": "",
+  "email": "",
+  "phoneNumber": "",
+  "isVolunteer": "",
+  "lat": "53.2729807",
+  "long": "5.985930199999999",
+  "_host": "5a15c7c3c189fb0014c09210", // host ID
+  "code": "",
+  "_team": "", // team ID if joining to team
+  "language": "DUTCH",
+  "teamName": "", // if creating new team
+  "teamEmail": "",
+  "team-logo": ""
+}
