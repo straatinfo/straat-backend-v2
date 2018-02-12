@@ -204,6 +204,9 @@ const registerWithCodeV3 = async (req, res, next) => {
     if (checkUsername.err || checkEmail.err) {
       return ErrorHelper.ClientError(res, {error: 'Error in checking username and email validity'}, 400);
     }
+
+    console.log(checkEmail, checkUsername);
+
     if (checkUsername.user || checkEmail.user) {
       return ErrorHelper.ClientError(res, {error: 'Username or email is already in used'});
     }
@@ -255,7 +258,7 @@ const registerWithCodeV3 = async (req, res, next) => {
 
     // give token
     const token = JwtService.tokenForUser(getU.user._id);
-    SuccessHelper.success(res, { user: getU.user, token: token });
+    SuccessHelper.success(res, { user: getU.user, token: token, team: team });
   }
   catch (e) {
     console.log(e);

@@ -83,7 +83,7 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
     req.checkBody('streetName', 'Street Name must not be empty').notEmpty();
     req.checkBody('city', 'City must not be empty').notEmpty();
     // req.checkBody('country', 'Country must not be empty').notEmpty();
-    req.checkBody('state', 'State must not be empty').notEmpty();
+    // req.checkBody('state', 'State must not be empty').notEmpty();
     req.checkBody('postalCode', 'Postal Code must not be empty').notEmpty();
     req.checkBody('fname', 'Firstname must not be empty').notEmpty();
     req.checkBody('fname', 'Invalid Name input').isLength({ min: 2 });
@@ -94,6 +94,10 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
     req.checkBody('isVolunteer', 'isVolunteer field must not be empty').notEmpty();
     // req.checkBody('long', 'Longitutude is required').notEmpty();
     // req.checkBody('lat', 'Latitude is required').notEmpty();
+
+    if (!req.body.username) {
+      return ErrorHelper.ClientError(res, {error: 'username is undefined'}, 400);
+    }
 
     const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
 
