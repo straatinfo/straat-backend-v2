@@ -44,6 +44,20 @@ const updateMainCategory = async (req, res, next) => {
   }
 };
 
+const getMainCategoriesByReportType = async (req,res, next) => {
+  const { reportTypeId } = req.params;
+  try {
+    const getMCBRT = await CategoryHelper.getMainCategoriesByReportType(reportTypeId);
+    if (getMCBRT.err) {
+      return ErrorHelper.ClientError(res, {error: getMCBRT.err}, 400);
+    }
+    SuccessHelper.success(res, getMCBRT.mainCategories);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const deleteMainCategory = async (req, res, next) => {
   const { mainCategoryId } = req.params;
   try {
@@ -122,5 +136,6 @@ module.exports = {
   getSubCategories: getSubCategories,
   createSubCategory: createSubCategory,
   updateSubCategory: updateSubCategory,
-  deleteSubCategory: deleteSubCategory
+  deleteSubCategory: deleteSubCategory,
+  getMainCategoriesByReportType: getMainCategoriesByReportType
 };

@@ -41,6 +41,21 @@ const getMainCategoryById = (_id) => {
   });
 }
 
+const getMainCategoriesByReportType = (_reportType) => {
+  return new Promise((resolve, reject) => {
+    MainCategory.find({'_reportType': _reportType})
+    .populate('subCategories')
+    .populate('_reportType')
+    .populate('_host')
+    .exec((err, mainCategories) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, mainCategories: mainCategories});
+    });
+  });
+};
+
 const createMainCategory = (input) => {
   return new Promise((resolve, reject) => {
     const newMainCategory = new MainCategory(input);
@@ -208,5 +223,6 @@ module.exports = {
   getSubCategories: getSubCategories,
   createSubcategory: createSubcategory,
   updateSubCategory: updateSubCategory,
-  deleteSubCategory: deleteSubCategory
+  deleteSubCategory: deleteSubCategory,
+  getMainCategoriesByReportType: getMainCategoriesByReportType
 };

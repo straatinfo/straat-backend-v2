@@ -1,5 +1,8 @@
 const User = require('../models/User');
 const ErrorHelper = require('./error.helper');
+const CodeGenerator = require('node-code-generator');
+const generator = new CodeGenerator();
+const pattern = '************';
 
 const checkUserByCredentials = (loginName) => {
   return new Promise((resolve, reject) => {
@@ -47,6 +50,21 @@ const findUserById = (id) => {
   });
 };
 
+const updateUser = (_id, input) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_id, input, async (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      const getUserD = await findUserById(user._id);
+      if (getUserD.err) {
+        return resolve({err: getUserD.err});
+      }
+      resolve({err: null, user: getUserD.user});
+    });
+  });
+};
+
 const createNewUser = (input) => {
   return new Promise((resolve, reject) => {
     const userEncryption = new User();
@@ -80,9 +98,68 @@ const addTeamToHost = (_host, _team) => {
   });
 };
 
+const forgotPassword = (email) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // find user
+      const checkU = await checkUserByCredentials(email);
+      if (checkU.err) {
+        return resolve({err: checkU.err});
+      }
+      if (!checkU.user) {
+        return resolve({err: 'Invalid email'});
+      }
+
+      const code = generator.generateCodes(pattern, 1);
+      const newPassword = code[0];
+
+      // update user password
+      const userInstance = new User();
+      const encryptedPassword = userInstance.encryptPassword(newPassword);
+      const updateU = await updateUser(checkU.user._id, {'password': encryptedPassword});
+      if (updateU.err) {
+        return resolve({err: updateU.err});
+      }
+      resolve({err: null, user: updateU.user});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const changePassword = (email, newPassword) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // find user
+      const checkU = await checkUserByCredentials(email);
+      if (checkU.err) {
+        return resolve({err: checkU.err});
+      }
+      if (!checkU.user) {
+        return resolve({err: 'Invalid email'});
+      }
+      // update user password
+      const userInstance = new User();
+      const encryptedPassword = userInstance.encryptPassword(newPassword);
+      const updateU = await updateUser(checkU.user._id, {'password': encryptedPassword});
+      if (updateU.err) {
+        return resolve({err: updateU.err});
+      }
+      resolve({err: null, user: updateU.user});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
   createNewUser: createNewUser,
-  addTeamToHost: addTeamToHost
+  addTeamToHost: addTeamToHost,
+  updateUser: updateUser,
+  forgotPassword: forgotPassword,
+  changePassword: changePassword
 };
