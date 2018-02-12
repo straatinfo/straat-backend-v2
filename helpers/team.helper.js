@@ -172,12 +172,19 @@ const checkUserIfCanJoin = (_user, _team) => {
   return new Promise(async(resolve, reject) => {
     try {
       const checkT = await getTeamById(_team);
+      console.log(checkT);
       if (checkT.err) {
         return resolve({err: checkT.err});
       }
       const checkU = await UserHelper.findUserById(_user);
       if (checkU.err) {
         return resolve({err: checkU.err});
+      }
+      if (!checkT.team) {
+        return resolve({err: 'Invalid Team'});
+      }
+      if (!checkU.user) {
+        return resolve({err: 'Invalid User'});
       }
       if (checkU.user.isVolunteer !== checkT.team.isVolunteer) {
         return resolve({status: false});
