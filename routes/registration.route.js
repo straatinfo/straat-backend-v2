@@ -20,6 +20,12 @@ RegistrationRoute.route('/signupV2')
   Registration.registerWithCodeV2
 );
 
+RegistrationRoute.route('/signupV3')
+.post(
+  RegistrationValidator.registerWithCodeFormValidatorV2,
+  Registration.registerWithCodeV3
+);
+
 RegistrationRoute.route('/validation')
 .post(Registration.checkUserInput);
 
