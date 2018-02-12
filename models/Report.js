@@ -11,9 +11,10 @@ const reportSchema = new Schema({
   note: { type: String },
   status: { type: String, default: 'Unresolved' },
   isVehicleInvolved: { type: Boolean, default: false },
-  idPeopleInvolved: { type: Boolean, default: false },
+  isPeopleInvolved: { type: Boolean, default: false },
   vehicleInvolvedDescription: { type: String },
   peopleInvolvedCount: { type: Number },
+  isUrgent: { type: Boolean, default: false },
   reportPhotos: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'ReportPhoto'
   }],
