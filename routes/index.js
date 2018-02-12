@@ -10,7 +10,7 @@ const ReporterRoute = require('./reporter.route');
 const DesignRoute = require('./design.route');
 const RegistrationRoute = require('./registration.route');
 const UploadRoute = require('./upload.route');
-
+const UserRoute = require('./user.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -28,4 +28,5 @@ module.exports = (app) => {
   app.use('/v1/api/design', DesignRoute);
   app.use('/v1/api/registration', RegistrationRoute);
   app.use('/v1/api/upload', UploadRoute);
+  app.use('/v1/api/user', UserRoute);
 };

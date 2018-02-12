@@ -23,6 +23,8 @@ const userSchema = new Schema({
   isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
+  picUrl: { type: String },
+  picSecuredUrl: { type: String },
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   constituents: [{
