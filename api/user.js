@@ -1,6 +1,10 @@
 const UserHelper = require('../helpers/user.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
+const MailHelper = require('../helpers/mailing.helper');
+const CodeGenerator = require('node-code-generator');
+const generator = new CodeGenerator();
+const pattern = '************';
 
 const getUserDetails = async (req, res, next) => {
   const { id } = req.params;
@@ -34,8 +38,31 @@ const updateUserDetails = async (req, res, next) => {
 };
 
 const forgotPassword = async (req, res, next) => {
-  const { id } = req.params;
+  const { email } = req.body;
   try {
+    // check email
+    const checkU = await UserHelper.checkUserByCredentials(email);
+    if (checkU.err) {
+      return ErrorHelper.ClientError(res, {error: checkU.err}, 400);
+    }
+    if (!checkU.user) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid email'}, 400);
+    }
+    const userEmail = checkU.user.email;
+    // get new password
+    const code = generator(pattern, 1);
+    // update users password
+    const newPassword = code[0];
+    const changeP = await UserHelper.updateUser(userEmail.user._id, {'password': newPassword});
+    if (changeP.err) {
+      return ErrorHelper.ClientError(res, {error: changeP.err}, 400);
+    }
+    // send email for the generated password
+    const sendMail = await MailHelper.forgotPasswordNotif(userEmail, newPassword);
+    if (sendMail.err) {
+      return ErrorHelper.ClientError(res, {error: sendMail.err}, 400);
+    }
+    SuccessHelper.success(res, {message: 'Successfully sent email'});
     
   }
   catch (e) {
