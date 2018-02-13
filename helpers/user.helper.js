@@ -23,7 +23,8 @@ const findUserById = (id) => {
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked', 'isPatron',
-      'hostName', 'username', '_host', 'isVolunteer'
+      'hostName', 'username', '_host', 'isVolunteer',
+      'picUrl', 'picSecuredUrl'
     ])
     .populate('_role')
     .populate({
@@ -49,6 +50,7 @@ const findUserById = (id) => {
 
 const updateUser = (_id, input) => {
   return new Promise((resolve, reject) => {
+    console.log(input);
     User.findByIdAndUpdate(_id, input, async (err, user) => {
       if (err) {
         return resolve({err: err});
@@ -95,7 +97,7 @@ const addTeamToHost = (_host, _team) => {
   });
 };
 
-const forgotPassword = (email) => {
+const forgotPassword = (email, newPassword) => {
   return new Promise(async(resolve, reject) => {
     try {
       // find user
@@ -106,9 +108,6 @@ const forgotPassword = (email) => {
       if (!checkU.user) {
         return resolve({err: 'Invalid email'});
       }
-
-      const code = generator.generateCodes(pattern, 1);
-      const newPassword = code[0];
 
       // update user password
       const userInstance = new User();
@@ -125,21 +124,13 @@ const forgotPassword = (email) => {
   });
 };
 
-const changePassword = (email, newPassword) => {
+const changePassword = (_user, newPassword) => {
   return new Promise(async(resolve, reject) => {
     try {
-      // find user
-      const checkU = await checkUserByCredentials(email);
-      if (checkU.err) {
-        return resolve({err: checkU.err});
-      }
-      if (!checkU.user) {
-        return resolve({err: 'Invalid email'});
-      }
       // update user password
       const userInstance = new User();
       const encryptedPassword = userInstance.encryptPassword(newPassword);
-      const updateU = await updateUser(checkU.user._id, {'password': encryptedPassword});
+      const updateU = await updateUser(_user, {'password': encryptedPassword});
       if (updateU.err) {
         return resolve({err: updateU.err});
       }
