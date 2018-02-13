@@ -31,13 +31,14 @@ const createReportType = async (req, res, next) => {
 const updateReportType = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const updaetRT = await ReportTypeHelper.updateReportType(_id, req.body);
+    const updateRT = await ReportTypeHelper.updateReportType(id, req.body);
     if (updateRT.err) {
       return ErrorHelper.ClientError(res, {error: updateRT.err}, 400);
     }
     SuccessHelper.success(res, updateRT.reportType);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };

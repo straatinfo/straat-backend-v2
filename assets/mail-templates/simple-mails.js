@@ -42,5 +42,14 @@ module.exports = {
     </br>
     <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
     `;
+  },
+  fogotPasswordNotif: (newPassword) => {
+    return `
+    <p>Greetings!</p>
+    <p>Here is your new password: ${newPassword}</p>
+    </br>
+    <p>Sincerely,</p>
+    <p>Straat.info</p>
+    `;
   }
 }
