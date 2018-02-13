@@ -1,8 +1,5 @@
 const User = require('../models/User');
 const ErrorHelper = require('./error.helper');
-const CodeGenerator = require('node-code-generator');
-const generator = new CodeGenerator();
-const pattern = '************';
 
 const checkUserByCredentials = (loginName) => {
   return new Promise((resolve, reject) => {

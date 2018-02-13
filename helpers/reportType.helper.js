@@ -39,11 +39,20 @@ const createReportType = (input) => {
 
 const updateReportType = (_id, input) => {
   return new Promise((resolve, reject) => {
-    ReportType.findByIdAndUpdate(_id, input, (err, reportType) => {
+    ReportType.findByIdAndUpdate(_id, input, async(err, reportType) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, reportType: reportType});
+      try {
+        const getRT = await getReportTypeById(reportType._id);
+        if (getRT.err) {
+          return rsolve({err: getRT.err});
+        }
+        resolve({err: null, reportType: getRT.reportType});
+      }
+      catch (e) {
+        reject(e);
+      } 
     });
   });
 };

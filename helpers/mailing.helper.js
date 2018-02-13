@@ -31,7 +31,7 @@ const sendSuccessfulRegistrationNotif = (teamDetails) => {
   const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName);
   return new Promise(async(resolve, reject) => {
     try {
-      const sendBasicMail = await SendGridService.basicMail(sender. receiver, subject, mailBody);
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
       if (sendBasicMail.err) {
         return resolve({err: sendBasicMail.err});
       }
@@ -84,6 +84,26 @@ const deleteTeamNotif = () => {
   });
 };
 
+// forgot password notif
+const forgotPasswordNotif = (email, newPassword) => {
+  const receiver = email;
+  const sender = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
+  const subject = 'Forgot Password';
+  const mailBody = MailTemplates.fogotPasswordNotif(newPassword, sender);
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
+      if (sendBasicMail.err) {
+        return resolve({err: sendBasicMail.err});
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   sendRegistrationRequestNotif: sendRegistrationRequestNotif,
   sendSuccessfulRegistrationNotif: sendSuccessfulRegistrationNotif,
@@ -92,5 +112,6 @@ module.exports = {
   sendReportBNotif: sendReportBNotif,
   sendReportCNotif: sendReportCNotif,
   sendFeedBackNotif: sendFeedBackNotif,
-  deleteTeamNotif: deleteTeamNotif
+  deleteTeamNotif: deleteTeamNotif,
+  forgotPasswordNotif: forgotPasswordNotif
 };
