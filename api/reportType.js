@@ -46,7 +46,7 @@ const updateReportType = async (req, res, next) => {
 const deleteReportType = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const deleteRT = await ReportTypeHelper.deleteReportType(_id);
+    const deleteRT = await ReportTypeHelper.deleteReportType(id);
     if (deleteRT.err) {
       return ErrorHelper.ClientError(rea, {error: deleteRT.err}, 400);
     }
