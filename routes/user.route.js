@@ -2,11 +2,12 @@ const express = require('express');
 const passport = require('passport');
 require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
+const requireSignin = passport.authenticate('local', { session: false });
 const User = require('../api/user');
 const UserRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
 
-UserRoute.route('/:id')
+UserRoute.route('/profile/:id')
 .get(/* requireAuth, */ User.getUserDetails)
 .put(/* requireAuth, */ User.updateUserDetails);
 
@@ -17,8 +18,8 @@ UserRoute.route('/pic/:id')
   User.addProfilePic
 );
 
-UserRoute.route('/password/:id')
-.get(User.forgotPassword)
-.put(User.changePassword);
+UserRoute.route('/password')
+.post(User.forgotPassword)
+.put(requireSignin, User.changePassword);
 
 module.exports = UserRoute;

@@ -6,9 +6,9 @@ mongoose.connect(Config.DATA_BASE);
 
 const users = [
   new User({
-    email: 'admin@test.com',
-    username: 'admin',
-    postalCode: '12344'
+    email: 'johnhiggins.avila@gmail.com',
+    username: 'AdminJohn',
+    postalCode: 'test'
   })
 ];
 
