@@ -103,13 +103,14 @@ const createSubCategory = async (req, res, next) => {
 const updateSubCategory = async (req, res, next) => {
   const { subCategoryId } = req.params;
   try {
-    const updateSC = await CategoryHelper.updateSubCategory(subCategoryId);
-    if (udpateSC.err) {
+    const updateSC = await CategoryHelper.updateSubCategory(subCategoryId, req.body);
+    if (updateSC.err) {
       return ErrorHelper.ClientError(res, {error: updateSC.err}, 400);
     }
     SuccessHelper.success(res, updateSC.subCategory);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
