@@ -251,6 +251,33 @@ const deleteReport = (_id) => {
   });
 };
 
+const getReportByQueryObject = (queryObject) => {
+  return new Promise((resolve, reject) => {
+    Report.find(queryObject)
+    .populate('_reporter', [
+      '_id', 'fname', 'lname', 'email', 'gender',
+      'username', 'houseNumber', 'streetName',
+      'city', 'state', 'country', 'postalCode',
+      'phoneNumber'
+    ])
+    .populate('_host', [
+      '_id', 'hostName', 'houseNumber', 'streetName',
+      'city', 'state', 'country', 'postalCode',
+      'phoneNumber', 'long', 'lat'
+    ])
+    .populate('_reportType')
+    .populate('_mainCategory')
+    .populate('_subCategory')
+    .sort([['date', -1]])
+    .exec((err, reports) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reports: reports});
+    });
+  });
+};
+
 module.exports = {
   reportIdGenerator: reportIdGenerator,
   getReports: getReports,
@@ -261,6 +288,7 @@ module.exports = {
   getReportByHost: getReportByHost,
   getReportsByReportType: getReportsByReportType,
   saveUploadedPhotoReport: saveUploadedPhotoReport,
-  saveUploadLooper: saveUploadLooper
+  saveUploadLooper: saveUploadLooper,
+  getReportByQueryObject: getReportByQueryObject
 };
 

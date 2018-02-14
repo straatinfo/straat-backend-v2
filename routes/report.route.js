@@ -13,7 +13,8 @@ ReportRoute.route('/')
   /*requireAuth,*/
   CloudinaryService.multipleUpload('report-images', 9),
   ReportFormValidator.reportFormValidator,
-  CloudinaryService.getMetaData, Report.createReport
+  CloudinaryService.getMetaData,
+  Report.createReport
 );
 
 ReportRoute.route('/:id')
@@ -27,5 +28,11 @@ ReportRoute.route('/category/:reportTypeId')
 
 ReportRoute.route('/host/:hostId')
 .get(/*requireAuth,*/ Report.getReportsByHostId);
+
+ReportRoute.route('/reporter/:reporterId')
+.get(/* requireAuth, */ Report.getReportByReporter);
+
+ReportRoute.route('/nearby/:long/:lat/:radius')
+.get(/* requireAuth, */ Report.getReportNearBy);
 
 module.exports = ReportRoute;
