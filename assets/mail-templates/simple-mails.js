@@ -43,10 +43,14 @@ module.exports = {
     <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
     `;
   },
+  sendReportBNotifToHost: () => {
+
+  },
   fogotPasswordNotif: (newPassword) => {
     return `
     <p>Greetings!</p>
-    <p>Here is your new password: ${newPassword}</p>
+    <p>Here is your temporary password: ${newPassword}</p>
+    <p>Please change your password.</p>
     </br>
     <p>Sincerely,</p>
     <p>Straat.info</p>
