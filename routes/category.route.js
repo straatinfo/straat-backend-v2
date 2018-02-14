@@ -9,23 +9,23 @@ const SubCategoryValidator = require('../validator/subCategory.validator');
 const Category = require('../api/category');
 const CategoryRoute = express.Router();
 
-CategoryRoute.route('/:hostId')
+CategoryRoute.route('/mainCategory/hostId/:hostId')
 .get(/*requireAuth,*/ Category.getMainCategories)
 .post(/*requireAuth,*/ MainCategoryValidator.mainCategoryFormValidator, Category.createMainCategory);
 
-CategoryRoute.route('/:hostId/:mainCategoryId')
+CategoryRoute.route('/mainCategory/:mainCategoryId')
 .put(/*requireAuth,*/ MainCategoryValidator.updateMainCategoryFormValidator, Category.updateMainCategory)
 .delete(/*requireAuth,*/ Category.deleteMainCategory);
 
-CategoryRoute.route('/main/:reportTypeId')
+CategoryRoute.route('/mainCategory/reportTypeId/:reportTypeId')
 .get(/* requireAuth, */ Category.getMainCategoriesByReportType);
 
-CategoryRoute.route('/sub/:mainCategoryId')
+CategoryRoute.route('/subCategory/mainCategoryId/:mainCategoryId')
 .get(/*requireAuth,*/ Category.getSubCategories)
 .post(/*requireAuth,*/ SubCategoryValidator.subCategoryFormValidator, Category.createSubCategory);
 
-CategoryRoute.route('/sub/:mainCategoryId/:subCategoryId')
-.put(/*requireAuth,*/ Category.updateSubCategory)
+CategoryRoute.route('/subCategory/:subCategoryId')
+.put(/*requireAuth,*/ SubCategoryValidator.updateSubCategoryFormValidator, Category.updateSubCategory)
 .delete(/*requireAuth,*/ Category.deleteSubCategory);
 
 module.exports = CategoryRoute;
