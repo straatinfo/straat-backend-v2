@@ -176,6 +176,30 @@ const createHostLoop = (dataArray=[], promiseFunction = createHost) => {
   });
 };
 
+const getFreeHost = () => {
+  return new Promise((resolve, reject) => {
+    User.findOne({'hostName': 'freeHost'}, [
+      '_id', 'hostName', 'houseNumber', 'streetName',
+      'city', 'state', 'country', 'postalCode', 'username',
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+    ])
+    .populate('_role')
+    .populate({
+      path: 'mainCategories',
+      populate: {
+        path: 'subCategories'
+      }
+    })
+    .populate('design')
+    .exec((err, host) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, host: host});
+    });
+  });
+};
+
 module.exports = {
   getHostById: getHostById,
   getHosts: getHosts,
@@ -183,5 +207,6 @@ module.exports = {
   updateHost: updateHost,
   deleteHost: deleteHost,
   createHost: createHost,
-  createHostLoop: createHostLoop
+  createHostLoop: createHostLoop,
+  getFreeHost: getFreeHost
 };
