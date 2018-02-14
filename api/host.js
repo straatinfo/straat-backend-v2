@@ -95,6 +95,20 @@ const bulkCreateHost = async (req, res, next) => {
   }
 };
 
+const getFreeHost = async (req, res, next) => {
+  try {
+    const getFH = await HostHelper.getFreeHost();
+    if (getFH.err) {
+      return ErrorHelper.ClientError(res, {error: getFH.err}, 400);
+    }
+    SuccessHelper.success(res, getFH.host);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
 
 module.exports = {
   getHostById: getHostById,
@@ -103,5 +117,6 @@ module.exports = {
   createHost: createHost,
   updateHost: updateHost,
   deleteHost: deleteHost,
-  bulkCreateHost: bulkCreateHost
+  bulkCreateHost: bulkCreateHost,
+  getFreeHost: getFreeHost
 };

@@ -5,6 +5,10 @@ const requireAuth = passport.authenticate('jwt', {session: false});
 const Host = require('../api/host');
 const HostRoute = express.Router();
 
+
+HostRoute.route('/freehost')
+.get(/* requireAuth, */ Host.getFreeHost);
+
 HostRoute.route('/')
 .get(/*requireAuth,*/ Host.getHosts)
 .post(/*requireAuth,*/ Host.createHost);
