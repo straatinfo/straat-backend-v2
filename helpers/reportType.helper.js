@@ -4,7 +4,14 @@ const CategoryHelper = require('./category.helper');
 
 const getReportTypes = () => {
   return new Promise((resolve, reject) => {
-    ReportType.find((err, reportTypes) => {
+    ReportType.find({})
+    .populate({
+      path: 'mainCategories',
+      populate: {
+        path: 'subCategories'
+      }
+    })
+    .exec((err, reportTypes) => {
       if (err) {
         return resolve({err: err});
       }
@@ -15,7 +22,14 @@ const getReportTypes = () => {
 
 const getReportTypeById = (_id) => {
   return new Promise((resolve, reject) => {
-    ReportType.findById(_id, (err, reportType) => {
+    ReportType.findById(_id)
+    .populate({
+      path: 'mainCategories',
+      populate: {
+        path: 'subCategories'
+      }
+    })
+    .exec((err, reportType) => {
       if (err) {
         return resolve({err: err});
       }

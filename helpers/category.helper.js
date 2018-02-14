@@ -11,7 +11,7 @@ const getMainCategories = (_host) => {
       'streetName', 'city', 'state', 'country',
       'postalCode', 'long', 'lat', '_role'
     ])
-    .populate('subCategory')
+    .populate('subCategories')
     .populate('reportType')
     .exec(function (err, mainCategories) {
       if (err) {
@@ -30,7 +30,7 @@ const getMainCategoryById = (_id) => {
       'streetName', 'city', 'state', 'country',
       'postalCode', 'long', 'lat', '_role'
     ])
-    .populate('subCategory')
+    .populate('subCategories')
     .populate('reportType')
     .exec((err, mainCategory) => {
       if (err) {
