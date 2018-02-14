@@ -14,7 +14,7 @@ CategoryRoute.route('/:hostId')
 .post(/*requireAuth,*/ MainCategoryValidator.mainCategoryFormValidator, Category.createMainCategory);
 
 CategoryRoute.route('/:hostId/:mainCategoryId')
-.put(/*requireAuth,*/ Category.updateMainCategory)
+.put(/*requireAuth,*/ MainCategoryValidator.updateMainCategoryFormValidator, Category.updateMainCategory)
 .delete(/*requireAuth,*/ Category.deleteMainCategory);
 
 CategoryRoute.route('/main/:reportTypeId')

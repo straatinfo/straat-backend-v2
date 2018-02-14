@@ -13,7 +13,9 @@ const getReporters = () => {
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
-      'long', 'lat', 'isBlocked', 'username'
+      'long', 'lat', 'isBlocked',
+      'hostName', 'username', '_host', 'isVolunteer',
+      'picUrl', 'picSecuredUrl'
     ])
     .populate('_role')
     .populate('_host', [
@@ -38,7 +40,9 @@ const getReporterById = (_id) => {
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
-      'long', 'lat', 'isBlocked', 'username'
+      'long', 'lat', 'isBlocked',
+      'hostName', 'username', '_host', 'isVolunteer',
+      'picUrl', 'picSecuredUrl'
     ])
     .populate('_role')
     .populate('_host', [
@@ -92,7 +96,9 @@ const getReportersByHost = (_host) => {
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
-      'long', 'lat', 'isBlocked', 'username'
+      'long', 'lat', 'isBlocked',
+      'hostName', 'username', '_host', 'isVolunteer',
+      'picUrl', 'picSecuredUrl'
     ])
     .populate('_role')
     .populate('_host', [
