@@ -108,6 +108,55 @@ const deleteReport = async (req, res, next) => {
   }
 };
 
+const getReportByReporter = async (req, res, next) => {
+  const { reporterId } = req.params;
+  try {
+    const queryObject = {'_reporter': reporterId};
+    const getRBR = await ReportHelper.getReportByQueryObject(queryObject);
+    if (getRBR.err) {
+      return ErrorHelper.ClientError(res, {error: getRBR.err}, 400);
+    }
+    SuccessHelper.success(res, getRBR.reports);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const getReportNearBy = async (req, res, next) => {
+  const { long, lat, radius } = req.params;
+  try {
+    if (!req.params || !long || !lat || !radius) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Parameters'}, 200);
+    }
+    const longOffsetMax = parseFloat(long) + parseFloat(radius);
+    const longOffsetMin = parseFloat(long) - parseFloat(radius);
+    const latOffsetMax = parseFloat(lat) + parseFloat(radius);
+    const latOffsetMin = parseFloat(lat) - parseFloat(radius);
+    const queryObject = {
+      $or: [
+        {
+          $and: [
+            { 'long': { $gte: longOffsetMin } },
+            { 'long': { $lte: longOffsetMax } }
+          ],
+          $and: [
+            { 'lat': { $gte: latOffsetMin } },
+            { 'lat': { $lte: latOffsetMax } }
+          ]
+        }
+      ]};
+    const getRNB = await ReportHelper.getReportByQueryObject(queryObject);
+    if (getRNB.err) {
+      return ErrorHelper.ClientError(res, {error: getRNB.err}, 400);
+    }
+    SuccessHelper.success(res, getRNB.reports);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReports: getReports,
   getReportById: getReportById,
@@ -115,5 +164,7 @@ module.exports = {
   getReportsByReportType: getReportsByReportType,
   createReport: createReport,
   updateReport: updateReport,
-  deleteReport: deleteReport
+  deleteReport: deleteReport,
+  getReportByReporter: getReportByReporter,
+  getReportNearBy: getReportNearBy
 };
