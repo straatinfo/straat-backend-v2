@@ -6,9 +6,10 @@ const Report = require('../api/report');
 const ReportRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
 const ReportFormValidator = require('../validator/report.validator');
+const FlatReport = require('../middleware/flatReport');
 
 ReportRoute.route('/')
-.get(/*requireAuth,*/ Report.getReports)
+.get(/*requireAuth,*/ Report.getReports, FlatReport.getFlatReports)
 .post(
   /*requireAuth,*/
   CloudinaryService.multipleUpload('report-images', 9),
@@ -23,11 +24,11 @@ ReportRoute.route('/:id')
 .delete(/*requireAuth,*/ Report.deleteReport);
 
 
-ReportRoute.route('/category/:reportTypeId')
+ReportRoute.route('/reportType/:reportTypeId')
 .get(/*requireAuth,*/ Report.getReportsByReportType);
 
 ReportRoute.route('/host/:hostId')
-.get(/*requireAuth,*/ Report.getReportsByHostId);
+.get(/*requireAuth,*/ Report.getReportsByHostId, FlatReport.getFlatReports);
 
 ReportRoute.route('/reporter/:reporterId')
 .get(/* requireAuth, */ Report.getReportByReporter);
