@@ -15,7 +15,11 @@ const reportSchema = new Schema({
   vehicleInvolvedDescription: { type: String },
   peopleInvolvedCount: { type: Number },
   isUrgent: { type: Boolean, default: false },
-  dateResolved: { type: Date },
+  finishedDate: { type: Date },
+  reportCoordinate : {
+    type: {type: String, enum: 'Point', default: 'Point'},
+    coordinates: { type: [Number],default:[0,0]}
+  },
   reportPhotos: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'ReportPhoto'
   }],
@@ -25,5 +29,7 @@ const reportSchema = new Schema({
   _mainCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory' },
   _subCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' },
 }, { timestamps: true });
+
+reportSchema.index({reportCoordinate: '2dsphere'});
 
 module.exports = mongoose.model('Report', reportSchema);
