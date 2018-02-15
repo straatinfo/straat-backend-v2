@@ -15,6 +15,7 @@ const reportSchema = new Schema({
   vehicleInvolvedDescription: { type: String },
   peopleInvolvedCount: { type: Number },
   isUrgent: { type: Boolean, default: false },
+  dateResolved: { type: Date },
   reportPhotos: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'ReportPhoto'
   }],
