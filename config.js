@@ -17,7 +17,7 @@ module.exports = {
     STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'jaylord@globalbrainforce.com',
     NO_REPLY: 'no-reply@straat.info',
     SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'jaylord@globalbrainforce.com', // 'seqretary@gmail.com'
-    DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'jaylord@globalbrainforce.com', // 'deletedteaam@straat.info'
-    NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST || 'jaylord@globalbrainforce.com' // 'jaylord@globalbrainforce.com'
+    DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
+    NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST || 'newTeamRequest@info.com' // 'jaylord@globalbrainforce.com'
   }
 };

@@ -18,6 +18,12 @@ ReportRoute.route('/')
   Report.createReport
 );
 
+ReportRoute.route('/V2')
+.post(
+  /* requireAuth, */
+  Report.createReportV2
+);
+
 ReportRoute.route('/:id')
 .get(/*requireAuth,*/ Report.getReportById)
 .put(/*requireAuth,*/ Report.updateReport)
