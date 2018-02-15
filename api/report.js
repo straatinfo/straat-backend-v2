@@ -2,6 +2,7 @@ const SuccessHelper = require('../helpers/success.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const ReportHelper = require('../helpers/report.helper');
 const ReportTypeHelper = require('../helpers/reportType.helper');
+const flatten = require('flat');
 
 const getReports = async (req, res, next) => {
   try {
@@ -9,9 +10,15 @@ const getReports = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    if (req.query.flat) {
+      const data = getR.reports;
+      req.reports = data;
+      return next();
+    }
     SuccessHelper.success(res, getR.reports);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -36,6 +43,11 @@ const getReportsByHostId = async (req, res, next) => {
     const getR = await ReportHelper.getReportByHost(hostId);
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
+    }
+    if (req.query.flat) {
+      const data = getR.reports;
+      req.reports = data;
+      return next();
     }
     SuccessHelper.success(res, getR.reports);
   }
@@ -68,7 +80,7 @@ const createReport = async (req, res, next) => {
     if (createR.err) {
       return ErrorHelper.ClientError(res, { error: getR.err }, 400);
     }
-    if (req.files.length === 0) {
+    if (!req.files || req.files.length === 0) {
       return SuccessHelper.success(res, {report: createR.report});
     }
     const saveRP = await ReportHelper.saveUploadLooper(createR._id, req.dataArray, ReportHelper.saveUploadedPhotoReport);
