@@ -12,7 +12,7 @@ const getMainCategories = (_host) => {
       'postalCode', 'long', 'lat', '_role'
     ])
     .populate('subCategories')
-    .populate('reportType')
+    .populate('_reportType')
     .exec(function (err, mainCategories) {
       if (err) {
         return resolve({err: err});
