@@ -92,6 +92,34 @@ const createReport = async (req, res, next) => {
   }
 };
 
+const createReportV2 = async (req, res, next) => {
+  try {
+    const getGeneratedCode = await ReportHelper.reportIdGenerator(req.body._reportType);
+    if (getGeneratedCode.err) {
+      return ErrorHelper.ClientError(res, {error: getGeneratedCode.err}, 400);
+    }
+    const createR = await ReportHelper.createReport({...req.body, generatedReportId: getGeneratedCode.generatedReportId});
+    if (createR.err) {
+      return ErrorHelper.ClientError(res, { error: getR.err }, 400);
+    }
+    if (req.body.reportPhotos && req.body.reportPhots.length !== 0) {
+      const saveReportPhotos = await Promise.all(req.body.reportPhotos.map(async(photo) => {
+        const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
+        if (savePhoto.err) {
+          return savePhoto.err;
+        }
+        return savePhoto.reportPhoto;
+      }));
+      return SuccessHelper.success(res, createR.report);
+    }
+    SuccessHelper.success(res, createR.report);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const updateReport = async (req, res, next) => {
   const { id } = req.params;
   try {
@@ -178,5 +206,6 @@ module.exports = {
   updateReport: updateReport,
   deleteReport: deleteReport,
   getReportByReporter: getReportByReporter,
-  getReportNearBy: getReportNearBy
+  getReportNearBy: getReportNearBy,
+  createReportV2: createReportV2
 };

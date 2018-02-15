@@ -12,9 +12,9 @@ const reportFormValidator = async (req, res, next) => {
   req.checkBody('_host', 'Host cannot be empty').notEmpty();
   req.checkBody('_mainCategory', 'Main Category cannot be empty').notEmpty();
   req.checkBody('_reportType', 'Report Type Cannot be empty').notEmpty();
-  req.checkBody('_subCategory', 'SubCategory cannot be empty').notEmpty();
+  // req.checkBody('_subCategory', 'SubCategory cannot be empty').notEmpty();
   req.checkBody('isUrgent', 'Is Urgent cannot be empty').notEmpty();
-  
+
   const errors = req.validationErrors();
 
   if (errors) {
@@ -46,5 +46,3 @@ module.exports = {
   reportFormValidator: reportFormValidator,
   updateReportFormValidator: updateReportFormValidator
 };
-
-
