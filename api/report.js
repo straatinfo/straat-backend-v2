@@ -80,7 +80,7 @@ const createReport = async (req, res, next) => {
     }
     const createR = await ReportHelper.createReport({...req.body, generatedReportId: getGeneratedCode.generatedReportId});
     if (createR.err) {
-      return ErrorHelper.ClientError(res, { error: getR.err }, 400);
+      return ErrorHelper.ClientError(res, { error: createR.err }, 400);
     }
     if (!req.files || req.files.length === 0) {
       return SuccessHelper.success(res, {report: createR.report});
@@ -102,10 +102,10 @@ const createReportV2 = async (req, res, next) => {
     }
     const createR = await ReportHelper.createReport({...req.body, generatedReportId: getGeneratedCode.generatedReportId});
     if (createR.err) {
-      return ErrorHelper.ClientError(res, { error: getR.err }, 400);
+      return ErrorHelper.ClientError(res, { error: createR.err }, 400);
     }
-    if (req.body.reportPhotos && req.body.reportPhots.length !== 0) {
-      const saveReportPhotos = await Promise.all(req.body.reportPhotos.map(async(photo) => {
+    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
+      const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
         const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
         if (savePhoto.err) {
           return savePhoto.err;

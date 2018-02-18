@@ -70,6 +70,7 @@ const getReports = () => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
+    .populate('reportPhotos')
     .sort([['date', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -97,6 +98,7 @@ const getReportByHost = (hostId) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
+    .populate('reportPhotos')
     .sort([['date', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -124,6 +126,7 @@ const getReportById = (_id) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
+    .populate('reportPhotos')
     .exec((err, report) => {
       if (err) {
         return resolve({err: err});
@@ -150,6 +153,7 @@ const getReportsByReportType = (reportTypeId) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
+    .populate('reportPhotos')
     .sort([['date', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -274,6 +278,7 @@ const getReportByQueryObject = (queryObject) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
+    .populate('reportPhotos')
     .sort([['date', -1]])
     .exec((err, reports) => {
       if (err) {
