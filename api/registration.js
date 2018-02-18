@@ -205,8 +205,6 @@ const registerWithCodeV3 = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: 'Error in checking username and email validity'}, 400);
     }
 
-    console.log(checkEmail, checkUsername);
-
     if (checkUsername.user || checkEmail.user) {
       return ErrorHelper.ClientError(res, {error: 'Username or email is already in used'});
     }
@@ -215,7 +213,6 @@ const registerWithCodeV3 = async (req, res, next) => {
     if (createU.err) {
       return ErrorHelper.ClientError(res, {error: createU.err}, 400);
     }
-    console.log(createU);
     const getU = await UserHelper.findUserById(createU.user._id);
 
     // create or join team
@@ -251,8 +248,14 @@ const registerWithCodeV3 = async (req, res, next) => {
       }
       createT = await TeamHelper.createTeam(getU.user._id, teamInput);
       if (createT.err) {
-        console.log(createT.err);
         return ErrorHelper.ClientError(res, {error: 'There was an error in creating team'}, 400);
+      }
+      let sendNewTeamRequest;
+      if (req.body.isVolunteer != true) {
+        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT.team);
+      }
+      if (sendNewTeamRequest && sendNewTeamRequest.err) {
+        return resolve({err: 'team was created but request to approve was not sent'});
       }
     }
 

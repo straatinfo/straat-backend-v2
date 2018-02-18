@@ -65,7 +65,7 @@ const getReports = () => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -92,7 +92,7 @@ const getReportByHost = (hostId) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -119,7 +119,7 @@ const getReportById = (_id) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -145,7 +145,7 @@ const getReportsByReportType = (reportTypeId) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -248,6 +248,221 @@ const deleteReport = (_id) => {
       }
       resolve({err: null, report: report});
     });
+  });
+};
+
+const getReportByQueryObject = (queryObject) => {
+  return new Promise((resolve, reject) => {
+    Report.find(queryObject)
+    .populate('_reporter', [
+      '_id', 'fname', 'lname', 'email', 'gender',
+      'username', 'houseNumber', 'streetName',
+      'city', 'state', 'country', 'postalCode',
+      'phoneNumber'
+    ])
+    .populate('_host', [
+      '_id', 'hostName', 'houseNumber', 'streetName',
+      'city', 'state', 'country', 'postalCode',
+      'phoneNumber', 'long', 'lat', 'email'
+    ])
+    .populate('_reportType')
+    .populate('_mainCategory')
+    .populate('_subCategory')
+    .sort([['date', -1]])
+    .exec((err, reports) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reports: reports});
+    });
+  });
+};
+
+const flatReport = (report) => {
+  return new Promise((resolve, reject) => {
+    let flatReport;
+    if (report._subCategory && report._reporter && report.generatedReportId) {
+      flatReport = {
+        _id: report._id,
+        generatedReportId: report.generatedReportId,
+        updatedAt: report.updatedAt,
+        createdAt: report.createdAt,
+        '_reportType._id': report._reportType._id,
+        '_reportType.code': report._reportType.code,
+        '_reportType.name': report._reportType.name,
+        '_reportType.description': report._reportType.description,
+        '_reporter._id': report._reporter.id,
+        '_reporter.fname': report._reporter.fname,
+        '_reporter.lname': report._reporter.lname,
+        title: report.title,
+        description: report.description,
+        long: report.long,
+        lat: report.lat,
+        location: report.location,
+        '_host._id': report._host._id,
+        '_host.hostName': report._host.hostName,
+        '_host.postalcode': report._host.postalCode,
+        '_host.houseNumber': report._host.houseNumber,
+        '_host.streetName': report._host.streetName,
+        '_host.city': report._host.city,
+        '_host.state': report._host.state,
+        '_host.country': report._host.country,
+        '_host.lat': report._host.lat,
+        '_host.long': report._host.long,
+        '_host.email': report._host.email,
+        '_host.phoneNumber': report._host.phoneNumber,
+        '_mainCategory._id': report._mainCategory._id,
+        '_mainCategory._reportType': report._mainCategory._reportType,
+        '_mainCategory.name': report._mainCategory.name,
+        '_subCategory._id': report._subCategory._id,
+        '_subCategory._mainCategory': report._subCategory._mainCategory || null,
+        '_subCategory.name': report._subCategory.name,
+        isPeopleInvolved: report.isPeopleInvolved,
+        isVehicleInvolved: report.isVehicleInvolved,
+        isUrgent: report.isUrgent,
+        note: report.note,
+        status: report.status,
+        peopleInvolvedCount: report.peopleInvolvedCount,
+        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
+        reportPhotos: report.reportPhotos
+      };
+    } else if (report._reporter && report.generatedReportId) {
+      flatReport = {
+        _id: report._id,
+        generatedReportId: report.generatedReportId,
+        updatedAt: report.updatedAt,
+        createdAt: report.createdAt,
+        '_reporter._id': report._reporter.id,
+        '_reporter.fname': report._reporter.fname,
+        '_reporter.lname': report._reporter.lname,
+        '_reportType._id': report._reportType._id,
+        '_reportType.code': report._reportType.code,
+        '_reportType.name': report._reportType.name,
+        '_reportType.description': report._reportType.description,
+        title: report.title,
+        description: report.description,
+        long: report.long,
+        lat: report.lat,
+        location: report.location,
+        '_host._id': report._host._id,
+        '_host.hostName': report._host.hostName,
+        '_host.postalcode': report._host.postalCode,
+        '_host.houseNumber': report._host.houseNumber,
+        '_host.streetName': report._host.streetName,
+        '_host.city': report._host.city,
+        '_host.state': report._host.state,
+        '_host.country': report._host.country,
+        '_host.lat': report._host.lat,
+        '_host.long': report._host.long,
+        '_host.email': report._host.email,
+        '_host.phoneNumber': report._host.phoneNumber,
+        '_mainCategory._id': report._mainCategory._id,
+        '_mainCategory._reportType': report._mainCategory._reportType,
+        '_mainCategory.name': report._mainCategory.name,
+        '_subCategory._id': null,
+        '_subCategory._mainCategory': null,
+        '_subCategory.name': null,
+        isPeopleInvolved: report.isPeopleInvolved,
+        isVehicleInvolved: report.isVehicleInvolved,
+        isUrgent: report.isUrgent,
+        note: report.note,
+        status: report.status,
+        peopleInvolvedCount: report.peopleInvolvedCount,
+        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
+        reportPhotos: report.reportPhotos
+      }
+    } else if (report.generatedReportId) {
+      flatReport = {
+        _id: report._id,
+        generatedReportId: report.generatedReportId,
+        updatedAt: report.updatedAt,
+        createdAt: report.createdAt,
+        '_reporter._id': null,
+        '_reporter.fname': null,
+        '_reporter.lname': null,
+        '_reportType._id': report._reportType._id,
+        '_reportType.code': report._reportType.code,
+        '_reportType.name': report._reportType.name,
+        '_reportType.description': report._reportType.description,
+        title: report.title,
+        description: report.description,
+        long: report.long,
+        lat: report.lat,
+        location: report.location,
+        '_host._id': report._host._id,
+        '_host.hostName': report._host.hostName,
+        '_host.postalcode': report._host.postalCode,
+        '_host.houseNumber': report._host.houseNumber,
+        '_host.streetName': report._host.streetName,
+        '_host.city': report._host.city,
+        '_host.state': report._host.state,
+        '_host.country': report._host.country,
+        '_host.lat': report._host.lat,
+        '_host.long': report._host.long,
+        '_host.phoneNumber': report._host.phoneNumber,
+        '_host.email': report._host.email,
+        '_mainCategory._id': report._mainCategory._id,
+        '_mainCategory._reportType': report._mainCategory._reportType,
+        '_mainCategory.name': report._mainCategory.name,
+        '_subCategory._id': null,
+        '_subCategory._mainCategory': null,
+        '_subCategory.name': null,
+        isPeopleInvolved: report.isPeopleInvolved,
+        isVehicleInvolved: report.isVehicleInvolved,
+        isUrgent: report.isUrgent,
+        note: report.note,
+        status: report.status,
+        peopleInvolvedCount: report.peopleInvolvedCount,
+        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
+        reportPhotos: report.reportPhotos
+      }
+    } else {
+      flatReport = {
+        _id: report._id,
+        generatedReportId: null,
+        updatedAt: report.updatedAt,
+        createdAt: report.createdAt,
+        '_reporter._id': null,
+        '_reporter.fname': null,
+        '_reporter.lname': null,
+        '_reportType._id': report._reportType._id,
+        '_reportType.code': report._reportType.code,
+        '_reportType.name': report._reportType.name,
+        '_reportType.description': report._reportType.description,
+        title: report.title,
+        description: report.description,
+        long: report.long,
+        lat: report.lat,
+        location: report.location,
+        '_host._id': report._host._id,
+        '_host.hostName': report._host.hostName,
+        '_host.postalcode': report._host.postalCode,
+        '_host.houseNumber': report._host.houseNumber,
+        '_host.streetName': report._host.streetName,
+        '_host.city': report._host.city,
+        '_host.state': report._host.state,
+        '_host.country': report._host.country,
+        '_host.lat': report._host.lat,
+        '_host.long': report._host.long,
+        '_host.email': report._host.email,
+        '_host.phoneNumber': report._host.phoneNumber,
+        '_mainCategory._id': report._mainCategory._id,
+        '_mainCategory._reportType': report._mainCategory._reportType,
+        '_mainCategory.name': report._mainCategory.name,
+        '_subCategory._id': null,
+        '_subCategory._mainCategory': null,
+        '_subCategory.name': null,
+        isPeopleInvolved: report.isPeopleInvolved,
+        isVehicleInvolved: report.isVehicleInvolved,
+        isUrgent: report.isUrgent,
+        note: report.note,
+        status: report.status,
+        peopleInvolvedCount: report.peopleInvolvedCount,
+        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
+        reportPhotos: report.reportPhotos
+      }
+    }
+    resolve({err: null, report: flatReport});
   });
 };
 
