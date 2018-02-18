@@ -14,10 +14,12 @@ module.exports = {
     SENDGRID_USERNAME: process.env.SENDGRID_USERNAME || 'app86892324@heroku.com'
   },
   EMAIL_ADDRESSES: {
-    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'jaylord@globalbrainforce.com',
+    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'johnhiggins.avila@gmail.com',
     NO_REPLY: 'no-reply@straat.info',
-    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'jaylord@globalbrainforce.com', // 'seqretary@gmail.com'
+    NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST || 'jaylord@globalbrainforce.com', // 'jaylord@globalbrainforce.com'
+    UPDATE_REQUEST_EMAIL: process.env.UPDATE_REQUEST_EMAIL || 'updaterequest@straat.info',
+    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'johnhiggins.avila@gmail.com', // 'seqretary@gmail.com'
     DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
-    NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST || 'newTeamRequest@info.com' // 'jaylord@globalbrainforce.com'
+    FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info'
   }
 };
