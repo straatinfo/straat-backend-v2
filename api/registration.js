@@ -216,7 +216,7 @@ const registerWithCodeV3 = async (req, res, next) => {
     const getU = await UserHelper.findUserById(createU.user._id);
 
     // create or join team
-    let teamInput = {}, createT, requestT;
+    let teamInput = {}, createT, requestT, team;
     if (req.body._team) {
       // if there is team id
       requestT = await TeamInviteHelper.sendRequest(getU.user._id, req.body._team);
@@ -261,7 +261,7 @@ const registerWithCodeV3 = async (req, res, next) => {
 
     // give token
     const token = JwtService.tokenForUser(getU.user._id);
-    SuccessHelper.success(res, { user: getU.user, token: token, team: team });
+    SuccessHelper.success(res, { user: getU.user, token: token });
   }
   catch (e) {
     console.log(e);

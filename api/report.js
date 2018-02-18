@@ -3,7 +3,6 @@ const ErrorHelper = require('../helpers/error.helper');
 const ReportHelper = require('../helpers/report.helper');
 const ReportTypeHelper = require('../helpers/reportType.helper');
 const ReporterHelper = require('../helpers/reporter.helper');
-const flatten = require('flat');
 const MailingHelper = require('../helpers/mailing.helper');
 const HostHelper = require('../helpers/host.helper');
 
@@ -13,9 +12,15 @@ const getReports = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    if (req.query.flat) {
+      const data = getR.reports;
+      req.reports = data;
+      return next();
+    }
     SuccessHelper.success(res, getR.reports);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -40,6 +45,11 @@ const getReportsByHostId = async (req, res, next) => {
     const getR = await ReportHelper.getReportByHost(hostId);
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
+    }
+    if (req.query.flat) {
+      const data = getR.reports;
+      req.reports = data;
+      return next();
     }
     SuccessHelper.success(res, getR.reports);
   }
@@ -72,7 +82,7 @@ const createReport = async (req, res, next) => {
     if (createR.err) {
       return ErrorHelper.ClientError(res, { error: getR.err }, 400);
     }
-    if (req.files.length === 0) {
+    if (!req.files || req.files.length === 0) {
       return SuccessHelper.success(res, {report: createR.report});
     }
     const saveRP = await ReportHelper.saveUploadLooper(createR._id, req.dataArray, ReportHelper.saveUploadedPhotoReport);
@@ -168,6 +178,55 @@ const deleteReport = async (req, res, next) => {
   }
 };
 
+const getReportByReporter = async (req, res, next) => {
+  const { reporterId } = req.params;
+  try {
+    const queryObject = {'_reporter': reporterId};
+    const getRBR = await ReportHelper.getReportByQueryObject(queryObject);
+    if (getRBR.err) {
+      return ErrorHelper.ClientError(res, {error: getRBR.err}, 400);
+    }
+    SuccessHelper.success(res, getRBR.reports);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const getReportNearBy = async (req, res, next) => {
+  const { long, lat, radius } = req.params;
+  try {
+    if (!req.params || !long || !lat || !radius) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Parameters'}, 200);
+    }
+    const longOffsetMax = parseFloat(long) + parseFloat(radius);
+    const longOffsetMin = parseFloat(long) - parseFloat(radius);
+    const latOffsetMax = parseFloat(lat) + parseFloat(radius);
+    const latOffsetMin = parseFloat(lat) - parseFloat(radius);
+    const queryObject = {
+      $or: [
+        {
+          $and: [
+            { 'long': { $gte: longOffsetMin } },
+            { 'long': { $lte: longOffsetMax } }
+          ],
+          $and: [
+            { 'lat': { $gte: latOffsetMin } },
+            { 'lat': { $lte: latOffsetMax } }
+          ]
+        }
+      ]};
+    const getRNB = await ReportHelper.getReportByQueryObject(queryObject);
+    if (getRNB.err) {
+      return ErrorHelper.ClientError(res, {error: getRNB.err}, 400);
+    }
+    SuccessHelper.success(res, getRNB.reports);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReports: getReports,
   getReportById: getReportById,
@@ -175,5 +234,8 @@ module.exports = {
   getReportsByReportType: getReportsByReportType,
   createReport: createReport,
   updateReport: updateReport,
-  deleteReport: deleteReport
+  deleteReport: deleteReport,
+  getReportByReporter: getReportByReporter,
+  getReportNearBy: getReportNearBy,
+  createReportV2: createReportV2
 };

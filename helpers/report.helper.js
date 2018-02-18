@@ -160,8 +160,6 @@ const getReportsByReportType = (reportTypeId) => {
   });
 };
 
-
-
 const createReport = (input) => {
   return new Promise((resolve, reject) => {
     const newReport = new Report(input);
@@ -183,7 +181,6 @@ const createReport = (input) => {
   });
 };
 
-
 const saveUploadedPhotoReport = (_report, input) => {
   return new Promise((resolve, reject) => {
     const newReportPhoto = new ReportPhoto({...input, '_report': _report});
@@ -191,7 +188,16 @@ const saveUploadedPhotoReport = (_report, input) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, reportPhoto: reportPhoto});
+      Report.findByIdAndUpdate(_report,
+      { '$addToSet': { 'reportPhotos': reportPhoto._id } },
+      { 'new': true, 'upsert': true },
+      (err, report) => {
+        if (err) {
+          return resolve({err: err});
+        }
+
+        resolve({err: null, reportPhoto: reportPhoto});
+      });
     });
   });
 };
@@ -476,6 +482,7 @@ module.exports = {
   getReportByHost: getReportByHost,
   getReportsByReportType: getReportsByReportType,
   saveUploadedPhotoReport: saveUploadedPhotoReport,
-  saveUploadLooper: saveUploadLooper
+  saveUploadLooper: saveUploadLooper,
+  getReportByQueryObject: getReportByQueryObject,
+  flatReport: flatReport
 };
-

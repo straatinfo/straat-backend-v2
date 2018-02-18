@@ -28,24 +28,29 @@ const multipleUpload = (fieldName, numberOfFiles) => {
 };
 
 const getMetaData = (req, res, next) => {
-  if (req.files.length === 0) {
-    return next();
-  }
   try {
-    const dataArray = req.files.map((f) => {
-      return {
-        public_id: f.public_id,
-        mimetype: f.mimetype,
-        url: f.url,
-        secure_url: f.secure_url,
-        format: f.format,
-        etag: f.etag,
-        width: f.width,
-        height: f.height
-      };
-    });
-    req.dataArray = dataArray;
-    next();
+    if (!req.files) {
+      return next();
+    }
+    if (req.files.length === 0) {
+      return next();
+    }
+    if (req.files && req.files.length !== 0) {
+      const dataArray = req.files.map((f) => {
+        return {
+          public_id: f.public_id,
+          mimetype: f.mimetype,
+          url: f.url,
+          secure_url: f.secure_url,
+          format: f.format,
+          etag: f.etag,
+          width: f.width,
+          height: f.height
+        };
+      });
+      req.dataArray = dataArray;
+      next();
+    }
   }
   catch (e) {
     res.status(500).send({status: 0, error: 'Server Error'});
