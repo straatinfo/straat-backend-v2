@@ -31,7 +31,7 @@ const getMainCategoryById = (_id) => {
       'postalCode', 'long', 'lat', '_role'
     ])
     .populate('subCategories')
-    .populate('reportType')
+    .populate('_reportType')
     .exec((err, mainCategory) => {
       if (err) {
         return resolve({err: err});

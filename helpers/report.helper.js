@@ -65,7 +65,7 @@ const getReports = () => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -92,7 +92,7 @@ const getReportByHost = (hostId) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -119,7 +119,7 @@ const getReportById = (_id) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -145,7 +145,7 @@ const getReportsByReportType = (reportTypeId) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -269,7 +269,7 @@ const getReportByQueryObject = (queryObject) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat'
+      'phoneNumber', 'long', 'lat', 'email'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -315,6 +315,7 @@ const flatReport = (report) => {
         '_host.country': report._host.country,
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
+        '_host.email': report._host.email,
         '_host.phoneNumber': report._host.phoneNumber,
         '_mainCategory._id': report._mainCategory._id,
         '_mainCategory._reportType': report._mainCategory._reportType,
@@ -359,6 +360,7 @@ const flatReport = (report) => {
         '_host.country': report._host.country,
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
+        '_host.email': report._host.email,
         '_host.phoneNumber': report._host.phoneNumber,
         '_mainCategory._id': report._mainCategory._id,
         '_mainCategory._reportType': report._mainCategory._reportType,
@@ -404,6 +406,7 @@ const flatReport = (report) => {
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
         '_host.phoneNumber': report._host.phoneNumber,
+        '_host.email': report._host.email,
         '_mainCategory._id': report._mainCategory._id,
         '_mainCategory._reportType': report._mainCategory._reportType,
         '_mainCategory.name': report._mainCategory.name,
@@ -447,6 +450,7 @@ const flatReport = (report) => {
         '_host.country': report._host.country,
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
+        '_host.email': report._host.email,
         '_host.phoneNumber': report._host.phoneNumber,
         '_mainCategory._id': report._mainCategory._id,
         '_mainCategory._reportType': report._mainCategory._reportType,

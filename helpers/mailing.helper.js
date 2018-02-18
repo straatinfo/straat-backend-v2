@@ -4,10 +4,11 @@ const MailTemplates = require('../assets/mail-templates/simple-mails');
 
 // access code for android
 const sendRegistrationRequestNotif = (userDetail) => {
-  const { fname, lname, email, message } = userDetail;
+  const { fname, lname, message } = userDetail;
   const receiver = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
-  const subject = 'Request for access';
-  const mailBody = MailTemplates.sendRegistrationRequestNotifMail(email, fname, lname, message);
+  const sender = Config.EMAIL_ADDRESSES.UPDATE_REQUEST_EMAIL;
+  const subject = 'Request for Update';
+  const mailBody = MailTemplates.sendRegistrationRequestNotifMail(sender, fname, lname, message);
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail('newteamrequest@straat.info', receiver, subject, mailBody);
@@ -23,12 +24,12 @@ const sendRegistrationRequestNotif = (userDetail) => {
 };
 
 // registration notification team request for approval
-const sendSuccessfulRegistrationNotif = (teamDetails) => {
+const sendNewTeamRequestNotif = (teamDetails) => {
   const { teamName, teamEmail } = teamDetails;
   const receiver = Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL;
   const sender = Config.EMAIL_ADDRESSES.NEW_TEAM_REQUEST;
   const subject = 'New Team Request Non Volunteer';
-  const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName);
+  const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName, sender);
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
@@ -44,9 +45,43 @@ const sendSuccessfulRegistrationNotif = (teamDetails) => {
 };
 
 // report A nofication
-const sendReportANotifForHost = () => {
-  return new Promise((resolve, reject) => {
+const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEmail, text = null, category1, category2 = null, location, reportDeepLink) => {
+  const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
+  const receiver = hostEmail;
+  const subject = 'Type A Report';
+  const mailBody = MailTemplates.sendReportAToHost(username, teamName, teamEmail, text, category1, category2, location, reportDeepLink);
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
+      if (sendBasicMail.err) {
+        return resolve({err: sendBasicMail.err});
+      }
+      resolve({err: null});
+    } 
+    catch (e) {
+      reject(e);
+    }
+  });
+};
 
+// report A notification to reporter
+const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null) => {
+  const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
+  const receiver = reporterEmail;
+  const subject = 'uw nieuwe melding openbare ruimte';
+  const mailBody = MailTemplates.sendReportANotifToReporter(location, date, category1, category2, text);
+  const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, teamLeaderEmail];
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendEmailWithCC = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, CC, sender);
+      if (sendEmailWithCC.err) {
+        return resolve({err: sendEmailWithCC.err});
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
   });
 };
 
@@ -57,23 +92,64 @@ const sendReportANotifForTeamLeader = () => {
 };
 
 // report B notification
-const sendReportBNotif = () => {
-  return new Promise((resolve, reject) => {
-
+const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, location, text=null) => {
+  const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
+  const receiver = reporterEmail;
+  const subject = 'Report B';
+  const mailBody = MailTemplates.sendReportBNotifToReporter(date, mainCategoryName, location, text);
+  const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL];
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendMailWithCC = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, CC);
+      if (sendMailWithCC.err) {
+        return resolve({err: sendMailWithCC.err});
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
   });
 };
 
 // report C notification
-const sendReportCNotif = () => {
-  return new Promise((resolve, reject) => {
-
+const sendReportCNotifToReporter = (reporterEmail, date, mainCategoryName, location, text=null) => {
+  const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
+  const receiver = reporterEmail;
+  const subject = 'Report C';
+  const mailBody = MailTemplates.sendReportBNotifToReporter(date, mainCategoryName, location, text);
+  const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL];
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendMailWithCC = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, CC);
+      if (sendMailWithCC.err) {
+        return resolve({err: sendMailWithCC.err});
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
   });
 };
 
 // feedback notif
-const sendFeedBackNotif = () => {
-  return new Promise((resolve, reject) => {
-
+const sendFeedBackNotif = (reporterName, reporterEmail, feedback) => {
+  const sender = Config.EMAIL_ADDRESSES.FEED_BACK_EMAIL;
+  const receiver = Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL;
+  const subject = 'FEEDBACK';
+  const mailBody = MailTemplates.sendFeedBackNotif(feedback, reporterName, reporterEmail);
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
+      if (sendBasicMail.err) {
+        return resolve({err: sendBasicMail.err});
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
   });
 };
 
@@ -106,12 +182,13 @@ const forgotPasswordNotif = (email, newPassword) => {
 
 module.exports = {
   sendRegistrationRequestNotif: sendRegistrationRequestNotif,
-  sendSuccessfulRegistrationNotif: sendSuccessfulRegistrationNotif,
-  sendReportANotifForHost: sendReportANotifForHost,
-  sendReportANotifForTeamLeader: sendReportANotifForTeamLeader,
-  sendReportBNotif: sendReportBNotif,
-  sendReportCNotif: sendReportCNotif,
+  sendNewTeamRequestNotif: sendNewTeamRequestNotif,
+  sendReportANotifToHost: sendReportANotifToHost,
+  sendReportANotifToReporter: sendReportANotifToReporter,
+  // sendReportANotifForTeamLeader: sendReportANotifForTeamLeader,
+  sendReportBNotifToReporter: sendReportBNotifToReporter,
+  sendReportCNotifToReporter: sendReportCNotifToReporter,
   sendFeedBackNotif: sendFeedBackNotif,
-  deleteTeamNotif: deleteTeamNotif,
+  // deleteTeamNotif: deleteTeamNotif,
   forgotPasswordNotif: forgotPasswordNotif
 };

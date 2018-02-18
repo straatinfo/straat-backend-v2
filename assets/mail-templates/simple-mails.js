@@ -2,8 +2,8 @@ module.exports = {
   sendRegistrationRequestNotifMail: (email, fname, lname, message) => {
     return `<p>Greetings!</p><br/><p>A new user is requesting for an access code.<p/><p>User Details:<p/><p>Email: ${email}<p/><p>Firstname: ${fname}<p/><p>Lastname: ${lname} </p><br /><p>Sincerely,<p>Straat.info-team</p>`;
   },
-  sendTeamRequestNotifMail: (teamEmail, teamName) => {
-    return `<p>Greetings!</p><br/><p>A new Non-Volunteer Team is requesting for approval.<p/><p>User Details:<p/><p>Email: ${teamEmail}<p/><p>Team Name: ${teamName}<p/><p>Sincerely,<p>newteamrequest@straat.info</p>`;
+  sendTeamRequestNotifMail: (teamEmail, teamName, sender) => {
+    return `<p>Greetings!</p><br/><p>A new Non-Volunteer Team is requesting for approval.<p/><p>User Details:<p/><p>Email: ${teamEmail}<p/><p>Team Name: ${teamName}<p/><p>Sincerely,<p>${sender}</p>`;
   },
   sendReportAToHost: (username, teamName,teamEmail, text, category1, category2, location, reportDeepLink) => {
     return `
@@ -22,6 +22,21 @@ module.exports = {
     <p>${teamName}</p>
     </br>
     <p>PS Deze melding is verzonden met de app straat.info dé app voor buurtpreventie. Als u vragen heeft, of tips ter verbetering over de app, kunt u terecht via het formulier op www.straat.info of via info@straat.info</p>
+    `;
+  },
+  sendReportANotifToReporter: (location, date, category1, category2 = null, text = null) => {
+    return `
+      <p>Dear madam, sir,</p>
+      <p> You just made a report ${date} </p>
+      <p>Meldingscategorie 1: ${category1}</p>
+      <p>Meldingscategorie 2: ${(category2) ? category2 : '-'}</p>
+      <p>Eventuele toelichting: ${(text) ? text : '-'}</p>
+      <p>Locatie: ${location}</p>
+      </br>
+      <p>This report has been sent to the relevant host.</p>
+      <p>Thank you for using straat.info</p>
+      </br>
+      <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
     `;
   },
   sendReportANotifToTeam: (gender, createdAt, categoryName) => {
@@ -43,8 +58,33 @@ module.exports = {
     <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
     `;
   },
+  sendReportBNotifToReporter: (date, mainCategoryName, location, text = null) => {
+    return `
+      <p>Dear madam, sir,</p>
+      <p> You just made a report ${date} </p>
+      <p>Meldingscategorie 1: ${mainCategoryName}</p>
+      <p>Eventuele toelichting: ${(text) ? text : '-'}</p>
+      <p>Locatie: ${location}</p>
+      </br>
+      <p>This report has been sent to the relevant host.</p>
+      <p>Thank you for using straat.info</p>
+      </br>
+      <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
+    `;
+  },
   sendReportBNotifToHost: () => {
 
+  },
+  sendFeedBackNotif: (feedBackMessage, reporterName, reporterEmail) => {
+    return `
+      <p>Greetings!</p>
+      <p>You receive a new feed back from ${reporterName}</p>
+      <p>Email: ${reporterEmail}</p>
+      <p>Feedback:</p>
+      <p>${feedBackMessage}</p>
+      </br>
+      <p>Thank you.</p>
+    `;
   },
   fogotPasswordNotif: (newPassword) => {
     return `
