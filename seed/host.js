@@ -6,6 +6,7 @@ mongoose.connect(Config.DATA_BASE);
 
 var users = [
   new User({
+    _id: '5a7b485a039e2860cf9dd19a',
     hostName: 'Gemeente Den Haag',
     email: 'denhaag@straat.info',
     username: 'Gemeente Den Haag',
@@ -14,9 +15,10 @@ var users = [
     country: 'Netherlands',
     postalCode: '2500 DJ',
     phoneNumber: '14070',
-    _role: '5a79be1d7d1aeb41665af29e' // should be changed
+    _role: '5a75c9de3a06a627a7e8af45' // should be changed
   }),
   new User({
+    _id: '5a7b485a039e2860cf9dd19b',
     hostName: 'Gemeente Vlaardingen',
     email: 'vlaardingen@straat.info',
     username: 'Gemeente Vlaardingen',
@@ -25,7 +27,15 @@ var users = [
     country: 'Netherlands',
     postalCode: '3130 EB',
     phoneNumber: '(010) 248 40 00',
-    _role: '5a79be1d7d1aeb41665af29e' // should be changed
+    _role: '5a75c9de3a06a627a7e8af45' // should be changed
+  }),
+  new User({
+    _id: '5a844e1bf154bc463543b987',
+    hostName: 'freeHost',
+    email: 'freehost@test.com',
+    username: 'freeHost',
+    postalCode: '2500 DJ',
+    _role: '5a75c9de3a06a627a7e8af45' // should be changed according to _role in db
   })
 ];
 

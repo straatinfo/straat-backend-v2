@@ -28,6 +28,7 @@ const getHostId = (code) => {
       if (!data) {
         resolve({err: 'Invalid Code'});
       }
+      console.log(data);
       resolve({err: null, _host: data._host});
     }
     catch (e) {

@@ -225,7 +225,7 @@ const registerWithCodeV3 = async (req, res, next) => {
       }
     } else {
       // if isVolunteer === true can create team and isApproved = true
-      if (req.body.isVolunteer == true) {
+      if (req.body.isVolunteer === true || req.body.isVolunteer === 'true') {
         teamInput = {
           teamName: req.body.teamName,
           teamEmail: req.body.teamEmail,
@@ -246,8 +246,10 @@ const registerWithCodeV3 = async (req, res, next) => {
           isApproved: false
         };
       }
+      console.log(teamInput);
       createT = await TeamHelper.createTeam(getU.user._id, teamInput);
       if (createT.err) {
+        console.log(createT.err);
         return ErrorHelper.ClientError(res, {error: 'There was an error in creating team'}, 400);
       }
       let sendNewTeamRequest;

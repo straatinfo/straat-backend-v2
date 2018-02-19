@@ -15,7 +15,8 @@ const getHosts = () => {
         'phoneNumber', 'long', 'lat', 'isPatron', 'email'
       ])
       .populate('_role')
-      .populate('design')
+      .populate('designs')
+      .populate('teams')
       .exec((err, hosts) => {
         if (err) {
           return resolve({err: err});
