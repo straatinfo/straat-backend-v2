@@ -130,11 +130,53 @@ const updateReporterReports = (_reporter, _report) => {
   });
 };
 
+const flatReporter = (r) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const flatR = {
+        _id: r._id || '',
+        fname: r.fname || '',
+        lname: r.lname || '',
+        gender: r.gender || '',
+        email: r.email || '',
+        username: r.username || '',
+        houseNumber: r.houseNumber || '',
+        streetName: r.streetName || '',
+        country: r.country || '',
+        state: r.state || '',
+        postalCode: r.postalCode || '',
+        city: r.city || '',
+        lat: r.lat || null,
+        long: r.long || null,
+        '_role._id': (r._role && r._role._id) ? r._role._id : null,
+        '_role.name': (r._role && r._role.name) ? r._role.name : '',
+        '_role.code': (r._role && r._role.code) ? r._role.code : '',
+        '_role.accessLevel': (r._role && r._role.accessLevel) ? r._role.accessLevel : null,
+        '_host._id': (r._host && r._host._id) ? r._host._id : '',
+        '_host.hostName': (r._host && r._host.hostName) ? r._host.hostName : '',
+        '_host.email': (r._host && r._host.email) ? r._host.email : '',
+        '_host.postalCode': (r._host && r._host.postalCode) ? r._host.postalCode : null,
+        '_host.phoneNumber': (r._host && r._host.phoneNumber) ? r._host.phoneNumber : '',
+        '_host.isPatron': (r._host && r._host.isPatron) ? r._host.isPatron : false,
+        teamLeaders: r.teamLeaders || [],
+        teamMembers: r.teamMembers || [],
+        isBlocked: r.isBlocked || false,
+        isVolunteer: r.isVolunteer || false
+      };
+      resolve({err: null, reporter: flatR});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getReporters: getReporters,
   getReporterById: getReporterById,
   blockReporter: blockReporter,
   unBlockReporter: unBlockReporter,
   getReportersByHost: getReportersByHost,
-  updateReporterReports: updateReporterReports
+  updateReporterReports: updateReporterReports,
+  flatReporter: flatReporter
 };
