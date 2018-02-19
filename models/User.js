@@ -44,6 +44,12 @@ const userSchema = new Schema({
   }],
   mainCategories: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory', unique: true
+  }],
+  hostReports: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
+  }],
+  reporterReports: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }]
 });
 

@@ -21,6 +21,7 @@ ReportRoute.route('/')
 ReportRoute.route('/V2')
 .post(
   /* requireAuth, */
+  ReportFormValidator.reportFormValidator,
   Report.createReportV2
 );
 

@@ -1,6 +1,10 @@
 const Report = require('../models/Report');
 const ReportPhoto = require('../models/ReportPhoto');
 const ReportTypeHelper = require('./reportType.helper');
+const ReporterHelper = require('./reporter.helper');
+const HostHelper = require('./host.helper');
+const TeamHelper = require('./team.helper');
+const CategoryHelper = require('./category.helper');
 
 
 const getReportDateRange = (date) => {
@@ -168,10 +172,30 @@ const createReport = (input) => {
   return new Promise((resolve, reject) => {
     const newReport = new Report(input);
     newReport.save(async(err, report) => {
-      if (err) {
-        return resolve({err: err});
-      }
       try {
+        if (err) {
+          return resolve({err: err});
+        }
+        // update reporter
+        const updateReporter = await ReporterHelper.updateReporterReports(report._reporter, report._id);
+        // update host
+        const updateHost = await HostHelper.updateHostReport(report._host, report._id);
+        // update reportType
+        const updateReportType = await ReportTypeHelper.updateReportTypeReport(report._reportType, report._id);
+        // update mainCategory
+        const updateMainCategory = await CategoryHelper.updateMainCategoryReport(report._mainCategory, report._id);
+        // update team
+        const updateTeam = await TeamHelper.updateTeamReport(report._team, report._id);
+        // update subCategory
+        if (report._subCategory) {
+          const updateSubCategory = await CategoryHelper.updateSubCategoryReport(report._subCategory, report._id);
+          if (updateSubCategory.err) {
+            return resolve({err: 'Error on updating related schema'});
+          }
+        }
+        if (updateReporter.err || updateHost.err || updateReportType.err || updateMainCategory.err || updateTeam.err) {
+          return resolve({err: 'Error on updating related schema'});
+        }
         const getR = await getReportById(report._id);
         if (getR.err) {
           return resolve({err: getR.err});

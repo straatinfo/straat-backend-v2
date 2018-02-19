@@ -93,10 +93,25 @@ const deleteReportType = (_id) => {
   });
 };
 
+const updateReportTypeReport = (_reportType, _report) => {
+  return new Promise((resolve, reject) => {
+    ReportType.findByIdAndUpdate(_reportType,
+    { '$addToSet': { 'reports': _report } },
+    { 'new': true, 'upsert': true },
+    (err, reportType) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reportType: reportType});
+    });
+  });
+};
+
 module.exports = {
   getReportTypes: getReportTypes,
   createReportType: createReportType,
   updateReportType: updateReportType,
   deleteReportType: deleteReportType,
-  getReportTypeById: getReportTypeById
+  getReportTypeById: getReportTypeById,
+  updateReportTypeReport: updateReportTypeReport
 };
