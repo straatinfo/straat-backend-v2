@@ -8,6 +8,11 @@ const getHosts = async (req, res, next) => {
     if (getH.err) {
       return ErrorHelper.ClientError(res, {error: getH.err}, 400);
     }
+    if(req.query.flat) {
+      const data = getH.hosts;
+      req.hosts = data;
+      return next();
+    }
     SuccessHelper.success(res, getH.hosts);
   }
   catch (e) {
@@ -34,6 +39,11 @@ const getHostsWithinRadius = async (req, res, next) => {
     const getH = await HostHelper.getHostWithinRadius(long, lat, radius);
     if (getH.err) {
       return ErrorHelper.ClientError(res, { error: getH.err }, 400);
+    }
+    if(req.query.flat) {
+      const data = getH.hosts;
+      req.hosts = data;
+      return next();
     }
     SuccessHelper.success(res, getH.hosts);
   }

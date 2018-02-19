@@ -18,7 +18,7 @@ const getFlatReports = async (req, res, next) => {
     SuccessHelper.success(res, flatReports);
   }
   catch (e) {
-
+    ErrorHelper.ServerError(res);
   }
 };
 
