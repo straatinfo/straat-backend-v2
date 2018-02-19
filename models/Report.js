@@ -16,6 +16,7 @@ const reportSchema = new Schema({
   peopleInvolvedCount: { type: Number },
   isUrgent: { type: Boolean, default: false },
   finishedDate: { type: Date },
+  causeOfFinished: { type: String },
   reportCoordinate : {
     type: {type: String, enum: 'Point', default: 'Point'},
     coordinates: { type: [Number],default:[0,0]}

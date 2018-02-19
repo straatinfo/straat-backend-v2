@@ -15,6 +15,9 @@ const teamSchema = new Schema({
   }],
   teamMembers: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
+  }],
+  reports: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }]
 });
 

@@ -116,10 +116,25 @@ const getReportersByHost = (_host) => {
   });
 };
 
+const updateReporterReports = (_reporter, _report) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_reporter,
+    { '$addToSet': { 'reporterReports': _report } },
+    { 'new': true, 'upsert': true },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    });
+  });
+};
+
 module.exports = {
   getReporters: getReporters,
   getReporterById: getReporterById,
   blockReporter: blockReporter,
   unBlockReporter: unBlockReporter,
-  getReportersByHost: getReportersByHost
+  getReportersByHost: getReportersByHost,
+  updateReporterReports: updateReporterReports
 };

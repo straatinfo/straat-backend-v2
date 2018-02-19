@@ -304,6 +304,20 @@ const checkTeamByCredentials = (teamNameOrTeamEmail) => {
   });
 };
 
+const updateTeamReport = (_team, _report) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_team,
+    { '$addToSet': { 'reports': _report } },
+    { 'new': true, 'upsert': true },
+    (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    })
+  });
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -315,5 +329,6 @@ module.exports = {
   removeLeader: removeLeader,
   addMember: addMember,
   kickMember: kickMember,
-  checkTeamByCredentials: checkTeamByCredentials
+  checkTeamByCredentials: checkTeamByCredentials,
+  updateTeamReport: updateTeamReport
 };
