@@ -3,24 +3,13 @@ const TeamInviteHelper = require('../helpers/teamInvite.helper');
 const TeamLeaderHelper = require('../helpers/teamLeader.helper');
 const TeamMemberHelper = require('../helpers/teamMember.helper');
 const UserHelper = require('../helpers/user.helper');
+const User = require('../models/User');
 
 const getTeams = () => {
   return new Promise((resolve, reject) => {
     Team.find()
-    .populate({
-      path: 'teamleaders',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'email': 1 }
-      }
-    })
-    .populate({
-      path: 'teamMembers',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'email': 1 }
-      }
-    })
+    .populate('teamLeaders')
+    .populate('teamMembers')
     .populate('_host', [ '_id', 'hostName' ])
     .exec((err, teams) => {
       if (err) {
@@ -34,20 +23,8 @@ const getTeams = () => {
 const getTeamWithFilter = (queryObject) => {
   return new Promise((resolve, reject) => {
     Team.find({'_host': queryObject._host, 'isVolunteer': queryObject.isVolunteer})
-    .populate({
-      path: 'teamleaders',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'email': 1 }
-      }
-    })
-    .populate({
-      path: 'teamMembers',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'email': 1 }
-      }
-    })
+    .populate('teamLeaders')
+    .populate('teamMembers')
     .populate('_host', [ '_id', 'hostName' ])
     .exec((err, teams) => {
       if (err) {
@@ -61,20 +38,8 @@ const getTeamWithFilter = (queryObject) => {
 const getTeamById = (_id) => {
   return new Promise((resolve, reject) => {
     Team.findById(_id)
-    .populate({
-      path: 'teamLeaders',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'email': 1 }
-      }
-    })
-    .populate({
-      path: 'teamMembers',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'email': 1 }
-      }
-    })
+    .populate('teamLeaders')
+    .populate('teamMembers')
     .populate('_host', [ '_id', 'hostName' ])
     .exec((err, team) => {
       if (err) {
@@ -118,6 +83,7 @@ const createTeam = (_user, input) => {
           if (getTeamInfo.err) {
             return resolve({err: null, team: team});
           }
+
           resolve({err: null, team: getTeamInfo.team});
       });
     }
@@ -159,6 +125,14 @@ const deleteTeam = (_id) => {
         const removeMembersInUsers = await TeamMemberHelper.removeTeamMemberInUsers(_id);
         const removeInvites = await TeamInviteHelper.removeTeam(_id);
         resolve({err: null});
+        User.findByIdAndUpdate(team._host,
+        { '$pop': { 'teams': team._id } },
+        (err, user) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          resolve({err: null, team: team});
+        });
       }
       catch (e) {
         reject(e);

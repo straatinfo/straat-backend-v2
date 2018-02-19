@@ -41,6 +41,9 @@ const userSchema = new Schema({
   }],
   designs: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Design'
+  }],
+  mainCategories: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory', unique: true
   }]
 });
 
