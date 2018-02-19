@@ -8,6 +8,11 @@ const getReporters = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    if(req.query.flat) {
+      const data = getR.reporters;
+      req.reporters = data;
+      return next();
+    }
     SuccessHelper.success(res, getR.reporters);
   }
   catch (e) {

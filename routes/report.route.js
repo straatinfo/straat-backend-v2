@@ -32,15 +32,15 @@ ReportRoute.route('/:id')
 
 
 ReportRoute.route('/reportType/:reportTypeId')
-.get(/*requireAuth,*/ Report.getReportsByReportType);
+.get(/*requireAuth,*/ Report.getReportsByReportType, FlatReport.getFlatReports);
 
 ReportRoute.route('/host/:hostId')
 .get(/*requireAuth,*/ Report.getReportsByHostId, FlatReport.getFlatReports);
 
 ReportRoute.route('/reporter/:reporterId')
-.get(/* requireAuth, */ Report.getReportByReporter);
+.get(/* requireAuth, */ Report.getReportByReporter, FlatReport.getFlatReports);
 
 ReportRoute.route('/nearby/:long/:lat/:radius')
-.get(/* requireAuth, */ Report.getReportNearBy);
+.get(/* requireAuth, */ Report.getReportNearBy, FlatReport.getFlatReports);
 
 module.exports = ReportRoute;

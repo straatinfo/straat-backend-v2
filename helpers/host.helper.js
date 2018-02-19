@@ -215,6 +215,44 @@ const updateHostReport = (_host, _report) => {
   });
 };
 
+const flatHost = (h) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const flattenHost = {
+        _id: h._id || '',
+        hostName: h.hostName || '',
+        email: h.email || '',
+        username: h.username || '',
+        streetName: h.streetName || '',
+        city: h.city || '',
+        country: h.country || '',
+        postalCode: h.postalCode || '',
+        phoneNumber: h.phoneNumber || '',
+        '_role._id': (h._role && h._role._id) ? h._role._id : null,
+        '_role.name': (h._role && h._role.name) ? h._role.name : '',
+        '_role.code': (h._role && h._role.code) ? h._role.code : '',
+        '_role.accessLevel': (h._role && h._role.accessLevel) ? h._role.accessLevel : null,
+        long: h.long || null,
+        lat: h.lat || null,
+        designs: h.designs || [],
+        teams: h.teams || [],
+        isPatron: h.isPatron || false
+      };
+      resolve({err: null, host: flattenHost});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+/* 
+
+  "designs": [],
+  "teams": [],
+  "isPatron": false
+*/
+
 module.exports = {
   getHostById: getHostById,
   getHosts: getHosts,
@@ -224,5 +262,6 @@ module.exports = {
   createHost: createHost,
   createHostLoop: createHostLoop,
   getFreeHost: getFreeHost,
-  updateHostReport: updateHostReport
+  updateHostReport: updateHostReport,
+  flatHost: flatHost
 };
