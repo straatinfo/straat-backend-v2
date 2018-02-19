@@ -8,7 +8,6 @@ const getReporters = () => {
       return resolve({err: getRole.err});
     }
     const _role = getRole.role._id;
-    console.log(_role);
     User.find({'_role': _role}, [
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
