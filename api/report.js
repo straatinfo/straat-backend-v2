@@ -65,6 +65,11 @@ const getReportsByReportType = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    if (req.query.flat) {
+      const data = getR.reports;
+      req.reports = data;
+      return next();
+    }
     SuccessHelper.success(res, getR.reports);
   }
   catch (e) {
@@ -186,6 +191,11 @@ const getReportByReporter = async (req, res, next) => {
     if (getRBR.err) {
       return ErrorHelper.ClientError(res, {error: getRBR.err}, 400);
     }
+    if (req.query.flat) {
+      const data = getRBR.reports;
+      req.reports = data;
+      return next();
+    }
     SuccessHelper.success(res, getRBR.reports);
   }
   catch (e) {
@@ -219,6 +229,11 @@ const getReportNearBy = async (req, res, next) => {
     const getRNB = await ReportHelper.getReportByQueryObject(queryObject);
     if (getRNB.err) {
       return ErrorHelper.ClientError(res, {error: getRNB.err}, 400);
+    }
+    if (req.query.flat) {
+      const data = getRNB.reports;
+      req.reports = data;
+      return next();
     }
     SuccessHelper.success(res, getRNB.reports);
   }
