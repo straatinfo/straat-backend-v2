@@ -1,6 +1,7 @@
 const MainCategory = require('../models/MainCategory');
 const SubCategory = require('../models/SubCategory');
 const ReportType = require('../models/ReportType');
+const User = require('../models/User');
 
 // main category helpers
 const getMainCategories = (_host) => {
@@ -66,17 +67,22 @@ const createMainCategory = (input) => {
       ReportType.findByIdAndUpdate(input._reportType,
       { '$addToSet': { 'mainCategories': mainCategory._id } },
       { 'new': true, 'upsert': true },
-      async(err, reportType) => {
-        try {
-          const getMC = await getMainCategoryById(mainCategory._id);
-          if (getMC.err) {
-            return resolve({err: getMC.err});
+      (err, reportType) => {
+        User.findByIdAndUpdate(input._host,
+        { '$addToSet': { 'mainCategories': mainCategory._id } },
+        { 'new': true, 'upsert': true },
+        async(err, user) => {
+          try {
+            const getMC = await getMainCategoryById(mainCategory._id);
+            if (getMC.err) {
+              return resolve({err: getMC.err});
+            }
+            resolve({err: null, mainCategory: getMC.mainCategory});
           }
-          resolve({err: null, mainCategory: getMC.mainCategory});
-        }
-        catch (e) {
-          reject(e);
-        }
+          catch (e) {
+            reject(e);
+          }
+        });
       });
     });
   });
