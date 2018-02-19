@@ -27,7 +27,7 @@ const userSchema = new Schema({
   picSecuredUrl: { type: String },
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  constituents: [{
+  reporters: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'User'
   }],
   teams: [{

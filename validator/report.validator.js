@@ -32,7 +32,7 @@ const reportFormValidator = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: 'Invalid Host ID'}, 400);
     }
 
-    const checkTeam = await TeamHelper.getTeamById(req.body_team);
+    const checkTeam = await TeamHelper.getTeamById(req.body._team);
     if (checkTeam.err || !checkTeam.team) {
       return ErrorHelper.ClientError(res, { error: 'Invalid Team ID'}, 400);
     }

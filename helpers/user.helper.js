@@ -73,11 +73,15 @@ const createNewUser = (input) => {
       password: encryptedPassword
     });
     newUser.save(function(err, user) {
-      if (err) {
-        return resolve({err: err});
-      }
-
-      resolve({err: null, user: user});
+      User.findByIdAndUpdate(input._host,
+      { '$addToSet': { 'reporters': user._id } },
+      { 'new': true, 'upsert': true },
+      (err, host) => {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, user: user});
+      });
     });
   });
 };
