@@ -220,6 +220,34 @@ const deleteSubCategory = (_id) => {
   });
 };
 
+const updateMainCategoryReport = (_mainCategory, _report) => {
+  return new Promise((resolve, reject) => {
+    MainCategory.findByIdAndUpdate(_mainCategory,
+    { '$addToSet': { 'reports': _report } },
+    { 'new': true, 'upsert': true },
+    (err, mainCategory) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, mainCategory: mainCategory});
+    });
+  });
+};
+
+const updateSubCategoryReport = (_subCategory, _report) => {
+  return new Promise((resolve, reject) => {
+    SubCategory.findByIdAndUpdate(_subCategory,
+    { '$addToSet': { 'reports': _report } },
+    { 'new': true, 'upsert': true },
+    (err, subCategory) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, subCategory: subCategory});
+    });
+  });
+};
+
 module.exports = {
   getMainCategories: getMainCategories,
   getMainCategoryById: getMainCategoryById,
@@ -230,5 +258,7 @@ module.exports = {
   createSubcategory: createSubcategory,
   updateSubCategory: updateSubCategory,
   deleteSubCategory: deleteSubCategory,
-  getMainCategoriesByReportType: getMainCategoriesByReportType
+  getMainCategoriesByReportType: getMainCategoriesByReportType,
+  updateMainCategoryReport: updateMainCategoryReport,
+  updateSubCategoryReport: updateSubCategoryReport
 };

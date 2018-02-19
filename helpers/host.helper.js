@@ -201,6 +201,20 @@ const getFreeHost = () => {
   });
 };
 
+const updateHostReport = (_host, _report) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_host,
+    { '$addToSet': { 'hostReports': _report } },
+    { 'new': true, 'upsert': true },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    });
+  });
+};
+
 module.exports = {
   getHostById: getHostById,
   getHosts: getHosts,
@@ -209,5 +223,6 @@ module.exports = {
   deleteHost: deleteHost,
   createHost: createHost,
   createHostLoop: createHostLoop,
-  getFreeHost: getFreeHost
+  getFreeHost: getFreeHost,
+  updateHostReport: updateHostReport
 };
