@@ -7,6 +7,10 @@ const createHostFormValidator = async (req, res, next) => {
 
     req.checkBody('email', 'Email must not be empty').notEmpty();
     req.checkBody('email', 'Invalid email').isEmail();
+    req.checkBody('hostPersonalEmail', 'Personal Email must not be empty').notEmpty();
+    req.checkBody('hostPersonalEmail', 'Invalid Personal Email').isEmail();
+    req.checkBody('lname', 'Host Lastname is required').notEmpty();
+    req.checkBody('fname', 'Host Firstname is required').notEmpty();
     req.checkBody('password', 'Invalid password').notEmpty().isLength({ min: 4 });
     req.checkBody('houseNumber', 'House Number must not be empty').notEmpty();
     req.checkBody('streetName', 'Street Name must not be empty').notEmpty();

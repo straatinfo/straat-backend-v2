@@ -7,7 +7,8 @@ const getDesigns = (_host) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
-      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .exec((err, designs) => {
       if (err) {
@@ -51,7 +52,8 @@ const getDesignById = (_id) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
-      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .exec((err, design) => {
       if (err) {
