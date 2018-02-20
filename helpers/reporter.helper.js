@@ -29,6 +29,7 @@ const getReporters = () => {
       if (err) {
         return resolve({err: err});
       }
+
       resolve({err: null, reporters: reporters});
     });
   });
@@ -137,33 +138,36 @@ const flatReporter = (r) => {
   return new Promise((resolve, reject) => {
     try {
       const flatR = {
-        _id: r._id || '',
-        fname: r.fname || '',
-        lname: r.lname || '',
-        gender: r.gender || '',
-        email: r.email || '',
-        username: r.username || '',
-        houseNumber: r.houseNumber || '',
-        streetName: r.streetName || '',
-        country: r.country || '',
-        state: r.state || '',
-        postalCode: r.postalCode || '',
-        city: r.city || '',
+        _id: r._id || null,
+        fname: r.fname || null,
+        lname: r.lname || null,
+        gender: r.gender || null,
+        email: r.email || null,
+        username: r.username || null,
+        houseNumber: r.houseNumber || null,
+        streetName: r.streetName || null,
+        country: r.country || null,
+        state: r.state || null,
+        postalCode: r.postalCode || null,
+        city: r.city || null,
         lat: r.lat || null,
         long: r.long || null,
         '_role._id': (r._role && r._role._id) ? r._role._id : null,
-        '_role.name': (r._role && r._role.name) ? r._role.name : '',
-        '_role.code': (r._role && r._role.code) ? r._role.code : '',
-        '_host.lname': (report._host && report._host.lname) ? report._host.lname : null,
-        '_host.fname': (report._host && report._host.hostPersonalEmail) ? report._host.hostPersonalEmail : null,
-        '_host.hostPersonalEmail': (report._host && report._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
+        '_role.name': (r._role && r._role.name) ? r._role.name : null,
+        '_role.code': (r._role && r._role.code) ? r._role.code : null,
+        '_host.lname': (r._host && r._host.lname) ? r._host.lname : null,
+        '_host.fname': (r._host && r._host.hostPersonalEmail) ? r._host.hostPersonalEmail : null,
+        '_host.hostPersonalEmail': (r._host && r._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
         '_role.accessLevel': (r._role && r._role.accessLevel) ? r._role.accessLevel : null,
-        '_host._id': (r._host && r._host._id) ? r._host._id : '',
-        '_host.hostName': (r._host && r._host.hostName) ? r._host.hostName : '',
-        '_host.email': (r._host && r._host.email) ? r._host.email : '',
+        '_host._id': (r._host && r._host._id) ? r._host._id : null,
+        '_host.hostName': (r._host && r._host.hostName) ? r._host.hostName : null,
+        '_host.email': (r._host && r._host.email) ? r._host.email : null,
         '_host.postalCode': (r._host && r._host.postalCode) ? r._host.postalCode : null,
-        '_host.phoneNumber': (r._host && r._host.phoneNumber) ? r._host.phoneNumber : '',
+        '_host.phoneNumber': (r._host && r._host.phoneNumber) ? r._host.phoneNumber : null,
         '_host.isPatron': (r._host && r._host.isPatron) ? r._host.isPatron : false,
+        'activeTeam._id': (r.activeTeam && r.activeTeam._id) ? r.activeTeam._id : null,
+        'activeTeam.teamName': (r.activeTeam && r.activeTeam.teamName) ? r.activeTeam.teamName : null,
+        'activeTeam.teamEmail': (r.activeTeam && r.activeTeam.teamEmail) ? r.activeTeam.teamEmail : null,
         teamLeaders: r.teamLeaders || [],
         teamMembers: r.teamMembers || [],
         isBlocked: r.isBlocked || false,
@@ -172,6 +176,7 @@ const flatReporter = (r) => {
       resolve({err: null, reporter: flatR});
     }
     catch (e) {
+      console.log(e);
       reject(e);
     }
   });
