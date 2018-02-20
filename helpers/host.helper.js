@@ -12,7 +12,8 @@ const getHosts = () => {
       User.find({'_role': _role}, [
         '_id', 'hostName', 'houseNumber', 'streetName',
         'city', 'state', 'country', 'postalCode', 'username',
-        'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+        'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+        'lname', 'fname', 'hostPersonalEmail'
       ])
       .populate('_role')
       .populate('designs')
@@ -63,7 +64,8 @@ const getHostWithinRadius = (long, lat, radius) => {
       }, [
         '_id', 'hostName', 'houseNumber', 'streetName',
         'city', 'state', 'country', 'postalCode', 'username',
-        'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+        'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+        'lname', 'fname', 'hostPersonalEmail'
       ])
       .populate('_role')
       .populate('design')
@@ -182,7 +184,8 @@ const getFreeHost = () => {
     User.findOne({'hostName': 'freeHost'}, [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
-      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_role')
     .populate({

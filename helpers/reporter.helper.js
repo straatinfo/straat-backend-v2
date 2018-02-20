@@ -20,7 +20,8 @@ const getReporters = () => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
-      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('teamMembers')
     .populate('teamLeaders')
@@ -47,7 +48,8 @@ const getReporterById = (_id) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
-      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('teamMembers')
     .populate('teamLeaders')
@@ -103,7 +105,8 @@ const getReportersByHost = (_host) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
-      'phoneNumber', 'long', 'lat', 'isPatron', 'email'
+      'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('teamMembers')
     .populate('teamLeaders')
@@ -151,6 +154,9 @@ const flatReporter = (r) => {
         '_role._id': (r._role && r._role._id) ? r._role._id : null,
         '_role.name': (r._role && r._role.name) ? r._role.name : '',
         '_role.code': (r._role && r._role.code) ? r._role.code : '',
+        '_host.lname': (report._host && report._host.lname) ? report._host.lname : null,
+        '_host.fname': (report._host && report._host.hostPersonalEmail) ? report._host.hostPersonalEmail : null,
+        '_host.hostPersonalEmail': (report._host && report._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
         '_role.accessLevel': (r._role && r._role.accessLevel) ? r._role.accessLevel : null,
         '_host._id': (r._host && r._host._id) ? r._host._id : '',
         '_host.hostName': (r._host && r._host.hostName) ? r._host.hostName : '',
