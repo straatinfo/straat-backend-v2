@@ -318,6 +318,32 @@ const updateTeamReport = (_team, _report) => {
   });
 };
 
+const findActiveTeam = (_user) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      let activeTeam;
+      const activeTeamLeader = await TeamLeaderHelper.findActiveTeam(_user);
+      if (activeTeamLeader.err) {
+        return resolve({err: activeTeamLeader.err});
+      }
+      if (activeTeamLeader.activeTeam) {
+        return resolve({err: null, activeTeam: activeTeamLeader.activeTeam});
+      }
+      const activeTeamMember = await TeamMemberHelper.findActiveTeam(_user);
+      if (activeTeamMember.err) {
+        return resolve({err: activeTeamMember.err});
+      }
+      if (activeTeamMember.activeTeam) {
+        return resolve({err: null, activeTeam: activeTeamMember.activeTeam});
+      }
+      resolve({err: null, activeTeam: null});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -330,5 +356,6 @@ module.exports = {
   addMember: addMember,
   kickMember: kickMember,
   checkTeamByCredentials: checkTeamByCredentials,
-  updateTeamReport: updateTeamReport
+  updateTeamReport: updateTeamReport,
+  findActiveTeam: findActiveTeam
 };

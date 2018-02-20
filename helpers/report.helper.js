@@ -69,7 +69,8 @@ const getReports = () => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -97,7 +98,8 @@ const getReportByHost = (hostId) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -125,7 +127,8 @@ const getReportById = (_id) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -152,7 +155,8 @@ const getReportsByReportType = (reportTypeId) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -297,7 +301,8 @@ const getReportByQueryObject = (queryObject) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -349,6 +354,9 @@ const flatReport = (report) => {
         '_host.country': report._host.country,
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
+        '_host.lname': (report._host && report._host.lname) ? report._host.lname : null,
+        '_host.fname': (report._host && report._host.hostPersonalEmail) ? report._host.hostPersonalEmail : null,
+        '_host.hostPersonalEmail': (report._host && report._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
         '_host.email': report._host.email,
         '_host.phoneNumber': report._host.phoneNumber,
         '_mainCategory._id': report._mainCategory._id,
@@ -399,6 +407,9 @@ const flatReport = (report) => {
         '_host.country': report._host.country,
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
+        '_host.lname': (report._host && report._host.lname) ? report._host.lname : null,
+        '_host.fname': (report._host && report._host.hostPersonalEmail) ? report._host.hostPersonalEmail : null,
+        '_host.hostPersonalEmail': (report._host && report._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
         '_host.email': report._host.email,
         '_host.phoneNumber': report._host.phoneNumber,
         '_mainCategory._id': report._mainCategory._id,
@@ -449,6 +460,9 @@ const flatReport = (report) => {
         '_host.country': report._host.country,
         '_host.lat': report._host.lat,
         '_host.long': report._host.long,
+        '_host.lname': (report._host && report._host.lname) ? report._host.lname : null,
+        '_host.fname': (report._host && report._host.hostPersonalEmail) ? report._host.hostPersonalEmail : null,
+        '_host.hostPersonalEmail': (report._host && report._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
         '_host.phoneNumber': report._host.phoneNumber,
         '_host.email': report._host.email,
         '_mainCategory._id': report._mainCategory._id,
