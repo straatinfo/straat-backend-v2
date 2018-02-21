@@ -66,10 +66,12 @@ const getReports = () => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -94,10 +96,12 @@ const getReportByHost = (hostId) => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -122,10 +126,12 @@ const getReportById = (_id) => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -140,6 +146,26 @@ const getReportById = (_id) => {
   });
 };
 
+const changeReportStatus = (_report, status = 'DONE') => {
+  return new Promise((resolve, reject) => {
+    Report.findByIdAndUpdate(_report, {'status': status}, async (err, report) => {
+      try {
+        if (err) {
+          return resolve({err: err});
+        }
+        const getReport = await getReportById(report._id);
+        if (getReport.err) {
+          return resolve({err: getReport.err});
+        }
+        resolve({err: null, report: getReport.report});
+      }
+      catch (e) {
+        reject(e);
+      }
+    })
+  });
+};
+
 const getReportsByReportType = (reportTypeId) => {
   return new Promise((resolve, reject) => {
     Report.find({'_reportType': reportTypeId})
@@ -149,10 +175,12 @@ const getReportsByReportType = (reportTypeId) => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -297,7 +325,8 @@ const getReportByQueryObject = (queryObject) => {
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
-      'phoneNumber', 'long', 'lat', 'email'
+      'phoneNumber', 'long', 'lat', 'email',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -313,205 +342,65 @@ const getReportByQueryObject = (queryObject) => {
   });
 };
 
-const flatReport = (report) => {
+const flatReport = (r) => {
   return new Promise((resolve, reject) => {
-    let flatReport;
-    if (report._subCategory && report._reporter && report.generatedReportId) {
-      flatReport = {
-        _id: report._id,
-        generatedReportId: report.generatedReportId,
-        updatedAt: report.updatedAt,
-        createdAt: report.createdAt,
-        finishedDate: report.finishedDate,
-        causeOfFinished: report.causeOfFinished,
-        '_team._id': report._team._id,
-        '_team.teamName': report._team.teamName,
-        '_team.teamEmail': report._team.teamEmail,
-        '_reportType._id': report._reportType._id,
-        '_reportType.code': report._reportType.code,
-        '_reportType.name': report._reportType.name,
-        '_reportType.description': report._reportType.description,
-        '_reporter._id': report._reporter.id,
-        '_reporter.fname': report._reporter.fname,
-        '_reporter.lname': report._reporter.lname,
-        title: report.title,
-        description: report.description,
-        long: report.long,
-        lat: report.lat,
-        location: report.location,
-        '_host._id': report._host._id,
-        '_host.hostName': report._host.hostName,
-        '_host.postalcode': report._host.postalCode,
-        '_host.houseNumber': report._host.houseNumber,
-        '_host.streetName': report._host.streetName,
-        '_host.city': report._host.city,
-        '_host.state': report._host.state,
-        '_host.country': report._host.country,
-        '_host.lat': report._host.lat,
-        '_host.long': report._host.long,
-        '_host.email': report._host.email,
-        '_host.phoneNumber': report._host.phoneNumber,
-        '_mainCategory._id': report._mainCategory._id,
-        '_mainCategory._reportType': report._mainCategory._reportType,
-        '_mainCategory.name': report._mainCategory.name,
-        '_subCategory._id': report._subCategory._id,
-        '_subCategory._mainCategory': report._subCategory._mainCategory || null,
-        '_subCategory.name': report._subCategory.name,
-        isPeopleInvolved: report.isPeopleInvolved,
-        isVehicleInvolved: report.isVehicleInvolved,
-        isUrgent: report.isUrgent,
-        note: report.note,
-        status: report.status,
-        peopleInvolvedCount: report.peopleInvolvedCount,
-        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
-        reportPhotos: report.reportPhotos
-      };
-    } else if (report._reporter && report.generatedReportId) {
-      flatReport = {
-        _id: report._id,
-        generatedReportId: report.generatedReportId,
-        updatedAt: report.updatedAt,
-        createdAt: report.createdAt,
-        finishedDate: report.finishedDate,
-        causeOfFinished: report.causeOfFinished,
-        '_team._id': report._team._id,
-        '_team.teamName': report._team.teamName,
-        '_team.teamEmail': report._team.teamEmail,
-        '_reporter._id': report._reporter.id,
-        '_reporter.fname': report._reporter.fname,
-        '_reporter.lname': report._reporter.lname,
-        '_reportType._id': report._reportType._id,
-        '_reportType.code': report._reportType.code,
-        '_reportType.name': report._reportType.name,
-        '_reportType.description': report._reportType.description,
-        title: report.title,
-        description: report.description,
-        long: report.long,
-        lat: report.lat,
-        location: report.location,
-        '_host._id': report._host._id,
-        '_host.hostName': report._host.hostName,
-        '_host.postalcode': report._host.postalCode,
-        '_host.houseNumber': report._host.houseNumber,
-        '_host.streetName': report._host.streetName,
-        '_host.city': report._host.city,
-        '_host.state': report._host.state,
-        '_host.country': report._host.country,
-        '_host.lat': report._host.lat,
-        '_host.long': report._host.long,
-        '_host.email': report._host.email,
-        '_host.phoneNumber': report._host.phoneNumber,
-        '_mainCategory._id': report._mainCategory._id,
-        '_mainCategory._reportType': report._mainCategory._reportType,
-        '_mainCategory.name': report._mainCategory.name,
-        '_subCategory._id': null,
-        '_subCategory._mainCategory': null,
-        '_subCategory.name': null,
-        isPeopleInvolved: report.isPeopleInvolved,
-        isVehicleInvolved: report.isVehicleInvolved,
-        isUrgent: report.isUrgent,
-        note: report.note,
-        status: report.status,
-        peopleInvolvedCount: report.peopleInvolvedCount,
-        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
-        reportPhotos: report.reportPhotos
-      }
-    } else if (report.generatedReportId) {
-      flatReport = {
-        _id: report._id,
-        generatedReportId: report.generatedReportId,
-        updatedAt: report.updatedAt,
-        createdAt: report.createdAt,
-        finishedDate: report.finishedDate,
-        causeOfFinished: report.causeOfFinished,
-        '_team._id': report._team._id,
-        '_team.teamName': report._team.teamName,
-        '_team.teamEmail': report._team.teamEmail,
-        '_reporter._id': null,
-        '_reporter.fname': null,
-        '_reporter.lname': null,
-        '_reportType._id': report._reportType._id,
-        '_reportType.code': report._reportType.code,
-        '_reportType.name': report._reportType.name,
-        '_reportType.description': report._reportType.description,
-        title: report.title,
-        description: report.description,
-        long: report.long,
-        lat: report.lat,
-        location: report.location,
-        '_host._id': report._host._id,
-        '_host.hostName': report._host.hostName,
-        '_host.postalcode': report._host.postalCode,
-        '_host.houseNumber': report._host.houseNumber,
-        '_host.streetName': report._host.streetName,
-        '_host.city': report._host.city,
-        '_host.state': report._host.state,
-        '_host.country': report._host.country,
-        '_host.lat': report._host.lat,
-        '_host.long': report._host.long,
-        '_host.phoneNumber': report._host.phoneNumber,
-        '_host.email': report._host.email,
-        '_mainCategory._id': report._mainCategory._id,
-        '_mainCategory._reportType': report._mainCategory._reportType,
-        '_mainCategory.name': report._mainCategory.name,
-        '_subCategory._id': null,
-        '_subCategory._mainCategory': null,
-        '_subCategory.name': null,
-        isPeopleInvolved: report.isPeopleInvolved,
-        isVehicleInvolved: report.isVehicleInvolved,
-        isUrgent: report.isUrgent,
-        note: report.note,
-        status: report.status,
-        peopleInvolvedCount: report.peopleInvolvedCount,
-        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
-        reportPhotos: report.reportPhotos
-      }
-    } else {
-      flatReport = {
-        _id: report._id,
-        generatedReportId: null,
-        updatedAt: report.updatedAt,
-        createdAt: report.createdAt,
-        '_reporter._id': null,
-        '_reporter.fname': null,
-        '_reporter.lname': null,
-        '_reportType._id': report._reportType._id,
-        '_reportType.code': report._reportType.code,
-        '_reportType.name': report._reportType.name,
-        '_reportType.description': report._reportType.description,
-        title: report.title,
-        description: report.description,
-        long: report.long,
-        lat: report.lat,
-        location: report.location,
-        '_host._id': report._host._id,
-        '_host.hostName': report._host.hostName,
-        '_host.postalcode': report._host.postalCode,
-        '_host.houseNumber': report._host.houseNumber,
-        '_host.streetName': report._host.streetName,
-        '_host.city': report._host.city,
-        '_host.state': report._host.state,
-        '_host.country': report._host.country,
-        '_host.lat': report._host.lat,
-        '_host.long': report._host.long,
-        '_host.email': report._host.email,
-        '_host.phoneNumber': report._host.phoneNumber,
-        '_mainCategory._id': report._mainCategory._id,
-        '_mainCategory._reportType': report._mainCategory._reportType,
-        '_mainCategory.name': report._mainCategory.name,
-        '_subCategory._id': null,
-        '_subCategory._mainCategory': null,
-        '_subCategory.name': null,
-        isPeopleInvolved: report.isPeopleInvolved,
-        isVehicleInvolved: report.isVehicleInvolved,
-        isUrgent: report.isUrgent,
-        note: report.note,
-        status: report.status,
-        peopleInvolvedCount: report.peopleInvolvedCount,
-        vehicleInvolvedDescription: report.vehicleInvolvedDescription,
-        reportPhotos: report.reportPhotos
-      }
-    }
+    
+    const flatReport = {
+      _id: r._id || null,
+      generatedReportId: r.generatedReportId || null,
+      updatedAt: r.updatedAt || null,
+      createdAt: r.createdAt || null,
+      finishedDate: r.finishedDate || null,
+      causeOfFinished: r.causeOfFinished || null,
+      '_team._id': (r._team && r._team._id) ? r._team._id : null,
+      '_team.teamName': (r._team && r._team.teamName) ? r._team.teamName : null,
+      '_team.teamEmail': (r._team && r._team.teamEmail) ? r._team.teamEmail : null,
+      '_reportType._id': (r._reportType && r._reportType._id) ? r._reportType._id : null,
+      '_reportType.code': (r._reportType && r._reportType.code) ? r._reportType.code : null,
+      '_reportType.name': (r._reportType && r._reportType.name) ? r._reportType.name : null,
+      '_reportType.description': (r._reportType && r._reportType.description) ? r._reportType.description : null,
+      '_reporter._id': (r._reporter && r._reporter._id) ? r._reporter.id : null,
+      '_reporter.fname': (r._reporter && r._reporter.fname) ? r._reporter.fname : null,
+      '_reporter.lname': (r._reporter && r._reporter.lname) ? r._reporter.lname : null,
+      title: r.title || null,
+      description: r.description || null,
+      long: r.long || null,
+      lat: r.lat || null,
+      location: r.location || null,
+      '_host._id': (r._host && r._host._id) ? r._host._id : null,
+      '_host.hostName': (r._host && r._host.hostName) ? r._host.hostName : null,
+      '_host.postalcode': (r._host && r._host.postalCode) ? r._host.postalCode : null,
+      '_host.houseNumber': (r._host && r._host.houseNumber) ? r._host.houseNumber : null,
+      '_host.streetName': (r._host && r._host.streetName) ? r._host.streetName : null,
+      '_host.city': (r._host && r._host.city) ? r._host.city : null,
+      '_host.state': (r._host && r._host.state) ? r._host.state : null,
+      '_host.country': (r._host && r._host.country) ? r._host.country : null,
+      '_host.lat': (r._host && r._host.lat) ? r._host.lat : null,
+      '_host.long': (r._host && r._host.long) ? r._host.long : null,
+      '_host.lname': (r._host && r._host.lname) ? r._host.lname : null,
+      '_host.fname': (r._host && r._host.hostPersonalEmail) ? r._host.hostPersonalEmail : null,
+      '_host.hostPersonalEmail': (r._host && r._host.hostPersonalEmail) ? r._host.hostPersonalEmail : null,
+      '_host.email': (r._host && r._host.email) ? r._host.email : null,
+      '_host.phoneNumber': (r._host && r._host.phoneNumber) ? r._host.phoneNumber : null,
+      '_mainCategory._id': (r._mainCategory && r._mainCategory._id) ? r._mainCategory._id : null,
+      '_mainCategory._reportType': (r._mainCategory && r._mainCategory._reportType) ? r._mainCategory._reportType : null,
+      '_mainCategory.name': (r._mainCategory && r._mainCategory.name) ? r._mainCategory.name : null,
+      '_subCategory._id': (r._subCategory && r._subCategory._id) ? r._subCategory._id : null,
+      '_subCategory._mainCategory': (r._subCategory && r._subCategory._mainCategory) ? r._subCategory._mainCategory : null,
+      '_subCategory.name': (r._subCategory && r._subCategory.name) ? r._subCategory.name : null,
+      '_team._id': (r._team && r._team._id) ? r._team._id : null,
+      '_team.teamName': (r._team && r._team.teamName) ? r._team.teamName : null,
+      '_team.teamEmail': (r._team && r._team.teamEmail) ? r._team.teamEmail : null, 
+      isPeopleInvolved: r.isPeopleInvolved || null,
+      isVehicleInvolved: r.isVehicleInvolved || null,
+      isUrgent: r.isUrgent || null,
+      note: r.note || null,
+      status: r.status || null,
+      peopleInvolvedCount: r.peopleInvolvedCount || null,
+      vehicleInvolvedDescription: r.vehicleInvolvedDescription || null,
+      reportPhotos: r.reportPhotos || []
+    };
+
     resolve({err: null, report: flatReport});
   });
 };
@@ -528,5 +417,6 @@ module.exports = {
   saveUploadedPhotoReport: saveUploadedPhotoReport,
   saveUploadLooper: saveUploadLooper,
   getReportByQueryObject: getReportByQueryObject,
-  flatReport: flatReport
+  flatReport: flatReport,
+  changeReportStatus: changeReportStatus
 };

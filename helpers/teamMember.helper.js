@@ -132,6 +132,24 @@ const removeTeamMembers = (_team) => {
   });
 };
 
+const findActiveTeam = (_user) => {
+  return new Promise((resolve, reject) => {
+    TeamMember.find({'_user': _user, 'active': true})
+    .populate('_team')
+    .exec((err, teamMember) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      if (teamMember.length < 1) {
+        return resolve({err: null, activeTeam: null});
+      }
+      const activeTeam = teamMember[0]._team;
+      resolve({err: null, activeTeam: activeTeam});
+
+    });
+  });
+};
+
 module.exports = {
   addTeamMember: addTeamMember,
   removeTeamMember: removeTeamMember,
@@ -141,5 +159,6 @@ module.exports = {
   removeTeamMemberToTeam: removeTeamMemberToTeam,
   checkTeamMember: checkTeamMember,
   addTeamMemberToTeam: addTeamMemberToTeam,
-  addTeamMemberToUser: addTeamMemberToUser
+  addTeamMemberToUser: addTeamMemberToUser,
+  findActiveTeam: findActiveTeam
 };

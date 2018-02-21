@@ -1,6 +1,8 @@
 const ReporterHelper = require('../helpers/reporter.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
+const TeamHelper = require('../helpers/team.helper');
+const _ = require('lodash');
 
 const getReporters = async (req, res, next) => {
   try {
@@ -8,12 +10,20 @@ const getReporters = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    const updatedReporters = await Promise.all(getR.reporters.map(async(r) => {
+      let reporter = r;
+      const findActiveTeam = await TeamHelper.findActiveTeam(r._id);
+      const data = {...r.toObject(), activeTeam: findActiveTeam.activeTeam};
+      return data;
+    }));
+
     if(req.query.flat) {
-      const data = getR.reporters;
+      const data = updatedReporters;
       req.reporters = data;
       return next();
     }
-    SuccessHelper.success(res, getR.reporters);
+
+    SuccessHelper.success(res, updatedReporters);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -27,7 +37,9 @@ const getReporterById = async (req, res, next) => {
     if (getRBI.err) {
       return ErrorHelper.ClientError(res, {error: getRBI.err}, 400);
     }
-    SuccessHelper.success(res, getRBI.reporter);
+    const findActiveTeam = await TeamHelper.findActiveTeam(getRBI.reporter._id);
+    const data = {...getRBI.reporter.toObject(), activeTeam: findActiveTeam.activeTeam};
+    SuccessHelper.success(res, data);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -41,7 +53,20 @@ const getReportersByHost = async (req, res, next) => {
     if (getRBH.err) {
       return ErrorHelper.ClientError(res, {error: getRBH.err}, 400);
     }
-    SuccessHelper.success(res, getRBH.reporters);
+    const updatedReporters = await Promise.all(getRBH.reporters.map(async(r) => {
+      let reporter = r;
+      const findActiveTeam = await TeamHelper.findActiveTeam(r._id);
+      const data = {...r.toObject(), activeTeam: findActiveTeam.activeTeam};
+      return data;
+    }));
+
+    if(req.query.flat) {
+      const data = updatedReporters;
+      req.reporters = data;
+      return next();
+    }
+
+    SuccessHelper.success(res, updatedReporters);
   }
   catch (e) {
     ErrorHelper.ServerError(res);

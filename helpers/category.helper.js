@@ -10,7 +10,8 @@ const getMainCategories = (_host) => {
     .populate('_host', [
       '_id', 'hostName', 'email', 'houseNumber',
       'streetName', 'city', 'state', 'country',
-      'postalCode', 'long', 'lat', '_role'
+      'postalCode', 'long', 'lat', '_role',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('subCategories')
     .populate('_reportType')
@@ -29,7 +30,8 @@ const getMainCategoryById = (_id) => {
     .populate('_host', [
       '_id', 'hostName', 'email', 'houseNumber',
       'streetName', 'city', 'state', 'country',
-      'postalCode', 'long', 'lat', '_role'
+      'postalCode', 'long', 'lat', '_role',
+      'lname', 'fname', 'hostPersonalEmail'
     ])
     .populate('subCategories')
     .populate('_reportType')

@@ -43,4 +43,7 @@ ReportRoute.route('/reporter/:reporterId')
 ReportRoute.route('/nearby/:long/:lat/:radius')
 .get(/* requireAuth, */ Report.getReportNearBy, FlatReport.getFlatReports);
 
+ReportRoute.route('/status/:reportId')
+.put(/* requireAuth, */ReportFormValidator.changeReportStatusFormValidator, Report.changeReportStatus);
+
 module.exports = ReportRoute;
