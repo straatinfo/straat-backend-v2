@@ -9,7 +9,7 @@ const reportSchema = new Schema({
   long: { type: Number },
   lat: { type: Number },
   note: { type: String },
-  status: { type: String, default: 'Unresolved' },
+  status: { type: String, enum: [ 'NEW', 'INPROGRESS', 'DONE', 'EXPIRED'], default: 'NEW' },
   isVehicleInvolved: { type: Boolean, default: false },
   isPeopleInvolved: { type: Boolean, default: false },
   vehicleInvolvedDescription: { type: String },
@@ -17,6 +17,7 @@ const reportSchema = new Schema({
   isUrgent: { type: Boolean, default: false },
   finishedDate: { type: Date },
   causeOfFinished: { type: String },
+  isPublic: { type: Boolean, default: true },
   reportCoordinate : {
     type: {type: String, enum: 'Point', default: 'Point'},
     coordinates: { type: [Number],default:[0,0]}

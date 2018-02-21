@@ -242,6 +242,22 @@ const getReportNearBy = async (req, res, next) => {
   }
 };
 
+const changeReportStatus = async (req, res, next) => {
+  const { reportId } = req.params;
+  const { status } = req.body;
+  try {
+    const changeRS = await ReportHelper.changeReportStatus(reportId, status);
+    if (changeRS.err) {
+      return ErrorHelper.ClientError(res, {error: changeRS.err}, 400);
+    }
+    SuccessHelper.success(res, changeRS.report);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReports: getReports,
   getReportById: getReportById,
@@ -252,5 +268,6 @@ module.exports = {
   deleteReport: deleteReport,
   getReportByReporter: getReportByReporter,
   getReportNearBy: getReportNearBy,
-  createReportV2: createReportV2
+  createReportV2: createReportV2,
+  changeReportStatus: changeReportStatus
 };
