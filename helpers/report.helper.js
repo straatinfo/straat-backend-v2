@@ -66,6 +66,7 @@ const getReports = () => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
@@ -95,6 +96,7 @@ const getReportByHost = (hostId) => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
@@ -124,6 +126,7 @@ const getReportById = (_id) => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
@@ -143,6 +146,26 @@ const getReportById = (_id) => {
   });
 };
 
+const changeReportStatus = (_report, status = 'DONE') => {
+  return new Promise((resolve, reject) => {
+    Report.findByIdAndUpdate(_report, {'status': status}, async (err, report) => {
+      try {
+        if (err) {
+          return resolve({err: err});
+        }
+        const getReport = await getReportById(report._id);
+        if (getReport.err) {
+          return resolve({err: getReport.err});
+        }
+        resolve({err: null, report: getReport.report});
+      }
+      catch (e) {
+        reject(e);
+      }
+    })
+  });
+};
+
 const getReportsByReportType = (reportTypeId) => {
   return new Promise((resolve, reject) => {
     Report.find({'_reportType': reportTypeId})
@@ -152,6 +175,7 @@ const getReportsByReportType = (reportTypeId) => {
       'city', 'state', 'country', 'postalCode',
       'phoneNumber'
     ])
+    .populate('_team')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
@@ -364,6 +388,9 @@ const flatReport = (r) => {
       '_subCategory._id': (r._subCategory && r._subCategory._id) ? r._subCategory._id : null,
       '_subCategory._mainCategory': (r._subCategory && r._subCategory._mainCategory) ? r._subCategory._mainCategory : null,
       '_subCategory.name': (r._subCategory && r._subCategory.name) ? r._subCategory.name : null,
+      '_team._id': (r._team && r._team._id) ? r._team._id : null,
+      '_team.teamName': (r._team && r._team.teamName) ? r._team.teamName : null,
+      '_team.teamEmail': (r._team && r._team.teamEmail) ? r._team.teamEmail : null, 
       isPeopleInvolved: r.isPeopleInvolved || null,
       isVehicleInvolved: r.isVehicleInvolved || null,
       isUrgent: r.isUrgent || null,
@@ -390,5 +417,6 @@ module.exports = {
   saveUploadedPhotoReport: saveUploadedPhotoReport,
   saveUploadLooper: saveUploadLooper,
   getReportByQueryObject: getReportByQueryObject,
-  flatReport: flatReport
+  flatReport: flatReport,
+  changeReportStatus: changeReportStatus
 };
