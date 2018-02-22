@@ -344,6 +344,33 @@ const findActiveTeam = (_user) => {
   });
 };
 
+const addConvoToTeam = (_team, _conversation) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_team,
+    { '$addToSet': { 'conversations': _conversation } },
+    { 'new': true, 'upsert': true },
+    (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    });
+  });
+};
+
+const removeConvoToTeam = (_team, _conversation) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_team,
+    { '$pop': { 'conversations': _conversation } },
+    (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    });
+  });
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -357,5 +384,7 @@ module.exports = {
   kickMember: kickMember,
   checkTeamByCredentials: checkTeamByCredentials,
   updateTeamReport: updateTeamReport,
-  findActiveTeam: findActiveTeam
+  findActiveTeam: findActiveTeam,
+  addConvoToTeam: addConvoToTeam,
+  removeConvoToTeam: removeConvoToTeam
 };
