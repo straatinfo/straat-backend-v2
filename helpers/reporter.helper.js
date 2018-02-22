@@ -157,7 +157,7 @@ const flatReporter = (r) => {
         '_role.code': (r._role && r._role.code) ? r._role.code : null,
         '_host.lname': (r._host && r._host.lname) ? r._host.lname : null,
         '_host.fname': (r._host && r._host.hostPersonalEmail) ? r._host.hostPersonalEmail : null,
-        '_host.hostPersonalEmail': (r._host && r._host.hostPersonalEmail) ? _host.hostPersonalEmail : null,
+        '_host.hostPersonalEmail': (r._host && r._host.hostPersonalEmail) ? r._host.hostPersonalEmail : null,
         '_role.accessLevel': (r._role && r._role.accessLevel) ? r._role.accessLevel : null,
         '_host._id': (r._host && r._host._id) ? r._host._id : null,
         '_host.hostName': (r._host && r._host.hostName) ? r._host.hostName : null,
