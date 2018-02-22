@@ -1,6 +1,19 @@
 module.exports = {
-  sendRegistrationRequestNotifMail: (email, fname, lname, message) => {
-    return `<p>Greetings!</p><br/><p>A new user is requesting for an access code.<p/><p>User Details:<p/><p>Email: ${email}<p/><p>Firstname: ${fname}<p/><p>Lastname: ${lname} </p><br /><p>Sincerely,<p>Straat.info-team</p>`;
+  sendRegistrationRequestNotifMail: (email, fname, lname, message, phoneNumber) => {
+    return `
+      <p>Greetings!</p>
+      <br/>
+      <p>A new user is requesting for an access code.<p/>
+      <p>User Details:<p/>
+      <p>Email: ${email}<p/>
+      <p>Firstname: ${fname}<p/>
+      <p>Lastname: ${lname} </p>
+      <p>Phone Number: ${(phoneNumber) ? phoneNumber : '-'}</p>
+      <p>message: ${(message) ? message : 'No Message'}</p>
+      <br />
+      <p>Sincerely,</p>
+      <p>Straat.info-team</p>
+    `;
   },
   sendTeamRequestNotifMail: (teamEmail, teamName, sender) => {
     return `<p>Greetings!</p><br/><p>A new Non-Volunteer Team is requesting for approval.<p/><p>User Details:<p/><p>Email: ${teamEmail}<p/><p>Team Name: ${teamName}<p/><p>Sincerely,<p>${sender}</p>`;

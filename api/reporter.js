@@ -10,6 +10,7 @@ const getReporters = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+
     const updatedReporters = await Promise.all(getR.reporters.map(async(r) => {
       let reporter = r;
       const findActiveTeam = await TeamHelper.findActiveTeam(r._id);

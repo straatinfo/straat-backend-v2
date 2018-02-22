@@ -36,4 +36,7 @@ TeamInviteRoute.route('/acceptRequest/:userId/:teamId')
 TeamInviteRoute.route('/acceptInvite/:userId/:teamId')
 .get(/*requireAuth,*/ TeamInvite.acceptInvite);
 
+TeamInviteRoute.route('/byReporterAndTeam/:teamId/:userId')
+.get(/*requireAuth,*/ TeamInvite.checkInviteExist);
+
 module.exports = TeamInviteRoute;

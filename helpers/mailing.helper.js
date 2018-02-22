@@ -4,14 +4,14 @@ const MailTemplates = require('../assets/mail-templates/simple-mails');
 
 // access code for android
 const sendRegistrationRequestNotif = (userDetail) => {
-  const { fname, lname, message } = userDetail;
+  const { fname, lname, message, phoneNumber } = userDetail;
   const receiver = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
   const sender = Config.EMAIL_ADDRESSES.UPDATE_REQUEST_EMAIL;
   const subject = 'Request for Update';
-  const mailBody = MailTemplates.sendRegistrationRequestNotifMail(sender, fname, lname, message);
+  const mailBody = MailTemplates.sendRegistrationRequestNotifMail(email, fname, lname, message, phoneNumber);
   return new Promise(async(resolve, reject) => {
     try {
-      const sendBasicMail = await SendGridService.basicMail('newteamrequest@straat.info', receiver, subject, mailBody);
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
       if (sendBasicMail.err) {
         return resolve({err: sendBasicMail.err});
       }
