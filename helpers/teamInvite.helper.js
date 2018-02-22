@@ -1,10 +1,13 @@
 const TeamInvite = require('../models/TeamInvite');
 const TeamMemberHelper = require('../helpers/teamMember.helper');
 
-const checkInviteExist = (_user, _team) => {
+const checkInviteExist = (_team, _user) => {
   return new Promise((resolve, reject) => {
-    TeamInvite.find({'_user': _user, '_team': _team}, (err, teamInvites) => {
-      
+    TeamInvite.findOne({'_user': _user, '_team': _team}, (err, teamInvite) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, teamInvite: teamInvite});
     });
   });
 };
@@ -145,5 +148,6 @@ module.exports = {
   removeInvite: removeInvite,
   removeTeam: removeTeam,
   acceptInvite: acceptInvite,
-  acceptRequest: acceptRequest
+  acceptRequest: acceptRequest,
+  checkInviteExist: checkInviteExist
 };

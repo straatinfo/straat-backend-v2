@@ -168,6 +168,8 @@ const flatReporter = (r) => {
         'activeTeam._id': (r.activeTeam && r.activeTeam._id) ? r.activeTeam._id : null,
         'activeTeam.teamName': (r.activeTeam && r.activeTeam.teamName) ? r.activeTeam.teamName : null,
         'activeTeam.teamEmail': (r.activeTeam && r.activeTeam.teamEmail) ? r.activeTeam.teamEmail : null,
+        'activeTeam.teamLeader._id': (r.activeTeam && r.activeTeam.teamLeader && r.activeTeam.teamLeader._id) ? r.activeTeam.teamLeader._id : null,
+        'activeTeam.teamMember._id': (r.activeTeam && r.activeTeam.teamMember && r.activeTeam.teamMember._id) ? r.activeTeam.teamMember._id : null,
         teamLeaders: r.teamLeaders || [],
         teamMembers: r.teamMembers || [],
         isBlocked: r.isBlocked || false,
