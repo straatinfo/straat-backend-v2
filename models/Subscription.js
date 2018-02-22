@@ -6,6 +6,6 @@ const subscriptionSchema = new Schema({
   name: { type: String },
   description: { type: String },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('Subscription', subscriptionSchema);

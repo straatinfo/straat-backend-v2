@@ -12,6 +12,6 @@ const mainCategorySchema = new Schema({
   subCategories: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory'
   }]
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('MainCategory', mainCategorySchema);
