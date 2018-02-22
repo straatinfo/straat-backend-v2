@@ -45,13 +45,14 @@ const getUserConversations = async (req, res, next) => {
 
 const createConversation = async (req, res, next) => {
   try {
-    const createC = await ConversationHelper.createConversation(req.body);
+    const createC = await ConversationHelper.createConversation(req.body._author, req.body);
     if (createC.err) {
       return ErrorHelper.ClientError(res, {error: createC.err});
     }
     SuccessHelper.success(res, createC.conversation);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -59,13 +60,15 @@ const createConversation = async (req, res, next) => {
 const updateConversation = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const updateC = await ConversationHelper.updateConversation(id, req.body);
+    const updateC = await ConversationHelper.updateConversation(id, {'title': req.body.title});
     if (updateC.err) {
       return ErrorHelper.ClientError(res, {error: updateC.err}, 400);
     }
-    SuccessHelper.success(res, createC.conversation);
+    const detailedC = await ConversationHelper.getConversationById(updateC.conversation._id);
+    SuccessHelper.success(res, detailedC.conversation);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -87,11 +90,11 @@ const deleteConversation = async (req, res, next) => {
 const addParticipant = async (req, res, next) => {
   const { userId, conversationId } = req.params;
   try {
-    const addP = await ConversationHelper.addParticipant(conversationId, userId);
+    const addP = await ConversationHelper.addParticipant(userId, conversationId);
     if (addP.err) {
       return ErrorHelper.ClientError(res, {error: addP.err}, 400);
     }
-    SuccessHelper.success(res, {message: 'Success'});
+    SuccessHelper.success(res, addP.participant);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -101,11 +104,11 @@ const addParticipant = async (req, res, next) => {
 const removeParticipant = async (req, res, next) => {
   const { userId, conversationId } = req.params;
   try {
-    const removeP = await ConversationHelper.removeParticipant(conversationId, userId);
+    const removeP = await ConversationHelper.removeParticipant(userId, conversationId);
     if (removeP.err) {
       return ErrorHelper.ClientError(res, {error: removeP.err}, 400);
     }
-    SuccessHelper.success(res, { message: 'Success' });
+    SuccessHelper.success(res, removeP.participant);
   }
   catch (e) {
     ErrorHelper.ServerError(res);

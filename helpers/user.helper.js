@@ -146,6 +146,33 @@ const changePassword = (_user, newPassword) => {
   });
 };
 
+const addMessageToUser = (_user, _message) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_user,
+    { '$addToSet': { 'messages': _message } },
+    { 'new': true, 'upsert': true },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    });
+  });
+};
+
+const removeMessageToUser = (_user, _message) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_user,
+    { '$pop': { 'messages': _message } },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    });
+  });
+};
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
@@ -153,5 +180,7 @@ module.exports = {
   addTeamToHost: addTeamToHost,
   updateUser: updateUser,
   forgotPassword: forgotPassword,
-  changePassword: changePassword
+  changePassword: changePassword,
+  addMessageToUser: addMessageToUser,
+  removeMessageToUser: removeMessageToUser
 };

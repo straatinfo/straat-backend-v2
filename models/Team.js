@@ -18,6 +18,9 @@ const teamSchema = new Schema({
   }],
   reports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
+  }],
+  conversations: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Conversation'
   }]
 }, { timestamps: true });
 
