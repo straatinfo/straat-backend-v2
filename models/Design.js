@@ -10,6 +10,6 @@ const designSchema = new Schema({
   url: String,
   secure_url: String,
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('Design', designSchema);

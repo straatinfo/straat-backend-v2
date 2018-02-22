@@ -8,6 +8,6 @@ const subCategorySchema = new Schema({
   reports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }]
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('SubCategory', subCategorySchema);

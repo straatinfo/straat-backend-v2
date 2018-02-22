@@ -55,7 +55,7 @@ const userSchema = new Schema({
   messages: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Message'
   }]
-});
+}, {timestamps: true});
 
 userSchema.methods.encryptPassword = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
