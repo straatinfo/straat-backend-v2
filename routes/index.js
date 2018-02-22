@@ -12,6 +12,7 @@ const RegistrationRoute = require('./registration.route');
 const UploadRoute = require('./upload.route');
 const UserRoute = require('./user.route');
 const FeedbackRoute = require('./feedback.route');
+const MessageRoute = require('./message.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -31,4 +32,5 @@ module.exports = (app) => {
   app.use('/v1/api/upload', UploadRoute);
   app.use('/v1/api/user', UserRoute);
   app.use('/v1/api/feedback', FeedbackRoute);
+  app.use('/v1/api/message', MessageRoute);
 };
