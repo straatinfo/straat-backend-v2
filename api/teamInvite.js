@@ -2,6 +2,20 @@ const SuccessHelper = require('../helpers/success.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
 
+const checkInviteExist = async (req,res, next) => {
+  const { teamId, userId } = req.params;
+  try {
+    const checkTI = await TeamInviteHelper.checkInviteExist(teamId, userId);
+    if (checkTI.err) {
+      return ErrorHelper.ClientError(res, {error: checkTI.err}, 400);
+    }
+    SuccessHelper.success(res, checkTI.teamInvite);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const getTeamPendingInvites = async (req, res, next) => {
   const { teamId } = req.params;
   try {
@@ -158,5 +172,6 @@ module.exports = {
   declineRequest: declineRequest,
   declineInvite: declineInvite,
   acceptRequest: acceptRequest,
-  acceptInvite: acceptInvite
+  acceptInvite: acceptInvite,
+  checkInviteExist: checkInviteExist
 };

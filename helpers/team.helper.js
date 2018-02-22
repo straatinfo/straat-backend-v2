@@ -327,14 +327,14 @@ const findActiveTeam = (_user) => {
         return resolve({err: activeTeamLeader.err});
       }
       if (activeTeamLeader.activeTeam) {
-        return resolve({err: null, activeTeam: activeTeamLeader.activeTeam});
+        return resolve({err: null, activeTeam: {...activeTeamLeader.activeTeam.toObject(), teamLeader: activeTeamLeader.teamLeader, teamMember: null}});
       }
       const activeTeamMember = await TeamMemberHelper.findActiveTeam(_user);
       if (activeTeamMember.err) {
         return resolve({err: activeTeamMember.err});
       }
       if (activeTeamMember.activeTeam) {
-        return resolve({err: null, activeTeam: activeTeamMember.activeTeam});
+        return resolve({err: null, activeTeam: {...activeTeamMember.activeTeam.toObject(), teamMember: activeTeamMember.activeTeam.teamMember, teamLeader: null}});
       }
       resolve({err: null, activeTeam: null});
     }
