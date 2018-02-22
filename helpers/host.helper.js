@@ -235,6 +235,9 @@ const flatHost = (h) => {
         '_role.name': (h._role && h._role.name) ? h._role.name : '',
         '_role.code': (h._role && h._role.code) ? h._role.code : '',
         '_role.accessLevel': (h._role && h._role.accessLevel) ? h._role.accessLevel : null,
+        lname: h.lname || null,
+        fname: h. fname || null,
+        hostPersonalEmail: h.hostPersonalEmail || null,
         long: h.long || null,
         lat: h.lat || null,
         designs: h.designs || [],
@@ -248,13 +251,6 @@ const flatHost = (h) => {
     }
   });
 };
-
-/* 
-
-  "designs": [],
-  "teams": [],
-  "isPatron": false
-*/
 
 module.exports = {
   getHostById: getHostById,
