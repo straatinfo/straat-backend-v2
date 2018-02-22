@@ -39,6 +39,7 @@ const createMessage = async (req, res, next) => {
     SuccessHelper.success(res, createM.message);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -46,7 +47,7 @@ const createMessage = async (req, res, next) => {
 const updateMessage = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const updateM = await MessageHelper.updateMessage(id);
+    const updateM = await MessageHelper.updateMessage(id, req.body.body);
     if (updateM.err) {
       return ErrorHelper.ClientError(res, {error: updateM.err}, 400);
     }
@@ -67,6 +68,7 @@ const deleteMessage = async (req, res, next) => {
     SuccessHelper.success(res, deleteM.message);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };

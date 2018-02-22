@@ -6,6 +6,11 @@ const UserHelper = require('./user.helper');
 const getConversationMessages = (_conversation) => {
   return new Promise((resolve, reject) => {
     Message.find({'_conversation': _conversation})
+    .populate({
+      path: '_author',
+      select: { '_id': 1, 'email': 1, 'username': 1, 'fname': 1, 'lname': 1 }
+    })
+    .populate('_conversation')
     .limit(20)
     .sort({'createdAt': -1})
     .exec((err, messages) => {
@@ -21,6 +26,11 @@ const getConversationByPage = (_conversation, page) => {
   const getPage = Math.max(0, page)
   return new Promise((resolve, reject) => {
     Message.find({'_conversation': _conversation})
+    .populate({
+      path: '_author',
+      select: { '_id': 1, 'email': 1, 'username': 1, 'fname': 1, 'lname': 1 }
+    })
+    .populate('_conversation')
     .limit(20)
     .sort({'createdAt': -1})
     .skip(20 * getPage)
@@ -42,18 +52,27 @@ const sendMessage = (input) => {
           return resolve({err: err});
         }
         // update _conversation
-        const updateConversation = await ConversationHelper.addMessageToConversation(input._conversation, message._id);
-        if (updateConversation.err) {
-          return resolve({err: updateConversation.err});
-        }
+        // const updateConversation = await ConversationHelper.addMessageToConversation(message._conversation, message._id);
+        // if (updateConversation.err) {
+        //   return resolve({err: updateConversation.err});
+        // }
         // update _author
         // const updateAuthor = await UserHelper.addMessageToUser(input._author, message._id);
         // if (updateAuthor.err) {
         //   return resolve({err: updateAuthor.err});
         // }
-        resolve({err: null, message: message});
+        Conversation.findByIdAndUpdate(message._conversation,
+        { '$addToSet': { 'messages': message._id } },
+        { 'new': true, 'upsert': true },
+        (err, conversation) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          resolve({err: null, message: message});
+        });
       }
       catch (e) {
+        console.log(e);
         reject(e);
       }
     });
@@ -66,7 +85,12 @@ const updateMessage = (_id, body) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, message: message});
+      Message.findById(message._id, (err, messageD) => {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, message: messageD});
+      });
     });
   });
 };
@@ -78,15 +102,25 @@ const deleteMessage = (_id) => {
         if (err) {
           return reslove({err: err});
         }
-        const deleteMessageToConvo = await ConversationHelper.removeMessageToConversation(message._conversation, message._id);
-        if (deleteMessageToConvo.err) {
-          return resolve({err: err});
+        if (!message) {
+          return resolve({err: null, message: message});
         }
+        // const deleteMessageToConvo = await ConversationHelper.removeMessageToConversation(message._conversation, message._id);
+        // if (deleteMessageToConvo.err) {
+        //   return resolve({err: deleteMessageToConvo.err});
+        // }
         // const deleteMessageToUser = await UserHelper.removeMessageToUser(message._author, message._id);
         // if (deleteMessageToUser.err) {
         //   return resolve({err: deleteMessageToUser.err});
         // }
-        resolve({err: null, message:message});
+        Conversation.findByIdAndUpdate(message._conversation,
+        { '$pop': { 'messages': message._id } },
+        (err, conversation) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          resolve({err: null, message:message});
+        });
       }
       catch (e) {
         reject(e);
