@@ -11,6 +11,6 @@ const reportTypeSchema = new Schema({
   mainCategories: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
   }]
-});
+}, {timestamps: true});
 
 module.exports = mongoose.model('ReportType', reportTypeSchema);

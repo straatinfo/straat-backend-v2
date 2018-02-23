@@ -147,7 +147,7 @@ const findActiveTeam = (_user) => {
         return resolve({err: null, activeTeam: null});
       }
       const activeTeam = teamLeader[0]._team;
-      resolve({err: null, activeTeam: activeTeam});
+      resolve({err: null, activeTeam: activeTeam, teamLeader: teamLeader[0] });
 
     });
   });

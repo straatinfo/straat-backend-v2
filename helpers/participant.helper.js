@@ -16,16 +16,16 @@ const newParticipant = (_user, _conversation) => {
         if (err) {
           return resolve({err: err});
         }
-        resolve({err: null});
+        resolve({err: null, participant: participant});
       });
     });
   });
 };
 
-const addParticipantToConversation = (_user, _conversation) => {
+const addParticipantToConversation = (_participant, _conversation) => {
   return new Promise((resolve, reject) => {
     Conversation.findByIdAndUpdate(_conversation,
-    { '$addToSet': { 'participants': _user } },
+    { '$addToSet': { 'participants': _participant } },
     { 'new': true, 'upsert': true },
     (err, conversation) => {
       if (err) {
@@ -38,7 +38,7 @@ const addParticipantToConversation = (_user, _conversation) => {
 
 const deleteParticipant = (_user, _conversation) => {
   return new Promise((resolve, reject) => {
-    Participant.remove({'_conversation': _conversation, '_user': _user}, (err, participant) => {
+    Participant.findOneAndRemove({'_conversation': _conversation, '_user': _user}, (err, participant) => {
       if (err) {
         return resolve({err: err});
       }

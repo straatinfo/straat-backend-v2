@@ -1,16 +1,20 @@
 const Participant = require('../models/Participant');
 const Conversation = require('../models/Conversation');
 const ParticipantHelper = require('../helpers/participant.helper');
+const TeamHelper = require('./team.helper');
+const MessageHelper = require('./Message.helper');
 
 const getConversations = () => {
   return new Promise((resolve, reject) => {
-    Conversation.find()
+    Conversation.find({})
     .populate({
-      path: 'participants',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'fname': 1, 'lname': 1, 'email': 1, 'username': 1 }
-      }
+      path: 'participants'
+    })
+    .populate({
+      path: 'messages'
+    })
+    .populate({
+      path: '_team'
     })
     .exec((err, conversations) => {
       if (err) {
@@ -25,8 +29,13 @@ const getUserConversations = (_user) => {
   return new Promise((resolve, reject) => {
     Participant.find({'_user': _user})
     .populate({
-      path: '_conversation',
-      select: { '_id': 1, 'title': 1, 'type': 1, '_author': 1 }
+      path: 'participants'
+    })
+    .populate({
+      path: 'messages'
+    })
+    .populate({
+      path: '_team'
     })
     .exec((err, participants) => {
       if (err) {
@@ -41,17 +50,19 @@ const getConversationById = (_id) => {
   return new Promise((resolve, reject) => {
     Conversation.findById(_id)
     .populate({
-      path: 'participants',
-      populate: {
-        path: '_user',
-        select: { '_id': 1, 'fname': 1, 'lname': 1, 'email': 1, 'username': 1 }
-      }
+      path: 'participants'
     })
-    .exec((err, conversations) => {
+    .populate({
+      path: 'messages'
+    })
+    .populate({
+      path: '_team'
+    })
+    .exec((err, conversation) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, conversations: conversations});
+      resolve({err: null, conversation: conversation});
     });
   });
 };
@@ -65,9 +76,19 @@ const createConversation = (_user, input) => {
       }
       try {
         const addParticipant = await ParticipantHelper.newParticipant(_user, conversation._id);
-        const addParticipantToConvo = await ParticipantHelper.addParticipantToConversation(_user, conversation._id);
-        if (addParticipant.err || addParticipantToConvo.err) {
-          return resolve({err: 'There is a problem in updating conversation'});
+        if (addParticipant.err) {
+          return resolve({err: addParticipant.err});
+        }
+        const addParticipantToConvo = await ParticipantHelper.addParticipantToConversation(addParticipant.participant._id, conversation._id);
+        if (addParticipantToConvo.err) {
+          return resolve({err: addParticipantToConvo.err});
+        }
+        if (input._team) {
+          const addConvoToTeam = await TeamHelper.addConvoToTeam(input._team, conversation._id);
+          if (addConvoToTeam.err) {
+            return resolve({err: addConvoToTeam.err});
+          }
+          return resolve({err: null, conversation: conversation});
         }
         resolve({err: null, conversation: conversation});
       }
@@ -95,9 +116,23 @@ const deleteConversation = (_id) => {
       if (err) {
         return resolve({err: err});
       }
+      if (!conversation) {
+        return resolve({err: null, conversation: null});
+      }
       const deleteParticipants = await ParticipantHelper.deleteAllParticipants(_id);
       if (deleteParticipants.err) {
-        return resolve({err: err});
+        return resolve({err: deleteParticipants.err});
+      }
+      const deleteMessages = await MessageHelper.deleteAllMessagesInConvo(_id);
+      if (deleteMessages.err) {
+        return resolve({err: deleteMessages.err});
+      }
+      if (conversation._team) {
+        const removeConvoToTeam = await TeamHelper.removeConvoToTeam(conversation._team, conversation._id);
+        if (removeConvoToTeam.err) {
+          return resolve({err: removeConvoToTeam.err});
+        }
+        return resolve({err: null, conversation: conversation});
       }
       resolve({err: null, conversation: conversation});
     });
@@ -107,10 +142,13 @@ const deleteConversation = (_id) => {
 const addParticipant = (_user, _conversation) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const newParticipant = ParticipantHelper.newParticipant(_user, _conversation);
-      const addParticipantToConvo = ParticipantHelper.deleteParticpantToConversation(_user, _conversation);
-      if (newParticipant.err || addParticipantToConvo.err) {
-        return resolve({err: 'Error in adding new participant'});
+      const newParticipant = await ParticipantHelper.newParticipant(_user, _conversation);
+      if (newParticipant.err) {
+        return resolve({err: newParticipant.err});
+      }
+      const addParticipantToConvo = await ParticipantHelper.addParticipantToConversation(newParticipant.participant._id, _conversation);
+      if (addParticipantToConvo.err) {
+        return resolve({err: addParticipantToConvo.err});
       }
       resolve({err: null, participant: newParticipant.participant });
     }
@@ -120,19 +158,49 @@ const addParticipant = (_user, _conversation) => {
   });
 };
 
-removeParticipant = (_user, _conversation) => {
+const removeParticipant = (_user, _conversation) => {
   return new Promise(async(resolve, reject) => {
     try {
       const deleteParticipant = await ParticipantHelper.deleteParticipant(_user, _conversation);
+      if (deleteParticipant.err) {
+        return resolve({err: deleteParticipant.err});
+      }
       const deleteParticipantToConvo = await ParticipantHelper.deleteParticpantToConversation(_user, _conversation);
-      if (deleteParticipant.err || deleteParticipantToConvo.err) {
-        return resolve({err: 'error in deleting participant'});
+      if (deleteParticipantToConvo.err) {
+        return resolve({err: deleteParticipantToConvo.err});
       }
       resolve({err: null, participant: deleteParticipant.participant});
     }
     catch (e) {
       reject(e);
     }
+  });
+};
+
+const addMessageToConversation = (_conversation, _message) => {
+  return new Promise((resolve, reject) => {
+    Conversation.findByIdAndUpdate(_conversation,
+    { '$addToSet': { 'messages': _message } },
+    { 'new': true, 'upsert': true },
+    (err, conversation) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, conversation: conversation});
+    });
+  });
+};
+
+const removeMessageToConversation = (_conversation, _message) => {
+  return new Promise((resolve, reject) => {
+    Conversation.findByIdAndUpdate(_conversation,
+    { '$pop': { 'messages': _message } },
+    (err, conversation) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, conversation: conversation});
+    });
   });
 };
 
@@ -144,5 +212,7 @@ module.exports = {
   updateConversation: updateConversation,
   deleteConversation: deleteConversation,
   addParticipant: addParticipant,
-  removeParticipant: removeParticipant
+  removeParticipant: removeParticipant,
+  addMessageToConversation: addMessageToConversation,
+  removeMessageToConversation: removeMessageToConversation
 };
