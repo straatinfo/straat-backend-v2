@@ -47,18 +47,20 @@ const createReportTypeC = async (req, res, next) => {
             }
             return savePhoto.reportPhoto;
           }));
-          return success.push(res, createR.report);
+          return success.push(createR.report);
         }
     
-        success.push(res, createR.report);
+        success.push(createR.report);
       }
       catch (e) {
         error.push(e);
       }
     }));
+  
     SuccessHelper.success(res, {error, success});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
