@@ -101,6 +101,9 @@ const createReport = async (req, res, next) => {
 
 const createReportV2 = async (req, res, next) => {
   try {
+    if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
+      return next();
+    }
     const getGeneratedCode = await ReportHelper.reportIdGenerator(req.body._reportType);
     if (getGeneratedCode.err) {
       return ErrorHelper.ClientError(res, {error: getGeneratedCode.err}, 400);
@@ -108,16 +111,6 @@ const createReportV2 = async (req, res, next) => {
     const createR = await ReportHelper.createReport({...req.body, generatedReportId: getGeneratedCode.generatedReportId});
     if (createR.err) {
       return ErrorHelper.ClientError(res, { error: createR.err }, 400);
-    }
-    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
-      const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
-        const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
-        if (savePhoto.err) {
-          return savePhoto.err;
-        }
-        return savePhoto.reportPhoto;
-      }));
-      return SuccessHelper.success(res, createR.report);
     }
     // send emails
     const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt } = createR.report;
@@ -145,6 +138,18 @@ const createReportV2 = async (req, res, next) => {
       default:
         null
       break;
+    }
+
+    // send photos
+    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
+      const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
+        const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
+        if (savePhoto.err) {
+          return savePhoto.err;
+        }
+        return savePhoto.reportPhoto;
+      }));
+      return SuccessHelper.success(res, createR.report);
     }
 
     SuccessHelper.success(res, createR.report);
