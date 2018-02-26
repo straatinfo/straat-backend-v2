@@ -7,6 +7,7 @@ const ReportRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
 const ReportFormValidator = require('../validator/report.validator');
 const FlatReport = require('../middleware/flatReport');
+const ReportMiddleware = require('../middleware/report.middleware');
 
 ReportRoute.route('/')
 .get(/*requireAuth,*/ Report.getReports, FlatReport.getFlatReports)
@@ -22,7 +23,8 @@ ReportRoute.route('/V2')
 .post(
   /* requireAuth, */
   ReportFormValidator.reportFormValidator,
-  Report.createReportV2
+  Report.createReportV2,
+  ReportMiddleware.createReportTypeC
 );
 
 ReportRoute.route('/:id')

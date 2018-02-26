@@ -107,11 +107,23 @@ const updateReportTypeReport = (_reportType, _report) => {
   });
 };
 
+const getReportTypeByCode = (code) => {
+  return new Promise((resolve, reject) => {
+    ReportType.findOne({'code': code}, (err, reportType) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reportType: reportType});
+    });
+  });
+};
+
 module.exports = {
   getReportTypes: getReportTypes,
   createReportType: createReportType,
   updateReportType: updateReportType,
   deleteReportType: deleteReportType,
   getReportTypeById: getReportTypeById,
-  updateReportTypeReport: updateReportTypeReport
+  updateReportTypeReport: updateReportTypeReport,
+  getReportTypeByCode: getReportTypeByCode
 };
