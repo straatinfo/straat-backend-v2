@@ -27,5 +27,11 @@ TeamRoute.route('/member/:userId/:teamId')
 .get(/*requireAuth,*/ Team.addMember)
 .delete(/*requireAuth,*/ Team.kickMember);
 
+TeamRoute.route('/approve')
+.get(/*requireAuth,*/ Team.getApprovedTeam) // /approve?isApproved=false returns nonApproved teams
+.post(/*requireAuth,*/ Team.approveTeam) // /approves a team 
+.put(/*requireAuth,*/ Team.disApproveTeam); // /change the isApproved to false
+
+
 
 module.exports = TeamRoute;

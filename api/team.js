@@ -160,6 +160,59 @@ const kickMember = async (req, res, next) => {
   }
 };
 
+const getApprovedTeam = async(req, res, next) => {
+  try {
+    let isApproved;
+    if (req.query && req.query.isApproved && req.query.isApproved === 'false') {
+      isApproved = false;
+    } else {
+      isApproved = true;
+    }
+    const getAT = await TeamHelper.getApprovedTeam(isApproved);
+    if (getAT.err) {
+      return ErrorHelper.ClientError(res, {error: getAT.err}, 400);
+    }
+    SuccessHelper.success(res, getAT.teams);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const approveTeam = async(req, res, next) => {
+  const { teamId } = req.body;
+  try {
+    if (!teamId) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Team ID'}, 400);
+    }
+    const approveT = await TeamHelper.approveTeam(teamId, true);
+    if (approveT.err) {
+      return ErrorHelper.ClientError(res, {error: approveT.err}, 400);
+    }
+    SuccessHelper.success(res, approveT.team);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const disApproveTeam = async (req, res, next) => {
+  const { teamId } = req.body;
+  try {
+    if (!teamId) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Team ID'}, 400);
+    }
+    const disAT = await TeamHelper.approveTeam(teamId, false);
+    if (disAT.err) {
+      return ErrorHelper.ClientError(res, {error: disAT.err}, 400);
+    }
+    SuccessHelper.success(res, disAT.team);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamById: getTeamById,
@@ -170,5 +223,8 @@ module.exports = {
   addLeader: addLeader,
   removeLeader: removeLeader,
   addMember: addMember,
-  kickMember: kickMember
+  kickMember: kickMember,
+  getApprovedTeam: getApprovedTeam,
+  approveTeam: approveTeam,
+  disApproveTeam: disApproveTeam
 };
