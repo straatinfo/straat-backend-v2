@@ -25,7 +25,19 @@ const getRoleByCode = (code =  'HOST') => {
   });
 };
 
+const getRoleByAccessLevel = (accesslevel = 3) => {
+  return new Promise((resolve, reject) => {
+    Role.findOne({'accessLevel': accesslevel}, (err, role) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, role: role});
+    });
+  });
+};
+
 module.exports = {
   findRoleById: findRoleById,
-  getRoleByCode: getRoleByCode
+  getRoleByCode: getRoleByCode,
+  getRoleByAccessLevel: getRoleByAccessLevel
 };

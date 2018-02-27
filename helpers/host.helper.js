@@ -9,7 +9,7 @@ const getHosts = () => {
         return resolve({err: getRole.err});
       }
       const _role = getRole.role._id;
-      User.find({'_role': _role}, [
+      User.find({'_role': _role, 'softRemoved': false}, [
         '_id', 'hostName', 'houseNumber', 'streetName',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
@@ -45,7 +45,7 @@ const getHostWithinRadius = (long, lat, radius) => {
       const _role = getRole.role._id;
       User.find({
         $and: [
-          {'_role': _role},
+          {'_role': _role, 'softRemoved': false},
           {
             $or: [
               {
@@ -119,7 +119,7 @@ const updateHost = (_id, input) => {
 
 const deleteHost = (_id) => {
   return new Promise((resolve, reject) => {
-    User.findByIdAndRemove(_id, (err, host) => {
+    User.findByIdAndUpdate(_id, {'softRemoved': true}, (err, host) => {
       if (err) {
         return resolve({err: err});
       }
