@@ -93,10 +93,34 @@ const deleteDesign = (_id) => {
   });
 };
 
+const getGeneralDesign = () => {
+  return new Promise((resolve, reject) => {
+    Design.findOne({'designName': 'General Design'}, (err, design) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, design: design});
+    });
+  });
+};
+
+const setActiveDesign = (_host, _design) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_host, {'_activeDesign': _design}, (err, host) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: host, host: host});
+    });
+  });
+};
+
 module.exports = {
   getDesigns: getDesigns,
   createDesign: createDesign,
   getDesignById: getDesignById,
   updateDesign: updateDesign,
-  deleteDesign: deleteDesign
+  deleteDesign: deleteDesign,
+  getGeneralDesign: getGeneralDesign,
+  setActiveDesign: setActiveDesign
 };

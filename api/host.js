@@ -1,6 +1,7 @@
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const HostHelper = require('../helpers/host.helper');
+const DesignHelper = require('../helpers/design.helper');
 
 const getHosts = async (req, res, next) => {
   try {
@@ -22,7 +23,11 @@ const getHosts = async (req, res, next) => {
 
 const createHost = async (req, res, next) => {
   try {
-    const createH = await HostHelper.createHost(req.body);
+    const getGD = await DesignHelper.getGeneralDesign();
+    if (getGD.err) {
+      return ErrorHelper.ClientError(res, {error: getGD.err}, 400);
+    }
+    const createH = await HostHelper.createHost({...req.body, '_activeDesign': getGD.design_id});
     if (createH.err) {
       return ErrorHelper.ClientError(res, {error: createH.err}, 400);
     }
