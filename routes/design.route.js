@@ -16,5 +16,8 @@ DesignRoute.route('/:id')
 .put(/*requireAuth,*/ Design.updateDesign)
 .delete(/*requireAuth,*/ Design.deleteDesign);
 
+DesignRoute.route('/activeDesign/:hostId/:designId')
+.put(/*requireAuth,*/ Design.setActiveDesign);
+
 
 module.exports = DesignRoute;

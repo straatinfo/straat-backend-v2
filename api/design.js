@@ -106,11 +106,29 @@ const deleteDesign = async (req, res, next) => {
   }
 };
 
+const setActiveDesign = async (req, res, next) => {
+  const { hostId, designId } = req.params;
+  try {
+    if (!hostId || !designId) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid hostID or DesignID'}, 400);
+    }
+    const setAD = await DesignHelper.setActiveDesign(hostId, designId);
+    if (setAD.err) {
+      return ErrorHelper.ClientError(res, {error: setAD.err}, 400);
+    }
+    SuccessHelper.success(res, setAD.host);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getDesigns: getDesigns,
   createDesign: createDesign,
   addLogo: addLogo,
   getDesignById: getDesignById,
   updateDesign: updateDesign,
-  deleteDesign: deleteDesign
+  deleteDesign: deleteDesign,
+  setActiveDesign: setActiveDesign
 };
