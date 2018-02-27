@@ -4,7 +4,7 @@ const MailTemplates = require('../assets/mail-templates/simple-mails');
 
 // access code for android
 const sendRegistrationRequestNotif = (userDetail) => {
-  const { fname, lname, message, phoneNumber } = userDetail;
+  const { email, fname, lname, message, phoneNumber } = userDetail;
   const receiver = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
   const sender = Config.EMAIL_ADDRESSES.UPDATE_REQUEST_EMAIL;
   const subject = 'Request for Update';

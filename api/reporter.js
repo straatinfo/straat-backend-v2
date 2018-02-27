@@ -38,6 +38,9 @@ const getReporterById = async (req, res, next) => {
     if (getRBI.err) {
       return ErrorHelper.ClientError(res, {error: getRBI.err}, 400);
     }
+    if (!getRBI.reporter) {
+      return SuccessHelper.success(res, null);
+    }
     const findActiveTeam = await TeamHelper.findActiveTeam(getRBI.reporter._id);
     const data = {...getRBI.reporter.toObject(), activeTeam: findActiveTeam.activeTeam};
     SuccessHelper.success(res, data);
@@ -102,10 +105,25 @@ const unBlockReporter = async (req, res, next) => {
   }
 };
 
+const deleteReporter = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deleteR = await ReporterHelper.deleteReporter(id);
+    if (deleteR.err) {
+      return ErrorHelper.ClientError(res, {error: deleteR.err}, 400);
+    }
+    SuccessHelper.success(res, deleteR.reporter);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReporters: getReporters,
   getReporterById: getReporterById,
   blockReporter: blockReporter,
   unBlockReporter: unBlockReporter,
-  getReportersByHost: getReportersByHost
+  getReportersByHost: getReportersByHost,
+  deleteReporter: deleteReporter
 };

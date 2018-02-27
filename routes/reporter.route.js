@@ -10,7 +10,8 @@ ReporterRoute.route('/')
 .get(/*requireAuth,*/ Reporter.getReporters, FlatReporter.getFlatReporters);
 
 ReporterRoute.route('/:id')
-.get(/*requireAuth,*/ Reporter.getReporterById);
+.get(/*requireAuth,*/ Reporter.getReporterById)
+.delete(/*requireAuth,*/ Reporter.deleteReporter);
 
 ReporterRoute.route('/host/:hostId')
 .get(/*requireAuth,*/ Reporter.getReportersByHost, FlatReporter.getFlatReporters);

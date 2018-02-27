@@ -8,7 +8,7 @@ const getReporters = () => {
       return resolve({err: getRole.err});
     }
     const _role = getRole.role._id;
-    User.find({'_role': _role}, [
+    User.find({'_role': _role, 'softRemoved': false}, [
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
@@ -37,7 +37,7 @@ const getReporters = () => {
 
 const getReporterById = (_id) => {
   return new Promise((resolve, reject) => {
-    User.findById(_id, [
+    User.findOne({'_id': _id, 'softRemoved': false}, [
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
@@ -94,7 +94,7 @@ const getReportersByHost = (_host) => {
       return resolve({err: getRole.err});
     }
     const _role = getRole.role._id;
-    User.find({'_role': _role, '_host': _host}, [
+    User.find({'_role': _role, '_host': _host, 'softRemoved': false}, [
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
@@ -190,6 +190,17 @@ const flatReporter = (r) => {
   });
 };
 
+const deleteReporter = (_reporter) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_reporter, {'softRemoved': true}, (err, reporter) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reporter: reporter});
+    });
+  });
+};
+
 module.exports = {
   getReporters: getReporters,
   getReporterById: getReporterById,
@@ -197,5 +208,6 @@ module.exports = {
   unBlockReporter: unBlockReporter,
   getReportersByHost: getReportersByHost,
   updateReporterReports: updateReporterReports,
-  flatReporter: flatReporter
+  flatReporter: flatReporter,
+  deleteReporter: deleteReporter
 };

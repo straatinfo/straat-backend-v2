@@ -79,6 +79,7 @@ const requestForCode = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Successfully sent request'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
