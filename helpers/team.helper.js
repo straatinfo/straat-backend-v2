@@ -371,6 +371,32 @@ const removeConvoToTeam = (_team, _conversation) => {
   });
 };
 
+const getApprovedTeam = (isApproved = true) => {
+  return new Promise((resolve, reject) => {
+    Team.find({'isApproved': isApproved})
+    .populate('teamLeaders')
+    .populate('teamMembers')
+    .populate('_host', [ '_id', 'hostName' ])
+    .exec((err, teams) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, teams: teams});
+    });    
+  });
+};
+
+const approveTeam = (_team, isApproved = true) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_team, {'isApproved': isApproved}, (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    });
+  });
+}
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -386,5 +412,7 @@ module.exports = {
   updateTeamReport: updateTeamReport,
   findActiveTeam: findActiveTeam,
   addConvoToTeam: addConvoToTeam,
-  removeConvoToTeam: removeConvoToTeam
+  removeConvoToTeam: removeConvoToTeam,
+  getApprovedTeam: getApprovedTeam,
+  approveTeam: approveTeam
 };

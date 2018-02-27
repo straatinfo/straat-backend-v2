@@ -10,7 +10,7 @@ const login = async (req, res, next) => {
     const data = {
       user: user.user,
       token: JwtService.tokenForUser(user.user),
-      _activeDesign: user.user.toObject()._host._activeDesign
+      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null
     };
     SuccessHelper.success(res, data);
   }
