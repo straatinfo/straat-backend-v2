@@ -26,6 +26,13 @@ const findUserById = (id) => {
       'hostName', 'username', '_host', 'isVolunteer',
       'picUrl', 'picSecuredUrl'
     ])
+    .populate({
+      path: '_host',
+      select: { '_id': 1, 'hostName': 1 },
+      populate: {
+        path: '_activeDesign'
+      }
+    })
     .populate('_role')
     .populate({
       path: 'teamMembers',

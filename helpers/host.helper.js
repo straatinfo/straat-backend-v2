@@ -15,6 +15,7 @@ const getHosts = () => {
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
         'lname', 'fname', 'hostPersonalEmail'
       ])
+      .populate('_activeDesign')
       .populate('_role')
       .populate('designs')
       .populate('teams')
@@ -67,6 +68,7 @@ const getHostWithinRadius = (long, lat, radius) => {
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
         'lname', 'fname', 'hostPersonalEmail'
       ])
+      .populate('_activeDesign')
       .populate('_role')
       .populate('design')
       .exec((err, hosts) => {
@@ -194,6 +196,7 @@ const getFreeHost = () => {
         path: 'subCategories'
       }
     })
+    .populate('_activeDesign')
     .populate('design')
     .exec((err, host) => {
       if (err) {
@@ -222,18 +225,18 @@ const flatHost = (h) => {
   return new Promise((resolve, reject) => {
     try {
       const flattenHost = {
-        _id: h._id || '',
-        hostName: h.hostName || '',
-        email: h.email || '',
-        username: h.username || '',
-        streetName: h.streetName || '',
-        city: h.city || '',
-        country: h.country || '',
-        postalCode: h.postalCode || '',
-        phoneNumber: h.phoneNumber || '',
+        _id: h._id || null,
+        hostName: h.hostName || null,
+        email: h.email || null,
+        username: h.username || null,
+        streetName: h.streetName || null,
+        city: h.city || null,
+        country: h.country || null,
+        postalCode: h.postalCode || null,
+        phoneNumber: h.phoneNumber || null,
         '_role._id': (h._role && h._role._id) ? h._role._id : null,
-        '_role.name': (h._role && h._role.name) ? h._role.name : '',
-        '_role.code': (h._role && h._role.code) ? h._role.code : '',
+        '_role.name': (h._role && h._role.name) ? h._role.name : null,
+        '_role.code': (h._role && h._role.code) ? h._role.code : null,
         '_role.accessLevel': (h._role && h._role.accessLevel) ? h._role.accessLevel : null,
         lname: h.lname || null,
         fname: h. fname || null,
@@ -242,7 +245,15 @@ const flatHost = (h) => {
         lat: h.lat || null,
         designs: h.designs || [],
         teams: h.teams || [],
-        isPatron: h.isPatron || false
+        isPatron: h.isPatron || false,
+        '_activeDesign._id': (h._activeDesign && h._activeDesign._id) ? h._activeDesign._id : null,
+        '_activeDesign.designName': (h._activeDesign && h._activeDesign.designName) ? h._activeDesign.designName : null,
+        '_activeDesign.colorOne': (h._activeDesign && h._activeDesign.colorOne) ? h._activeDesign.colorOne : null,
+        '_activeDesign.colorTwo': (h._activeDesign && h._activeDesign.colorTwo) ? h._activeDesign.colorTwo : null,
+        '_activeDesign.colorThree': (h._activeDesign && h._activeDesign.colorThree) ? h._activeDesign.colorThree : null,
+        '_activeDesign.colorFour': (h._activeDesign && h._activeDesign.colorFour) ? h._activeDesign.colorFour : null,
+        '_activeDesign.url': (h._activeDesign && h._activeDesign.url) ? h._activeDesign.url : null,
+        '_activeDesign.secure_url': (h._activeDesign && h._activeDesign.secure_url) ? h._activeDesign.secure_url : null
       };
       resolve({err: null, host: flattenHost});
     }

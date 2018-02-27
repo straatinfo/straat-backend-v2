@@ -9,7 +9,8 @@ const login = async (req, res, next) => {
     const user = await UserHelper.findUserById(req.user._id);
     const data = {
       user: user.user,
-      token: JwtService.tokenForUser(user.user)
+      token: JwtService.tokenForUser(user.user),
+      _activeDesign: user.user.toObject()._host._activeDesign
     };
     SuccessHelper.success(res, data);
   }

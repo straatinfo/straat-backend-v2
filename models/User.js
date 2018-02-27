@@ -27,6 +27,7 @@ const userSchema = new Schema({
   picUrl: { type: String },
   picSecuredUrl: { type: String },
   softRemoved: { type: Boolean, default: false },
+  _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' },
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   reporters: [{
