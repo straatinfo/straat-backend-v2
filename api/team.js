@@ -172,9 +172,14 @@ const getApprovedTeam = async(req, res, next) => {
     if (getAT.err) {
       return ErrorHelper.ClientError(res, {error: getAT.err}, 400);
     }
+    if (req.query && req.query.flat === 'true') {
+      req.teams = getAT.teams;
+      return next();
+    }
     SuccessHelper.success(res, getAT.teams);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -213,6 +218,20 @@ const disApproveTeam = async (req, res, next) => {
   }
 };
 
+const softRemoveTeam = async (req, res, next) => {
+  const { teamId } = req.params;
+  try {
+    const deleteT = await TeamHelper.softRemovedTeam(teamId);
+    if (deleteT.err) {
+      return ErrorHelper.ClientError(res, {error: deleteT.err}, 400);
+    }
+    SuccessHelper.success(res, deleteT.team);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamById: getTeamById,
@@ -220,6 +239,7 @@ module.exports = {
   getTeamWithFilter: getTeamWithFilter,
   updateTeam: updateTeam,
   deleteTeam: deleteTeam,
+  softRemoveTeam: softRemoveTeam,
   addLeader: addLeader,
   removeLeader: removeLeader,
   addMember: addMember,

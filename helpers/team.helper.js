@@ -7,10 +7,10 @@ const User = require('../models/User');
 
 const getTeams = () => {
   return new Promise((resolve, reject) => {
-    Team.find()
+    Team.find({'softRemoved': false})
     .populate('teamLeaders')
     .populate('teamMembers')
-    .populate('_host', [ '_id', 'hostName' ])
+    .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, teams) => {
       if (err) {
         return resolve({err: err});
@@ -22,10 +22,10 @@ const getTeams = () => {
 
 const getTeamWithFilter = (queryObject) => {
   return new Promise((resolve, reject) => {
-    Team.find({'_host': queryObject._host, 'isVolunteer': queryObject.isVolunteer})
+    Team.find({'softRemoved': false, '_host': queryObject._host, 'isVolunteer': queryObject.isVolunteer})
     .populate('teamLeaders')
     .populate('teamMembers')
-    .populate('_host', [ '_id', 'hostName' ])
+    .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, teams) => {
       if (err) {
         return resolve({err: err});
@@ -37,10 +37,10 @@ const getTeamWithFilter = (queryObject) => {
 
 const getTeamById = (_id) => {
   return new Promise((resolve, reject) => {
-    Team.findById(_id)
+    Team.findOne({'_id': _id, 'softRemoved': false })
     .populate('teamLeaders')
     .populate('teamMembers')
-    .populate('_host', [ '_id', 'hostName' ])
+    .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, team) => {
       if (err) {
         return resolve({err: err});
@@ -373,10 +373,10 @@ const removeConvoToTeam = (_team, _conversation) => {
 
 const getApprovedTeam = (isApproved = true) => {
   return new Promise((resolve, reject) => {
-    Team.find({'isApproved': isApproved})
+    Team.find({'isApproved': isApproved, 'softRemoved': false})
     .populate('teamLeaders')
     .populate('teamMembers')
-    .populate('_host', [ '_id', 'hostName' ])
+    .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, teams) => {
       if (err) {
         return resolve({err: err});
@@ -397,6 +397,43 @@ const approveTeam = (_team, isApproved = true) => {
   });
 }
 
+const flatTeam = (t) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const team = {
+        _id: t._id || null,
+        teamName: t.teamName || null,
+        teamEmail: t.teamEmail || null,
+        logoUrl: t.logoUrl || null,
+        logoSecuredUrl: t.logoSecuredUrl || null,
+        description: t.description || null,
+        isVolunteer: (t.isVolunteer === false) ? false : (t.isVolunteer === true) ? true : null,
+        isApproved: (t.isApproved === false) ? false : (t.isApproved === true) ? true : null,
+        '_host._id': (t._host && t._host._id) ? t._host._id : null,
+        '_host.hostName': (t._host && t._host.hostName) ? t._host.hostName : null,
+        '_host.email': (t._host && t._host.email) ? t._host.email : null,
+        teamLeaders: t.teamLeaders || [],
+        teamMembers: t.teamMembers || []
+      };
+      resolve({err: null, team: team});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const softRemoveTeam = (_team) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_team, {'softRemoved': false}, (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    });
+  });
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -404,6 +441,7 @@ module.exports = {
   createTeam: createTeam,
   updateTeam: updateTeam,
   deleteTeam: deleteTeam,
+  softRemovedTeam: softRemoveTeam,
   addLeader: addLeader,
   removeLeader: removeLeader,
   addMember: addMember,
@@ -414,5 +452,6 @@ module.exports = {
   addConvoToTeam: addConvoToTeam,
   removeConvoToTeam: removeConvoToTeam,
   getApprovedTeam: getApprovedTeam,
-  approveTeam: approveTeam
+  approveTeam: approveTeam,
+  flatTeam: flatTeam
 };

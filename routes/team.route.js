@@ -6,6 +6,7 @@ const Team = require('../api/team');
 const TeamRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
 const TeamValidator = require('../validator/team.validator');
+const TeamMiddleware = require('../middleware/team.middleware');
 
 TeamRoute.route('/')
 .get(/*requireAuth,*/ Team.getTeams)
@@ -13,11 +14,6 @@ TeamRoute.route('/')
 
 TeamRoute.route('/new/:userId')
 .post(CloudinaryService.singleUpload('team-logo'),TeamValidator.createTeamFormValidator, /*requireAuth,*/ Team.createTeam);
-
-TeamRoute.route('/:teamId')
-.get(/*requireAuth,*/ Team.getTeamById)
-.put(/*requireAuth,*/ Team.updateTeam)
-.delete(/*requireAuth,*/Team.deleteTeam);
 
 TeamRoute.route('/leader/:userId/:teamId')
 .get(/*requireAuth,*/ Team.addLeader)
@@ -28,10 +24,13 @@ TeamRoute.route('/member/:userId/:teamId')
 .delete(/*requireAuth,*/ Team.kickMember);
 
 TeamRoute.route('/approve')
-.get(/*requireAuth,*/ Team.getApprovedTeam) // /approve?isApproved=false returns nonApproved teams
+.get(/*requireAuth,*/ Team.getApprovedTeam, TeamMiddleware.flatTeam) // /approve?isApproved=false returns nonApproved teams
 .post(/*requireAuth,*/ Team.approveTeam) // /approves a team 
 .put(/*requireAuth,*/ Team.disApproveTeam); // /change the isApproved to false
 
-
+TeamRoute.route('/:teamId')
+.get(/*requireAuth,*/ Team.getTeamById)
+.put(/*requireAuth,*/ Team.updateTeam)
+.delete(/*requireAuth,*/ Team.softRemoveTeam);
 
 module.exports = TeamRoute;
