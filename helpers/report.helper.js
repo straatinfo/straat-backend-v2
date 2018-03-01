@@ -87,9 +87,9 @@ const getReports = () => {
   });
 };
 
-const getReportByHost = (hostId) => {
+const getReportByHost = (hostId, _reportType = null) => {
   return new Promise((resolve, reject) => {
-    Report.find({'_host': hostId})
+    Report.find({'_host': hostId, '_reportType': _reportType})
     .populate('_reporter', [
       '_id', 'fname', 'lname', 'email', 'gender',
       'username', 'houseNumber', 'streetName',
