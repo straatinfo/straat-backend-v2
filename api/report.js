@@ -42,7 +42,11 @@ const getReportById = async (req, res, next) => {
 const getReportsByHostId = async (req, res, next) => {
   const { hostId } = req.params;
   try {
-    const getR = await ReportHelper.getReportByHost(hostId);
+    const getReportTypeA = await ReportTypeHelper.getReportTypeByCode('A');
+    if (getReportTypeA.err) {
+      return ErrorHelper.ClientError(res, {error: getReportTypeA.err});
+    }
+    const getR = await ReportHelper.getReportByHost(hostId, getReportTypeA.reportType._id);
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
@@ -54,6 +58,7 @@ const getReportsByHostId = async (req, res, next) => {
     SuccessHelper.success(res, getR.reports);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -263,6 +268,25 @@ const changeReportStatus = async (req, res, next) => {
   }
 };
 
+const getReportsByReporterAndTeam = async (req, res, next) => {
+  const { reporterId, teamId } = req.params;
+  try {
+    const queryObject = { $or: [ { '_reporter': reporterId }, { '_team': teamId } ] };
+    const getR = await ReportHelper.getReportByQueryObject(queryObject);
+    if (getR.err) {
+      return ErrorHelper.ClientError(res, {error: getR.err}, 400);
+    }
+    if (req.query && req.query.flat === 'true') {
+      req.reports = getR.reports;
+      return next();
+    }
+    SuccessHelper.success(res, getR.reports);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReports: getReports,
   getReportById: getReportById,
@@ -274,5 +298,6 @@ module.exports = {
   getReportByReporter: getReportByReporter,
   getReportNearBy: getReportNearBy,
   createReportV2: createReportV2,
-  changeReportStatus: changeReportStatus
+  changeReportStatus: changeReportStatus,
+  getReportsByReporterAndTeam: getReportsByReporterAndTeam
 };
