@@ -64,6 +64,10 @@ const getHostById = async (req, res, next) => {
     if (getH.err) {
       return ErrorHelper.ClientError(res, {error: getH.err}, 400);
     }
+    if(req.query.flat === 'true') {
+      const host = await HostHelper.flatHost(getH.host);
+      return SuccessHelper.success(res, host.host);
+    }
     SuccessHelper.success(res, getH.host);
   }
   catch (e) {
