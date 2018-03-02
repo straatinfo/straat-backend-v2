@@ -66,11 +66,11 @@ const getReporterById = (_id) => {
 const blockReporter = (_id) => {
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(_id, {'isBlocked': true})
-    .exec((err) => {
+    .exec((err, reporter) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null});
+      resolve({err: null, reporter: {...reporter, isBlocked: true}});
     });
   });
 };
@@ -78,11 +78,11 @@ const blockReporter = (_id) => {
 const unBlockReporter = (_id) => {
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(_id, {'isBlocked': false})
-    .exec((err) => {
+    .exec((err, reporter) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null});
+      resolve({err: null, reporter: {...reporter, isBlocked: false}});
     });
   });
 };
@@ -179,7 +179,9 @@ const flatReporter = (r) => {
         teamLeaders: r.teamLeaders || [],
         teamMembers: r.teamMembers || [],
         isBlocked: r.isBlocked || false,
-        isVolunteer: r.isVolunteer || false
+        isVolunteer: r.isVolunteer || false,
+        status1: r.status1 || null,
+        status2: r.status2 || null
       };
       resolve({err: null, reporter: flatR});
     }
