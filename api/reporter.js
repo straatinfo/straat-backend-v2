@@ -163,9 +163,10 @@ const unBlockReporter = async (req, res, next) => {
     if (unblockR.err) {
       return ErrorHelper.ClientError(res, {error: unblockR.err}, 400);
     }
-    SuccessHelper.success(res, unBlockR.reporter, `User ID: ${id} has been unblocked`);
+    SuccessHelper.success(res, unblockR.reporter, `User ID: ${id} has been unblocked`);
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
