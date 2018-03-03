@@ -207,7 +207,7 @@ const disApproveTeam = async (req, res, next) => {
     if (!teamId) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Team ID'}, 400);
     }
-    const disAT = await TeamHelper.approveTeam(teamId, false);
+    const disAT = await TeamHelper.declineTeam(teamId, true);
     if (disAT.err) {
       return ErrorHelper.ClientError(res, {error: disAT.err}, 400);
     }
