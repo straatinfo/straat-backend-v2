@@ -61,7 +61,7 @@ const createTeam = (_user, input) => {
       if (!findUser.user) {
         return resolve({err: 'Cannot find user'});
       }
-      const newTeam = new Team({...input, 'isVolunteer': findUser.user.isVolunteer});
+      const newTeam = new Team({...input, 'isVolunteer': findUser.user.isVolunteer, 'isApproved': findUser.user.isVolunteer});
       newTeam.save(async(err, team) => {
         if (err) {
           return resolve({err: err});
