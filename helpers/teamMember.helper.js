@@ -136,7 +136,7 @@ const findActiveTeam = (_user) => {
   return new Promise((resolve, reject) => {
     TeamMember.find({'_user': _user, 'active': true})
     .populate('_team')
-    .sort('createdAt', -1)
+    .sort([['createdAt', 'desc']])
     .exec((err, teamMember) => {
       if (err) {
         return resolve({err: err});

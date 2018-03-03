@@ -33,7 +33,14 @@ const getReporters = async (req, res, next) => {
 
       //set status2
       status2 = (findActiveTeam.teamLeader) ? 'LEADER' : (findActiveTeam.teamMember) ? 'MEMBER' : 'INDIVIDUAL';
-      const data = {...r.toObject(), activeTeam: findActiveTeam.activeTeam, status1: status1, status2: status2 };
+      const data = {
+        ...r.toObject(),
+        activeTeam: findActiveTeam.activeTeam,
+        teamMember: findActiveTeam.teamMember,
+        teamLeader: findActiveTeam.teamLeader,
+        status1: status1,
+        status2: status2
+      };
       return data;
     }));
 
