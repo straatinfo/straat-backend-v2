@@ -139,6 +139,7 @@ const findActiveTeam = (_user) => {
   return new Promise((resolve, reject) => {
     TeamLeader.find({'_user': _user, 'active': true})
     .populate('_team')
+    .sort('createdAt', -1)
     .exec((err, teamLeader) => {
       if (err) {
         return resolve({err: err});
