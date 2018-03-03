@@ -323,13 +323,20 @@ const findActiveTeam = (_user) => {
     try {
       let activeTeam;
       const activeTeamLeader = await TeamLeaderHelper.findActiveTeam(_user);
+      const activeTeamMember = await TeamMemberHelper.findActiveTeam(_user);
+      if (activeTeamMember.activeTeam && activeTeamLeader.activeTeam) {
+        if (activeTeamLeader.activeTeam.createdAt.getTime() > activeTeamLeader.activeTeam.createdAt.getTime()) {
+          return resolve({err: null, activeTeam: {...activeTeamLeader.activeTeam.toObject()}, teamLeader: activeTeamLeader.teamLeader, teamMember: null});
+        } else {
+          return resolve({err: null, activeTeam: {...activeTeamMember.activeTeam.toObject()}, teamMember: activeTeamMember.teamMember, teamLeader: null});
+        }
+      }
       if (activeTeamLeader.err) {
         return resolve({err: activeTeamLeader.err});
       }
       if (activeTeamLeader.activeTeam) {
         return resolve({err: null, activeTeam: {...activeTeamLeader.activeTeam.toObject()}, teamLeader: activeTeamLeader.teamLeader, teamMember: null});
       }
-      const activeTeamMember = await TeamMemberHelper.findActiveTeam(_user);
       if (activeTeamMember.err) {
         return resolve({err: activeTeamMember.err});
       }
