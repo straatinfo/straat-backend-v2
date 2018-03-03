@@ -371,9 +371,9 @@ const removeConvoToTeam = (_team, _conversation) => {
   });
 };
 
-const getApprovedTeam = (isApproved = true) => {
+const getApprovedTeam = (isApproved = true, isDeclined = false) => {
   return new Promise((resolve, reject) => {
-    Team.find({'isApproved': isApproved, 'softRemoved': false})
+    Team.find({'isApproved': isApproved, 'isDeclined': isDeclined, 'softRemoved': false })
     .populate('teamLeaders')
     .populate('teamMembers')
     .populate('_host', [ '_id', 'hostName', 'email' ])
@@ -381,19 +381,31 @@ const getApprovedTeam = (isApproved = true) => {
       if (err) {
         return resolve({err: err});
       }
+      console.log(teams);
       resolve({err: null, teams: teams});
     });    
   });
 };
 
-const approveTeam = (_team, isApproved = true) => {
+const approveTeam = (_team, isApproved = true, isDeclined = false) => {
   return new Promise((resolve, reject) => {
-    Team.findByIdAndUpdate(_team, {'isApproved': isApproved}, (err, team) => {
+    Team.findByIdAndUpdate(_team, {'isApproved': isApproved, 'isDeclined': isDeclined }, (err, team) => {
       if (err) {
         return resolve({err: err});
       }
       resolve({err: null, team: team});
     });
+  });
+}
+
+const declineTeam = (_team, isDeclined = true, isApproved = false) => {
+  return new Promise((resolve, reject) => {
+    Team.findByIdAndUpdate(_team, {'isDeclined': isDeclined, 'isApproved': isApproved }, (err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    })
   });
 }
 
@@ -409,6 +421,7 @@ const flatTeam = (t) => {
         description: t.description || null,
         isVolunteer: (t.isVolunteer === false) ? false : (t.isVolunteer === true) ? true : null,
         isApproved: (t.isApproved === false) ? false : (t.isApproved === true) ? true : null,
+        isDeclined: (t.isDeclined === false) ? false : (t.isDeclined === true) ? true : null,
         '_host._id': (t._host && t._host._id) ? t._host._id : null,
         '_host.hostName': (t._host && t._host.hostName) ? t._host.hostName : null,
         '_host.email': (t._host && t._host.email) ? t._host.email : null,
@@ -453,5 +466,6 @@ module.exports = {
   removeConvoToTeam: removeConvoToTeam,
   getApprovedTeam: getApprovedTeam,
   approveTeam: approveTeam,
-  flatTeam: flatTeam
+  flatTeam: flatTeam,
+  declineTeam: declineTeam
 };

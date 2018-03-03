@@ -9,6 +9,7 @@ const teamSchema = new Schema({
   description: { type: String },
   isVolunteer: { type: Boolean, default: true },
   isApproved: { type: Boolean, default: false },
+  isDeclined: { type: Boolean, default: false },
   softRemoved: { type: Boolean, default: false },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   teamLeaders: [{
