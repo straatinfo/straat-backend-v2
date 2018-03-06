@@ -16,7 +16,6 @@ module.exports = function (io) {
         }
         const checkConvo = await ConversationHelper.getConversationById(_conversation);
         if (checkSocket.err || !checkSocket.socket) {
-          console.log(err);
           return io.to(socket.id).emit('enter-convo', {status: 0, message: 'Failed to enter conversation'})
         }
         const activateP = await ParticipantHelper.activateParticipant(checkSocket.socket._user, checkConvo.conversation, true);
