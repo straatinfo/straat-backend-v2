@@ -54,6 +54,9 @@ const userSchema = new Schema({
   reporterReports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }],
+  participants: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Participant'
+  }],
   messages: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Message'
   }]
