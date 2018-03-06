@@ -36,6 +36,20 @@ const addParticipantToConversation = (_participant, _conversation) => {
   });
 };
 
+const addParticipantToUser = (_participant, _user) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_user,
+    { '$addToSet': { 'participants': _participant } },
+    { 'new': true, 'upsert': true },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    })
+  });
+}
+
 const deleteParticipant = (_user, _conversation) => {
   return new Promise((resolve, reject) => {
     Participant.findOneAndRemove({'_conversation': _conversation, '_user': _user}, (err, participant) => {
@@ -72,10 +86,41 @@ const deleteAllParticipants = (_conversation) => {
   });
 }
 
+const activateParticipant = (_user, _conversation, activate = true) => {
+  return new Promise((resolve, reject) => {
+    Participant.findOneAndUpdate({'_user': _user, '_conversation': _conversation }, {'isActive': activate}, (err, participant) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, participant: participant});
+    });
+  });
+}
+
+const deactivateParticipant = (_user) => {
+  return new Promise((resolve, reject) => {
+    Participant.find({'_user': _user}, async (err, participants) => {
+      try {
+        const updateP = await Promise.all(participants.map(async(p) => {
+          const deactivateP = await activateParticipant(p._user);
+          return deactivateP.participant;
+        }));
+        resolve({err: null,  participants: participants});
+      }
+      catch (e) {
+        reject(e);
+      }
+    });
+  });
+}
+
 module.exports = {
   newParticipant: newParticipant,
   addParticipantToConversation: addParticipantToConversation,
   deleteParticpantToConversation: deleteParticpantToConversation,
   deleteParticipant: deleteParticipant,
-  deleteAllParticipants
+  deleteAllParticipants: deleteAllParticipants,
+  addParticipantToUser: addParticipantToUser,
+  activateParticipant: activateParticipant,
+  deactivateParticipant: deactivateParticipant
 };

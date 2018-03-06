@@ -4,6 +4,9 @@ const Schema = mongoose.Schema;
 const messageSchema = new Schema({
   _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   body: { type: String },
+  attachments: [{
+    type: String // attachment links
+  }],
   _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' }
 }, { timestamps: true });
 

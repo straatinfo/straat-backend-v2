@@ -5,7 +5,8 @@
  */
 
 var app = require('../app');
-var debug = require('debug')('shopping-cart:server');
+var serverSocket = require('../serverSocket');
+var debug = require('debug')('straat:server');
 var http = require('http');
 
 
@@ -24,6 +25,8 @@ var PORT = process.env.PORT || 5000;
 
 var server = http.createServer(app);
 var io = require('socket.io')(server);
+serverSocket(io);
+
 /**
  * Listen on provided port, on all network interfaces.
  */
