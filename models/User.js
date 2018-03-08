@@ -24,6 +24,7 @@ const userSchema = new Schema({
   isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
+  isSpecific: { type: Boolean, default: false },
   picUrl: { type: String },
   picSecuredUrl: { type: String },
   softRemoved: { type: Boolean, default: false },

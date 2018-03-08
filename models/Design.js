@@ -9,7 +9,7 @@ const designSchema = new Schema({
   colorFour: { type: String },
   url: String,
   secure_url: String,
-  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, {timestamps: true});
 
 module.exports = mongoose.model('Design', designSchema);

@@ -128,6 +128,21 @@ const getFreeHost = async (req, res, next) => {
   }
 };
 
+const updateHostDesign = async (req, res, next) => {
+  try {
+    const { hostId } = req.params;
+    const isSpecific = (req.query.isSpecific === 'true') ? true : false;
+    const updateHD = await HostHelper.updateHost(hostId, {'isSpecific': isSpecific});
+    if (updateHD.err) {
+      return ErrorHelper.ClientError(res, {error: updateHD.err});
+    }
+    SuccessHelper.success(res, updateHD.host);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 
 module.exports = {
   getHostById: getHostById,
@@ -137,5 +152,6 @@ module.exports = {
   updateHost: updateHost,
   deleteHost: deleteHost,
   bulkCreateHost: bulkCreateHost,
-  getFreeHost: getFreeHost
+  getFreeHost: getFreeHost,
+  updateHostDesign: updateHostDesign
 };

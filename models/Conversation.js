@@ -5,7 +5,7 @@ const conversationSchema = new Schema({
   title: { type: String , default: 'Untilted conversation', index: true },
   type: { type: String, enum: ['PRIVATE', 'GROUP', 'TEAM', 'GLOBAL'], default: 'TEAM' },
   _team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
-  _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   participants: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Participant'
   }],
