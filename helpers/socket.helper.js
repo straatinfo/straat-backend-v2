@@ -1,5 +1,25 @@
 const Socket = require('../models/Socket');
 
+const findSocket = () => {
+  return new Promise((resolve, reject) => {
+    Socket.findAll({})
+    .populate('_user', [
+      '_id', 'email', 'fname', 'lname', 'gender',
+      'houseNumber', 'streetName', 'city', 'state',
+      'country', 'postalCode', 'phoneNumber',
+      'long', 'lat', 'isBlocked',
+      'hostName', 'username', '_host', 'isVolunteer',
+      'picUrl', 'picSecuredUrl'
+    ])
+    .exec((err, sockets) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, sockets: sockets});
+    });
+  });
+}
+
 const findSocketByUser = (_user) => {
   return new Promise((resolve, reject) => {
     Socket.findOne({'_user': _user}, (err, socket) => {
@@ -73,5 +93,6 @@ module.exports = {
   removeSocket: removeSocket,
   updateSocket: updateSocket,
   findSocketByUser: findSocketByUser,
-  findSocketBySocketId:findSocketBySocketId
+  findSocketBySocketId:findSocketBySocketId,
+  findSocket: findSocket
 };

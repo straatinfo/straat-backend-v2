@@ -13,7 +13,7 @@ const getHosts = () => {
         '_id', 'hostName', 'houseNumber', 'streetName',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-        'lname', 'fname', 'hostPersonalEmail'
+        'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
       ])
       .populate('_activeDesign')
       .populate('_role')
@@ -66,7 +66,7 @@ const getHostWithinRadius = (long, lat, radius) => {
         '_id', 'hostName', 'houseNumber', 'streetName',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-        'lname', 'fname', 'hostPersonalEmail'
+        'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
       ])
       .populate('_activeDesign')
       .populate('_role')
@@ -101,7 +101,7 @@ const getHostById = (_id) => {
 
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
-    User.findByIdAndUpdate(_id, {...input}, async(err, host) => {
+    User.findByIdAndUpdate(_id, input, async(err, host) => {
       if (err) {
         return resolve({err: err});
       }
@@ -187,7 +187,7 @@ const getFreeHost = () => {
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-      'lname', 'fname', 'hostPersonalEmail'
+      'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
     ])
     .populate('_role')
     .populate({
@@ -246,6 +246,7 @@ const flatHost = (h) => {
         designs: h.designs || [],
         teams: h.teams || [],
         isPatron: h.isPatron || false,
+        isSpecific: h.isSpecific || false,
         '_activeDesign._id': (h._activeDesign && h._activeDesign._id) ? h._activeDesign._id : null,
         '_activeDesign.designName': (h._activeDesign && h._activeDesign.designName) ? h._activeDesign.designName : null,
         '_activeDesign.colorOne': (h._activeDesign && h._activeDesign.colorOne) ? h._activeDesign.colorOne : null,

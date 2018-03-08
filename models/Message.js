@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
-  _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   body: { type: String },
   attachments: [{
     type: String // attachment links

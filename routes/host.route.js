@@ -24,4 +24,7 @@ HostRoute.route('/withinRadius/:long/:lat/:radius')
 HostRoute.route('/bulk')
 .post(/*requireAuth,*/ Host.bulkCreateHost);
 
+HostRoute.route('/design/:hostId')
+.put(/*requireAuth, */ Host.updateHostDesign);
+
 module.exports = HostRoute;
