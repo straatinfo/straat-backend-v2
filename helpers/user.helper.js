@@ -28,7 +28,7 @@ const findUserById = (id) => {
     ])
     .populate({
       path: '_host',
-      select: { '_id': 1, 'hostName': 1 },
+      select: { '_id': 1, 'hostName': 1, 'isSpecific': 1 },
       populate: {
         path: '_activeDesign'
       }
