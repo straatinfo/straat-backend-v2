@@ -7,8 +7,7 @@ const designSchema = new Schema({
   colorTwo: { type: String },
   colorThree: { type: String },
   colorFour: { type: String },
-  url: String,
-  secure_url: String,
+  _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, {timestamps: true});
 

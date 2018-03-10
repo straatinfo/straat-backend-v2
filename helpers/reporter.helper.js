@@ -14,9 +14,14 @@ const getReporters = () => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked',
       'hostName', 'username', '_host', 'isVolunteer',
-      'picUrl', 'picSecuredUrl'
+      '_profilePic'
     ])
+    .populate({
+      path: '_activeTeam',
+      populate: [ {path: 'teamMembers'}, {path: 'teamLeaders'}]
+    })
     .populate('_role')
+    .populate('_profilePic')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
@@ -43,9 +48,14 @@ const getReporterById = (_id) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked',
       'hostName', 'username', '_host', 'isVolunteer',
-      'picUrl', 'picSecuredUrl'
+      '_profilePic'
     ])
+    .populate({
+      path: '_activeTeam',
+      populate: [ {path: 'teamMembers'}, {path: 'teamLeaders'}]
+    })
     .populate('_role')
+    .populate('_profilePic')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
@@ -100,9 +110,14 @@ const getReportersByHost = (_host) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked',
       'hostName', 'username', '_host', 'isVolunteer',
-      'picUrl', 'picSecuredUrl'
+      '_profilePic'
     ])
+    .populate({
+      path: '_activeTeam',
+      populate: [ {path: 'teamMembers'}, {path: 'teamLeaders'}]
+    })
     .populate('_role')
+    .populate('_profilePic')
     .populate('_host', [
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
@@ -181,7 +196,16 @@ const flatReporter = (r) => {
         isBlocked: r.isBlocked || false,
         isVolunteer: r.isVolunteer || false,
         status1: r.status1 || null,
-        status2: r.status2 || null
+        status2: r.status2 || null,
+        '_profilePic._id': (r._profilePic && r._profilePic._id) ? r._profilePic._id : null,
+        '_profilePic.url': (r._profilePic && r._profilePic.url) ? r._profilePic.url : null,
+        '_profilePic.secure_url': (r._profilePic && r._profilePic.secure_url) ? r._profilePic.secure_url : null,
+        '_profilePic.public_id': (r._profilePic && r._profilePic.public_id) ? r._profilePic.public_id : null,
+        '_activeTeam._id': (r._activeTeam && r._activeTeam._id) ? r._activeTeam._id : null,
+        '_activeTeam.teamName': (r._activeTeam && r._activeTeam.teamName) ? r._activeTeam.teamName : null,
+        '_activeTeam.teamEmail': (r._activeTeam && r._activeTeam.teamEmail) ? r._activeTeam.teamEmail : null,
+        '_activeTeam.createdAt': (r._activeTeam && r._activeTeam.createdAt) ? r._activeTeam.createdAt : null,
+        '_activeTeam.updatedAt': (r._activeTeam && r._activeTeam.updatedAt) ? r._activeTeam.updatedAt : null
       };
       resolve({err: null, reporter: flatR});
     }

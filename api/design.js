@@ -1,6 +1,7 @@
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const DesignHelper = require('../helpers/design.helper');
+const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 
 const getDesigns = async (req, res, next) => {
   const { hostId } = req.params;
@@ -45,11 +46,11 @@ const addLogo = async (req, res, next) => {
     if (!req.file) {
       return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
     }
-    const { url, secure_url } = req.file;
-    if (!url || !secure_url) {
-      return ErrorHelper.ClientError(res, {error: 'Cannot find logo'}, 400);
+    const createMU = await MediaUploadHelper.createMediaUpload(req.file);
+    if (createMU.err) {
+      return ErrorHelper.ClientError(res, {error: createMU.err}, 422);
     }
-    const updateD = await DesignHelper.updateDesign(id, {'url': url, 'secure_url': secure_url});
+    const updateD = await DesignHelper.updateDesign(id, {'_profilePic': createMU.mediaUpload._id});
     if (updateD.err) {
       return ErrorHelper.ClientError(res, {error: updateD.err}, 400);
     }

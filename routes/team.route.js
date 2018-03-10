@@ -13,7 +13,7 @@ TeamRoute.route('/')
 .post(/*requireAuth,*/ Team.getTeamWithFilter);
 
 TeamRoute.route('/new/:userId')
-.post(CloudinaryService.singleUpload('team-logo'),TeamValidator.createTeamFormValidator, /*requireAuth,*/ Team.createTeam);
+.post(CloudinaryService.singleUpload('team-logo', 'team'),TeamValidator.createTeamFormValidator, /*requireAuth,*/ Team.createTeam);
 
 TeamRoute.route('/leader/:userId/:teamId')
 .get(/*requireAuth,*/ Team.addLeader)

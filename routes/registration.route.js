@@ -15,7 +15,7 @@ RegistrationRoute.route('/signup')
 
 RegistrationRoute.route('/signupV2')
 .post(
-  CloudinaryService.singleUpload('team-logo'),
+  CloudinaryService.singleUpload('team-logo', 'team'),
   RegistrationValidator.registerWithCodeFormValidatorV2,
   Registration.registerWithCodeV2
 );

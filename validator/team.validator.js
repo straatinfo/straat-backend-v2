@@ -8,7 +8,6 @@ const createTeamFormValidator = async (req, res, next) => {
   req.checkBody('teamEmail', 'Email cannot be empty').notEmpty();
   req.checkBody('teamEmail', 'Invalid email').isEmail();
   req.checkBody('isVolunteer', 'Is volunteer cannot be empty').notEmpty();
-  
   const errors = req.validationErrors();
 
   if (errors) {

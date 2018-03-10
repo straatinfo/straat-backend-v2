@@ -5,6 +5,7 @@ const MailingHelper = require('../helpers/mailing.helper');
 const UserHelper = require('../helpers/user.helper');
 const TeamHelper = require('../helpers/team.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
+const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 const JwtService = require('../service/jwt.service');
 
 const checkUserInput = async (req, res, next) => {
@@ -135,14 +136,12 @@ const registerWithCodeV2 = async (req, res, next) => {
     if (createU.err) {
       return ErrorHelper.ClientError(res, {error: createU.err}, 400);
     }
-    console.log(createU);
-    const getU = await UserHelper.findUserById(createU.user._id);
 
     // create or join team
     let teamInput = {}, createT, requestT;
     if (req.body._team) {
       // if there is team id
-      requestT = await TeamInviteHelper.sendRequest(getU.user._id, req.body._team);
+      requestT = await TeamInviteHelper.sendRequest(createU.user._id, req.body._team);
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400);
       }
@@ -163,21 +162,22 @@ const registerWithCodeV2 = async (req, res, next) => {
           isApproved: false
         };
       }
-      createT = await TeamHelper.createTeam(getU.user._id, teamInput);
+      createT = await TeamHelper.createTeam(createU.user._id, teamInput);
       if (createT.err) {
         console.log(createT.err);
         return ErrorHelper.ClientError(res, {error: 'There was an error in creating team'}, 400);
       }
+      const addActiveTeam = await UserHelper.updateUser(createU.user._id, {'_activeTeam': createT.team._id});
     }
 
     if (req.file && createT.team) {
-      const fileInput = {
-        logoUrl: req.file.url,
-        securedLogoUrl: req.file.secure_url
-      };
-      const updateT = await TeamHelper.updateTeam(createT.team._id, fileInput);
+      const createMediaUpload = await MediaUploadHelper.createMediaUpload(req.file);
+      if (createMediaUpload.err) {
+        return ErrorHelper.ClientError(res, {error: createMediaUpload.err}, 400);
+      }
+      const updateT = await TeamHelper.updateTeam(createT.team._id, {'_profilePic': createMediaUpload.mediaUpload._id});
     }
-
+    const getU = await UserHelper.findUserById(createU.user._id);
     // give token
     const token = JwtService.tokenForUser(getU.user._id);
     SuccessHelper.success(res, { user: getU.user, token: token });
@@ -214,13 +214,13 @@ const registerWithCodeV3 = async (req, res, next) => {
     if (createU.err) {
       return ErrorHelper.ClientError(res, {error: createU.err}, 400);
     }
-    const getU = await UserHelper.findUserById(createU.user._id);
+
 
     // create or join team
     let teamInput = {}, createT, requestT, team;
     if (req.body._team) {
       // if there is team id
-      requestT = await TeamInviteHelper.sendRequest(getU.user._id, req.body._team);
+      requestT = await TeamInviteHelper.sendRequest(createU.user._id, req.body._team);
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400);
       }
@@ -248,11 +248,12 @@ const registerWithCodeV3 = async (req, res, next) => {
         };
       }
       console.log(teamInput);
-      createT = await TeamHelper.createTeam(getU.user._id, teamInput);
+      createT = await TeamHelper.createTeam(createU.user._id, teamInput);
       if (createT.err) {
         console.log(createT.err);
         return ErrorHelper.ClientError(res, {error: 'There was an error in creating team'}, 400);
       }
+      const addActiveTeam = await UserHelper.updateUser(createU.user._id, {'_activeTeam': createT.team._id});
       let sendNewTeamRequest;
       if (req.body.isVolunteer != true) {
         sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT.team);
@@ -262,6 +263,7 @@ const registerWithCodeV3 = async (req, res, next) => {
       }
     }
 
+    const getU = await UserHelper.findUserById(createU.user._id);
     // give token
     const token = JwtService.tokenForUser(getU.user._id);
     SuccessHelper.success(res, { user: getU.user, token: token });
