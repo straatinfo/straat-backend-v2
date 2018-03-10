@@ -18,8 +18,10 @@ const getMainCategories = async (req, res, next) => {
 
 const createMainCategory = async (req, res, next) => {
   const { hostId } = req.params;
+  const { name, description, _reportType } = req.body;
   try {
-    const createMC = await CategoryHelper.createMainCategory({...req.body, '_host': hostId});
+    const input = {'name': name, 'description': description, '_reportType': _reportType, '_host': hostId};
+    const createMC = await CategoryHelper.createMainCategory(input);
     if (createMC.err) {
       return resolve({err: createMC.err});
     }
@@ -88,8 +90,10 @@ const getSubCategories = async (req, res, next) => {
 
 const createSubCategory = async (req, res, next) => {
   const { mainCategoryId } = req.params;
+  const { name, description } = req.body;
   try {
-    const createSC = await CategoryHelper.createSubcategory({...req.body, '_mainCategory': mainCategoryId});
+    const input = {'_mainCategory': mainCategoryId};
+    const createSC = await CategoryHelper.createSubcategory(input);
     if (createSC.err) {
       return ErrorHelper.ClientError(res, { err: createSC.err }, 400);
     }

@@ -24,7 +24,7 @@ const findUserById = (id) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked', 'isPatron',
       'hostName', 'username', '_host', 'isVolunteer',
-      'picUrl', 'picSecuredUrl'
+      '_profilePic'
     ])
     .populate({
       path: '_host',
@@ -33,7 +33,13 @@ const findUserById = (id) => {
         path: '_activeDesign'
       }
     })
+    // .populate({
+    //   path: '_activeTeam',
+    //   populate: [{path: 'teamMembers'}, {path: 'teamLeaders'}]
+    // })
+    .populate('_activeTeam')
     .populate('_role')
+    .populate('_profilePic')
     .populate({
       path: 'teamMembers',
       populate: {

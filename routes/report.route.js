@@ -13,7 +13,7 @@ ReportRoute.route('/')
 .get(/*requireAuth,*/ Report.getReports, FlatReport.getFlatReports)
 .post(
   /*requireAuth,*/
-  CloudinaryService.multipleUpload('report-images', 9),
+  CloudinaryService.multipleUpload('report-images', 9, 'reports', ['png', 'jpeg', 'jpg', 'mp4']),
   ReportFormValidator.reportFormValidator,
   CloudinaryService.getMetaData,
   Report.createReport

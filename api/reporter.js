@@ -14,10 +14,10 @@ const getReporters = async (req, res, next) => {
 
     const updatedReporters = await Promise.all(getR.reporters.map(async(r) => {
       let reporter = r, status2;
-      const findActiveTeam = await TeamHelper.findActiveTeam(r._id);
+
       const getPendingInvite = await TeamInviteHelper.getRequestListByUser(r._id, true);
       const invite = _.find(getPendingInvite.teamInvites, (i) => {
-        return i._team === (findActiveTeam.activeTeam) ? findActiveTeam.activeTeam._id : 'asdf';
+        return i._team === (r._activeTeam) ? r._activeTeam._id : 'asdf';
       });
       // set status1
       let status1;
@@ -32,12 +32,18 @@ const getReporters = async (req, res, next) => {
       }
 
       //set status2
-      status2 = (findActiveTeam.teamLeader) ? 'LEADER' : (findActiveTeam.teamMember) ? 'MEMBER' : 'INDIVIDUAL';
+      if (r.teamLeaders.length > 1 || r.teamMembers.length > 1) {
+        status2 = 'MULTIPLE';
+      } else if (r.teamLeaders.length !== 0) {
+        status2 = 'LEADER';
+      } else if (r.teamMembers.length !== 0) {
+        status2 = 'MEMBER';
+      } else {
+        status2 = 'INDIVIDUAL';
+      }
       const data = {
         ...r.toObject(),
-        activeTeam: findActiveTeam.activeTeam,
-        teamMember: findActiveTeam.teamMember,
-        teamLeader: findActiveTeam.teamLeader,
+        activeTeam: r._activeTeam,
         status1: status1,
         status2: status2
       };
@@ -69,10 +75,10 @@ const getReporterById = async (req, res, next) => {
       return SuccessHelper.success(res, null);
     }
     let r = getRBI.reporter, status2;
-    const findActiveTeam = await TeamHelper.findActiveTeam(r._id);
+
     const getPendingInvite = await TeamInviteHelper.getRequestListByUser(r._id, true);
     const invite = _.find(getPendingInvite.teamInvites, (i) => {
-      return i._team === (findActiveTeam.activeTeam) ? findActiveTeam.activeTeam._id : 'asdf';
+      return i._team === (r._activeTeam) ? r._activeTeam._id : 'asdf';
     });
     // set status1
     let status1;
@@ -87,8 +93,16 @@ const getReporterById = async (req, res, next) => {
     }
 
     //set status2
-    status2 = (findActiveTeam.teamLeader) ? 'LEADER' : (findActiveTeam.teamMember) ? 'MEMBER' : 'INDIVIDUAL';
-    const data = {...r.toObject(), activeTeam: findActiveTeam.activeTeam, status1: status1, status2: status2 };
+    if (r.teamLeaders.length > 1 || r.teamMembers.length > 1) {
+      status2 = 'MULTIPLE';
+    } else if (r.teamLeaders.length !== 0) {
+      status2 = 'LEADER';
+    } else if (r.teamMembers.length !== 0) {
+      status2 = 'MEMBER';
+    } else {
+      status2 = 'INDIVIDUAL';
+    }
+    const data = {...r.toObject(), activeTeam: r._activeTeam, status1: status1, status2: status2 };
     if (req.query.flat === 'true') {
       const reporter = await ReporterHelper.flatReporter(data);
       if (reporter.err) {
@@ -112,10 +126,10 @@ const getReportersByHost = async (req, res, next) => {
     }
     const updatedReporters = await Promise.all(getRBH.reporters.map(async(r) => {
       let reporter = r, status2;
-      const findActiveTeam = await TeamHelper.findActiveTeam(r._id);
+
       const getPendingInvite = await TeamInviteHelper.getRequestListByUser(r._id, true);
       const invite = _.find(getPendingInvite.teamInvites, (i) => {
-        return i._team === (findActiveTeam.activeTeam) ? findActiveTeam.activeTeam._id : 'asdf';
+        return i._team === (r._activeTeam) ? r._activeTeam._id : 'asdf';
       });
       // set status1
       let status1;
@@ -130,8 +144,16 @@ const getReportersByHost = async (req, res, next) => {
       }
 
       //set status2
-      status2 = (findActiveTeam.teamLeader) ? 'LEADER' : (findActiveTeam.teamMember) ? 'MEMBER' : 'INDIVIDUAL';
-      const data = {...r.toObject(), activeTeam: findActiveTeam.activeTeam, status1: status1, status2: status2 };
+      if (r.teamLeaders.length > 1 || r.teamMembers.length > 1) {
+        status2 = 'MULTIPLE';
+      } else if (r.teamLeaders.length !== 0) {
+        status2 = 'LEADER';
+      } else if (r.teamMembers.length !== 0) {
+        status2 = 'MEMBER';
+      } else {
+        status2 = 'INDIVIDUAL';
+      }
+      const data = {...r.toObject(), activeTeam: r._activeTeam, status1: status1, status2: status2 };
       return data;
     }));
 

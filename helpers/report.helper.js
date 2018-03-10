@@ -1,5 +1,5 @@
 const Report = require('../models/Report');
-const ReportPhoto = require('../models/ReportPhoto');
+const MediaUpload = require('../models/MediaUpload');
 const ReportTypeHelper = require('./reportType.helper');
 const ReporterHelper = require('./reporter.helper');
 const HostHelper = require('./host.helper');
@@ -76,7 +76,7 @@ const getReports = () => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
-    .populate('reportPhotos')
+    .populate('attachments')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -106,7 +106,7 @@ const getReportByHost = (hostId, _reportType = null) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
-    .populate('reportPhotos')
+    .populate('attachments')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -136,7 +136,7 @@ const getReportById = (_id) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
-    .populate('reportPhotos')
+    .populate('attachments')
     .exec((err, report) => {
       if (err) {
         return resolve({err: err});
@@ -185,7 +185,7 @@ const getReportsByReportType = (reportTypeId) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
-    .populate('reportPhotos')
+    .populate('attachments')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -239,20 +239,20 @@ const createReport = (input) => {
 
 const saveUploadedPhotoReport = (_report, input) => {
   return new Promise((resolve, reject) => {
-    const newReportPhoto = new ReportPhoto({...input, '_report': _report});
-    newReportPhoto.save((err, reportPhoto) => {
+    const newMediaUpload = new MediaUpload(input);
+    newMediaUpload.save((err, mediaUpload) => {
       if (err) {
         return resolve({err: err});
       }
       Report.findByIdAndUpdate(_report,
-      { '$addToSet': { 'reportPhotos': reportPhoto._id } },
+      { '$addToSet': { 'attachments': mediaUpload._id } },
       { 'new': true, 'upsert': true },
       (err, report) => {
         if (err) {
           return resolve({err: err});
         }
 
-        resolve({err: null, reportPhoto: reportPhoto});
+        resolve({err: null, mediaUpload: mediaUpload});
       });
     });
   });
@@ -268,7 +268,7 @@ const saveUploadLooper = (_report, inputArray = [], saveUploadPromise = saveUplo
           if (saveRP.err) {
             return error.push(saveRP.err);
           }
-          success.push(saveRP.reportPhoto);
+          success.push(saveRP.mediaUpload);
         }
         catch (e) {
           error.push(e);
@@ -331,7 +331,7 @@ const getReportByQueryObject = (queryObject) => {
     .populate('_reportType')
     .populate('_mainCategory')
     .populate('_subCategory')
-    .populate('reportPhotos')
+    .populate('attachments')
     .sort([['date', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -398,7 +398,7 @@ const flatReport = (r) => {
       status: r.status || null,
       peopleInvolvedCount: r.peopleInvolvedCount || null,
       vehicleInvolvedDescription: r.vehicleInvolvedDescription || null,
-      reportPhotos: r.reportPhotos || []
+      attachments: r.attachments || []
     };
 
     resolve({err: null, report: flatReport});

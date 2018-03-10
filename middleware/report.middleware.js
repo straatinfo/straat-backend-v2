@@ -43,6 +43,7 @@ const createReportTypeC = async (req, res, next) => {
           const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
             const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
             if (savePhoto.err) {
+              console.log(savePhoto.err);
               return savePhoto.err;
             }
             return savePhoto.reportPhoto;

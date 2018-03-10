@@ -23,11 +23,28 @@ const getHosts = async (req, res, next) => {
 
 const createHost = async (req, res, next) => {
   try {
+    const {
+      hostName, email, hostPersonalEmail, username,
+      fname, lname, housNumber, street, city, state,
+      country, postalCode, phoneNumber, long, lat
+    } = req.body;
     const getGD = await DesignHelper.getGeneralDesign();
     if (getGD.err) {
       return ErrorHelper.ClientError(res, {error: getGD.err}, 400);
     }
-    const createH = await HostHelper.createHost({...req.body, '_activeDesign': getGD.design_id});
+    const input = {
+      'hostName': hostName,
+      'email': email,
+      'hostPersonalEmail': hostPersonalEmail,
+      'username': username,
+      'country': country,
+      'postalCode': postalCode,
+      'phoneNumber': phoneNumber,
+      'long': long,
+      'lat': lat,
+      '_activeDesign': getGD.design_id
+    };
+    const createH = await HostHelper.createHost(input);
     if (createH.err) {
       return ErrorHelper.ClientError(res, {error: createH.err}, 400);
     }

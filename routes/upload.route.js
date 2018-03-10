@@ -8,7 +8,7 @@ const CloudinaryService = require('../service/cloudinary.service');
 
 UploadRoute.route('/public')
 .post(
-  CloudinaryService.singleUpload('photo'),
+  CloudinaryService.singleUpload('photo', 'reports', ['jpg', 'png', 'jpeg', 'mp4']),
   /* requireAuth, */
   Upload.uploadPhoto
 );

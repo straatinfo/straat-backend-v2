@@ -7,23 +7,25 @@ cloudinary.config({
   ...Config.CLOUDINARY
 });
 
-const storage = cloudinaryStorage({
-  cloudinary: cloudinary,
-  folder: 'sample',
-  allowedFormats: ['jpg', 'png'],
-  filename: function (req, file, cb) {
-    const filename = file.originalname +'_'+ new Date();
-    cb(undefined, filename);
-  }
-});
+const storage = (folderName, allowedFormats = ['jpg', 'png']) => {
+  return cloudinaryStorage({
+    cloudinary: cloudinary,
+    folder: folderName,
+    allowedFormats: allowedFormats,
+    filename: function (req, file, cb) {
+      const filename = file.originalname +'_'+ new Date();
+      cb(undefined, filename);
+    }
+  })
+};
 
-const singleUpload = (fieldName) => {
-  const upload = multer({ storage: storage });
+const singleUpload = (fieldName, folderName = 'sample', allowedFormats = ['jpg', 'png']) => {
+  const upload = multer({ storage: storage(folderName, allowedFormats) });
   return upload.single(fieldName);
 };
 
-const multipleUpload = (fieldName, numberOfFiles) => {
-  const upload = multer({ storage: storage });
+const multipleUpload = (fieldName, numberOfFiles, folderName = 'sample', allowedFormats = ['jpg', 'png'] ) => {
+  const upload = multer({ storage: storage(folderName, allowedFormats) });
   return upload.array(fieldName, numberOfFiles);
 };
 

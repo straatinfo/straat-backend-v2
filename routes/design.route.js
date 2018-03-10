@@ -12,7 +12,7 @@ DesignRoute.route('/host/:hostId')
 
 DesignRoute.route('/:id')
 .get(/*requireAuth,*/ Design.getDesignById)
-.post(CloudinaryService.singleUpload('host-logo'), /*requireAuth,*/Design.addLogo)
+.post(CloudinaryService.singleUpload('host-logo', 'designs'), /*requireAuth,*/Design.addLogo)
 .put(/*requireAuth,*/ Design.updateDesign)
 .delete(/*requireAuth,*/ Design.deleteDesign);
 
