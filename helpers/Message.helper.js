@@ -11,6 +11,7 @@ const getConversationMessages = (_conversation) => {
       select: { '_id': 1, 'email': 1, 'username': 1, 'fname': 1, 'lname': 1 }
     })
     .populate('_conversation')
+    .populate('attachments')
     .limit(20)
     .sort({'createdAt': -1})
     .exec((err, messages) => {
@@ -31,6 +32,7 @@ const getConversationByPage = (_conversation, page) => {
       select: { '_id': 1, 'email': 1, 'username': 1, 'fname': 1, 'lname': 1 }
     })
     .populate('_conversation')
+    .populate('attachments')
     .limit(20)
     .sort({'createdAt': -1})
     .skip(20 * getPage)

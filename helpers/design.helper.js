@@ -10,6 +10,7 @@ const getDesigns = (_host) => {
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
       'lname', 'fname', 'hostPersonalEmail'
     ])
+    .populate('_profilePic')
     .exec((err, designs) => {
       if (err) {
         return resolve({err: err});
@@ -27,7 +28,8 @@ const createDesign = (_host, input) => {
       'colorOne': input.colorOne,
       'colorTwo': input.colorTwo,
       'colorThree': input.colorThree,
-      'colorFour': input.colorFour
+      'colorFour': input.colorFour,
+      '_profilePic': input._profilePic
     });
     newDesign.save((err, design) => {
       if (err) {
@@ -55,6 +57,7 @@ const getDesignById = (_id) => {
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
       'lname', 'fname', 'hostPersonalEmail'
     ])
+    .populate('_profilePic')
     .exec((err, design) => {
       if (err) {
         return resolve({err: err});

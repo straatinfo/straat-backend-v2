@@ -6,6 +6,7 @@ const conversationSchema = new Schema({
   type: { type: String, enum: ['PRIVATE', 'GROUP', 'TEAM', 'GLOBAL'], default: 'TEAM' },
   _team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
   _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   participants: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Participant'
   }],

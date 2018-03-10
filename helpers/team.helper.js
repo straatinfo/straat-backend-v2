@@ -10,6 +10,7 @@ const getTeams = () => {
     Team.find({'softRemoved': false})
     .populate('teamLeaders')
     .populate('teamMembers')
+    .populate('_profilePic')
     .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, teams) => {
       if (err) {
@@ -25,6 +26,7 @@ const getTeamWithFilter = (queryObject) => {
     Team.find({'softRemoved': false, '_host': queryObject._host, 'isVolunteer': queryObject.isVolunteer})
     .populate('teamLeaders')
     .populate('teamMembers')
+    .populate('_profilePic')
     .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, teams) => {
       if (err) {
@@ -40,6 +42,7 @@ const getTeamById = (_id) => {
     Team.findOne({'_id': _id, 'softRemoved': false })
     .populate('teamLeaders')
     .populate('teamMembers')
+    .populate('_profilePic')
     .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, team) => {
       if (err) {
@@ -61,18 +64,33 @@ const createTeam = (_user, input) => {
       if (!findUser.user) {
         return resolve({err: 'Cannot find user'});
       }
-      const newTeam = new Team({...input, 'isVolunteer': findUser.user.isVolunteer, 'isApproved': findUser.user.isVolunteer});
+      const data = {
+        '_host': input._host,
+        'teamName': input.teamName,
+        'teamEmail': input.teamEmail,
+        'description': input.description,
+        'isVolunteer': findUser.user.isVolunteer,
+        'isApproved': findUser.user.isVolunteer
+      };
+      const newTeam = new Team(data);
       newTeam.save(async(err, team) => {
+        console.log('team', team);
         if (err) {
           return resolve({err: err});
         }
           const addLeader = await TeamLeaderHelper.addTeamLeader(_user, team._id);
+          const addMember = await TeamMemberHelper.addTeamMember(_user, team._id);
           if (addLeader.err) {
             return resolve({err: `The team was added but leader failed to add.`});
           }
+          if (addMember.err) {
+            return resolve({err: 'The team was added but member failed to add.'});
+          }
           const addLeaderToTeam = await TeamLeaderHelper.addTeamLeaderToTeam(team._id, addLeader.teamLeader._id);
           const addLeaderToUser = await TeamLeaderHelper.addTeamLeaderToUser(_user, addLeader.teamLeader._id);
-          if (addLeaderToTeam.err || addLeaderToUser.err) {
+          const addMemberToTeam = await TeamMemberHelper.addTeamMemberToTeam(team._id, addMember.teamMember._id);
+          const addMemberToUser = await TeamMemberHelper.addTeamMemberToUser(_user, addMember.teamMember._id);
+          if (addLeaderToTeam.err || addLeaderToUser.err || addMemberToTeam.err || addMemberToUser.err) {
             return resolve({err: 'Unable to register leader to team and user'});
           }
           const updateHost = await UserHelper.addTeamToHost(input._host, team._id);
@@ -146,7 +164,6 @@ const checkUserIfCanJoin = (_user, _team) => {
   return new Promise(async(resolve, reject) => {
     try {
       const checkT = await getTeamById(_team);
-      console.log(checkT);
       if (checkT.err) {
         return resolve({err: checkT.err});
       }
@@ -157,10 +174,11 @@ const checkUserIfCanJoin = (_user, _team) => {
       if (!checkT.team) {
         return resolve({err: 'Invalid Team'});
       }
-      if (!checkU.user) {
+      if (!checkU.user || checkU.user._role.accessLevel !== 3) {
         return resolve({err: 'Invalid User'});
       }
       if (checkU.user.isVolunteer !== checkT.team.isVolunteer) {
+        console.log('user', checkU.user.isVolunteer, 'team', checkT.team.isVolunteer);
         return resolve({status: false});
       }
       resolve({status: true});
@@ -182,7 +200,7 @@ const addLeader = (_user, _team) => {
       if (checkTL.err) {
         return resolve({err: checkTL.err});
       }
-      if (checkTL.leader !== null) {
+      if (checkTL.teamLeader !== null) {
         return resolve({err: null});
       }
       const addTL = await TeamLeaderHelper.addTeamLeader(_user, _team);
@@ -191,13 +209,9 @@ const addLeader = (_user, _team) => {
       }
       const addTlToUser = await TeamLeaderHelper.addTeamLeaderToUser(_user, addTL.teamLeader._id);
       const addTlToTeam = await TeamLeaderHelper.addTeamLeaderToTeam(_team, addTL.teamLeader._id);
-      const removeTM = await TeamMemberHelper.removeTeamMember(_user, _team);
-      if (removeTM.err) {
-        return resolve({err: 'Error in removing Member'});
+      if (addTlToTeam.err || addTlToUser.err) {
+        return resolve({err: 'Unable to update user and team'});
       }
-      const removeTMToUser = await TeamMemberHelper.removeTeamMemberToUser(_user, removeTM.teamMember._id);
-      const removeTMToTeam = await TeamMemberHelper.removeTeamMemberToTeam(_team, removeTM.teamMember._id);
-      
       resolve({err: null});
     }
     catch (e) {
@@ -215,12 +229,9 @@ const removeLeader = (_user, _team) => {
       }
       const removeTLToUser = await TeamLeaderHelper.removeTeamLeaderToUser(_user, removeTL.teamLeader._id);
       const removeTLToTeam = await TeamLeaderHelper.removeTeamLeaderToTeam(_team, removeTL.teamLeader._id);
-      const addTM = await TeamMemberHelper.addTeamMember(_user, _team);
       if (addTM.err) {
         return resolve({err: 'Error in adding team leader'});
       }
-      const addTMToUser = await TeamMemberHelper.addTeamMemberToUser(_user, addTM.teamMember._id);
-      const addTMToTeam = await TeamMemberHelper.addTeamMemberToTeam(_team, addTM.teamMember._id);
       resolve({err: null});
     }
     catch (e) {
@@ -383,6 +394,7 @@ const getApprovedTeam = (isApproved = true, isDeclined = false) => {
     Team.find({'isApproved': isApproved, 'isDeclined': isDeclined, 'softRemoved': false })
     .populate('teamLeaders')
     .populate('teamMembers')
+    .populate('_profilePic')
     .populate('_host', [ '_id', 'hostName', 'email' ])
     .exec((err, teams) => {
       if (err) {
@@ -423,8 +435,8 @@ const flatTeam = (t) => {
         _id: t._id || null,
         teamName: t.teamName || null,
         teamEmail: t.teamEmail || null,
-        logoUrl: t.logoUrl || null,
-        logoSecuredUrl: t.logoSecuredUrl || null,
+        logoUrl: (t._profilePic && t._profilePic.url) ? t._profilePic.url : null,
+        logoSecuredUrl: (t._profilePic && t._profilePic.secure_url) ? t._profilePic.secure_url : null,
         description: t.description || null,
         isVolunteer: (t.isVolunteer === false) ? false : (t.isVolunteer === true) ? true : null,
         isApproved: (t.isApproved === false) ? false : (t.isApproved === true) ? true : null,
@@ -433,7 +445,11 @@ const flatTeam = (t) => {
         '_host.hostName': (t._host && t._host.hostName) ? t._host.hostName : null,
         '_host.email': (t._host && t._host.email) ? t._host.email : null,
         teamLeaders: t.teamLeaders || [],
-        teamMembers: t.teamMembers || []
+        teamMembers: t.teamMembers || [],
+        '_profilePic._id': (t._profilePic && t._profilePic._id) ? t._profilePic._id : null,
+        '_profilePic.url' : (t._profilePic && t._profilePic.url) ? t._profilePic.url : null,
+        '_profilePic.secure_url': (t._profilePic && t._profilePic.secure_url) ? t._profilePic.secure_url : null,
+        '_profilePic.public_id': (t._profilePic && t._profilePic.public_id) ? t._profilePic.public_id : null
       };
       resolve({err: null, team: team});
     }

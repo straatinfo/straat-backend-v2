@@ -1,6 +1,7 @@
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const TeamHelper = require('../helpers/team.helper');
+const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 
 const getTeams = async (req, res, next) => {
   try {
@@ -57,11 +58,11 @@ const createTeam = async (req, res, next) => {
     if (!req.file) {
       return SuccessHelper.success(res, createT.team);
     }
-    const input = {
-      'logoUrl': req.file.url,
-      'logoSecuredUrl': req.file.secure_url
-    };
-    const updateT = await TeamHelper.updateTeam(createT.team._id, input);
+    const createMU = await MediaUploadHelper.createMediaUpload(req.file);
+    if (createMU.err) {
+      return ErrorHelper.ClientError(res, {error: createMU.err}, 422);
+    }
+    const updateT = await TeamHelper.updateTeam(createT.team._id, {'_profilePic': createMU.mediaUpload._id});
     if (updateT.err) {
       return ErrorHelper.ClientError(res, {error: 'Team was created but the logo was failed to save'});
     }
@@ -106,6 +107,7 @@ const addLeader = async (req, res, next) => {
   const { userId, teamId } = req.params;
   try {
     const addL = await TeamHelper.addLeader(userId, teamId);
+    console.log('addL', addL);
     if (addL.err) {
       return ErrorHelper.ClientError(res, {error: addL.err}, 400);
     }

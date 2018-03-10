@@ -5,7 +5,7 @@ const messageSchema = new Schema({
   _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   body: { type: String },
   attachments: [{
-    type: String // attachment links
+    type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' // attachment links
   }],
   _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' }
 }, { timestamps: true });

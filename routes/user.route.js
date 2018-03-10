@@ -13,7 +13,7 @@ UserRoute.route('/profile/:id')
 
 UserRoute.route('/pic/:id')
 .put(
-  CloudinaryService.singleUpload('profile-pic'),
+  CloudinaryService.singleUpload('profile-pic', 'user'),
   /* requireAuth, */
   User.addProfilePic
 );

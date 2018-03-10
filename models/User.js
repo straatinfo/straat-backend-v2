@@ -25,12 +25,12 @@ const userSchema = new Schema({
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
   isSpecific: { type: Boolean, default: false },
-  picUrl: { type: String },
-  picSecuredUrl: { type: String },
+  _profiePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   softRemoved: { type: Boolean, default: false },
-  _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' },
+  _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' }, // for host
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  _activeTeam: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }, // for Reporters/ordinary user
   reporters: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'User'
   }],

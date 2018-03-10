@@ -26,6 +26,7 @@ const addTeamLeader = (_user, _team) => {
       const newTeamLeader = new TeamLeader({'_user': _user, '_team': _team});
       newTeamLeader.save((err, teamLeader) => {
         if (err) {
+          console.log('teamleader error', err);
           return resolve({err: err});
         }
         resolve({err: null, teamLeader:teamLeader});

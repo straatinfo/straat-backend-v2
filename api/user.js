@@ -5,6 +5,7 @@ const MailHelper = require('../helpers/mailing.helper');
 const CodeGenerator = require('node-code-generator');
 const generator = new CodeGenerator();
 const pattern = '************';
+const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 
 const getUserDetails = async (req, res, next) => {
   const { id } = req.params;
@@ -95,9 +96,11 @@ const addProfilePic = async (req, res, next) => {
     if (!req.file) {
       return ErrorHelper.ClientError(res, {error: 'Invalid file'}, 400);
     }
-    const input = {'picUrl': req.file.url, 'picSecuredUrl': req.file.secure_url};
-    console.log(input);
-    const addProfileP = await UserHelper.updateUser(id, input);
+    const createMU = await MediaUploadHelper.createMediaUpload(req.file);
+    if (createMU.err) {
+      return ErrorHelper.ClientError(res, {error: createMU.err}, 422);
+    }
+    const addProfileP = await UserHelper.updateUser(id, {'_profilePic': createMU.mediaUpload._id});
     if (addProfileP.err) {
       return ErrorHelper.ClientError(res, {error: addProfileP.err}, 400);
     }

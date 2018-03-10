@@ -27,8 +27,8 @@ const reportSchema = new Schema({
     type: {type: String, enum: 'Point', default: 'Point'},
     coordinates: { type: [Number],default:[0,0]}
   },
-  reportPhotos: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'ReportPhoto'
+  attachments: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload'
   }],
   _reporter: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
