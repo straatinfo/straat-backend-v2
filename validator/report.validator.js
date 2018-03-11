@@ -18,14 +18,16 @@ const reportFormValidator = async (req, res, next) => {
     req.reportTypeCode = code;
     if (code.toUpperCase() === 'A') {
       req.checkBody('title', 'Title cannot be empty').notEmpty();
-      req.checkBody('description', 'Description cannot be empty').notEmpty();
+      // not required in spec
+      // req.checkBody('description', 'Description cannot be empty').notEmpty();
       req.checkBody('location', 'Location cannot be empty').notEmpty();
       req.checkBody('long', 'Longitude cannot be empty').notEmpty();
       req.checkBody('lat', 'Latitude cannot be empty').notEmpty();
       req.checkBody('_reporter', 'Reporter cannot be empty').notEmpty();
       req.checkBody('_host', 'Host cannot be empty').notEmpty();
       req.checkBody('_mainCategory', 'Main Category cannot be empty').notEmpty();
-      req.checkBody('_subCategory', 'SubCategory cannot be empty').notEmpty();
+      // only required if it has subcategory
+      // req.checkBody('_subCategory', 'SubCategory cannot be empty').notEmpty();
       req.checkBody('isUrgent', 'Is Urgent cannot be empty').notEmpty();
       req.checkBody('_team', 'Team Cannot be empty').notEmpty();
       const checkTeam = await TeamHelper.getTeamById(req.body._team);
@@ -35,7 +37,8 @@ const reportFormValidator = async (req, res, next) => {
     }
     if (code.toUpperCase() === 'B') {
       req.checkBody('title', 'Title cannot be empty').notEmpty();
-      req.checkBody('description', 'Description cannot be empty').notEmpty();
+      // not required in spec
+      // req.checkBody('description', 'Description cannot be empty').notEmpty();
       req.checkBody('location', 'Location cannot be empty').notEmpty();
       req.checkBody('long', 'Longitude cannot be empty').notEmpty();
       req.checkBody('lat', 'Latitude cannot be empty').notEmpty();
@@ -51,10 +54,12 @@ const reportFormValidator = async (req, res, next) => {
     }
     if (code.toUpperCase() === 'C') {
       req.checkBody('title', 'Title cannot be empty').notEmpty();
-      req.checkBody('description', 'Description cannot be empty').notEmpty();
+      // not required in spec
+      // req.checkBody('description', 'Description cannot be empty').notEmpty();
       req.checkBody('_reporter', 'Reporter cannot be empty').notEmpty();
       req.checkBody('_host', 'Host cannot be empty').notEmpty();
-      req.checkBody('_mainCategory', 'Main Category cannot be empty').notEmpty();
+      // only required if it has
+      // req.checkBody('_mainCategory', 'Main Category cannot be empty').notEmpty();
       req.checkBody('teamList', 'Team List cannot be empty').notEmpty();
       if (!req.body.teamList || req.body.teamList.length === 0) {
         return ErrorHelper.ClientError(res, {error: 'Team List Array is empty'}, 400);
