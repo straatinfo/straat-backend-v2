@@ -1,5 +1,6 @@
 const ErrorHelper = require('../helpers/error.helper');
 const RoleHelper = require('../helpers/role.helper');
+const UserHelper = require('../helpers/user.helper');
 
 const registrationFormValidator = async (req, res, next) => {
 
@@ -63,8 +64,22 @@ const registrationFormValidator = async (req, res, next) => {
 
 };
 
+const addProifleFormValidator = async (req, res, next) => {
+  try {
+    const checkUser = await UserHelper.findUserById(req.params.id);
+    if (checkUser.err || !checkUser.user) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid User'}, 400);
+    }
+    next();
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+}
+
 module.exports = {
-  registrationFormValidator: registrationFormValidator
+  registrationFormValidator: registrationFormValidator,
+  addProifleFormValidator: addProifleFormValidator
 };
 
 

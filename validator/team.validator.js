@@ -1,4 +1,5 @@
 const ErrorHelper = require('../helpers/error.helper');
+const TeamHelper = require('../helpers/team.helper');
 
 const createTeamFormValidator = async (req, res, next) => {
   const messages = [];
@@ -20,9 +21,33 @@ const createTeamFormValidator = async (req, res, next) => {
   next();
 };
 
+const updateTeamFormValidator = async (req, res, next) => {
+  try {
+    const messages = [];
+    req.checkBody('email', 'Email must be a valid email add').isEmail();
+    const checkT = await TeamHelper.getTeamById(req.params.teamId);
+    if (checkT.err || !checkT.team) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Team ID'}, 422);
+    }
+    const errors = req.validationErrors();
+
+    if (errors) {
+      errors.forEach(function (error) {
+        messages.push(error.msg);
+      });
+      return ErrorHelper.ClientError(res, messages, 400);
+    }
+    next();
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  } 
+}
+
 
 module.exports = {
-  createTeamFormValidator: createTeamFormValidator
+  createTeamFormValidator: createTeamFormValidator,
+  updateTeamFormValidator: updateTeamFormValidator
 };
 
 
