@@ -30,7 +30,12 @@ TeamRoute.route('/approve')
 
 TeamRoute.route('/:teamId')
 .get(/*requireAuth,*/ Team.getTeamById)
-.put(/*requireAuth,*/ Team.updateTeam)
+.put(
+  /*requireAuth,*/
+  CloudinaryService.singleUpload('team-logo', 'team'),
+  TeamValidator.updateTeamFormValidator,
+  Team.updateTeam
+)
 .delete(/*requireAuth,*/ Team.softRemoveTeam);
 
 module.exports = TeamRoute;

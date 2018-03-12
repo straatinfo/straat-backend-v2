@@ -63,16 +63,23 @@ const findUserById = (id) => {
 
 const updateUser = (_id, input) => {
   return new Promise((resolve, reject) => {
-    console.log(input);
     User.findByIdAndUpdate(_id, input, async (err, user) => {
-      if (err) {
-        return resolve({err: err});
+      try {
+        if (err) {
+          return resolve({err: err});
+        }
+        if (!user) {
+          return resolve({err: 'Invalid User ID'});
+        }
+        const getUserD = await findUserById(user._id);
+        if (getUserD.err) {
+          return resolve({err: getUserD.err});
+        }
+        resolve({err: null, user: getUserD.user});
       }
-      const getUserD = await findUserById(user._id);
-      if (getUserD.err) {
-        return resolve({err: getUserD.err});
+      catch (e) {
+        reject(e);
       }
-      resolve({err: null, user: getUserD.user});
     });
   });
 };

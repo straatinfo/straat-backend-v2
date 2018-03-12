@@ -6,6 +6,7 @@ const requireSignin = passport.authenticate('local', { session: false });
 const User = require('../api/user');
 const UserRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
+const UserValidation = require('../validator/user.validator');
 
 UserRoute.route('/profile/:id')
 .get(/* requireAuth, */ User.getUserDetails)
@@ -14,6 +15,7 @@ UserRoute.route('/profile/:id')
 UserRoute.route('/pic/:id')
 .put(
   CloudinaryService.singleUpload('profile-pic', 'user'),
+  UserValidation.addProifleFormValidator,
   /* requireAuth, */
   User.addProfilePic
 );
