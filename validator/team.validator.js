@@ -24,7 +24,7 @@ const createTeamFormValidator = async (req, res, next) => {
 const updateTeamFormValidator = async (req, res, next) => {
   try {
     const messages = [];
-    req.checkBody('email', 'Email must be a valid email add').isEmail();
+    // req.checkBody('teamEmail', 'Email must be a valid email add').isEmail();
     const checkT = await TeamHelper.getTeamById(req.params.teamId);
     if (checkT.err || !checkT.team) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Team ID'}, 422);
