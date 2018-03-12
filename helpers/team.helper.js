@@ -118,6 +118,9 @@ const updateTeam = (_id, input) => {
         return resolve({err: err});
       }
       try {
+        if (!team) {
+          return resolve({err: 'Invalid Team ID'});
+        }
         const getTeamInfo = await getTeamById(team._id);
         if (getTeamInfo.err) {
           return resolve({err: null, team: team});

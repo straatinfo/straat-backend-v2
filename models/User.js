@@ -25,7 +25,7 @@ const userSchema = new Schema({
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
   isSpecific: { type: Boolean, default: false },
-  _profiePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
+  _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   softRemoved: { type: Boolean, default: false },
   _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' }, // for host
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },

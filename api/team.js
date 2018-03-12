@@ -77,7 +77,20 @@ const createTeam = async (req, res, next) => {
 const updateTeam = async (req, res, next) => {
   const { teamId } = req.params;
   try {
-    const updateT = await TeamHelper.updateTeam(teamId, req.body);
+    let _profilePic, input;
+    if (req.file) {
+      const createMU = await MediaUploadHelper.createMediaUpload(req.file);
+      if (createMU.err) {
+        return ErrorHelper.ClientError(res, {error: createMU.err}, 422);
+      }
+      _profilePic = (createMU.mediaUpload) ? createMU.mediaUpload._id : null;
+    }
+    if (_profilePic) {
+      input = {...req.body, '_profilePic': _profilePic};
+    } else {
+      input = req.body;
+    }
+    const updateT = await TeamHelper.updateTeam(teamId, input);
     if (updateT.err) {
       return ErrorHelper.ClientError(res, {error: updateT.err}, 400);
     }

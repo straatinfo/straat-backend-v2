@@ -93,14 +93,17 @@ const changePassword = async (req, res, next) => {
 const addProfilePic = async (req, res, next) => {
   const { id } = req.params;
   try {
+
     if (!req.file) {
       return ErrorHelper.ClientError(res, {error: 'Invalid file'}, 400);
     }
     const createMU = await MediaUploadHelper.createMediaUpload(req.file);
+    // console.log(createMU);
     if (createMU.err) {
       return ErrorHelper.ClientError(res, {error: createMU.err}, 422);
     }
     const addProfileP = await UserHelper.updateUser(id, {'_profilePic': createMU.mediaUpload._id});
+    console.log(addProfileP);
     if (addProfileP.err) {
       return ErrorHelper.ClientError(res, {error: addProfileP.err}, 400);
     }
