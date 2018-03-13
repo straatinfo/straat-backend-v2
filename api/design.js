@@ -10,6 +10,10 @@ const getDesigns = async (req, res, next) => {
     if (getD.err) {
       return ErrorHelper.ClientError(res, {error: getD.err}, 400);
     }
+    if (req.query.flat == 'true') {
+      req.designs = getD.designs;
+      return next();
+    }
     SuccessHelper.success(res, getD.designs);
   }
   catch (e) {
@@ -32,7 +36,21 @@ const createDesign = async (req, res, next) => {
     if (createD.err) {
       return ErrorHelper.ClientError(res, {error: createD.err}, 400);
     }
-    SuccessHelper.success(res, createD.design);
+    if (!createD.design) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422);
+    }
+    const getDD = await DesignHelper.getDesignById(createD.design._id);
+    if (getDD.err || !getDD.design) {
+      return ErrorHelper.ClientError(res, {error: 'Cannot get design Details'}, 400);
+    }
+    if (req.query.flat == 'true') {
+      const flatDesign = await DesignHelper.flatDesign(getDD.design);
+      if (flatDesign.err) {
+        return ErrorHelper.ClientError(res, {error: flatDesign.err}, 400);
+      }
+      return SuccessHelper.success(res, flatDesign.design);
+    }
+    SuccessHelper.success(res, getDD.design);
   }
   catch (e) {
     console.log(e);
@@ -54,7 +72,21 @@ const addLogo = async (req, res, next) => {
     if (updateD.err) {
       return ErrorHelper.ClientError(res, {error: updateD.err}, 400);
     }
-    SuccessHelper.success(res, {message: 'Success'});
+    if (!updateD.design) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid input'}, 422);
+    }
+    const getDD = await DesignHelper.getDesignById(updateD.design._id);
+    if (getDD.err || !getDD.design) {
+      return ErrorHelper.ClientError(res, {error: 'Cannot get design Details'}, 400);
+    }
+    if (req.query.flat == 'true') {
+      const flatDesign = await DesignHelper.flatDesign(getDD.design);
+      if (flatDesign.err) {
+        return ErrorHelper.ClientError(res, {error: flatDesign.err}, 400);
+      }
+      return SuccessHelper.success(res, flatDesign.design);
+    }
+    SuccessHelper.success(res, flatDesign);
   }
   catch (e) {
     console.log(e);
@@ -68,6 +100,13 @@ const getDesignById = async (req, res, next) => {
     const getDBI = await DesignHelper.getDesignById(id);
     if (getDBI.err) {
       return ErrorHelper.ClientError(res, {error: getDBI.err}, 400);
+    }
+    if (req.query.flat == 'true') {
+      const flatDesign = await DesignHelper.flatDesign(getDBI.design);
+      if (flatDesign.err) {
+        return ErrorHelper.ClientError(res, {error: flatDesign.err}, 400);
+      }
+      return SuccessHelper.success(res, flatDesign.design);
     }
     SuccessHelper.success(res, getDBI.design);
   }
@@ -83,6 +122,20 @@ const updateDesign = async (req, res, next) => {
     const updateD = await DesignHelper.updateDesign(id, req.body);
     if (updateD.err) {
       return ErrorHelper.ClientError(res, {error: updateD.err}, 400);
+    }
+    if (!updateD.design) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}, 422);
+    }
+    const getDD = await DesignHelper.getDesignById(updateD.design._id);
+    if (getDD.err || !getDD.design) {
+      return ErrorHelper.ClientError(res, {error: 'Cannot get design Details'}, 400);
+    }
+    if (req.query.flat == 'true') {
+      const flatDesign = await DesignHelper.flatDesign(getDD.design);
+      if (flatDesign.err) {
+        return ErrorHelper.ClientError(res, {error: flatDesign.err}, 400);
+      }
+      return SuccessHelper.success(res, flatDesign.design);
     }
     SuccessHelper.success(res, updateD.design);
   }

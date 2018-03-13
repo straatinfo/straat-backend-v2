@@ -118,6 +118,34 @@ const setActiveDesign = (_host, _design) => {
   });
 };
 
+const flatDesign = (d) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const flattenDesign = {
+        _id: d._id || null,
+        designName: d.designName || null,
+        updatedAt: d.updatedAt || null,
+        createdAt: d.createdAt || null,
+        colorOne: d.colorOne || null,
+        colorTwo: d.colorTwo || null,
+        colorThree: d.colorThree || null,
+        colorFour: d.colorFour || null,
+        '_host._id': (d._host && d._host._id) ? d._host._id : null,
+        '_host.hostName': (d._host && d._host.hostName) ? d._host.hostName : null,
+        '_host.email': (d._host && d._host.email) ? d._host.email: null,
+        '_profilePic._id': (d._profilePic && d._profilePic._id) ? d._profilePic._id : null,
+        '_profilePic.url': (d._profilePic && d._profilePic.url) ? d._profilePic.url : null,
+        '_profilePic.secure_url': (d._profilePic && d._profilePic.secure_url) ? d._profilePic.secure_url : null,
+        '_profilePic.public_id': (d._profilePic && d._profilePic.public_id) ? d._profilePic.public_id : null
+      };
+      resolve({err: null, design: flattenDesign});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getDesigns: getDesigns,
   createDesign: createDesign,
@@ -125,5 +153,6 @@ module.exports = {
   updateDesign: updateDesign,
   deleteDesign: deleteDesign,
   getGeneralDesign: getGeneralDesign,
-  setActiveDesign: setActiveDesign
+  setActiveDesign: setActiveDesign,
+  flatDesign: flatDesign
 };

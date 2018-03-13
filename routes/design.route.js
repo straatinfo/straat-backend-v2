@@ -4,10 +4,11 @@ require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const Design = require('../api/design');
 const DesignRoute = express.Router();
+const DesignMiddleware = require('../middleware/design.middleware');
 const CloudinaryService = require('../service/cloudinary.service');
 
 DesignRoute.route('/host/:hostId')
-.get(/*requireAuth,*/ Design.getDesigns)
+.get(/*requireAuth,*/ Design.getDesigns, DesignMiddleware.getFlatDesigns)
 .post(/*requireAuth,*/ Design.createDesign);
 
 DesignRoute.route('/:id')
