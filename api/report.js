@@ -32,6 +32,13 @@ const getReportById = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    if (req.query.flat == 'true') {
+      const report = await ReportHelper.flatReport(getR.report);
+      if (report.err) {
+        return ErrorHelper.ClientError(res, {error: report.err}, 400);
+      }
+      return SuccessHelper.success(res, report.report);
+    }
     SuccessHelper.success(res, getR.report);
   }
   catch (e) {
@@ -92,11 +99,25 @@ const createReport = async (req, res, next) => {
     if (createR.err) {
       return ErrorHelper.ClientError(res, { error: createR.err }, 400);
     }
+    if (!createR.report) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422);
+    }
     if (!req.files || req.files.length === 0) {
       return SuccessHelper.success(res, {report: createR.report});
     }
+    const getR = await ReportHelper.getReportById(createR.report._id);
+    if (getR.err) {
+      return ErrorHelper.ClientError(res, {error: getR.err}, 422);
+    }
+    if (req.query.flat == 'true') {
+      const flatR = await ReportHelper.flatReport(getR.report);
+      if (flatR.err) {
+        return ErrorHelper.ClientError(res, { error: flatR.err }, 422);
+      }
+      SuccessHelper.success(res, flatR.report);
+    }
     const saveRP = await ReportHelper.saveUploadLooper(createR._id, req.dataArray, ReportHelper.saveUploadedPhotoReport);
-    return SuccessHelper.success(res, {report: createR.report, reportPhotos: saveRP.success });    
+    return SuccessHelper.success(res, {report: getR.report, reportPhotos: saveRP.success });    
   }
   catch (e) {
     console.log(e);
@@ -116,6 +137,9 @@ const createReportV2 = async (req, res, next) => {
     const createR = await ReportHelper.createReport({...req.body, generatedReportId: getGeneratedCode.generatedReportId});
     if (createR.err) {
       return ErrorHelper.ClientError(res, { error: createR.err }, 400);
+    }
+    if (!createR.report) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422);
     }
     // send emails
     const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt } = createR.report;
@@ -150,17 +174,25 @@ const createReportV2 = async (req, res, next) => {
     if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
       const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
         const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
-        console.log(savePhoto);
         if (savePhoto.err) {
-          console.log(savePhoto.err);
           return savePhoto.err;
         }
         return savePhoto.reportPhoto;
       }));
       return SuccessHelper.success(res, createR.report);
     }
-
-    SuccessHelper.success(res, createR.report);
+    const getR = await ReportHelper.getReportById(createR.report._id);
+    if (getR.err) {
+      return ErrorHelper.ClientError(res, {error: getR.err}, 400);
+    }
+    if (req.query.flat == 'true') {
+      const flatR = await ReportHelper.flatReport(getR.report);
+      if (flatR.err) {
+        return ErrorHelper.ClientError(res, {error: flatR.err}, 422);
+      }
+      return SuccessHelper.success(res, flatR.report);
+    }
+    SuccessHelper.success(res, getR.report);
   }
   catch (e) {
     console.log(e);
@@ -175,7 +207,21 @@ const updateReport = async (req, res, next) => {
     if (updateR.err) {
       return ErrorHelper.ClientError(res, {error: updateR.err}, 400);
     }
-    SuccessHelper.success(res, updateR.report);
+    if (!updateR.report) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Report ID'}, 422);
+    }
+    const getR = await ReportHelper.getReportById(updateR.report._id);
+    if (getR.err) {
+      return ErrorHelper.ClientError(res, {error: getR.err}, 422);
+    }
+    if (req.query.flat == 'true') {
+      const flatR = await ReportHelper.flatReport(getR.report);
+      if (flatR.err) {
+        return ErrorHelper.ClientError(res, {error: flatR.err}, 422);
+      }
+      return SuccessHelper.success(res, flatR.report);
+    }
+    SuccessHelper.success(res, getR.report);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -262,6 +308,20 @@ const changeReportStatus = async (req, res, next) => {
     const changeRS = await ReportHelper.changeReportStatus(reportId, status);
     if (changeRS.err) {
       return ErrorHelper.ClientError(res, {error: changeRS.err}, 400);
+    }
+    if (!changeRS.report) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid ID'}, 422);
+    }
+    const getR = await ReportHelper.getReportById(changeRS.report._id);
+    if (getR.err) {
+      return ErrorHelper.ClientError(res, {error: getR.err}, 422);
+    }
+    if (req.query.flat == 'true') {
+      const flatR = await ReportHelper.flatReport(getR.report);
+      if (flatR.err) {
+        return ErrorHelper.ClientError(res, {error: flatR.err}, 422);
+      }
+      return SuccessHelper.success(res, flatR.report);
     }
     SuccessHelper.success(res, changeRS.report);
   }
