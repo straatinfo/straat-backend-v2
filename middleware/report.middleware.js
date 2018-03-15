@@ -57,7 +57,6 @@ const createReportTypeC = async (req, res, next) => {
         error.push(e);
       }
     }));
-  
     SuccessHelper.success(res, {error, success});
   }
   catch (e) {
