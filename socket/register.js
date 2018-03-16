@@ -12,6 +12,7 @@ module.exports = function (io) {
         const checkU = await UserHelper.findUserById(data._user);
         if (checkU.err || !checkU.user) {
           // socket.disconnect('unauthorized');
+          console.log('Error: Invalid User ID');
           return io.to(socket.id).emit('register', {status: 0, message: 'Registration Failed'});
         }
         const checkCon = await SocketHelper.findSocketByUser(checkU.user._id);
