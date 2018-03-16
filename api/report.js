@@ -181,7 +181,7 @@ const createReportV2 = async (req, res, next) => {
         }
         return savePhoto.reportPhoto;
       }));
-      return SuccessHelper.success(res, createR.report);
+      // return SuccessHelper.success(res, createR.report);
     }
     const getR = await ReportHelper.getReportById(createR.report._id);
     if (getR.err) {
