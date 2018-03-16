@@ -2,6 +2,7 @@ const MainCategory = require('../models/MainCategory');
 const SubCategory = require('../models/SubCategory');
 const ReportType = require('../models/ReportType');
 const User = require('../models/User');
+const HostHelper = require('./host.helper');
 
 // main category helpers
 const getMainCategories = (_host) => {
@@ -250,6 +251,41 @@ const updateSubCategoryReport = (_subCategory, _report) => {
   });
 };
 
+const getMainCategoryByHostWithFreeHost = (_host) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const freeHost = await HostHelper.getFreeHost();
+      if (freeHost.err) {
+        return resolve({err: freeHost.err});
+      }
+      if (!freeHost) {
+        return resolve({err: 'Cannot fetch freehost data'});
+      }
+      MainCategory.find({$or: [
+        {'_host': _host},
+        {'_host': freeHost.host._id}
+      ]})
+      .populate('_host', [
+        '_id', 'hostName', 'email', 'houseNumber',
+        'streetName', 'city', 'state', 'country',
+        'postalCode', 'long', 'lat', '_role',
+        'lname', 'fname', 'hostPersonalEmail'
+      ])
+      .populate('subCategories')
+      .populate('_reportType')
+      .exec(function (err, mainCategories) {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, mainCategories: mainCategories});
+      });
+    }
+    catch(e) {
+      reject(e);
+    }
+  });
+}
+
 module.exports = {
   getMainCategories: getMainCategories,
   getMainCategoryById: getMainCategoryById,
@@ -262,5 +298,6 @@ module.exports = {
   deleteSubCategory: deleteSubCategory,
   getMainCategoriesByReportType: getMainCategoriesByReportType,
   updateMainCategoryReport: updateMainCategoryReport,
-  updateSubCategoryReport: updateSubCategoryReport
+  updateSubCategoryReport: updateSubCategoryReport,
+  getMainCategoryByHostWithFreeHost: getMainCategoryByHostWithFreeHost
 };

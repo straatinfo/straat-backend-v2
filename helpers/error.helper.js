@@ -3,6 +3,7 @@ const ServerError = (res) => {
     status: 0,
     message: 'Server Error'
   };
+  console.log('Error: ', object);
   return res.status(500).send(object);
 };
 

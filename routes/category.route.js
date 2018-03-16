@@ -28,4 +28,7 @@ CategoryRoute.route('/subCategory/:subCategoryId')
 .put(/*requireAuth,*/ SubCategoryValidator.updateSubCategoryFormValidator, Category.updateSubCategory)
 .delete(/*requireAuth,*/ Category.deleteSubCategory);
 
+CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
+.get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral);
+
 module.exports = CategoryRoute;

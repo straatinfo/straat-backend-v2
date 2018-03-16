@@ -16,6 +16,20 @@ const getMainCategories = async (req, res, next) => {
   }
 };
 
+const getMainCategoriesWithGeneral = async (req, res, next) => {
+  const { hostId } = req.params;
+  try {
+    const getMC = await CategoryHelper.getMainCategoryByHostWithFreeHost(hostId);
+    if (getMC.err) {
+      return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
+    }
+    SuccessHelper.success(res, getMC.mainCategories);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const createMainCategory = async (req, res, next) => {
   const { hostId } = req.params;
   const { name, description, _reportType } = req.body;
@@ -142,5 +156,6 @@ module.exports = {
   createSubCategory: createSubCategory,
   updateSubCategory: updateSubCategory,
   deleteSubCategory: deleteSubCategory,
-  getMainCategoriesByReportType: getMainCategoriesByReportType
+  getMainCategoriesByReportType: getMainCategoriesByReportType,
+  getMainCategoriesWithGeneral: getMainCategoriesWithGeneral
 };
