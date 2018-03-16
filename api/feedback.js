@@ -12,6 +12,7 @@ const sendFeedBack = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Successfully sent feedback'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
