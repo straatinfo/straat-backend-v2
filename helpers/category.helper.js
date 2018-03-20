@@ -2,24 +2,31 @@ const MainCategory = require('../models/MainCategory');
 const SubCategory = require('../models/SubCategory');
 const ReportType = require('../models/ReportType');
 const User = require('../models/User');
+const HostHelper = require('./host.helper');
+const ReportTypeHelper = require('./reportType.helper');
 
 // main category helpers
-const getMainCategories = (_host) => {
+const getMainCategories = (_host, code) => {
   return new Promise((resolve, reject) => {
-    MainCategory.find({'_host': _host})
-    .populate('_host', [
-      '_id', 'hostName', 'email', 'houseNumber',
-      'streetName', 'city', 'state', 'country',
-      'postalCode', 'long', 'lat', '_role',
-      'lname', 'fname', 'hostPersonalEmail'
-    ])
-    .populate('subCategories')
-    .populate('_reportType')
-    .exec(function (err, mainCategories) {
+    ReportType.findOne({'code': code}, (err, reportType) => {
       if (err) {
         return resolve({err: err});
       }
-      resolve({err: null, mainCategories: mainCategories});
+      MainCategory.find({'_reportType': reportType._id, '_host': _host})
+      .populate('_host', [
+        '_id', 'hostName', 'email', 'houseNumber',
+        'streetName', 'city', 'state', 'country',
+        'postalCode', 'long', 'lat', '_role',
+        'lname', 'fname', 'hostPersonalEmail'
+      ])
+      .populate('subCategories')
+      .populate('_reportType')
+      .exec(function (err, mainCategories) {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, mainCategories: mainCategories});
+      });
     });
   });
 };
@@ -206,18 +213,23 @@ const updateSubCategory = (_id, input) => {
 
 const deleteSubCategory = (_id) => {
   return new Promise((resolve, reject) => {
-    SubCategory.findByIdAndRemove(_id, (err, subCategory) => {
-      if (err) {
-        return resolve({err: err});
-      }
-      MainCategory.findByIdAndUpdate(subCategory._mainCategory,
-      { '$pop': { 'subCategories': subCategory._id } },
-      (err) => {
+    SubCategory.findByIdAndRemove(_id, async(err, subCategory) => {
+      try {
         if (err) {
           return resolve({err: err});
         }
-        resolve({err: null, subCategory: subCategory});
-      });
+        MainCategory.findByIdAndUpdate(subCategory._mainCategory,
+        { '$pop': { 'subCategories': subCategory._id } },
+        (err) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          resolve({err: null, subCategory: subCategory});
+        });
+      }
+      catch (e) {
+        reject(e);
+      }
     });
   });
 };
@@ -250,6 +262,202 @@ const updateSubCategoryReport = (_subCategory, _report) => {
   });
 };
 
+const getMainCategoryByHostWithFreeHost = (_host) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const freeHost = await HostHelper.getFreeHost();
+      if (freeHost.err) {
+        return resolve({err: freeHost.err});
+      }
+      if (!freeHost) {
+        return resolve({err: 'Cannot fetch freehost data'});
+      }
+      MainCategory.find({$or: [
+        {'_host': _host},
+        {'_host': freeHost.host._id}
+      ]})
+      .populate('_host', [
+        '_id', 'hostName', 'email', 'houseNumber',
+        'streetName', 'city', 'state', 'country',
+        'postalCode', 'long', 'lat', '_role',
+        'lname', 'fname', 'hostPersonalEmail'
+      ])
+      .populate('subCategories')
+      .populate('_reportType')
+      .exec(function (err, mainCategories) {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, mainCategories: mainCategories});
+      });
+    }
+    catch(e) {
+      reject(e);
+    }
+  });
+};
+
+const flatMainCategory = (m) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const flatMC = {
+        _id: m._id || null,
+        name: m.name || null,
+        createdAt: m.createdAt || null,
+        updatedAt: m.updatedAt || null,
+        '_host._id': (m._host && m._host._id) ? m._host._id : null,
+        '_host.hostName': (m._host && m._host.hostName) ? m._host.hostName : null,
+        '_reportType._id': (m._reportType && m._reportType._id) ? m._reportType._id : null,
+        '_reportType.code': (m._reportType && m._reportType.code) ? m._reportType.code : null,
+        '_reportType.name': (m._reportType && m._reportType.name) ? m._reportType.name : null,
+        subCategories: m.subCategories || []
+      };
+
+      resolve({err: null, mainCategory: flatMC});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const flatSubCategory = (s) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const flatSC = {
+        _id: s._id || null,
+        name: s.name || null,
+        createdAt: s.createdAt || null,
+        updatedAt: s.updatedAt || null,
+        '_mainCategory._id': (s._mainCategory && s._mainCategory._id) ? s._mainCategory._id : null,
+        '_mainCategory.name': (s._mainCategory && s._mainCategory.name) ? s._mainCategory.name : null
+      };
+      resolve({err: null, subCategory: flatSC});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const getGeneralMainCategoriesByReportTypeCode = (code) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const getFH = await HostHelper.getFreeHost();
+      if (getFH.err) { return resolve({err: getFH.err}); }
+      if (!getFH.host) { return resolve({err: 'Cannot get Free host at this time'}); }
+      ReportType.findOne({'code': code}, (err, reportType) => {
+        if (err) {
+          return resolve({err: err});
+        }
+        MainCategory.find({'_reportType': reportType._id, '_host': getFH.host._id})
+        .populate('_host', [
+          '_id', 'hostName', 'email', 'houseNumber',
+          'streetName', 'city', 'state', 'country',
+          'postalCode', 'long', 'lat', '_role',
+          'lname', 'fname', 'hostPersonalEmail'
+        ])
+        .populate('subCategories')
+        .populate('_reportType')
+        .exec(function (err, mainCategories) {
+          if (err) {
+            return resolve({err: err});
+          }
+          resolve({err: null, mainCategories: mainCategories});
+        });
+      });
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
+const createMainCategoryForGeneralDesign = ({name, code, description}) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const getFH = await HostHelper.getFreeHost();
+      if (getFH.err) { return resolve({err: getFH.err}); }
+      if (!getFH.host) { return resolve({err: 'Cannot get Free host at this time'}); }
+      ReportType.findOne({'code': code}, (err, reportType) => {
+        if (err) { return resolve({err: err}); }
+        if (!reportType) { return resolve({err: 'Invalid Report Type Code'}); }
+        const newMainCategory = new MainCategory({name, description, '_reportType': reportType._id, '_host': getFH.host._id});
+        newMainCategory.save((err, mainCategory) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          ReportType.findByIdAndUpdate(reportType._id,
+          { '$addToSet': { 'mainCategories': mainCategory._id } },
+          { 'new': true, 'upsert': true },
+          (err, reportType) => {
+            User.findByIdAndUpdate(getFH.host._id,
+            { '$addToSet': { 'mainCategories': mainCategory._id } },
+            { 'new': true, 'upsert': true },
+            async(err, user) => {
+              try {
+                const getMC = await getMainCategoryById(mainCategory._id);
+                if (getMC.err) {
+                  return resolve({err: getMC.err});
+                }
+                resolve({err: null, mainCategory: getMC.mainCategory});
+              }
+              catch (e) {
+                reject(e);
+              }
+            });
+          });
+        });
+      });
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
+const createMainCategoryForHost = ({name, code, description}, _host) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const checkHost = await HostHelper.getHostById(_host);
+      if (checkHost.err || !checkHost.host) { return resolve({err: 'Invalid Host ID'}); }
+      ReportType.findOne({'code': code}, (err, reportType) => {
+        if (err) { return resolve({err: err}); }
+        if (!reportType) { return resolve({err: 'Invalid Report Type Code'}); }
+        const newMainCategory = new MainCategory({name, description, '_reportType': reportType._id, '_host': _host});
+        newMainCategory.save((err, mainCategory) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          ReportType.findByIdAndUpdate(reportType._id,
+          { '$addToSet': { 'mainCategories': mainCategory._id } },
+          { 'new': true, 'upsert': true },
+          (err, reportType) => {
+            User.findByIdAndUpdate(_host,
+            { '$addToSet': { 'mainCategories': mainCategory._id } },
+            { 'new': true, 'upsert': true },
+            async(err, user) => {
+              try {
+                const getMC = await getMainCategoryById(mainCategory._id);
+                if (getMC.err) {
+                  return resolve({err: getMC.err});
+                }
+                resolve({err: null, mainCategory: getMC.mainCategory});
+              }
+              catch (e) {
+                reject(e);
+              }
+            });
+          });
+        });
+      });
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
 module.exports = {
   getMainCategories: getMainCategories,
   getMainCategoryById: getMainCategoryById,
@@ -262,5 +470,11 @@ module.exports = {
   deleteSubCategory: deleteSubCategory,
   getMainCategoriesByReportType: getMainCategoriesByReportType,
   updateMainCategoryReport: updateMainCategoryReport,
-  updateSubCategoryReport: updateSubCategoryReport
+  updateSubCategoryReport: updateSubCategoryReport,
+  getMainCategoryByHostWithFreeHost: getMainCategoryByHostWithFreeHost,
+  flatMainCategory: flatMainCategory,
+  flatSubCategory: flatSubCategory,
+  getGeneralMainCategoriesByReportTypeCode: getGeneralMainCategoriesByReportTypeCode,
+  createMainCategoryForGeneralDesign: createMainCategoryForGeneralDesign,
+  createMainCategoryForHost: createMainCategoryForHost
 };

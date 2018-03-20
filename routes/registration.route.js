@@ -29,4 +29,7 @@ RegistrationRoute.route('/signupV3')
 RegistrationRoute.route('/validation')
 .post(Registration.checkUserInput);
 
+RegistrationRoute.route('/validation/host')
+.post(Registration.checkHostWithCode);
+
 module.exports = RegistrationRoute;

@@ -4,10 +4,15 @@ const SuccessHelper = require('../helpers/success.helper');
 
 const getMainCategories = async (req, res, next) => {
   const { hostId } = req.params;
+  const code = req.query.code || 'A';
   try {
-    const getMC = await CategoryHelper.getMainCategories(hostId);
+    const getMC = await CategoryHelper.getMainCategories(hostId, code);
     if (getMC.err) {
       return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
+    }
+    if (req.query.flat == 'true') {
+      req.mainCategories = getMC.mainCategories;
+      return next();
     }
     SuccessHelper.success(res, getMC.mainCategories);
   }
@@ -15,6 +20,73 @@ const getMainCategories = async (req, res, next) => {
     ErrorHelper.ServerError(res);
   }
 };
+
+const getMainCategoriesWithGeneral = async (req, res, next) => {
+  const { hostId } = req.params;
+  try {
+    const getMC = await CategoryHelper.getMainCategoryByHostWithFreeHost(hostId);
+    if (getMC.err) {
+      return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
+    }
+    if (req.query.flat == 'true') {
+      req.mainCategories = getMC.mainCategories;
+      return next();
+    }
+    SuccessHelper.success(res, getMC.mainCategories);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const getGeneralMainCategories = async (req, res, next) => {
+  try {
+    if (!req.query.code) { return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422); }
+    const code = req.query.code.toUpperCase();
+    let getMC;
+    switch (code) {
+      case 'A':
+        getMC = await CategoryHelper.getGeneralMainCategoriesByReportTypeCode('A');
+        break;
+      case 'B':
+        getMC = await CategoryHelper.getGeneralMainCategoriesByReportTypeCode('B');
+        break;
+      case 'C':
+        getMC = await CategoryHelper.getGeneralMainCategoriesByReportTypeCode('C');
+        break;
+      default:
+        return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422);
+    }
+    if (getMC.err) { return ErrorHelper.ClientError(res, {error: getMC.err}); }
+    if (req.query.flat == 'true') {
+      req.mainCategories = getMC.mainCategories;
+      return next();
+    }
+    SuccessHelper.success(res, getMC.mainCategories);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
+const createGeneralMainCategory = async (req, res, next) => {
+  try {
+    const { code, name, description } = req.body;
+    if (!code || !name) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}); }
+    const createGMC = await CategoryHelper.createMainCategoryForGeneralDesign({name, code, description});
+    if (createGMC.err) { return ErrorHelper.ClientError(res, {error: createGMC.err}); }
+    if (req.query.flat == 'true') {
+      const flatMC = await CategoryHelper.flatMainCategory(createGMC.mainCategory);
+      if (flatMC.err) { return ErrorHelper.ClientError(res, {error: flatMC.err}); }
+      return SuccessHelper.success(res, flatMC.mainCategory);
+    }
+    SuccessHelper.success(res, createGMC.mainCategory);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+}
 
 const createMainCategory = async (req, res, next) => {
   const { hostId } = req.params;
@@ -24,6 +96,12 @@ const createMainCategory = async (req, res, next) => {
     const createMC = await CategoryHelper.createMainCategory(input);
     if (createMC.err) {
       return resolve({err: createMC.err});
+    }
+    if (!createMC.mainCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}, 422); }
+    if (req.query.flat == 'true') {
+      const flatMC = await CategoryHelper.flatMainCategory(createMC.mainCategory);
+      if (flatMC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get MainCategory'}); }
+      return SuccessHelper.success(res, flatMC.mainCategory);
     }
     SuccessHelper.success(res, createMC.mainCategory);
   }
@@ -39,6 +117,12 @@ const updateMainCategory = async (req, res, next) => {
     if (updateMC.err) {
       return ErrorHelper.ClientError(res, { error: updateMC.errr}, 400);
     }
+    if (!updateMC.mainCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}, 422); }
+    if (req.query.flat == 'true') {
+      const flatMC = await CategoryHelper.flatMainCategory(updateMC.mainCategory);
+      if (flatMC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get MainCategory'}); }
+      return SuccessHelper.success(res, flatMC.mainCategory);
+    }
     SuccessHelper.success(res, updateMC.mainCategory);
   }
   catch (e) {
@@ -52,6 +136,10 @@ const getMainCategoriesByReportType = async (req,res, next) => {
     const getMCBRT = await CategoryHelper.getMainCategoriesByReportType(reportTypeId);
     if (getMCBRT.err) {
       return ErrorHelper.ClientError(res, {error: getMCBRT.err}, 400);
+    }
+    if (req.query.flat == 'true') {
+      req.mainCategories = getMCBRT.mainCategories;
+      return next();
     }
     SuccessHelper.success(res, getMCBRT.mainCategories);
   }
@@ -81,6 +169,10 @@ const getSubCategories = async (req, res, next) => {
     if (getSC.err) {
       return ErrorHelper.ClientError(res, { err: getSC.err}, 400);
     }
+    if (req.query.flat == 'true') {
+      req.subCategories = getSC.subCategories;
+      return next();
+    }
     SuccessHelper.success(res, getSC.subCategories);
   }
   catch (e) {
@@ -92,10 +184,16 @@ const createSubCategory = async (req, res, next) => {
   const { mainCategoryId } = req.params;
   const { name, description } = req.body;
   try {
-    const input = {'_mainCategory': mainCategoryId};
+    const input = {'_mainCategory': mainCategoryId, name, description};
     const createSC = await CategoryHelper.createSubcategory(input);
     if (createSC.err) {
       return ErrorHelper.ClientError(res, { err: createSC.err }, 400);
+    }
+    if (!createSC.subCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422); }
+    if (req.query.flat == 'true') {
+      const flatSC = await CategoryHelper.flatSubCategory(createSC.subCategory);
+      if (flatSC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get SubCategory'}, 400); }
+      return SuccessHelper.success(res, flatSC.subCategory);
     }
     SuccessHelper.success(res, createSC.subCategory);
   }
@@ -110,6 +208,12 @@ const updateSubCategory = async (req, res, next) => {
     const updateSC = await CategoryHelper.updateSubCategory(subCategoryId, req.body);
     if (updateSC.err) {
       return ErrorHelper.ClientError(res, {error: updateSC.err}, 400);
+    }
+    if (!updateSC.subCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422); }
+    if (req.query.flat == 'true') {
+      const flatSC = await CategoryHelper.flatSubCategory(updateSC.subCategory);
+      if (flatSC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get SubCategory'}, 400); }
+      return SuccessHelper.success(res, flatSC.subCategory);
     }
     SuccessHelper.success(res, updateSC.subCategory);
   }
@@ -133,6 +237,26 @@ const deleteSubCategory = async (req, res, next) => {
   }
 };
 
+const createMainCategoryForHost = async (req, res, next) => {
+  try {
+    const _host = req.params.hostId;
+    const { code, name, description } = req.body;
+    if (!code || !name) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}); }
+    const createGMC = await CategoryHelper.createMainCategoryForHost({name, code, description}, _host);
+    if (createGMC.err) { return ErrorHelper.ClientError(res, {error: createGMC.err}); }
+    if (req.query.flat == 'true') {
+      const flatMC = await CategoryHelper.flatMainCategory(createGMC.mainCategory);
+      if (flatMC.err) { return ErrorHelper.ClientError(res, {error: flatMC.err}); }
+      return SuccessHelper.success(res, flatMC.mainCategory);
+    }
+    SuccessHelper.success(res, createGMC.mainCategory);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getMainCategories: getMainCategories,
   createMainCategory: createMainCategory,
@@ -142,5 +266,9 @@ module.exports = {
   createSubCategory: createSubCategory,
   updateSubCategory: updateSubCategory,
   deleteSubCategory: deleteSubCategory,
-  getMainCategoriesByReportType: getMainCategoriesByReportType
+  getMainCategoriesByReportType: getMainCategoriesByReportType,
+  getMainCategoriesWithGeneral: getMainCategoriesWithGeneral,
+  getGeneralMainCategories: getGeneralMainCategories,
+  createGeneralMainCategory: createGeneralMainCategory,
+  createMainCategoryForHost: createMainCategoryForHost
 };

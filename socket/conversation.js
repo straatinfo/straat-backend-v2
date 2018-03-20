@@ -12,15 +12,17 @@ module.exports = function (io) {
         const { _connection, _conversation } = data;
         const checkSocket = await SocketHelper.findSocketById(_connection);
         if (checkSocket.err) {
+          console.log('Error: ', checkSocket.err);
           return socket.disconnect('unauthorized');
         }
         const checkConvo = await ConversationHelper.getConversationById(_conversation);
         if (checkSocket.err || !checkSocket.socket) {
+          console.log('Error: ', 'Not connected to the socket' );
           return io.to(socket.id).emit('enter-convo', {status: 0, message: 'Failed to enter conversation'})
         }
         const activateP = await ParticipantHelper.activateParticipant(checkSocket.socket._user, checkConvo.conversation, true);
         if (activateP.err) {
-          console.log(err);
+          console.log('Error: ', activateP.err);
           return io.to(socket.id).emit('enter-convo', {status: 0, message: 'failed to enter conversation'});
         }
         if (activateP.participant) {
@@ -40,15 +42,16 @@ module.exports = function (io) {
         const { _connection, _conversation } = data;
         const checkSocket = await SocketHelper.findSocketById(_connection);
         if (checkSocket.err) {
+          console.log('Error: ', checkSocket.err);
           return socket.disconnect('unauthorized');
         }
         const checkConvo = await ConversationHelper.getConversationById(_conversation);
         if (checkSocket.err) {
-          console.log(err);
+          console.log('Error: ',checkSocket.err);
         }
         const activateP = await ParticipantHelper.activateParticipant(checkSocket.socket._user, checkConvo.conversation, false);
         if (activateP.err) {
-          console.log(err);
+          console.log('Error: ', activateP.err);
           return io.to(socket.id).emit('enter-convo', {status: 0, message: 'failed to exit convo'});
         }
         if (activateP.participant) {

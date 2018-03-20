@@ -144,22 +144,24 @@ const createReportV2 = async (req, res, next) => {
     // send emails
     const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt } = createR.report;
     const { code } = _reportType;
+    const mainName = _mainCategory ? _mainCategory.name : ''
+    const subName =  _subCategory ?_subCategory.name : ''
     switch (code.toUpperCase()) {
       case 'A':
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, _mainCategory.name, _subCategory.name, location );
-        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, null, location, createdAt, _mainCategory.name, _subCategory.name);
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location );
+        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, null, location, createdAt, mainName, subName);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
           return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
       break;
       case 'B':
-        const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, _mainCategory.name, location);
+        const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location);
         if (sendReportBNotifToReporter.err) {
           return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
       break;
       case 'C':
-        const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, _mainCategory.name, location);
+        const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, mainName, location);
         if (sendReportCNotifToReporter.err) {
           return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
@@ -179,7 +181,7 @@ const createReportV2 = async (req, res, next) => {
         }
         return savePhoto.reportPhoto;
       }));
-      return SuccessHelper.success(res, createR.report);
+      // return SuccessHelper.success(res, createR.report);
     }
     const getR = await ReportHelper.getReportById(createR.report._id);
     if (getR.err) {

@@ -7,6 +7,7 @@ const TeamHelper = require('../helpers/team.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
 const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 const JwtService = require('../service/jwt.service');
+const HostHelper = require('../helpers/host.helper');
 
 const checkUserInput = async (req, res, next) => {
   const { username, email, teamEmail, teamName, code } = req.body;
@@ -69,6 +70,27 @@ const checkUserInput = async (req, res, next) => {
     ErrorHelper.ServerError(e);
   }
 
+};
+
+const checkHostWithCode = async (req, res, next) => {
+  const { code } = req.body;
+  try {
+    const checkCode = await RegistrationHelper.getHostId(code);
+    if (checkCode.err) {
+      return ErrorHelper.UserError(res, {error: checkCode.err}, 400);
+    }
+    if (!checkCode._host) {
+      return ErrorHelper.UserError(res, {error: 'Invalid code'}, 422);
+    }
+    const getHost = await HostHelper.getHostById(checkCode._host);
+    if (getHost.err || !getHost.host) {
+      return ErrorHelper.UserError(res, {error: 'Invalid code'}, 422);
+    }
+    SuccessHelper.success(res, getHost.host);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
 };
 
 const requestForCode = async (req, res, next) => {
@@ -279,5 +301,6 @@ module.exports = {
   registerWithCode: registerWithCode,
   registerWithCodeV2: registerWithCodeV2,
   registerWithCodeV3: registerWithCodeV3,
-  checkUserInput: checkUserInput
+  checkUserInput: checkUserInput,
+  checkHostWithCode: checkHostWithCode
 };
