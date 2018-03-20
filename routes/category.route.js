@@ -5,23 +5,24 @@ require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const MainCategoryValidator = require('../validator/mainCategory.validator');
 const SubCategoryValidator = require('../validator/subCategory.validator');
+const CategoryMiddleware = require('../middleware/category.middleware');
 
 const Category = require('../api/category');
 const CategoryRoute = express.Router();
 
 CategoryRoute.route('/mainCategory/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getMainCategories)
-.post(/*requireAuth,*/ MainCategoryValidator.mainCategoryFormValidator, Category.createMainCategory);
+.get(/*requireAuth,*/ Category.getMainCategories, CategoryMiddleware.getFlatMainCategory)
+.post(/*requireAuth,*/ /*MainCategoryValidator.mainCategoryFormValidator, */ Category.createMainCategoryForHost);
 
 CategoryRoute.route('/mainCategory/:mainCategoryId')
 .put(/*requireAuth,*/ MainCategoryValidator.updateMainCategoryFormValidator, Category.updateMainCategory)
 .delete(/*requireAuth,*/ Category.deleteMainCategory);
 
 CategoryRoute.route('/mainCategory/reportTypeId/:reportTypeId')
-.get(/* requireAuth, */ Category.getMainCategoriesByReportType);
+.get(/* requireAuth, */ Category.getMainCategoriesByReportType, CategoryMiddleware.getFlatMainCategory);
 
 CategoryRoute.route('/subCategory/mainCategoryId/:mainCategoryId')
-.get(/*requireAuth,*/ Category.getSubCategories)
+.get(/*requireAuth,*/ Category.getSubCategories, CategoryMiddleware.getFlatSubCategory)
 .post(/*requireAuth,*/ SubCategoryValidator.subCategoryFormValidator, Category.createSubCategory);
 
 CategoryRoute.route('/subCategory/:subCategoryId')
@@ -29,6 +30,11 @@ CategoryRoute.route('/subCategory/:subCategoryId')
 .delete(/*requireAuth,*/ Category.deleteSubCategory);
 
 CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral);
+.get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral, Category.createMainCategory);
+
+CategoryRoute.route('/mainCategory/general')
+.get(/*requireAuth,*/ Category.getGeneralMainCategories, CategoryMiddleware.getFlatMainCategory)
+.post(/*requireAuth,*/  Category.createGeneralMainCategory);
+
 
 module.exports = CategoryRoute;
