@@ -6,9 +6,11 @@ const teamSchema = new Schema({
   teamEmail: { type: String, required: true, unique: true },
   description: { type: String },
   isVolunteer: { type: Boolean, default: true },
-  isApproved: { type: Boolean, default: false },
+  isApproved: { type: Boolean, default: true },
   isDeclined: { type: Boolean, default: false },
   softRemoved: { type: Boolean, default: false },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  creationMethod: { type: String, default: 'WEBSITE' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   teamLeaders: [{

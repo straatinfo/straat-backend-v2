@@ -7,71 +7,79 @@ const Team = require('../models/Team');
 var mongoose = require('mongoose');
 mongoose.connect(Config.DATA_BASE);
 
-// User.updateMany({}, {'softRemoved': false}, (err, user) => {
-//   if (err) {
-//     console.log(err);
-//     return exit();
-//   }
-//   console.log('Success');
-//   exit();
-// });
-
-Role.findOne({'accessLevel': 3}, (err, role) => {
+User.find({}, async(err, users) => {
   if (err) {
+    console.log(err);
     return exit();
   }
-  User.find({'_role': role._id})
-  .populate('teamMembers')
-  .populate('teamLeaders')
-  .exec(async(err, users) => {
-    try {
-      if (err) {
-        console.log(err);
-        return exit();
-      }
-      const process = await Promise.all(users.map(async(u) => {
-        if (u.teamLeaders.length !== 0 && u.teamLeaders[0] !== null) {
-          User.findByIdAndUpdate(u._id, {'_activeTeam': u.teamLeaders[0]._team}, (err, user) => {
-            console.log(u.teamLeaders[0]._team);
-            if (err) {
-              console.log(err);
-            }
-            if (user) {
-              return user;
-            }
-          });
-        } else if (u.teamMembers.length !== 0 && u.teamMembers[0] !== null) {
-          User.findByIdAndUpdate(u._id, {'_activeTeam': u.teamMembers[0]._team}, (err, user) => {
-            if (err) {
-              console.log(err);
-            }
-            if (user) {
-              return user;
-            }
-          });
-        } else {
-          return u;
-        }
-      }));
-      // console.log(process);
-      exit();
+  const process = await Promise.all(users.map(async(u) => {
+    if (!u.createdAt) {
+      User.findByIdAndUpdate(u._id, {'createdAt': '2018-03-21T07:08:58.683Z'}, (err, user) => {
+        console.log(user._id);
+      });
+    } else {
+      console.log(u.createdAt);
     }
-    catch (e) {
-      console.log(e);
-      exit();
-    }
-  })
-  // User.find({'_role': role._id})
-  // .populate('_activeTeam')
-  // .exec((err, users) => {
-  //   if (err) {
-  //     console.log(err);
-  //     return exit();
-  //   }
-  //   console.log(users);
-  //   exit();
-  // })
+  }));
+  exit();
 });
+
+// Role.findOne({'accessLevel': 3}, (err, role) => {
+//   if (err) {
+//     return exit();
+//   }
+//   User.find({'_role': role._id})
+//   .populate('teamMembers')
+//   .populate('teamLeaders')
+//   .exec(async(err, users) => {
+//     try {
+//       if (err) {
+//         console.log(err);
+//         return exit();
+//       }
+//       const process = await Promise.all(users.map(async(u) => {
+//         if (u.teamLeaders.length !== 0 && u.teamLeaders[0] !== null) {
+//           User.findByIdAndUpdate(u._id, {'_activeTeam': u.teamLeaders[0]._team}, (err, user) => {
+//             console.log(u.teamLeaders[0]._team);
+//             if (err) {
+//               console.log(err);
+//             }
+//             if (user) {
+//               return user;
+//             }
+//           });
+//         } else if (u.teamMembers.length !== 0 && u.teamMembers[0] !== null) {
+//           User.findByIdAndUpdate(u._id, {'_activeTeam': u.teamMembers[0]._team}, (err, user) => {
+//             if (err) {
+//               console.log(err);
+//             }
+//             if (user) {
+//               return user;
+//             }
+//           });
+//         } else {
+//           return u;
+//         }
+//       }));
+//       // console.log(process);
+//       exit();
+//     }
+//     catch (e) {
+//       console.log(e);
+//       exit();
+//     }
+//   })
+//   // User.find({'_role': role._id})
+//   // .populate('_activeTeam')
+//   // .exec((err, users) => {
+//   //   if (err) {
+//   //     console.log(err);
+//   //     return exit();
+//   //   }
+//   //   console.log(users);
+//   //   exit();
+//   // })
+// });
 
 function exit() {
   mongoose.disconnect();

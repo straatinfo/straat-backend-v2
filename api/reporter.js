@@ -15,17 +15,16 @@ const getReporters = async (req, res, next) => {
     const updatedReporters = await Promise.all(getR.reporters.map(async(r) => {
       let reporter = r, status2;
 
-      const getPendingInvite = await TeamInviteHelper.getRequestListByUser(r._id, true);
-      const invite = _.find(getPendingInvite.teamInvites, (i) => {
-        return i._team === (r._activeTeam) ? r._activeTeam._id : 'asdf';
-      });
+      const getPendingTeam = await TeamHelper.getPendingTeamByUser(r._id, r.isVolunteer);
+      if (getPendingTeam.err) { return ErrorHelper.ClientError(res, {error: getPendingTeam.err}); }
+      const pendingTeam = getPendingTeam.team;
       // set status1
       let status1;
       if (r.isBlocked) {
         status1 = 'BLOCK';
-      } else if (invite && invite.isRequest) {
+      } else if (pendingTeam) {
         status1 = 'WAITING';
-      } else if (!invite && r.isBlocked === false) {
+      } else if (!pendingTeam && r.isBlocked === false) {
         status1 = 'ACTIVE'
       } else {
         status1 = '';
@@ -44,6 +43,7 @@ const getReporters = async (req, res, next) => {
       const data = {
         ...r.toObject(),
         activeTeam: r._activeTeam,
+        pendingTeam: pendingTeam,
         status1: status1,
         status2: status2
       };
@@ -76,17 +76,16 @@ const getReporterById = async (req, res, next) => {
     }
     let r = getRBI.reporter, status2;
 
-    const getPendingInvite = await TeamInviteHelper.getRequestListByUser(r._id, true);
-    const invite = _.find(getPendingInvite.teamInvites, (i) => {
-      return i._team === (r._activeTeam) ? r._activeTeam._id : 'asdf';
-    });
+    const getPendingTeam = await TeamHelper.getPendingTeamByUser(r._id, r.isVolunteer);
+    if (getPendingTeam.err) { return ErrorHelper.ClientError(res, {error: getPendingTeam.err}); }
+    const pendingTeam = getPendingTeam.team;
     // set status1
     let status1;
     if (r.isBlocked) {
       status1 = 'BLOCK';
-    } else if (invite && invite.isRequest) {
+    } else if (pendingTeam) {
       status1 = 'WAITING';
-    } else if (!invite && r.isBlocked === false) {
+    } else if (!pendingTeam && r.isBlocked === false) {
       status1 = 'ACTIVE'
     } else {
       status1 = '';
@@ -102,7 +101,7 @@ const getReporterById = async (req, res, next) => {
     } else {
       status2 = 'INDIVIDUAL';
     }
-    const data = {...r.toObject(), activeTeam: r._activeTeam, status1: status1, status2: status2 };
+    const data = {...r.toObject(), activeTeam: r._activeTeam, status1: status1, status2: status2, pendingTeam: pendingTeam };
     if (req.query.flat === 'true') {
       const reporter = await ReporterHelper.flatReporter(data);
       if (reporter.err) {
@@ -127,17 +126,16 @@ const getReportersByHost = async (req, res, next) => {
     const updatedReporters = await Promise.all(getRBH.reporters.map(async(r) => {
       let reporter = r, status2;
 
-      const getPendingInvite = await TeamInviteHelper.getRequestListByUser(r._id, true);
-      const invite = _.find(getPendingInvite.teamInvites, (i) => {
-        return i._team === (r._activeTeam) ? r._activeTeam._id : 'asdf';
-      });
+      const getPendingTeam = await TeamHelper.getPendingTeamByUser(r._id, r.isVolunteer);
+      if (getPendingTeam.err) { return ErrorHelper.ClientError(res, {error: getPendingTeam.err}); }
+      const pendingTeam = getPendingTeam.team;
       // set status1
       let status1;
       if (r.isBlocked) {
         status1 = 'BLOCK';
-      } else if (invite && invite.isRequest) {
+      } else if (pendingTeam) {
         status1 = 'WAITING';
-      } else if (!invite && r.isBlocked === false) {
+      } else if (!pendingTeam && r.isBlocked === false) {
         status1 = 'ACTIVE'
       } else {
         status1 = '';
@@ -153,7 +151,7 @@ const getReportersByHost = async (req, res, next) => {
       } else {
         status2 = 'INDIVIDUAL';
       }
-      const data = {...r.toObject(), activeTeam: r._activeTeam, status1: status1, status2: status2 };
+      const data = {...r.toObject(), activeTeam: r._activeTeam, status1: status1, status2: status2, pendingTeam: pendingTeam };
       return data;
     }));
 

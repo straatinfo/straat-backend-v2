@@ -51,7 +51,7 @@ const getTeamWithFilter = async (req, res, next) => {
 const createTeam = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    const createT = await TeamHelper.createTeam(userId, req.body);
+    const createT = await TeamHelper.createTeam(userId, {...req.body, 'isApproved': true, 'createdBy': req.body._host});
     if (createT.err) {
       return ErrorHelper.ClientError(res, {error: createT.err}, 400);
     }

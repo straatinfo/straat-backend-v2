@@ -14,7 +14,7 @@ const getReporters = () => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked',
       'hostName', 'username', '_host', 'isVolunteer',
-      '_profilePic'
+      '_profilePic', 'createdAt', 'updatedAt'
     ])
     .populate({
       path: '_activeTeam',
@@ -26,7 +26,7 @@ const getReporters = () => {
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-      'lname', 'fname', 'hostPersonalEmail'
+      'lname', 'fname', 'hostPersonalEmail', 'createdAt', 'updatedAt'
     ])
     .populate('teamMembers')
     .populate('teamLeaders')
@@ -48,7 +48,7 @@ const getReporterById = (_id) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked',
       'hostName', 'username', '_host', 'isVolunteer',
-      '_profilePic'
+      '_profilePic', 'createdAt', 'updatedAt'
     ])
     .populate({
       path: '_activeTeam',
@@ -60,7 +60,7 @@ const getReporterById = (_id) => {
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-      'lname', 'fname', 'hostPersonalEmail'
+      'lname', 'fname', 'hostPersonalEmail', 'createdAt', 'updatedAt'
     ])
     .populate('teamMembers')
     .populate('teamLeaders')
@@ -110,7 +110,7 @@ const getReportersByHost = (_host) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked',
       'hostName', 'username', '_host', 'isVolunteer',
-      '_profilePic'
+      '_profilePic', 'createdAt', 'updatedAt'
     ])
     .populate({
       path: '_activeTeam',
@@ -122,7 +122,7 @@ const getReportersByHost = (_host) => {
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode', 'username',
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-      'lname', 'fname', 'hostPersonalEmail'
+      'lname', 'fname', 'hostPersonalEmail', 'createdAt', 'updatedAt'
     ])
     .populate('teamMembers')
     .populate('teamLeaders')
@@ -167,6 +167,8 @@ const flatReporter = (r) => {
         city: r.city || null,
         lat: r.lat || null,
         long: r.long || null,
+        createdAt: r.createdAt || null,
+        updatedAt: r.updatedAt || null,
         '_role._id': (r._role && r._role._id) ? r._role._id : null,
         '_role.name': (r._role && r._role.name) ? r._role.name : null,
         '_role.code': (r._role && r._role.code) ? r._role.code : null,
@@ -205,7 +207,9 @@ const flatReporter = (r) => {
         '_activeTeam.teamName': (r._activeTeam && r._activeTeam.teamName) ? r._activeTeam.teamName : null,
         '_activeTeam.teamEmail': (r._activeTeam && r._activeTeam.teamEmail) ? r._activeTeam.teamEmail : null,
         '_activeTeam.createdAt': (r._activeTeam && r._activeTeam.createdAt) ? r._activeTeam.createdAt : null,
-        '_activeTeam.updatedAt': (r._activeTeam && r._activeTeam.updatedAt) ? r._activeTeam.updatedAt : null
+        '_activeTeam.updatedAt': (r._activeTeam && r._activeTeam.updatedAt) ? r._activeTeam.updatedAt : null,
+        'pendingTeam._id': (r.pendingTeam && r.pendingTeam._id) ? r.pendingTeam._id : null,
+        'pendingTeam.teamName': (r.pendingTeam && r.pendingTeam.teamName) ? r.pendingTeam.teamName : null
       };
       resolve({err: null, reporter: flatR});
     }

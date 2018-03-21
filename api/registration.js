@@ -255,6 +255,8 @@ const registerWithCodeV3 = async (req, res, next) => {
           logoUrl: req.body.logoUrl,
           logoSecuredUrl: req.body.logoSecuredUrl,
           _host: createU.user._host,
+          createdBy: createU.user._id,
+          creationMethod: 'REGISTRATION',
           isVolunteer: true,
           isApproved: true
         };
@@ -265,6 +267,8 @@ const registerWithCodeV3 = async (req, res, next) => {
           logoUrl: req.body.logoUrl,
           logoSecuredUrl: req.body.logoSecuredUrl,
           _host: createU.user._host,
+          createdBy: createU.user._id,
+          creationMethod: 'REGISTRATION',
           isVolunteer: false,
           isApproved: false
         };
