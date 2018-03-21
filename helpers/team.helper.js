@@ -473,6 +473,17 @@ const softRemoveTeam = (_team) => {
   });
 };
 
+const getPendingTeamByUser = (_user, isVolunteer = false) => {
+  return new Promise((resolve, reject) => {
+    Team.findOne({'createdBy': _user, 'isApproved': false, 'isVolunteer': isVolunteer, 'creationMethod': 'REGISTRATION'})
+    .exec((err, team) => {
+      if (err) { return resolve({err: err}); }
+      resolve({err: null, team: team});
+    })
+  });
+};
+
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -493,5 +504,6 @@ module.exports = {
   getApprovedTeam: getApprovedTeam,
   approveTeam: approveTeam,
   flatTeam: flatTeam,
-  declineTeam: declineTeam
+  declineTeam: declineTeam,
+  getPendingTeamByUser: getPendingTeamByUser
 };
