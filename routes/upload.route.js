@@ -13,4 +13,11 @@ UploadRoute.route('/public')
   Upload.uploadPhoto
 );
 
+UploadRoute.route('/photo')
+.post(
+  CloudinaryService.singleUpload('photo', 'reports', ['jpg', 'png', 'jpeg', 'mp4']),
+  /* requireAuth, */
+  Upload.uploadPhotoAndSave
+);
+
 module.exports = UploadRoute;

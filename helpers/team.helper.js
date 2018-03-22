@@ -73,7 +73,7 @@ const createTeam = (_user, input) => {
         'isVolunteer': findUser.user.isVolunteer,
         'isApproved': findUser.user.isVolunteer
       };
-      const newTeam = new Team(data);
+      const newTeam = new Team({...input, ...data});
       newTeam.save(async(err, team) => {
         console.log('team', team);
         if (err) {

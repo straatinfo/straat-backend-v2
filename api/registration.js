@@ -211,7 +211,7 @@ const registerWithCodeV2 = async (req, res, next) => {
 };
 
 const registerWithCodeV3 = async (req, res, next) => {
-  const { code, password, username, email } = req.body;
+  const { code, password, username, email, teamPhotoUploaded } = req.body;
   try {
 
     let createU = {}
@@ -282,6 +282,11 @@ const registerWithCodeV3 = async (req, res, next) => {
           isApproved: false
         };
       }
+      
+      if (teamPhotoUploaded && teamPhotoUploaded._id) {
+        teamInput._profilePic = teamPhotoUploaded._id
+      }
+
       console.log(teamInput);
       createT = await TeamHelper.createTeam(createU.user._id, teamInput);
       if (createT.err) {
