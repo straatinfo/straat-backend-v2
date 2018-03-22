@@ -26,7 +26,7 @@ const createHost = async (req, res, next) => {
     const {
       hostName, email, hostPersonalEmail, username,
       fname, lname, housNumber, street, city, state,
-      country, postalCode, phoneNumber, long, lat
+      country, postalCode, phoneNumber, long, lat, houseNumber
     } = req.body;
     const getGD = await DesignHelper.getGeneralDesign();
     if (getGD.err) {
@@ -34,6 +34,7 @@ const createHost = async (req, res, next) => {
     }
     const input = {
       'hostName': hostName,
+      'houseNumber': houseNumber,
       'email': email,
       'hostPersonalEmail': hostPersonalEmail,
       'username': username,

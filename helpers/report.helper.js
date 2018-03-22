@@ -362,6 +362,7 @@ const flatReport = (r) => {
       '_reporter._id': (r._reporter && r._reporter._id) ? r._reporter.id : null,
       '_reporter.fname': (r._reporter && r._reporter.fname) ? r._reporter.fname : null,
       '_reporter.lname': (r._reporter && r._reporter.lname) ? r._reporter.lname : null,
+      '_reporter.username': (r._reporter && r._reporter.username) ? r._reporter.username : null,
       title: r.title || null,
       description: r.description || null,
       long: r.long || null,
