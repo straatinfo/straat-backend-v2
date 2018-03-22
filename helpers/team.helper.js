@@ -182,7 +182,8 @@ const checkUserIfCanJoin = (_user, _team) => {
         return resolve({err: 'Invalid User'});
       }
       if (checkU.user.isVolunteer !== checkT.team.isVolunteer) {
-        console.log('user', checkU.user.isVolunteer, 'team', checkT.team.isVolunteer);
+        console.log(checkU.user.isVolunteer);
+        console.log(checkT.team.isVolunteer);
         return resolve({status: false});
       }
       resolve({status: true});
@@ -198,7 +199,7 @@ const addLeader = (_user, _team) => {
     try {
       const checkIfCanJoin = await checkUserIfCanJoin(_user, _team);
       if (checkIfCanJoin.status === false) {
-        return resolve({err: 'Cannot join the team'});
+        return resolve({err: 'Volunteer Reporter Cant Join Non-Volunteer Team and Vice Versa'});
       }
       const checkTL = await TeamLeaderHelper.checkTeamLeader(_user, _team);
       if (checkTL.err) {
@@ -249,7 +250,7 @@ const addMember = (_user, _team) => {
     try {
       const checkIfCanJoin = await checkUserIfCanJoin(_user, _team);
       if (checkIfCanJoin.status === false) {
-        return resolve({err: 'Cannot join the team'});
+        return resolve({err: 'Volunteer Reporter Cant Join Non-Volunteer Team and Vice Versa'});
       }
       const checkMember = await TeamMemberHelper.checkTeamMember(_user, _team);
       if (checkMember.err) {
@@ -267,11 +268,11 @@ const addMember = (_user, _team) => {
       const checkLeader = await TeamLeaderHelper.checkTeamLeader(_user, _team);
       if (checkLeader.teamLeader) {
         const removeTL = await TeamLeaderHelper.removeTeamLeader(_user, _team);
-        if (removeTl.err) {
+        if (removeTL.err) {
           return resolve({err: removeTL.err});
         }
-        const removeTLToUser = await TeamLeaderHelper.removeTeamLeaderToUser(_user, removeTl.teamLeader._id);
-        const removeTLToTeam = await TeamLeaderHelper.removeTeamLeaderToTeam(_team, removeTl.teamLeader._id);
+        const removeTLToUser = await TeamLeaderHelper.removeTeamLeaderToUser(_user, removeTL.teamLeader._id);
+        const removeTLToTeam = await TeamLeaderHelper.removeTeamLeaderToTeam(_team, removeTL.teamLeader._id);
       }
       resolve({err: null});
     }
