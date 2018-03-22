@@ -2,6 +2,9 @@
 const Role = require('../models/Role');
 const Config = require('../config');
 const Team = require('../models/Team');
+const TeamLeader = require('../models/TeamLeader');
+const TeamMembers = require('../models/TeamMember');
+const User = require('../models/User');
 var mongoose = require('mongoose');
 mongoose.connect(Config.DATA_BASE);
 
@@ -58,33 +61,35 @@ mongoose.connect(Config.DATA_BASE);
 
 // 
 
-Team.find({}, async(err, teams) => {
+Team.find({})
+.populate('teamLeaders')
+.populate('teamMembers')
+.exec(async(err, teams) => {
   if (err) {
+    console.log(err);
     return exit();
   }
-  const process = Promise.all(teams.map(async(t) => {
-    // Team.findByIdAndUpdate(t._id, {'creationMethod': 'WEBSITE'}, (err, team) => {
-    //   if (team.teamLeaders[0]) {
-    //     console.log(team.teamLeaders[0]);
-    //   } else {
-    //     console.log(team.teamMembers[0]);
-    //   }
-    //   console.log(t._id);
-    // });
-    // if (!t.teamLeaders[0] && !t.teamMembers[0]) {
-    //   Team.remove({'_id': t._id}, (err) => {
-    //     console.log('deleting', t._id);
-    //   });
-    // } else if (t.teamLeaders[0]){
-    //   Team.findByIdAndUpdate(t._id, {'createdBy': t.teamLeaders[0]}, (err, team) => {
-    //     console.log(team);
-    //   });
-    // } else {
-    //   Team.findByIdAndUpdate(t._id, {'createdBy': t.teamMembers[0]}, (err, team) => {
-    //     console.log(team);
-    //   });
-    // }
-    console.log(t.createdBy);
+  const process = await Promise.all(teams.map(async(t) => {
+    const tl = await Promise.all(t.teamLeaders.map(async(l) => {
+      User.findByIdAndUpdate(l._user, {'isVolunteer': t.isVolunteer}, (err, user) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        if(user)console.log('leader', user._id);
+        return;
+      });
+    }));
+    const tm = await Promise.all(t.teamMembers.map(async(m) => {
+      User.findByIdAndUpdate(m._user, {'isVolunteer': t.isVolunteer}, (err, user) => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        if(user)console.log('member', user._id);
+        return;
+      });
+    }));
   }));
   exit();
 });

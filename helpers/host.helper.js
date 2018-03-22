@@ -234,6 +234,7 @@ const flatHost = (h) => {
         country: h.country || null,
         postalCode: h.postalCode || null,
         phoneNumber: h.phoneNumber || null,
+        houseNumber: h.houseNumber || null,
         '_role._id': (h._role && h._role._id) ? h._role._id : null,
         '_role.name': (h._role && h._role.name) ? h._role.name : null,
         '_role.code': (h._role && h._role.code) ? h._role.code : null,
