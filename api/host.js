@@ -33,16 +33,9 @@ const createHost = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: getGD.err}, 400);
     }
     const input = {
-      'hostName': hostName,
-      'houseNumber': houseNumber,
-      'email': email,
-      'hostPersonalEmail': hostPersonalEmail,
-      'username': username,
-      'country': country,
-      'postalCode': postalCode,
-      'phoneNumber': phoneNumber,
-      'long': long,
-      'lat': lat,
+      hostName, email, hostPersonalEmail, username,
+      fname, lname, housNumber, street, city, state,
+      country, postalCode, phoneNumber, long, lat, houseNumber,
       '_activeDesign': getGD.design_id
     };
     const createH = await HostHelper.createHost(input);
