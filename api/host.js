@@ -25,7 +25,7 @@ const createHost = async (req, res, next) => {
   try {
     const {
       hostName, email, hostPersonalEmail, username,
-      fname, lname, housNumber, street, city, state,
+      fname, lname, housNumber, streetName, city, state,
       country, postalCode, phoneNumber, long, lat, houseNumber
     } = req.body;
     const getGD = await DesignHelper.getGeneralDesign();
@@ -34,7 +34,7 @@ const createHost = async (req, res, next) => {
     }
     const input = {
       hostName, email, hostPersonalEmail, username,
-      fname, lname, housNumber, street, city, state,
+      fname, lname, housNumber, streetName, city, state,
       country, postalCode, phoneNumber, long, lat, houseNumber,
       '_activeDesign': getGD.design_id
     };
