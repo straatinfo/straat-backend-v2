@@ -211,33 +211,42 @@ const registerWithCodeV2 = async (req, res, next) => {
 };
 
 const registerWithCodeV3 = async (req, res, next) => {
-  const { code } = req.body;
+  const { code, password, username, email } = req.body;
   try {
+
+    let createU = {}
     const getHost = await RegistrationHelper.getHostId(code);
+    
     if (getHost.err) {
       return ErrorHelper.ClientError(res, {error: getHost.err}, 400);
     }
+    
     const input = {
       ...req.body,
       '_host': getHost._host
     };
 
-    const checkUsername = await UserHelper.checkUserByCredentials(input.username);
-    const checkEmail = await UserHelper.checkUserByCredentials(input.email);
-    if (checkUsername.err || checkEmail.err) {
+    const user = await UserHelper.checkUserByUNameEmail(username, email);
+    
+    if (user.err) {
       return ErrorHelper.ClientError(res, {error: 'Error in checking username and email validity'}, 400);
     }
 
-    if (checkUsername.user || checkEmail.user) {
-      return ErrorHelper.ClientError(res, {error: 'Username or email is already in used'});
+    if (user.user) {
+      const isRegistration = await UserHelper.comparePassword(password, user.user.password)
+      console.log('isRegistration', isRegistration)
+      if (!isRegistration.res) {
+         return ErrorHelper.ClientError(res, {error: 'Username or email is already in used'});
+      }
+      createU = user
+    } else {
+        createU = await UserHelper.createNewUser(input);
+        if (createU.err) {
+          return ErrorHelper.ClientError(res, {error: createU.err}, 400);
+        }       
     }
-
-    const createU = await UserHelper.createNewUser(input);
-    if (createU.err) {
-      return ErrorHelper.ClientError(res, {error: createU.err}, 400);
-    }
-
-
+    // when code come here that means user already registered ang ready to get a team
+    console.log('createU', createU)
     // create or join team
     let teamInput = {}, createT, requestT, team;
     if (req.body._team) {

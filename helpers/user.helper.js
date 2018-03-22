@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const ErrorHelper = require('./error.helper');
+const bcrypt = require('bcrypt-nodejs');
+
 
 const checkUserByCredentials = (loginName) => {
   return new Promise((resolve, reject) => {
@@ -15,6 +17,34 @@ const checkUserByCredentials = (loginName) => {
   });
 };
 
+
+const checkUserByUNameEmail = (userName, email) => {
+  return new Promise((resolve, reject) => {
+    User.findOne({$or: [
+      { 'email': email },
+      { 'username': userName }
+    ]}, function (err, user) {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user});
+    });
+  });
+};
+
+// test
+
+
+const comparePassword = (password, hash) => {
+   return new Promise((resolve, reject) => {
+    bcrypt.compare(password, hash, function(err, res) {
+      if (err) {
+        return resolve({err});
+      }
+      resolve({res});
+    });
+  });
+}
 
 const findUserById = (id) => {
   return new Promise((resolve, reject) => {
@@ -202,5 +232,7 @@ module.exports = {
   forgotPassword: forgotPassword,
   changePassword: changePassword,
   addMessageToUser: addMessageToUser,
-  removeMessageToUser: removeMessageToUser
+  removeMessageToUser: removeMessageToUser,
+  checkUserByUNameEmail,
+  comparePassword
 };

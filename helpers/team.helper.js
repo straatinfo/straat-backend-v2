@@ -66,6 +66,7 @@ const createTeam = (_user, input) => {
       }
       const data = {
         '_host': input._host,
+        'createdBy': findUser.user._id,
         'teamName': input.teamName,
         'teamEmail': input.teamEmail,
         'description': input.description,

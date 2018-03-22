@@ -99,17 +99,6 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
     if (!req.body.username) {
       return ErrorHelper.ClientError(res, {error: 'username is undefined'}, 400);
     }
-
-    const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
-
-    if (checkUser.err) {
-      return ErrorHelper.ClientError(res, {error: checkUser.err}, 400);
-    }
-
-    if (checkUser.user) {
-      return ErrorHelper.ClientError(res, {error: 'email or username is already in used'}, 400);
-    }
-
     if (!req.body.country) {
       req.body.country = 'Netherlands';
     }
@@ -119,6 +108,18 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
       req.checkBody('teamEmail', 'Team Email must not be empty').notEmpty();
       req.checkBody('teamEmail', 'Invalid Team Email').isEmail();
     }
+
+    // will be checked on next()
+    // const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
+
+    // if (checkUser.err) {
+    //   return ErrorHelper.ClientError(res, {error: checkUser.err}, 400);
+    // }
+
+    // if (checkUser.user) {
+    //   return ErrorHelper.ClientError(res, {error: 'email or username is already in used'}, 400);
+    // }
+
 
     const errors = req.validationErrors();
 
