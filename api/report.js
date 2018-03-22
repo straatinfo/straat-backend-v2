@@ -303,6 +303,41 @@ const getReportNearBy = async (req, res, next) => {
   }
 };
 
+const getReportsByNear = async (req, res, next) => {
+  const { long, lat, radius } = req.params;
+  try {
+    if (!req.params || !long || !lat || !radius) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Parameters'}, 200);
+    } 
+    const queryObject = {
+            reportCoordinate: {
+              $near: {
+                $maxDistance: parseFloat(radius), 
+                $minDistance: 0,
+                $geometry:{
+                  type:'Point',
+                  coordinates:[ parseFloat(long), parseFloat(lat) ]
+                }
+              }
+           }
+          };
+    const getRNB = await ReportHelper.getReportByQueryObject(queryObject);
+    if (getRNB.err) {
+      return ErrorHelper.ClientError(res, {error: getRNB.err}, 400);
+    }
+    if (req.query.flat) {
+      const data = getRNB.reports;
+      req.reports = data;
+      return next();
+    }
+    SuccessHelper.success(res, getRNB.reports);
+  }
+  catch (e) {
+    console.log(e)
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const changeReportStatus = async (req, res, next) => {
   const { reportId } = req.params;
   const { status } = req.body;
@@ -364,5 +399,6 @@ module.exports = {
   getReportNearBy: getReportNearBy,
   createReportV2: createReportV2,
   changeReportStatus: changeReportStatus,
-  getReportsByReporterAndTeam: getReportsByReporterAndTeam
+  getReportsByReporterAndTeam: getReportsByReporterAndTeam,
+  getReportsByNear
 };

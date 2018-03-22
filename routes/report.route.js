@@ -51,4 +51,7 @@ ReportRoute.route('/status/:reportId')
 ReportRoute.route('/myReport/:reporterId/:teamId')
 .get(/* requireAuth, */Report.getReportsByReporterAndTeam, FlatReport.getFlatReports);
 
+ReportRoute.route('/near/:long/:lat/:radius')
+.get(/* requireAuth, */ Report.getReportsByNear, FlatReport.getFlatReports);
+
 module.exports = ReportRoute;
