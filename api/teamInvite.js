@@ -1,6 +1,7 @@
 const SuccessHelper = require('../helpers/success.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
+const TeamMemberHelper = require('../helpers/teamMember.helper');
 
 const checkInviteExist = async (req,res, next) => {
   const { teamId, userId } = req.params;
@@ -140,9 +141,19 @@ const acceptRequest = async (req, res, next) => {
     if (acceptR.err) {
       return ErrorHelper.ClientError(res, {error: acceptR.err}, 400);
     }
+    // that means already crated new record in teamMebers but not teamMebers on user, team table
+     
+    const addMemberToUser = await TeamMemberHelper.addTeamMemberToUser(userId, acceptR.teamMember._id);
+    const addMemberToTeam = await TeamMemberHelper.addTeamMemberToTeam(teamId, acceptR.teamMember._id);
+    if (addMemberToUser.err || addMemberToUser.err) {
+      // failed to save teamMember on team, user
+      return ErrorHelper.ServerError(res);
+    }
+    console.log('acceptR', acceptR)
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e)
     ErrorHelper.ServerError(res);
   }
 };

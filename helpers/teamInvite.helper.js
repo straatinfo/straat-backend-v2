@@ -128,11 +128,11 @@ const acceptRequest = (_user, _team) => {
       if (addMember.err) {
         return resolve({err: 'Failed to add user in the team.'});
       }
-      const removeInvite = await removeInvite(_user, _team);
-      if (removeInvite.err) {
+      const removedInvite = await removeInvite(_user, _team);
+      if (removedInvite.err) {
         return resolve({err: null, warning: 'The invite was not removed.'});
       }
-      resolve({err: null});
+      resolve({err: null, teamMember: addMember.teamMember});
     }
     catch (e) {
       reject(e);

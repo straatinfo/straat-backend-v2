@@ -38,4 +38,7 @@ TeamRoute.route('/:teamId')
 )
 .delete(/*requireAuth,*/ Team.softRemoveTeam);
 
+TeamRoute.route('/info/:teamId')
+.get(/*requireAuth,*/ Team.getTeamInfoById)
+
 module.exports = TeamRoute;
