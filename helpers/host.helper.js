@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const RoleHelper = require('../helpers/role.helper');
+const _ = require('lodash');
 
 const getHosts = () => {
   return new Promise(async(resolve, reject) => {
@@ -10,7 +11,7 @@ const getHosts = () => {
       }
       const _role = getRole.role._id;
       User.find({'_role': _role, 'softRemoved': false}, [
-        '_id', 'hostName', 'houseNumber', 'streetName',
+        '_id', 'hostName', 'houseNumber', 'streetName', 'state',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
         'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
@@ -23,7 +24,10 @@ const getHosts = () => {
         if (err) {
           return resolve({err: err});
         }
-        resolve({err: null, hosts: hosts});
+        const filteredHost = _.filter(hosts, (h) => {
+          return h.hostName !== 'freeHost';
+        });
+        resolve({err: null, hosts: filteredHost});
       });
     }
     catch (e) {
@@ -63,7 +67,7 @@ const getHostWithinRadius = (long, lat, radius) => {
           }
         ]
       }, [
-        '_id', 'hostName', 'houseNumber', 'streetName',
+        '_id', 'hostName', 'houseNumber', 'streetName', 'state',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
         'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
@@ -75,7 +79,10 @@ const getHostWithinRadius = (long, lat, radius) => {
         if (err) {
           return resolve({err: err});
         }
-        resolve({err: null, hosts: hosts});
+        const filteredHost = _.filter(hosts, (h) => {
+          return h.hostName !== 'freeHost';
+        });
+        resolve({err: null, hosts: filteredHost});
       });
 
     }
@@ -184,7 +191,7 @@ const createHostLoop = (dataArray=[], promiseFunction = createHost) => {
 const getFreeHost = () => {
   return new Promise((resolve, reject) => {
     User.findOne({'hostName': 'freeHost'}, [
-      '_id', 'hostName', 'houseNumber', 'streetName',
+      '_id', 'hostName', 'houseNumber', 'streetName', 'state',
       'city', 'state', 'country', 'postalCode', 'username',
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
       'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
@@ -232,6 +239,7 @@ const flatHost = (h) => {
         streetName: h.streetName || null,
         city: h.city || null,
         country: h.country || null,
+        state: h.state || null,
         postalCode: h.postalCode || null,
         phoneNumber: h.phoneNumber || null,
         houseNumber: h.houseNumber || null,
