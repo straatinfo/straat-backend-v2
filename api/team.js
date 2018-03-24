@@ -30,6 +30,20 @@ const getTeamById = async (req, res, next) => {
   }
 };
 
+const getTeamInfoById = async (req, res, next) => {
+  const { teamId } = req.params;
+  try {
+    const getTBI = await TeamHelper.getTeamInfoById(teamId);
+    if (getTBI.err) {
+      return ErrorHelper.ClientError(res, {error: getTBI.err}, 400);
+    }
+    SuccessHelper.success(res, getTBI.team);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const getTeamWithFilter = async (req, res, next) => {
   const { queryObject } = req.body;
   try {
@@ -261,5 +275,6 @@ module.exports = {
   kickMember: kickMember,
   getApprovedTeam: getApprovedTeam,
   approveTeam: approveTeam,
-  disApproveTeam: disApproveTeam
+  disApproveTeam: disApproveTeam,
+  getTeamInfoById
 };

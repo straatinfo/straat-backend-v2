@@ -53,6 +53,35 @@ const getTeamById = (_id) => {
   });
 };
 
+const getTeamInfoById = (_id) => {
+  return new Promise((resolve, reject) => {
+    Team.findOne({'_id': _id, 'softRemoved': false },
+    { _id: 1, teamName: 1, teamEmail: 1, logoSecuredUrl: 1 })
+    .populate({
+      path: 'teamLeaders',
+      populate: {
+        select: { name: 1, fname: 1, lname: 1, _id: 1 },
+        path: '_user'
+      }
+    })
+    .populate({
+      path: 'teamMembers',
+      populate: {
+        select: { name: 1, fname: 1, lname: 1, _id: 1 },
+        path: '_user'
+      }
+    })
+    .populate('_profilePic')
+    .populate('_host', [ '_id', 'hostName', 'email' ])
+    .exec((err, team) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, team: team});
+    });
+  });
+};
+
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
   return new Promise(async(resolve, reject) => {
@@ -259,12 +288,12 @@ const addMember = (_user, _team) => {
       if (checkMember.teamMember) {
         return resolve({err: null, teamMember: checkMember.teamMember });
       }
-      const addMember = await TeamMemberHelper.addTeamMember(_user, _team);
-      if (addMember.err) {
+      const addedMember = await TeamMemberHelper.addTeamMember(_user, _team);
+      if (addedMember.err) {
         return resolve({err: err});
       }
-      const addMemberToUser = await TeamMemberHelper.addTeamMemberToUser(_user, addMember.teamMember._id);
-      const addMemberToTeam = await TeamMemberHelper.addTeamMemberToTeam(_team, addMember.teamMember._id);
+      const addMemberToUser = await TeamMemberHelper.addTeamMemberToUser(_user, addedMember.teamMember._id);
+      const addMemberToTeam = await TeamMemberHelper.addTeamMemberToTeam(_team, addedMember.teamMember._id);
       const checkLeader = await TeamLeaderHelper.checkTeamLeader(_user, _team);
       if (checkLeader.teamLeader) {
         const removeTL = await TeamLeaderHelper.removeTeamLeader(_user, _team);
@@ -507,5 +536,6 @@ module.exports = {
   approveTeam: approveTeam,
   flatTeam: flatTeam,
   declineTeam: declineTeam,
-  getPendingTeamByUser: getPendingTeamByUser
+  getPendingTeamByUser: getPendingTeamByUser,
+  getTeamInfoById
 };
