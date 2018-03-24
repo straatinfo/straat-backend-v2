@@ -170,7 +170,8 @@ const setActiveDesign = async (req, res, next) => {
     if (setAD.err) {
       return ErrorHelper.ClientError(res, {error: setAD.err}, 400);
     }
-    SuccessHelper.success(res, setAD.host);
+    const getD = await DesignHelper.getDesignById(designId);
+    SuccessHelper.success(res, getD.design);
   }
   catch (e) {
     ErrorHelper.ServerError(res);

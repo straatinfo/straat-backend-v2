@@ -95,6 +95,7 @@ const getHostWithinRadius = (long, lat, radius) => {
 const getHostById = (_id) => {
   return new Promise((resolve, reject) => {
     User.findById(_id)
+    .populate('_activeDesign')
     .populate('_role')
     .populate('design')
     .exec((err, host) => {
@@ -229,7 +230,7 @@ const updateHostReport = (_host, _report) => {
 };
 
 const flatHost = (h) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async(resolve, reject) => {
     try {
       const flattenHost = {
         _id: h._id || null,

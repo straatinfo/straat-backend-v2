@@ -54,4 +54,7 @@ ReportRoute.route('/myReport/:reporterId/:teamId')
 ReportRoute.route('/near/:long/:lat/:radius')
 .get(/* requireAuth, */ Report.getReportsByNear, FlatReport.getFlatReports);
 
+ReportRoute.route('/attachments/:reportId')
+.get(/* requireAuth, */Report.getReportAttachments);
+
 module.exports = ReportRoute;

@@ -406,6 +406,18 @@ const flatReport = (r) => {
   });
 };
 
+const getReportAttachments = (_report) => {
+  return new Promise((resolve, reject) => {
+    Report.findById(_report)
+    .populate('attachments')
+    .exec((err, report) => {
+      if (err) { return resolve({err: err}); }
+      const attachments = report.attachments;
+      resolve({err: null, attachments: attachments});
+    });
+  });
+}
+
 module.exports = {
   reportIdGenerator: reportIdGenerator,
   getReports: getReports,
@@ -419,5 +431,6 @@ module.exports = {
   saveUploadLooper: saveUploadLooper,
   getReportByQueryObject: getReportByQueryObject,
   flatReport: flatReport,
-  changeReportStatus: changeReportStatus
+  changeReportStatus: changeReportStatus,
+  getReportAttachments: getReportAttachments
 };

@@ -387,6 +387,19 @@ const getReportsByReporterAndTeam = async (req, res, next) => {
   }
 };
 
+const getReportAttachments = async (req, res, next) => {
+  const { reportId } = req.params;
+  try {
+    const getA = await ReportHelper.getReportAttachments(reportId);
+    if (getA.err) { return ErrorHelper.ClientError(res, {error: getA.err}, 400); }
+    SuccessHelper.success(res, getA.attachments);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReports: getReports,
   getReportById: getReportById,
@@ -400,5 +413,6 @@ module.exports = {
   createReportV2: createReportV2,
   changeReportStatus: changeReportStatus,
   getReportsByReporterAndTeam: getReportsByReporterAndTeam,
-  getReportsByNear
+  getReportsByNear: getReportsByNear,
+  getReportAttachments: getReportAttachments
 };
