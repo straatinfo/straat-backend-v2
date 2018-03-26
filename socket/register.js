@@ -15,7 +15,8 @@ module.exports = function (io) {
           console.log('Error: Invalid User ID');
           return io.to(socket.id).emit('register', {status: 0, message: 'Registration Failed'});
         }
-        const checkCon = await SocketHelper.findSocketByUser(checkU.user._id);
+        const checkCon = await SocketHelper.findSocketByUser(checkU.user._id, socket.id);
+
         let conn;
         if (!checkCon.socket) {
           conn = await SocketHelper.registerSocket(socket.id, data._user);
@@ -24,6 +25,7 @@ module.exports = function (io) {
         }
 
         io.to(socket.id).emit('register', {status: 1, message: 'Registration Success', _connection: conn.socket._id });
+        console.log(checkU.user.fname, ' ', checkU.user.lname, ' is now Live and ready to miyow')
       }
       catch (e) {
         console.log(e);

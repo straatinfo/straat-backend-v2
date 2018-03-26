@@ -2,7 +2,7 @@ const Socket = require('../models/Socket');
 
 const findSocket = () => {
   return new Promise((resolve, reject) => {
-    Socket.findAll({})
+    Socket.find({})
     .populate('_user', [
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
@@ -20,7 +20,7 @@ const findSocket = () => {
   });
 }
 
-const findSocketByUser = (_user) => {
+const findSocketByUserOLD = (_user) => {
   return new Promise((resolve, reject) => {
     Socket.findOne({'_user': _user}, (err, socket) => {
       if (err) {
@@ -30,6 +30,20 @@ const findSocketByUser = (_user) => {
     });
   });
 };
+
+// find user socket if non then create, if find then update(new socket ID, because socket id is dynamic)
+// as of this code only one session is allowed
+const findSocketByUser = (_user, _socket) => {
+  return new Promise((resolve, reject) => {
+    Socket.findOneAndUpdate({_user}, {$set:{_socket}}, {new: true}, (err, socket) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, socket: socket});
+    });
+  });
+};
+
 
 const findSocketById = (_id) => {
   return new Promise((resolve, reject) => {
@@ -93,6 +107,6 @@ module.exports = {
   removeSocket: removeSocket,
   updateSocket: updateSocket,
   findSocketByUser: findSocketByUser,
-  findSocketBySocketId:findSocketBySocketId,
+  findSocketBySocketId: findSocketBySocketId,
   findSocket: findSocket
 };
