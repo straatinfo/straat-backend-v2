@@ -261,7 +261,7 @@ const updateSubCategoryReport = (_subCategory, _report) => {
     });
   });
 };
-
+// un used: changes in fb app 03/31/18
 const getMainCategoryByHostWithFreeHost = (_host) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -284,6 +284,52 @@ const getMainCategoryByHostWithFreeHost = (_host) => {
       ])
       .populate('subCategories')
       .populate('_reportType')
+      .exec(function (err, mainCategories) {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, mainCategories: mainCategories});
+      });
+    }
+    catch(e) {
+      reject(e);
+    }
+  });
+};
+
+// remove all un used fields
+const getMainCategoriesByHost = (_host) => {
+  return new Promise(async(resolve, reject) => {
+    try { 
+      MainCategory.find({'_host': _host}, {_id: true, name: true, description: true})
+      .populate('subCategories', ['_id', 'name', 'description'])
+      .populate('_reportType', ['_id', 'code', 'name', 'description'])
+      .exec(function (err, mainCategories) {
+        if (err) {
+          return resolve({err: err});
+        }
+        resolve({err: null, mainCategories: mainCategories});
+      });
+    }
+    catch(e) {
+      reject(e);
+    }
+  });
+};
+
+const getMainCategoriesGeneral = () => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const freeHost = await HostHelper.getFreeHost();
+      if (freeHost.err) {
+        return resolve({err: freeHost.err});
+      }
+      if (!freeHost) {
+        return resolve({err: 'Cannot fetch freehost data'});
+      }
+      MainCategory.find({'_host': freeHost.host._id}, {_id: true, name: true, description: true})
+      .populate('subCategories', ['_id', 'name', 'description'])
+      .populate('_reportType', ['_id', 'code', 'name', 'description'])
       .exec(function (err, mainCategories) {
         if (err) {
           return resolve({err: err});
@@ -476,5 +522,7 @@ module.exports = {
   flatSubCategory: flatSubCategory,
   getGeneralMainCategoriesByReportTypeCode: getGeneralMainCategoriesByReportTypeCode,
   createMainCategoryForGeneralDesign: createMainCategoryForGeneralDesign,
-  createMainCategoryForHost: createMainCategoryForHost
+  createMainCategoryForHost: createMainCategoryForHost,
+  getMainCategoriesGeneral,
+  getMainCategoriesByHost
 };

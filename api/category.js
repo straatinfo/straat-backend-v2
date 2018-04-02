@@ -22,9 +22,11 @@ const getMainCategories = async (req, res, next) => {
 };
 
 const getMainCategoriesWithGeneral = async (req, res, next) => {
+  // !removed general
+  // get all categories of this _host
   const { hostId } = req.params;
   try {
-    const getMC = await CategoryHelper.getMainCategoryByHostWithFreeHost(hostId);
+    const getMC = await CategoryHelper.getMainCategoriesByHost(hostId);
     if (getMC.err) {
       return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
     }
@@ -53,6 +55,10 @@ const getGeneralMainCategories = async (req, res, next) => {
         break;
       case 'C':
         getMC = await CategoryHelper.getGeneralMainCategoriesByReportTypeCode('C');
+        break;
+      case 'ABC':
+        // get all categoriees of general
+        getMC = await CategoryHelper.getMainCategoriesGeneral();
         break;
       default:
         return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422);
