@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const CityAreaSchema = new Schema({
-  hostname: { type: String, indexed: true },     // base on xlms
+  hostName: { type: String, indexed: true },     // base on xlms
   cityName: { type: String, indexed: true },     // base on xlms
   address: { type: String, indexed: true },      // base on xlms
   postalCode: { type: String, indexed: true },   // base on xlms
