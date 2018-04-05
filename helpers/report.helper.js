@@ -342,6 +342,26 @@ const getReportByQueryObject = (queryObject) => {
   });
 };
 
+// not include extra fields
+const getReportByQueryObjectClean = (queryObject) => {
+  return new Promise((resolve, reject) => {
+    Report.find({...queryObject})
+    .populate('_reportType', ['_id', 'code', 'name', 'description'])
+    .populate('_reporter', ['_id', 'fname', 'lname', 'username'])
+    .populate('_mainCategory', ['_id','name', 'description'])
+    .populate('_subCategory', ['_id','name', 'description'])
+    .populate('_host', ['_id', 'hostName'])
+    .populate('attachments')
+    .sort([['createdAt', -1]])
+    .exec((err, reports) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, reports: reports});
+    });
+  });
+};
+
 const flatReport = (r) => {
   return new Promise((resolve, reject) => {
     
@@ -432,5 +452,6 @@ module.exports = {
   getReportByQueryObject: getReportByQueryObject,
   flatReport: flatReport,
   changeReportStatus: changeReportStatus,
-  getReportAttachments: getReportAttachments
+  getReportAttachments: getReportAttachments,
+  getReportByQueryObjectClean
 };

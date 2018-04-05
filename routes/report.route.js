@@ -51,8 +51,13 @@ ReportRoute.route('/status/:reportId')
 ReportRoute.route('/myReport/:reporterId/:teamId')
 .get(/* requireAuth, */Report.getReportsByReporterAndTeam, FlatReport.getFlatReports);
 
+// used by app
 ReportRoute.route('/near/:long/:lat/:radius')
-.get(/* requireAuth, */ Report.getReportsByNear, FlatReport.getFlatReports);
+.get(/* requireAuth, */ Report.getReportsByNear);
+
+// used by app old '/reporter/:reporterId'
+ReportRoute.route('/clean/reporter/:reporterId')
+.get(/* requireAuth, */ Report.getReportByReporterClean);
 
 ReportRoute.route('/attachments/:reportId')
 .get(/* requireAuth, */Report.getReportAttachments);

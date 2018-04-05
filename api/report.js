@@ -264,6 +264,22 @@ const getReportByReporter = async (req, res, next) => {
   }
 };
 
+// clean reports list
+const getReportByReporterClean = async (req, res, next) => {
+  const { reporterId } = req.params;
+  try {
+    const queryObject = {'_reporter': reporterId};
+    const getRBR = await ReportHelper.getReportByQueryObjectClean(queryObject);
+    if (getRBR.err) {
+      return ErrorHelper.ClientError(res, {error: getRBR.err}, 400);
+    }
+    SuccessHelper.success(res, getRBR.reports);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
 const getReportNearBy = async (req, res, next) => {
   const { long, lat, radius } = req.params;
   try {
@@ -310,18 +326,18 @@ const getReportsByNear = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: 'Invalid Parameters'}, 200);
     } 
     const queryObject = {
-            reportCoordinate: {
-              $near: {
-                $maxDistance: parseFloat(radius), 
-                $minDistance: 0,
-                $geometry:{
-                  type:'Point',
-                  coordinates:[ parseFloat(long), parseFloat(lat) ]
-                }
-              }
-           }
+             reportCoordinate: {
+                $near: {
+                  $maxDistance: parseFloat(radius), 
+                  $minDistance: 0,
+                  $geometry:{
+                    type:'Point',
+                    coordinates:[ parseFloat(long), parseFloat(lat) ]
+                  }
+                } 
+             }
           };
-    const getRNB = await ReportHelper.getReportByQueryObject(queryObject);
+    const getRNB = await ReportHelper.getReportByQueryObjectClean(queryObject);
     if (getRNB.err) {
       return ErrorHelper.ClientError(res, {error: getRNB.err}, 400);
     }
@@ -414,5 +430,6 @@ module.exports = {
   changeReportStatus: changeReportStatus,
   getReportsByReporterAndTeam: getReportsByReporterAndTeam,
   getReportsByNear: getReportsByNear,
-  getReportAttachments: getReportAttachments
+  getReportAttachments: getReportAttachments,
+  getReportByReporterClean
 };
