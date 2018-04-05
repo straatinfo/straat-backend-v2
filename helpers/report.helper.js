@@ -1,11 +1,10 @@
-const Report = require('../models/Report');
-const MediaUpload = require('../models/MediaUpload');
-const ReportTypeHelper = require('./reportType.helper');
-const ReporterHelper = require('./reporter.helper');
-const HostHelper = require('./host.helper');
-const TeamHelper = require('./team.helper');
-const CategoryHelper = require('./category.helper');
-
+const Report = require('../models/Report')
+const MediaUpload = require('../models/MediaUpload')
+const ReportTypeHelper = require('./reportType.helper')
+const ReporterHelper = require('./reporter.helper')
+const HostHelper = require('./host.helper')
+const TeamHelper = require('./team.helper')
+const CategoryHelper = require('./category.helper')
 
 const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
@@ -16,46 +15,44 @@ const getReportDateRange = (date) => {
       ]
     }, (err, reports) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, reports: reports});
-    });
-  });
-};
-
+      resolve({err: null, reports: reports})
+    })
+  })
+}
 
 const reportIdGenerator = (reportTypeId) => {
   // reportId format A20170924_00001
   return new Promise(async(resolve, reject) => {
     try {
-      const getRT = await ReportTypeHelper.getReportTypeById(reportTypeId);
+      const getRT = await ReportTypeHelper.getReportTypeById(reportTypeId)
       if (getRT.err) {
-        return resolve({err: getRT.err});
+        return resolve({err: getRT.err})
       }
-      const date = new Date();
-      const monthstr = "" + (date.getMonth() + 1);
-      const monthPad = "00";
-      const datestr = "" + date.getDate();
-      const datePad = "00";
-      const dateFormat = datePad.substring(0, datePad.length - datestr.length) + datestr;
-      const monthFormat = monthPad.substring(0, monthPad.length - monthstr.length) + monthstr;
-      const dateString = date.getFullYear() + '' + monthFormat + '' + dateFormat;
-      const getReport = await getReportDateRange(date);
+      const date = new Date()
+      const monthstr = '' + (date.getMonth() + 1)
+      const monthPad = '00'
+      const datestr = '' + date.getDate()
+      const datePad = '00'
+      const dateFormat = datePad.substring(0, datePad.length - datestr.length) + datestr
+      const monthFormat = monthPad.substring(0, monthPad.length - monthstr.length) + monthstr
+      const dateString = date.getFullYear() + '' + monthFormat + '' + dateFormat
+      const getReport = await getReportDateRange(date)
       if (getReport.err) {
-        return resolve({err: getReport.err});
+        return resolve({err: getReport.err})
       }
-      const reportCount = getReport.reports.length + 1;
-      const str = "" + reportCount;
-      const pad = "00000"
-      const countFormat = pad.substring(0, pad.length - str.length) + str;
-      const generatedReportId = getRT.reportType.code + dateString + '_' + countFormat;
-      resolve({err: null, generatedReportId: generatedReportId});
+      const reportCount = getReport.reports.length + 1
+      const str = '' + reportCount
+      const pad = '00000'
+      const countFormat = pad.substring(0, pad.length - str.length) + str
+      const generatedReportId = getRT.reportType.code + dateString + '_' + countFormat
+      resolve({err: null, generatedReportId: generatedReportId})
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
-    }
-  });
-};
+  })
+}
 
 const getReports = () => {
   return new Promise((resolve, reject) => {
@@ -80,12 +77,12 @@ const getReports = () => {
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, reports: reports});
-    });
-  });
-};
+      resolve({err: null, reports: reports})
+    })
+  })
+}
 
 const getReportByHost = (hostId, _reportType = null) => {
   return new Promise((resolve, reject) => {
@@ -110,11 +107,11 @@ const getReportByHost = (hostId, _reportType = null) => {
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, reports: reports});
-    });
-  });
+      resolve({err: null, reports: reports})
+    })
+  })
 }
 
 const getReportById = (_id) => {
@@ -139,32 +136,31 @@ const getReportById = (_id) => {
     .populate('attachments')
     .exec((err, report) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, report: report});
-    });
-  });
-};
+      resolve({err: null, report: report})
+    })
+  })
+}
 
 const changeReportStatus = (_report, status = 'DONE') => {
   return new Promise((resolve, reject) => {
     Report.findByIdAndUpdate(_report, {'status': status}, async (err, report) => {
       try {
         if (err) {
-          return resolve({err: err});
+          return resolve({err: err})
         }
-        const getReport = await getReportById(report._id);
+        const getReport = await getReportById(report._id)
         if (getReport.err) {
-          return resolve({err: getReport.err});
+          return resolve({err: getReport.err})
         }
-        resolve({err: null, report: getReport.report});
-      }
-      catch (e) {
-        reject(e);
+        resolve({err: null, report: getReport.report})
+      } catch (e) {
+        reject(e)
       }
     })
-  });
-};
+  })
+}
 
 const getReportsByReportType = (reportTypeId) => {
   return new Promise((resolve, reject) => {
@@ -189,129 +185,125 @@ const getReportsByReportType = (reportTypeId) => {
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, reports: reports});
-    });
-  });
-};
+      resolve({err: null, reports: reports})
+    })
+  })
+}
 
 const createReport = (input) => {
   return new Promise((resolve, reject) => {
-    const newReport = new Report(input);
+    const newReport = new Report(input)
     newReport.save(async(err, report) => {
       try {
         if (err) {
-          return resolve({err: err});
+          return resolve({err: err})
         }
         // update reporter
-        const updateReporter = await ReporterHelper.updateReporterReports(report._reporter, report._id);
+        const updateReporter = await ReporterHelper.updateReporterReports(report._reporter, report._id)
         // update host
-        const updateHost = await HostHelper.updateHostReport(report._host, report._id);
+        const updateHost = await HostHelper.updateHostReport(report._host, report._id)
         // update reportType
-        const updateReportType = await ReportTypeHelper.updateReportTypeReport(report._reportType, report._id);
+        const updateReportType = await ReportTypeHelper.updateReportTypeReport(report._reportType, report._id)
         // update mainCategory
-        const updateMainCategory = await CategoryHelper.updateMainCategoryReport(report._mainCategory, report._id);
+        const updateMainCategory = await CategoryHelper.updateMainCategoryReport(report._mainCategory, report._id)
         // update team
-        const updateTeam = await TeamHelper.updateTeamReport(report._team, report._id);
+        const updateTeam = await TeamHelper.updateTeamReport(report._team, report._id)
         // update subCategory
         if (report._subCategory) {
-          const updateSubCategory = await CategoryHelper.updateSubCategoryReport(report._subCategory, report._id);
+          const updateSubCategory = await CategoryHelper.updateSubCategoryReport(report._subCategory, report._id)
           if (updateSubCategory.err) {
-            return resolve({err: 'Error on updating related schema'});
+            return resolve({err: 'Error on updating related schema'})
           }
         }
         if (updateReporter.err || updateHost.err || updateReportType.err || updateMainCategory.err || updateTeam.err) {
-          return resolve({err: 'Error on updating related schema'});
+          return resolve({err: 'Error on updating related schema'})
         }
-        const getR = await getReportById(report._id);
+        const getR = await getReportById(report._id)
         if (getR.err) {
-          return resolve({err: getR.err});
+          return resolve({err: getR.err})
         }
-        resolve({err: null, report: getR.report});
+        resolve({err: null, report: getR.report})
+      } catch (e) {
+        reject(e)
       }
-      catch (e) {
-        reject(e);
-      }
-    });
-  });
-};
+    })
+  })
+}
 
 const saveUploadedPhotoReport = (_report, input) => {
   return new Promise((resolve, reject) => {
-    const newMediaUpload = new MediaUpload(input);
+    const newMediaUpload = new MediaUpload(input)
     newMediaUpload.save((err, mediaUpload) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
       Report.findByIdAndUpdate(_report,
       { '$addToSet': { 'attachments': mediaUpload._id } },
       { 'new': true, 'upsert': true },
       (err, report) => {
         if (err) {
-          return resolve({err: err});
+          return resolve({err: err})
         }
 
-        resolve({err: null, mediaUpload: mediaUpload});
-      });
-    });
-  });
-};
+        resolve({err: null, mediaUpload: mediaUpload})
+      })
+    })
+  })
+}
 
 const saveUploadLooper = (_report, inputArray = [], saveUploadPromise = saveUploadedPhotoReport) => {
   return new Promise(async(resolve, reject) => {
-    let error = [], success = [];
+    let error = [], success = []
     try {
       const process = await Promise.all(inputArray.map(async(input) => {
         try {
-          const saveRP = await saveUploadPromise(_report, input);
+          const saveRP = await saveUploadPromise(_report, input)
           if (saveRP.err) {
-            return error.push(saveRP.err);
+            return error.push(saveRP.err)
           }
-          success.push(saveRP.mediaUpload);
+          success.push(saveRP.mediaUpload)
+        } catch (e) {
+          error.push(e)
         }
-        catch (e) {
-          error.push(e);
-        }
-      }));
-      resolve({error: error, success: success});
+      }))
+      resolve({error: error, success: success})
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
-    }
-  });
-};
+  })
+}
 
 const updateReport = (_id, input) => {
   return new Promise((resolve, reject) => {
     Report.findByIdAndUpdate(_id, input, async(err, report) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
       try {
-        const getR = await getReportById(report._id);
+        const getR = await getReportById(report._id)
         if (getR.err) {
-          return resolve({err: getR.err});
+          return resolve({err: getR.err})
         }
-        resolve({err: null, report: getR.report});
+        resolve({err: null, report: getR.report})
+      } catch (e) {
+        reject(e)
       }
-      catch (e) {
-        reject(e);
-      }
-    });
-  });
-};
+    })
+  })
+}
 
 const deleteReport = (_id) => {
   return new Promise((resolve, reject) => {
     Report.findByIdAndRemove(_id, (err, report) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, report: report});
-    });
-  });
-};
+      resolve({err: null, report: report})
+    })
+  })
+}
 
 const getReportByQueryObject = (queryObject) => {
   return new Promise((resolve, reject) => {
@@ -335,12 +327,12 @@ const getReportByQueryObject = (queryObject) => {
     .sort([['date', -1]])
     .exec((err, reports) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, reports: reports});
-    });
-  });
-};
+      resolve({err: null, reports: reports})
+    })
+  })
+}
 
 // not include extra fields
 const getReportByQueryObjectClean = (queryObject) => {
@@ -348,23 +340,22 @@ const getReportByQueryObjectClean = (queryObject) => {
     Report.find({...queryObject})
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .populate('_reporter', ['_id', 'fname', 'lname', 'username'])
-    .populate('_mainCategory', ['_id','name', 'description'])
-    .populate('_subCategory', ['_id','name', 'description'])
+    .populate('_mainCategory', ['_id', 'name', 'description'])
+    .populate('_subCategory', ['_id', 'name', 'description'])
     .populate('_host', ['_id', 'hostName'])
     .populate('attachments')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, reports: reports});
-    });
-  });
-};
+      resolve({err: null, reports: reports})
+    })
+  })
+}
 
 const flatReport = (r) => {
   return new Promise((resolve, reject) => {
-    
     const flatReport = {
       _id: r._id || null,
       generatedReportId: r.generatedReportId || null,
@@ -411,7 +402,7 @@ const flatReport = (r) => {
       '_subCategory.name': (r._subCategory && r._subCategory.name) ? r._subCategory.name : null,
       '_team._id': (r._team && r._team._id) ? r._team._id : null,
       '_team.teamName': (r._team && r._team.teamName) ? r._team.teamName : null,
-      '_team.teamEmail': (r._team && r._team.teamEmail) ? r._team.teamEmail : null, 
+      '_team.teamEmail': (r._team && r._team.teamEmail) ? r._team.teamEmail : null,
       isPeopleInvolved: r.isPeopleInvolved || null,
       isVehicleInvolved: r.isVehicleInvolved || null,
       isUrgent: r.isUrgent || null,
@@ -420,28 +411,28 @@ const flatReport = (r) => {
       peopleInvolvedCount: r.peopleInvolvedCount || null,
       vehicleInvolvedDescription: r.vehicleInvolvedDescription || null,
       attachments: r.attachments || []
-    };
+    }
 
-    resolve({err: null, report: flatReport});
-  });
-};
+    resolve({err: null, report: flatReport})
+  })
+}
 
 const getReportAttachments = (_report) => {
   return new Promise((resolve, reject) => {
     Report.findById(_report)
     .populate('attachments')
     .exec((err, report) => {
-      if (err) { return resolve({err: err}); }
-      const attachments = report.attachments;
-      resolve({err: null, attachments: attachments});
-    });
-  });
+      if (err) { return resolve({err: err}) }
+      const attachments = report.attachments
+      resolve({err: null, attachments: attachments})
+    })
+  })
 }
 
 module.exports = {
   reportIdGenerator: reportIdGenerator,
   getReports: getReports,
-  getReportById, getReportById,
+  getReportById,
   createReport: createReport,
   updateReport: updateReport,
   deleteReport: deleteReport,
@@ -454,4 +445,4 @@ module.exports = {
   changeReportStatus: changeReportStatus,
   getReportAttachments: getReportAttachments,
   getReportByQueryObjectClean
-};
+}
