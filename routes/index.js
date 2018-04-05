@@ -14,6 +14,8 @@ const UserRoute = require('./user.route');
 const FeedbackRoute = require('./feedback.route');
 const MessageRoute = require('./message.route');
 
+// const TestRoute = require('./test.route');
+
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
     res.send({message: 'Web API is now online, waiting for requests..', status: 1, online: true});
@@ -33,4 +35,7 @@ module.exports = (app) => {
   app.use('/v1/api/user', UserRoute);
   app.use('/v1/api/feedback', FeedbackRoute);
   app.use('/v1/api/message', MessageRoute);
+
+
+  // app.use('/v1/api/test', TestRoute);
 };
