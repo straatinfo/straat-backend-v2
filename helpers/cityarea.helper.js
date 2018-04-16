@@ -28,14 +28,14 @@ const create = (data) => {
  * @param {lng, lat} data
  *
  */
-const searchIntersect = (latlng) => {
+const searchIntersect = (latlng, options) => {
   return new Promise((resolve, reject) => {
     const {lat, lng } = latlng
-    CityArea.findOne({
+    CityArea.findOne({...options,
       geojson: {$geoIntersects: {
         $geometry: {
           type: 'Point',
-          coordinates: [lng, lat]
+          coordinates: [parseFloat(lng), parseFloat(lat)]
         }
       }}
     }, {geojson: false}, (err, record) => {
@@ -53,10 +53,10 @@ const searchIntersect = (latlng) => {
  * @param {lng, lat} data
  *
  */
-const searchNear = (latlng) => {
+const searchNear = (latlng, options) => {
   return new Promise((resolve, reject) => {
     const {lat, lng  } = latlng
-    CityArea.findOne({
+    CityArea.findOne({...options,
       centralPoint: {$near: {
         $geometry: {
           type: 'Point',
@@ -81,7 +81,7 @@ const searchNear = (latlng) => {
 const getGeoJson = (city) => {
   return new Promise((resolve, reject) => {
     const options = {
-      url: 'https://nominatim.openstreetmap.org/search/' + city + '?polygon_geojson=1&limit=1&addressdetails=1&format=json',
+      url: 'https://nominatim.openstreetmap.org/search/' + city + '?polygon_geojson=1&limit=1&addressdetails=1&format=json&countrycodes=NL,PH',
 
       headers: {
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',

@@ -14,7 +14,7 @@ const UserRoute = require('./user.route');
 const FeedbackRoute = require('./feedback.route');
 const MessageRoute = require('./message.route');
 
-// const TestRoute = require('./test.route');
+ const TestRoute = require('./test.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -37,5 +37,5 @@ module.exports = (app) => {
   app.use('/v1/api/message', MessageRoute);
 
 
-  // app.use('/v1/api/test', TestRoute);
+   app.use('/v1/api/test', TestRoute);
 };
