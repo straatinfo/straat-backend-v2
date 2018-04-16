@@ -1,4 +1,5 @@
 
+const HostHelper = require('../helpers/host.helper')
 const CityAreaHelper = require('../helpers/cityarea.helper')
 const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
 
@@ -31,6 +32,7 @@ const htmlAreas = (cityData, index) => {
   Address: ${cityData.display_name}`
 }
 const geoParseGeometries = async (req, res, next) => {
+  return false // must not used: its ver dengerous
   try {
       // loop must not spam cause https://nominatim.openstreetmap.org will ban request
     await Promise.all(hostList.hostList.map(async (record, index) => {
@@ -55,13 +57,37 @@ const geoParseGeometries = async (req, res, next) => {
   res.end()
 }
 
+// checking host list there is something wrong going on here
+// user 5a7b485a039e2860cf9dd19a vanish sudenly
+
+const getHostList = async (req, res, next) => {
+  try {
+    // find base on coordinate
+   //  const area = await CityAreaHelper.searchNear({lat, lng})
+   const data = await HostHelper.getHosts()
+
+    if (data.err) {
+      res.send(data.err)
+      console.log(data.err)
+      return res.end()
+    }
+    res.send(data.hosts)
+    console.log(data.hosts)
+    res.end()
+    return true
+  } catch (e) {
+    console.log(e)
+    res.end()
+  }
+}
+
 const testGeo = async (req, res, next) => {
   console.log(req.query)
   const [lat, lng] = req.query.latlong.split(',')
   try {
     // find base on coordinate
    //  const area = await CityAreaHelper.searchNear({lat, lng})
-    const area = await CityAreaHelper.searchIntersect({lat, lng})
+   // const area = await CityAreaHelper.searchIntersect({lat, lng})
 
     if (area.err) {
       res.send(area.err)
@@ -69,6 +95,29 @@ const testGeo = async (req, res, next) => {
       return res.end()
     }
     res.send(area.area)
+    console.log(area.area)
+    res.end()
+    return true
+  } catch (e) {
+    console.log(e)
+    res.end()
+  }
+}
+
+const host = async (req, res, next) => {
+  console.log(req.query)
+  const [lat, lng] = req.query.latlng.split(',')
+  try {
+    // find base on coordinate
+   //  const area = await CityAreaHelper.searchNear({lat, lng})
+    const area = await HostHelper.getHostByCoordinates({lat, lng})
+
+    if (area.err) {
+      res.send(area.err)
+      return res.end()
+    }
+   // res.send('City: ' + area.area.cityName)
+    res.send(area)
     console.log(area.area)
     res.end()
     return true
@@ -3531,5 +3580,7 @@ module.exports = {
   testGeo,
   TestInsert,
   testGegeofromNeo,
-  geoParseGeometries
+  geoParseGeometries,
+  host,                    // get host data test
+  getHostList
 }

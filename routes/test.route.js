@@ -1,5 +1,4 @@
 const Test = require('../api/test')
-
 const cloudinary = require('cloudinary')
 const cloudinaryStorage = require('multer-storage-cloudinary')
 
@@ -42,5 +41,13 @@ TestRoute.route('/')
 
 // TestRoute.route('/geo/geoParseGeometries')
 // .get(Test.geoParseGeometries)
+
+// TestRoute.route('/host')
+// .get(Test.host)
+
+// TestRoute.route('/hostList')
+// .get(Test.getHostList)
+
+
 
 module.exports = TestRoute
