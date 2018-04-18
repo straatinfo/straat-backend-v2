@@ -39,8 +39,8 @@ TestRoute.route('/')
 // TestRoute.route('/geo/geoJson')
 // .get(Test.testGegeofromNeo)
 
-// TestRoute.route('/geo/geoParseGeometries')
-// .get(Test.geoParseGeometries)
+//  TestRoute.route('/geo/geoParseGeometries')
+//  .get(Test.geoParseGeometries)
 
 // TestRoute.route('/host')
 // .get(Test.host)
