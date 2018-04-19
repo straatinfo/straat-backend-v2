@@ -1,7 +1,8 @@
 
 const HostHelper = require('../helpers/host.helper')
 const CityAreaHelper = require('../helpers/cityarea.helper')
-const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
+// const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
+const hostList = require('../assets/jsonfiles/HostList_2018_4_17')
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
@@ -23,33 +24,76 @@ const testGegeofromNeo = async (req, res, next) => {
   res.end()
 }
 // dumb f(x)
-const htmlAreas = (cityData, index) => {
+const htmlAreas = (cityData, index, status) => {
   return `
   ___________________________________________________________________________________________________________________
 
   #:       ${index + 1}
+  status:  ${status}
   City:    ${cityData.cityName}
   Address: ${cityData.display_name}`
 }
+
+const geoParse = (hList, res, start) => {
+  return Promise.all(hList.map(async (record, index) => {
+    const datas = await CityAreaHelper.getGeoJson(record.cityName, record.type === 'test' ? 'county' : 'city')
+    if (datas.err) {
+        // failed to fetch geoJson
+     // failedCount.push({display_name: 'failed in fetching geoJson', cityName: record.cityName}, index, 'failed')
+
+      res.write(htmlAreas({display_name: 'failed in fetching geoJson', cityName: record.cityName}, index + start, 'error'))
+
+      return record
+    }
+
+    const area = await CityAreaHelper.create({...datas, ...record})
+    if (area.err) {
+      res.write(htmlAreas({display_name: 'failed in Saving Record', cityName: record.cityName}, index + start, 'error'))
+      return record
+    }
+   // successCount.push(datas)
+    res.write(htmlAreas(datas, index + start, 'success'))
+    return null
+   // resolve('ff')
+  }))
+}
+
+const parseReport = (res, data) => {
+  res.write('----- report ------')
+  res.write(JSON.stringify(data.filter((x, i) => x !== null)))
+}
+
 const geoParseGeometries = async (req, res, next) => {
   return false // must not used: its ver dengerous
   try {
+    // let successCount = [], failedCount = []
       // loop must not spam cause https://nominatim.openstreetmap.org will ban request
-    await Promise.all(hostList.hostList.map(async (record, index) => {
-      const datas = await CityAreaHelper.getGeoJson(record.cityName)
-      if (datas.err) {
-          // failed to fetch geoJson
-        return res.write(htmlAreas({display_name: 'failed in fetching geoJson', cityName: record.cityName}, index))
-      }
 
-      const area = await CityAreaHelper.create({...datas, ...record})
-      if (area.err) {
-        // failed to fetch geoJson
-        return res.write(htmlAreas({display_name: 'failed in Saving Record', cityName: record.cityName}, index))
-      }
-      return res.write(htmlAreas(datas, index))
-     // resolve('ff')
-    }))
+    const hList = hostList.hostList
+
+    const batch1 = await geoParse(hList.slice(0, 100), res, 0)
+    const batch2 = await geoParse(hList.slice(101, 200), res, 101)
+    const batch3 = await geoParse(hList.slice(201, 300), res, 201)
+    const batch4 = await geoParse(hList.slice(301, 400), res, 301)
+
+    parseReport(res, [...batch1, ...batch2, ...batch3, ...batch4])
+
+    // await Promise.all(hostList.hostList.slice(201, 400).map(async (record, index) => {
+    //   const datas = await CityAreaHelper.getGeoJson(record.cityName)
+    //   if (datas.err) {
+    //       // failed to fetch geoJson
+    //    // failedCount.push({display_name: 'failed in fetching geoJson', cityName: record.cityName}, index, 'failed')
+    //     return res.write(htmlAreas({display_name: 'failed in fetching geoJson', cityName: record.cityName}, index, 'error'))
+    //   }
+
+    //   // const area = await CityAreaHelper.create({...datas, ...record})
+    //   // if (area.err) {
+    //   //   return res.write(htmlAreas({display_name: 'failed in Saving Record', cityName: record.cityName}, index))
+    //   // }
+    //  // successCount.push(datas)
+    //   return res.write(htmlAreas(datas, index, 'success'))
+    //  // resolve('ff')
+    // }))
   } catch (e) {
     console.log(e)
     res.send(e)
@@ -64,7 +108,7 @@ const getHostList = async (req, res, next) => {
   try {
     // find base on coordinate
    //  const area = await CityAreaHelper.searchNear({lat, lng})
-   const data = await HostHelper.getHosts()
+    const data = await HostHelper.getHosts()
 
     if (data.err) {
       res.send(data.err)
