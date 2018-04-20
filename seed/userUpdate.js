@@ -14,7 +14,7 @@ User.find({}, async(err, users) => {
   }
   const process = await Promise.all(users.map(async(u) => {
     if (!u.createdAt) {
-      User.findByIdAndUpdate(u._id, {'createdAt': '2018-03-21T07:08:58.683Z'}, (err, user) => {
+      User.findByIdAndUpdate(u._id, {'conversations': []}, (err, user) => {
         console.log(user._id);
       });
     } else {
@@ -23,6 +23,7 @@ User.find({}, async(err, users) => {
   }));
   exit();
 });
+
 
 // Role.findOne({'accessLevel': 3}, (err, role) => {
 //   if (err) {

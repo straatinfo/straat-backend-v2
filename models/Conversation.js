@@ -8,7 +8,8 @@ const conversationSchema = new Schema({
   _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   participants: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Participant'
+    _user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    isActive: Boolean
   }],
   messages: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Message'

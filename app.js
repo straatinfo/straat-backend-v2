@@ -14,6 +14,7 @@ const Route = require('./routes');
 const TokenService = require('./service/token.service');
 const cors = require('cors');
 const Config = require('./config');
+var Boom = require('./middleware/error-handling/boom');
 
 const app = express();
 
@@ -53,6 +54,6 @@ app.use(function(req, res, next) {
 });
 
 Route(app);
-
+app.use(Boom);
 
 module.exports = app;
