@@ -18,6 +18,7 @@ const ConversationRouteV2 = require('./conversationV2.route');
 const MessageRouteV2 = require('./messageV2.route');
 
 // const TestRoute = require('./test.route');
+ const TestRoute = require('./test.route');
 
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
@@ -42,5 +43,5 @@ module.exports = (app) => {
   app.use('/v2/api/message', MessageRouteV2);
 
 
-  // app.use('/v1/api/test', TestRoute);
+   app.use('/v1/api/test', TestRoute);
 };

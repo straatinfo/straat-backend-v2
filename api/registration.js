@@ -10,7 +10,7 @@ const JwtService = require('../service/jwt.service');
 const HostHelper = require('../helpers/host.helper');
 
 const checkUserInput = async (req, res, next) => {
-  const { username, email, teamEmail, teamName, code } = req.body;
+  const { username, email, teamEmail, teamName, code, city, coordinate, isCoor } = req.body;
   try {
     let checkUsername, checkEmail, checkTeamEmail, checkTeamName, checkCode;
     // check for username
@@ -64,6 +64,18 @@ const checkUserInput = async (req, res, next) => {
         return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);
       }
     }
+     // check city
+    if (city) {
+      const data = await RegistrationHelper.getHostIdByCity(city, coordinate, isCoor);
+      if (data.err) {
+        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);
+      }
+      if (!data._host) {
+        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);
+      }
+      return SuccessHelper.success(res, data);
+    }
+
     SuccessHelper.success(res, {message: 'Valid input'});
   }
   catch (e) {
@@ -213,8 +225,9 @@ const registerWithCodeV2 = async (req, res, next) => {
 const registerWithCodeV3 = async (req, res, next) => {
   const { code, password, username, email, teamPhotoUploaded } = req.body;
   try {
-
+    
     let createU = {}
+    /**
     const getHost = await RegistrationHelper.getHostId(code);
     
     if (getHost.err) {
@@ -225,7 +238,9 @@ const registerWithCodeV3 = async (req, res, next) => {
       ...req.body,
       '_host': getHost._host
     };
-
+    */
+    const input = { ...req.body }
+    
     const user = await UserHelper.checkUserByUNameEmail(username, email);
     
     if (user.err) {

@@ -1,15 +1,19 @@
-const User = require('../models/User');
-const RoleHelper = require('../helpers/role.helper');
-const _ = require('lodash');
+const User = require('../models/User')
+const RoleHelper = require('../helpers/role.helper')
+const CityAreaHelper = require('../helpers/cityarea.helper')
+const CityArea = require('../models/CityArea')
+const _ = require('lodash')
+const isValidCoordinates = require('is-valid-coordinates')
 
 const getHosts = () => {
   return new Promise(async(resolve, reject) => {
     try {
-      const getRole = await RoleHelper.getRoleByCode('HOST');
+      // isa to sa mag papatagal, tutal naka seed nmn yung host role db, dapat constant nalang naten un role id para di na mag search
+      const getRole = await RoleHelper.getRoleByCode('HOST')
       if (getRole.err) {
-        return resolve({err: getRole.err});
+        return resolve({err: getRole.err})
       }
-      const _role = getRole.role._id;
+      const _role = getRole.role._id
       User.find({'_role': _role, 'softRemoved': false}, [
         '_id', 'hostName', 'houseNumber', 'streetName', 'state',
         'city', 'state', 'country', 'postalCode', 'username',
@@ -22,32 +26,56 @@ const getHosts = () => {
       .populate('teams')
       .exec((err, hosts) => {
         if (err) {
-          return resolve({err: err});
+          return resolve({err: err})
         }
         const filteredHost = _.filter(hosts, (h) => {
-          return h.hostName !== 'freeHost';
-        });
-        resolve({err: null, hosts: filteredHost});
-      });
+          return h.hostName !== 'freeHost'
+        })
+        resolve({err: null, hosts: filteredHost})
+      })
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
+  })
+}
+
+const getHostCities = () => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // isa to sa mag papatagal, tutal naka seed nmn yung host role db, dapat constant nalang naten un role id para di na mag search
+      const getRole = await RoleHelper.getRoleByCode('HOST')
+      if (getRole.err) {
+        return resolve({err: getRole.err})
+      }
+      const _role = getRole.role._id
+      User.find({'_role': _role, 'softRemoved': false}, {_id: true, city: true, hostName: true})
+      .exec((err, hosts) => {
+        if (err) {
+          return resolve({err: err})
+        }
+        const filteredHost = _.filter(hosts, (h) => {
+          return h.hostName !== 'freeHost'
+        })
+        resolve({err: null, hosts: filteredHost})
+      })
+    } catch (e) {
+      reject(e)
     }
-  });
-};
+  })
+}
 
 const getHostWithinRadius = (long, lat, radius) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const longOffsetMax = parseFloat(long) + parseFloat(radius);
-      const longOffsetMin = parseFloat(long) - parseFloat(radius);
-      const latOffsetMax = parseFloat(lat) + parseFloat(radius);
-      const latOffsetMin = parseFloat(lat) - parseFloat(radius);
-      const getRole = await RoleHelper.getRoleByCode('HOST');
+      const longOffsetMax = parseFloat(long) + parseFloat(radius)
+      const longOffsetMin = parseFloat(long) - parseFloat(radius)
+      const latOffsetMax = parseFloat(lat) + parseFloat(radius)
+      const latOffsetMin = parseFloat(lat) - parseFloat(radius)
+      const getRole = await RoleHelper.getRoleByCode('HOST')
       if (getRole.err) {
-        return resolve({err: getRole.err});
+        return resolve({err: getRole.err})
       }
-      const _role = getRole.role._id;
+      const _role = getRole.role._id
       User.find({
         $and: [
           {'_role': _role, 'softRemoved': false},
@@ -77,20 +105,18 @@ const getHostWithinRadius = (long, lat, radius) => {
       .populate('design')
       .exec((err, hosts) => {
         if (err) {
-          return resolve({err: err});
+          return resolve({err: err})
         }
         const filteredHost = _.filter(hosts, (h) => {
-          return h.hostName !== 'freeHost';
-        });
-        resolve({err: null, hosts: filteredHost});
-      });
-
+          return h.hostName !== 'freeHost'
+        })
+        resolve({err: null, hosts: filteredHost})
+      })
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
-    }
-  });
-};
+  })
+}
 
 const getHostById = (_id) => {
   return new Promise((resolve, reject) => {
@@ -100,94 +126,90 @@ const getHostById = (_id) => {
     .populate('design')
     .exec((err, host) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, host: host});
-    });
-  });
-};
+      resolve({err: null, host: host})
+    })
+  })
+}
 
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(_id, input, async(err, host) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
       try {
-        const getH = await getHostById(_id);
+        const getH = await getHostById(_id)
         if (getH.err) {
-          return resolve({err: getH.err});
+          return resolve({err: getH.err})
         }
-        resolve({err: null, host: getH.host});
+        resolve({err: null, host: getH.host})
+      } catch (e) {
+        reject(e)
       }
-      catch (e) {
-        reject(e);
-      }
-    });
-  });
-};
+    })
+  })
+}
 
 const deleteHost = (_id) => {
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(_id, {'softRemoved': true}, (err, host) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, host: host});
-    });
-  });
-};
+      resolve({err: null, host: host})
+    })
+  })
+}
 
 const createHost = (input) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const getRole = await RoleHelper.getRoleByCode('HOST');
+      const getRole = await RoleHelper.getRoleByCode('HOST')
       if (getRole.err) {
-        return resolve({err: getRole.err});
+        return resolve({err: getRole.err})
       }
-      _role = getRole.role._id;
-      const newUser = new User({...input, '_role': _role});
+      _role = getRole.role._id
+      const newUser = new User({...input, '_role': _role})
       newUser.save(async(err, host) => {
         if (err) {
-          return resolve({err: err});
+          return resolve({err: err})
         }
-        const getH = await getHostById(newUser._id);
-        console.log(getH);
+        const getH = await getHostById(newUser._id)
+        console.log(getH)
         if (getH.err) {
-          return resolve({err: getH.err});
+          return resolve({err: getH.err})
         }
-        resolve({err: null, host: getH.host});
-      });
+        resolve({err: null, host: getH.host})
+      })
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
-    }
-  });
-};
+  })
+}
 
-const createHostLoop = (dataArray=[], promiseFunction = createHost) => {
+const createHostLoop = (dataArray = [], promiseFunction = createHost) => {
   return new Promise(async(resolve, reject) => {
-    let err = [], success = [];
+    let err = [], success = []
     try {
       const create = await Promise.all(dataArray.map(async (d) => {
         try {
-          const newCreate = await promiseFunction(d);
+          const newCreate = await promiseFunction(d)
           if (newCreate.err) {
-            return err.push(newCreate.err);
+            return err.push(newCreate.err)
           }
-          success.push(newCreate.host);
+          success.push(newCreate.host)
+        } catch (e) {
+          err.push(e)
         }
-        catch (e) {
-          err.push(e);
-        }
-      }));
-      resolve({err: err, success: success});
+      }))
+      resolve({err: err, success: success})
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
-    }
-  });
-};
+  })
+}
 
 const getFreeHost = () => {
   return new Promise((resolve, reject) => {
@@ -208,12 +230,12 @@ const getFreeHost = () => {
     .populate('design')
     .exec((err, host) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, host: host});
-    });
-  });
-};
+      resolve({err: null, host: host})
+    })
+  })
+}
 
 const updateHostReport = (_host, _report) => {
   return new Promise((resolve, reject) => {
@@ -222,12 +244,12 @@ const updateHostReport = (_host, _report) => {
     { 'new': true, 'upsert': true },
     (err, user) => {
       if (err) {
-        return resolve({err: err});
+        return resolve({err: err})
       }
-      resolve({err: null, user: user});
-    });
-  });
-};
+      resolve({err: null, user: user})
+    })
+  })
+}
 
 const flatHost = (h) => {
   return new Promise(async(resolve, reject) => {
@@ -249,7 +271,7 @@ const flatHost = (h) => {
         '_role.code': (h._role && h._role.code) ? h._role.code : null,
         '_role.accessLevel': (h._role && h._role.accessLevel) ? h._role.accessLevel : null,
         lname: h.lname || null,
-        fname: h. fname || null,
+        fname: h.fname || null,
         hostPersonalEmail: h.hostPersonalEmail || null,
         long: h.long || null,
         lat: h.lat || null,
@@ -265,14 +287,54 @@ const flatHost = (h) => {
         '_activeDesign.colorFour': (h._activeDesign && h._activeDesign.colorFour) ? h._activeDesign.colorFour : null,
         '_activeDesign.url': (h._activeDesign && h._activeDesign.url) ? h._activeDesign.url : null,
         '_activeDesign.secure_url': (h._activeDesign && h._activeDesign.secure_url) ? h._activeDesign.secure_url : null
-      };
-      resolve({err: null, host: flattenHost});
+      }
+      resolve({err: null, host: flattenHost})
+    } catch (e) {
+      reject(e)
     }
-    catch (e) {
-      reject(e);
+  })
+}
+
+/**
+ *
+ * @description get host object by lat lang
+ *              must transform string address to specific coordinate in client
+ * @param {lat, lng} latlng
+ *
+ */
+
+const getHostByCoordinates = async (latlng) => {
+  return new Promise(async(resolve, reject) => {
+    // get specifc host first if none then get nearest host
+    try {
+        const {lat, lng } = latlng 
+        if (!isValidCoordinates(parseFloat(lng), parseFloat(lat))) {
+            throw new Error('not valid coordinate')
+        }
+        const hosts = await getHostCities()
+        if (hosts.err) {
+          return resolve({err: hosts.err})
+        }
+        const hostList = hosts.hosts.filter((h, i) => h.city ? h.city : false)
+        const activeHosts = hostList.map((h, i) => h.city.toUpperCase())
+        const specificHost = await CityAreaHelper.searchIntersect(latlng, {cityName: {$in: activeHosts}})
+console.log('hostList', hostList)
+        // no specific host - must find nearest host
+        if (!specificHost.area) {
+          const nearHost = await CityAreaHelper.searchNear(latlng, {cityName: {$in: activeHosts}})
+          return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === nearHost.area.cityName.toUpperCase())})
+        }
+        if (specificHost.err) {
+          return resolve({err: specificHost.err})
+        }
+        
+        return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === specificHost.area.cityName.toUpperCase())})
+     
+    } catch (e) {
+      return resolve({err: e.message})
     }
-  });
-};
+  })
+}
 
 module.exports = {
   getHostById: getHostById,
@@ -284,5 +346,6 @@ module.exports = {
   createHostLoop: createHostLoop,
   getFreeHost: getFreeHost,
   updateHostReport: updateHostReport,
-  flatHost: flatHost
-};
+  flatHost: flatHost,
+  getHostByCoordinates
+}

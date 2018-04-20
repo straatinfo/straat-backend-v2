@@ -2,6 +2,8 @@ const path = require('path');
 const fs = require('fs');
 const _ = require('lodash');
 const jsonFile = path.join(__dirname, '../assets/jsonfiles/hostcode.json');
+const HostHelper = require('../helpers/host.helper')
+const CityAreaHelper = require('../helpers/cityarea.helper')
 
 const readJsonFile = () => {
   return new Promise((resolve, reject) => {
@@ -37,7 +39,37 @@ const getHostId = (code) => {
   });
 }
 
+// use by registration validation
+const getHostIdByCity = (city, coordinate, isCoor) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      
+
+      // get coordinate first
+      const datas = await CityAreaHelper.getGeoJson(city.toUpperCase())
+      if (datas.err) {
+        // failed to fetch geoJson
+        return resolve({err: 'invalid city'});
+      }
+
+      // use coordinate if pass
+      const [lng, lat] = isCoor ? [coordinate.longitude, coordinate.latitude] : datas.centralPoint.coordinates
+      const area = await HostHelper.getHostByCoordinates({lat, lng})
+      if (area.err) {
+        // failed to fetch geoJson
+        return resolve({err: 'invalid city'});
+      }
+
+      resolve({err: null, _host: area.hosts._id, coordinates: [lng, lat], area: area });
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
 module.exports = {
   readJsonFile: readJsonFile,
-  getHostId: getHostId
+  getHostId: getHostId,
+  getHostIdByCity
 };

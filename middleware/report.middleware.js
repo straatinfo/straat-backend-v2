@@ -41,7 +41,9 @@ const createReportTypeC = async (req, res, next) => {
         // send photos
         if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
           const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
-            const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
+            // there is somehtin wrong saving here couse in public_id
+            // wil be return after change the model in public_id to not unique
+            const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, {...photo, public_id: photo.public_id + '##' + createR.report._id});
             if (savePhoto.err) {
               console.log(savePhoto.err);
               return savePhoto.err;
