@@ -17,14 +17,13 @@ const updateSchema = {
     _conversation: Joi.string().required().description('Conversation ID that will be updated')
   },
   query: {
-    action: Joi.string().required().description('Key word to use in selecting service ENUM: ["update", "add", "kick"]')
+    action: Joi.string().required().description('Key word to use in selecting service ENUM: ["update", "add", "remove"]')
   },
   body: {
     _remover: Joi.string().description('User ID that initiates the removal of user'),
     _user: Joi.string().description('User to be added'),
     title: Joi.string().description('Title of the conversation'),
-    _profilePic: Joi.string(),
-    _participant: Joi.array().description('User ID wanted to add / kick in conversation')
+    _profilePic: Joi.string()
   }
 };
 

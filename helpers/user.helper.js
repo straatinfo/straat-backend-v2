@@ -93,7 +93,10 @@ const findUserById = (id) => {
 
 const updateUser = (_id, input) => {
   return new Promise((resolve, reject) => {
-    User.findByIdAndUpdate(_id, input, async (err, user) => {
+    const userData = {
+      email, username, lname, fname, gender, houseNumber, streetName, city, state, country, postalCode, phoneNumber, long, lat, isVolunteer, isBlocked
+    } = input;
+    User.findByIdAndUpdate(_id, userData, async (err, user) => {
       try {
         if (err) {
           return resolve({err: err});

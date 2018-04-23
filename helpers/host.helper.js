@@ -135,7 +135,10 @@ const getHostById = (_id) => {
 
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
-    User.findByIdAndUpdate(_id, input, async(err, host) => {
+    const hostData = {
+      email, username, lname, fname,  hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat
+    } = input;
+    User.findByIdAndUpdate(_id, hostData, async(err, host) => {
       if (err) {
         return resolve({err: err})
       }

@@ -37,14 +37,6 @@ module.exports = function (io) {
     // handles all disconnecting functions
     socket.on('disconnect', async function (data) {
       try {
-        const checkSocket = SocketHelper.findSocketBySocketId(socket.id);
-        if (checkSocket.err) {
-          console.log(err);
-        }
-        if (checkSocket.socket) {
-          console.log('Disconnecting: ', checkSocket.socket);
-          const deactivateParticipant = await ParticipantHelper.deactivateParticipant(checkSocket.socket._user);
-        }
         const dc = await SocketHelper.removeSocket(socket.id);
         console.log(socket.id, 'Was Disconnected');
       }
