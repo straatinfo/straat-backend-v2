@@ -41,10 +41,6 @@ module.exports = function (io) {
         if (checkSocket.err) {
           console.log(err);
         }
-        if (checkSocket.socket) {
-          console.log('Disconnecting: ', checkSocket.socket);
-          const deactivateParticipant = await ParticipantHelper.deactivateParticipant(checkSocket.socket._user);
-        }
         const dc = await SocketHelper.removeSocket(socket.id);
         console.log(socket.id, 'Was Disconnected');
       }
