@@ -2,6 +2,7 @@ const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const TeamHelper = require('../helpers/team.helper');
 const MediaUploadHelper = require('../helpers/mediaUpload.helper');
+const ConversationHelper = require('../helpers/conversationV2.helper');
 
 const getTeams = async (req, res, next) => {
   try {
@@ -80,6 +81,7 @@ const createTeam = async (req, res, next) => {
     if (updateT.err) {
       return ErrorHelper.ClientError(res, {error: 'Team was created but the logo was failed to save'});
     }
+    const createConversation = await ConversationHelper.__createTeamChat(userId, createT.team._id, createMU.mediaUpload._id);
     SuccessHelper.success(res, updateT.team);
   }
   catch (e) {
@@ -165,9 +167,11 @@ const addMember = async (req, res, next) => {
   const { userId, teamId } = req.params;
   try {
     const addM = await TeamHelper.addMember(userId, teamId);
+    const team = await Team.findById(teamId);
     if (addM.err) {
       return ErrorHelper.ClientError(res, {error: addM.err}, 400);
     }
+    const addMemberToChat = await ConversationHelper.__addParticipant(team._conversation, userId);
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {

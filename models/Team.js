@@ -22,9 +22,7 @@ const teamSchema = new Schema({
   reports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }],
-  conversations: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Conversation'
-  }]
+  _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', required: true }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Team', teamSchema);

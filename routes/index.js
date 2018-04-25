@@ -31,7 +31,7 @@ module.exports = (app) => {
   app.use('/v1/api/host', HostRoute);
   app.use('/v1/api/team', TeamRoute);
   app.use('/v1/api/teamInvite', TeamInviteRoute);
-  app.use('/v1/api/conversation', ConversationRoute);
+  // app.use('/v1/api/conversation', ConversationRoute);
   app.use('/v1/api/reporter', ReporterRoute);
   app.use('/v1/api/design', DesignRoute);
   app.use('/v1/api/registration', RegistrationRoute);
