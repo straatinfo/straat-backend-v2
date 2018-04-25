@@ -20,7 +20,7 @@ const findSocket = () => {
   });
 }
 
-const findSocketByUserOLD = (_user) => {
+const findSocketByUser = (_user) => {
   return new Promise((resolve, reject) => {
     Socket.findOne({'_user': _user}, (err, socket) => {
       if (err) {
@@ -33,7 +33,7 @@ const findSocketByUserOLD = (_user) => {
 
 // find user socket if non then create, if find then update(new socket ID, because socket id is dynamic)
 // as of this code only one session is allowed
-const findSocketByUser = (_user, _socket) => {
+const findSocketByUserAndUpdate = (_user, _socket) => {
   return new Promise((resolve, reject) => {
     Socket.findOneAndUpdate({_user}, {$set:{_socket}}, {new: true}, (err, socket) => {
       if (err) {
@@ -43,7 +43,16 @@ const findSocketByUser = (_user, _socket) => {
     });
   });
 };
-
+const findSocketByUserUnfilx = (_user) => {
+  return new Promise((resolve, reject) => {
+    Socket.findOne({'_user': _user}, (err, socket) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, socket: socket});
+    });
+  });
+};
 
 const findSocketById = (_id) => {
   return new Promise((resolve, reject) => {
@@ -107,6 +116,7 @@ module.exports = {
   removeSocket: removeSocket,
   updateSocket: updateSocket,
   findSocketByUser: findSocketByUser,
+  findSocketByUserAndUpdate,
   findSocketBySocketId: findSocketBySocketId,
   findSocket: findSocket
 };

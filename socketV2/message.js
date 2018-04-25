@@ -1,49 +1,49 @@
-const ConversationHelper = require('../helpers/conversationV2.helper');
-const MessageHelper = require('../helpers/messageV2.helper');
-const SocketHelper = require('../helpers/socket.helper');
+const ConversationHelper = require('../helpers/conversationV2.helper')
+const MessageHelper = require('../helpers/messageV2.helper')
+const SocketHelper = require('../helpers/socket.helper')
 module.exports = function (io, socket) {
-  socket.on('send-message-v2', async function(data) {
+  socket.on('send-message-v2', async function (data) {
     try {
-      const { user, text, _conversation } = data;
+      const { user, text, _conversation } = data
       if (!_conversation) {
-        console.log('Error: Invalid conversation ID');
+        console.log('Error: Invalid conversation ID')
         return io.to(socket.id).emit('send-message-v2', {
           status: 0,
           message: 'Failed to send Message'
-        });
+        })
       }
-      const conversation = await ConversationHelper.__getConversationById(_conversation);
-      const newMessage = await MessageHelper.__createMessage(_conversation, user._id, text);
+      const conversation = await ConversationHelper.__getConversationById(_conversation)
+      const newMessage = await MessageHelper.__createMessage(_conversation, user._id, text)
       const payload = {
         _id: newMessage._id,
         createdAt: newMessage.createdAt,
         user: user,
         text: text
-      };
+      }
       conversation.participants.map(async function (p) {
-        const findSocket = await SocketHelper.findSocketByUser(p._user);
+        const findSocket = await SocketHelper.findSocketByUser(p)
         if (findSocket.socket) {
           io.to(findSocket.socket._socket).emit('new-message', {
-            status:1,
+            status: 1,
             message: 'Updated message',
             _conversation: _conversation,
+            conversation: {_id: conversation._id, title: conversation.title, type: conversation.type, _profilePic: conversation._profilePic},
             payload: payload
-          });
+          })
         }
-      });
-      console.log('Success: Successfully updated listeners');
+      })
+      console.log('Success: Successfully updated listeners')
       io.to(socket.id).emit('send-message-v2', {
         status: 1,
         message: 'Successfully sent message',
         _conversation: _conversation,
         payload: payload
-      });
-    }
-    catch (e) {
+      })
+    }    catch (e) {
       io.to(socket.id).emit('send-message-v2', {
         status: 0,
         message: 'Failed to send Message'
-      });
+      })
     }
-  });
+  })
 };
