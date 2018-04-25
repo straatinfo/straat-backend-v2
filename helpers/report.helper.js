@@ -1,10 +1,11 @@
-const Report = require('../models/Report')
-const MediaUpload = require('../models/MediaUpload')
-const ReportTypeHelper = require('./reportType.helper')
-const ReporterHelper = require('./reporter.helper')
-const HostHelper = require('./host.helper')
-const TeamHelper = require('./team.helper')
-const CategoryHelper = require('./category.helper')
+const Report = require('../models/Report');
+const MediaUpload = require('../models/MediaUpload');
+const ReportTypeHelper = require('./reportType.helper');
+const ReporterHelper = require('./reporter.helper');
+const HostHelper = require('./host.helper');
+const TeamHelper = require('./team.helper');
+const CategoryHelper = require('./category.helper');
+const ConversationHelper = require('./conversationV2.helper');
 
 const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
@@ -74,6 +75,7 @@ const getReports = () => {
     .populate('_mainCategory')
     .populate('_subCategory')
     .populate('attachments')
+    .populate('_conversation')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -104,6 +106,7 @@ const getReportByHost = (hostId, _reportType = null) => {
     .populate('_mainCategory')
     .populate('_subCategory')
     .populate('attachments')
+    .populate('_conversation')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -134,6 +137,7 @@ const getReportById = (_id) => {
     .populate('_mainCategory')
     .populate('_subCategory')
     .populate('attachments')
+    .populate('_conversation')
     .exec((err, report) => {
       if (err) {
         return resolve({err: err})
@@ -182,6 +186,7 @@ const getReportsByReportType = (reportTypeId) => {
     .populate('_mainCategory')
     .populate('_subCategory')
     .populate('attachments')
+    .populate('_conversation')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
@@ -224,6 +229,7 @@ const createReport = (input) => {
         if (getR.err) {
           return resolve({err: getR.err})
         }
+        const createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
         resolve({err: null, report: getR.report})
       } catch (e) {
         reject(e)
@@ -403,6 +409,7 @@ const flatReport = (r) => {
       '_team._id': (r._team && r._team._id) ? r._team._id : null,
       '_team.teamName': (r._team && r._team.teamName) ? r._team.teamName : null,
       '_team.teamEmail': (r._team && r._team.teamEmail) ? r._team.teamEmail : null,
+      '_conversation._id': (r._conversation && r._conversation._id) ? r._conversation._id : null,
       isPeopleInvolved: r.isPeopleInvolved || null,
       isVehicleInvolved: r.isVehicleInvolved || null,
       isUrgent: r.isUrgent || null,

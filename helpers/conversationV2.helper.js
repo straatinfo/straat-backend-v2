@@ -11,17 +11,19 @@ const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
 const Team = require('../models/Team');
 const TeamMember = require('../models/TeamMember');
+const Report = require('../models/Report');
 const _ = require('lodash');
 
 // private functions
 async function __getUserConversation(_user) {
   try {
-    const user = await User.findById(_user);
-    const conversations = await Promise.all(user.conversations.map(async (convoId) => {
-      const conversation = await Conversation.findById(convoId);
-      return conversation;
-    }));
-    return Promise.resolve(_.filter(conversations, convo => { if (convo) { return convo; }}));
+    const user = await User.findById(_user).populate('conversations');
+    // const conversations = await Promise.all(user.conversations.map(async (convoId) => {
+    //   const conversation = await Conversation.findById(convoId);
+    //   return conversation;
+    // }));
+    // return Promise.resolve(_.filter(conversations, convo => { if (convo) { return convo; }}));
+    return Promise.resolve(user.conversations);
   }
   catch (e) {
     return Promise.reject(e);
@@ -35,9 +37,9 @@ async function __getUserConversationByType(_user, type) {
       const conversation = await Conversation.findById(convoId);
       return conversation;
     }));
-    const filterdConversations = _.filter(conversations, (conversation) => {
-      if(conversation) {
-        return conversation.type.toLowerCase() === type.toLowerCase();
+    const filterdConversations = _.filter(conversations, (convo) => {
+      if(convo) {
+        return convo.type.toLowerCase() === type.toLowerCase();
       }
     });
     console.log(filterdConversations);
@@ -119,7 +121,7 @@ async function __createTeamChat(_user, _team, _profilePic) {
     });
     let teamConversation;
     if (_profilePic) {
-      const teamConversation = new Conversation({
+      teamConversation = new Conversation({
         'title': `Team Chat of ${team.teamName} team`,
         'type': 'TEAM',
         '_team': _team,
@@ -128,7 +130,7 @@ async function __createTeamChat(_user, _team, _profilePic) {
         'participants': participants
       });
     } else {
-      const teamConversation = new Conversation({
+      teamConversation = new Conversation({
         'title': `Team Chat of ${team.teamName} team`,
         'type': 'TEAM',
         '_team': _team,
@@ -140,7 +142,55 @@ async function __createTeamChat(_user, _team, _profilePic) {
     const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
       const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
     }));
+    const updateTeam = await Team.findByIdAndUpdate(_team, { '_conversation': conversation._id });
     return Promise.resolve(conversation);
+  }
+  catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+async function __createReportChat (_user, _team, _report, _profilePic) {
+  try {
+    const team = await Team.findById(_team);
+    if (!team) {
+      return Promise.reject({
+        statusCode: 404,
+        error: 'INVALID_TEAM',
+        message: 'Cannot find team with given ID'
+      });
+    }
+    const participants = _.map(team.teamMembers, (tm) => {
+      return {
+        _user: tm._user,
+        isActive: _user === tm._user
+      }
+    });
+    let reportConversation;
+    if (_profilePic) {
+      reportConversation = new Conversation({
+        'title': `Report Chat for Report ID: ${_report}`,
+        '_author': _user,
+        'type': 'REPORT',
+        '_report': _report,
+        '_profilePic': _profilePic,
+        'participants': participants
+      });
+    } else {
+      reportConversation = new Conversation({
+        'title': `Report Chat for Report ID: ${_report}`,
+        'type': 'REPORT',
+        '_author': _user,
+        '_report': _report,
+        '_profilePic': _profilePic,
+        'participants': participants
+      });
+    }
+    const conversation = await reportConversation.save();
+    const updateReport = await Report.findByIdAndUpdate(_report, {'_conversation': conversation._id});
+    const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
+      const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
+    }));
   }
   catch (e) {
     return Promise.reject(e);
@@ -383,6 +433,7 @@ module.exports = {
   __getUserConversation,
   __createGroupChat,
   __createPrivateConversation,
+  __createReportChat,
   __createTeamChat,
   __updateConversation,
   __removeParticipant,
