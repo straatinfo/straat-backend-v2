@@ -84,7 +84,7 @@ const deleteDesign = (_id) => {
       if (err) {
         return resolve({err: err});
       }
-      User.findByIdAndRemove(design._host,
+      User.findByIdAndUpdate(design._host,
       { '$pop': { 'designs': design._id } },
       (err) => {
         if (err) {
