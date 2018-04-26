@@ -18,7 +18,7 @@ Role.findOne({'code': 'HOST'}, (err, role) => {
       return exit();
     }
     const updater = await Promise.all(users.map((d) => {
-      User.findByIdAndUpdate(d._id, {'isSpecific': false}, (err, user) => {
+      User.findByIdAndUpdate(d._id, {'language': 'en'}, (err, user) => {
         if (err) {
           console.log(err);
         }

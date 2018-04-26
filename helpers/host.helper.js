@@ -282,6 +282,7 @@ const flatHost = (h) => {
         teams: h.teams || [],
         isPatron: h.isPatron || false,
         isSpecific: h.isSpecific || false,
+        language: h.language || null,
         '_activeDesign._id': (h._activeDesign && h._activeDesign._id) ? h._activeDesign._id : null,
         '_activeDesign.designName': (h._activeDesign && h._activeDesign.designName) ? h._activeDesign.designName : null,
         '_activeDesign.colorOne': (h._activeDesign && h._activeDesign.colorOne) ? h._activeDesign.colorOne : null,
