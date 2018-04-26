@@ -17,13 +17,20 @@ const _ = require('lodash');
 // private functions
 async function __getUserConversation(_user) {
   try {
-    const user = await User.findById(_user).populate('conversations');
-    // const conversations = await Promise.all(user.conversations.map(async (convoId) => {
-    //   const conversation = await Conversation.findById(convoId);
-    //   return conversation;
-    // }));
-    // return Promise.resolve(_.filter(conversations, convo => { if (convo) { return convo; }}));
-    return Promise.resolve(user.conversations);
+    const user = await User.findById(_user);
+
+    const conversations = await Promise.all(user.conversations.map(async (convoId) => {
+      const conversation = await Conversation.findById(convoId).populate('_author', ['_id', 'username']);
+      if (conversation) {
+        const participants = await Promise.all(conversation.participants.map(async(p) => {
+          const participant = await User.findById(p._user, ['_id', 'username']);
+          return {...p.toObject(), _user: participant};
+        }));
+        return {...conversation.toObject(), participants: participants};
+      }
+    }));
+    return Promise.resolve(_.filter(conversations, convo => { if (convo) { return convo; }}));
+    // return Promise.resolve(user.conversations);
   }
   catch (e) {
     return Promise.reject(e);
@@ -34,15 +41,20 @@ async function __getUserConversationByType(_user, type) {
   try {
     const user = await User.findById(_user);
     const conversations = await Promise.all(user.conversations.map(async (convoId) => {
-      const conversation = await Conversation.findById(convoId);
-      return conversation;
+      const conversation = await Conversation.findById(convoId).populate('_author', ['_id', 'username']);
+      if (conversation) {
+        const participants = await Promise.all(conversation.participants.map(async(p) => {
+          const participant = await User.findById(p._user, ['_id', 'username']);
+          return {...p.toObject(), _user: participant};
+        }));
+        return {...conversation.toObject(), participants: participants};
+      }
     }));
     const filterdConversations = _.filter(conversations, (convo) => {
       if(convo) {
         return convo.type.toLowerCase() === type.toLowerCase();
       }
     });
-    console.log(filterdConversations);
     return Promise.resolve(filterdConversations);
   }
   catch (e) {
@@ -52,8 +64,20 @@ async function __getUserConversationByType(_user, type) {
 
 async function __getConversationById(_conversation) {
   try {
-    const conversation = await Conversation.findById(_conversation).populate('_profilePic');
-    return Promise.resolve(conversation);
+    const conversation = await Conversation.findById(_conversation).populate('_profilePic').populate('_author', ['_id', 'username']);
+    if (!conversation) {
+      return Promise.reject({
+        statusCode: 404,
+        code: 0,
+        error: 'CONVERSATION_NOT_FOUND',
+        message: 'cannot find conversation'
+      })
+    }
+    const participants = await Promise.all(conversation.participants.map(async(p) => {
+      const participant = await User.findById(p._user, ['_id', 'username']);
+      return {...p.toObject(), _user: participant};
+    }));
+    return Promise.resolve({...conversation.toObject(), participants: participants});
   }
   catch (e) {
     return Promise.reject(e);

@@ -20,7 +20,7 @@ const userSchema = new Schema({
   phoneNumber: { type: String },
   long: { type: Number },
   lat: { type: Number },
-  language: { type: String, default: 'DUTCH' },
+  language: { type: String, default: 'en' },
   isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },

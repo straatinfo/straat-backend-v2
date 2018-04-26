@@ -29,7 +29,7 @@ const updateSchema = {
 
 const getSchema = {
   query: {
-    type: Joi.string().description('keyword enum["TEAM", "PRIVATE", "GROUP", "GLOBAL"]'),
+    type: Joi.string().description('keyword enum["TEAM", "PRIVATE", "GROUP", "REPORT", "GLOBAL"]'),
     _conversation: Joi.string().description('Conversation ID that will be updated'),
     _user: Joi.string().description('User ID of the reporter')
   }
