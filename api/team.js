@@ -3,6 +3,8 @@ const SuccessHelper = require('../helpers/success.helper');
 const TeamHelper = require('../helpers/team.helper');
 const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 const ConversationHelper = require('../helpers/conversationV2.helper');
+const Team = require('../models/Team');
+const _ = require('lodash');
 
 const getTeams = async (req, res, next) => {
   try {
@@ -47,6 +49,7 @@ const getTeamInfoById = async (req, res, next) => {
 
 const getTeamWithFilter = async (req, res, next) => {
   const { queryObject } = req.body;
+  console.log(queryObject);
   try {
     if (!queryObject || !queryObject._host || queryObject.isVolunteer === null) {
       ErrorHelper.ClientError(res, {error: 'Invalid queryObject'}, 400);
@@ -54,6 +57,15 @@ const getTeamWithFilter = async (req, res, next) => {
     const getTeamWF = await TeamHelper.getTeamWithFilter(queryObject);
     if (getTeamWF.err) {
       ErrorHelper.ClientError(res, {error: getTeamWF.err}, 400);
+    }
+    const flatTeams = await Promise.all(getTeamWF.teams.map(async (t) => {
+      const flatTeam = await TeamHelper.flatTeam(t);
+      if (flatTeam.team) {
+        return flatTeam.team;
+      }
+    }));
+    if (req.query.flat) {
+      return SuccessHelper.success(res, flatTeams);
     }
     SuccessHelper.success(res, getTeamWF.teams);
   }
@@ -175,6 +187,7 @@ const addMember = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
@@ -189,6 +202,7 @@ const kickMember = async (req, res, next) => {
     SuccessHelper.success(res, {message: 'Success'});
   }
   catch (e) {
+    console.log(e);
     ErrorHelper.ServerError(res);
   }
 };
