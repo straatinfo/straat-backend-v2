@@ -4,6 +4,7 @@ const Config = require('../config');
 const Team = require('../models/Team');
 const TeamLeader = require('../models/TeamLeader');
 const TeamMembers = require('../models/TeamMember');
+const Conversation = require('../models/Conversation');
 const User = require('../models/User');
 var mongoose = require('mongoose');
 mongoose.connect(Config.DATA_BASE);
@@ -61,38 +62,46 @@ mongoose.connect(Config.DATA_BASE);
 
 // 
 
-Team.find({})
-.populate('teamLeaders')
-.populate('teamMembers')
-.exec(async(err, teams) => {
-  if (err) {
-    console.log(err);
-    return exit();
+async function run () {
+  try {
+    const teams = await Team.find({}).populate('teamMembers').populate('teamLeaders');
+    const updateTeams = await Promise.all(teams.map(async(t) => {
+      if (!t._conversation && t.teamMembers.length !== 0) {
+        const newConversation = new Conversation({
+          _author: t.teamMembers[0]._user,
+          participants: [{
+            _user: t.teamMembers[0]._user,
+            isActive: false
+          }],
+        });
+        const conversation = await newConversation.save();
+        const updateTeam = await Team.update({'_id': t._id}, {'_conversation': conversation._id});
+        const updateConversation = await Conversation.update({'_id': conversation._id}, {'title': `Convesation of team ${t.teamName} team`, '_team': t._id});
+        const updatedTeam = await Team.findById(t._id);
+        console.log('updated', updatedTeam._id);
+        return updatedTeam;
+      } else if (t.teamMembers.length === 0) {
+        console.log('must be deleted', JSON.stringify(t, null, 2));
+        // const user = await User.findById(t.teamLeaders[0]._user).populate('_role');
+        // const updateUser = await User.update({'_id': t.teamLeaders[0]._user}, {'$pop': {'teamLeaders': t.teamLeaders[0]._id}});
+        // const updateTeam = await Team.update({'_id': t._id}, {'$pop': {'teamLeaders': t.teamLeaders[0]._id}});
+        // const removeTL = await TeamLeader.findByIdAndRemove(t.teamLeaders[0]._id);
+        // console.log('fixing', t._id);
+        const deleteT = await Team.findByIdAndRemove(t._id);
+      } else {
+        console.log('already had', t._conversation);
+        return t;
+      }
+    }));
+    exit();
   }
-  const process = await Promise.all(teams.map(async(t) => {
-    const tl = await Promise.all(t.teamLeaders.map(async(l) => {
-      User.findByIdAndUpdate(l._user, {'isVolunteer': t.isVolunteer}, (err, user) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        if(user)console.log('leader', user._id);
-        return;
-      });
-    }));
-    const tm = await Promise.all(t.teamMembers.map(async(m) => {
-      User.findByIdAndUpdate(m._user, {'isVolunteer': t.isVolunteer}, (err, user) => {
-        if (err) {
-          console.log(err);
-          return;
-        }
-        if(user)console.log('member', user._id);
-        return;
-      });
-    }));
-  }));
-  exit();
-});
+  catch (e) {
+    console.log(e);
+    exit();
+  }
+}
+
+run();
 
 function exit() {
   mongoose.disconnect();

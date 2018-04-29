@@ -10,7 +10,7 @@ const teamSchema = new Schema({
   isDeclined: { type: Boolean, default: false },
   softRemoved: { type: Boolean, default: false },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  creationMethod: { type: String, default: 'WEBSITE' },
+  creationMethod: { type: String, default: 'MOBILE' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   teamLeaders: [{
