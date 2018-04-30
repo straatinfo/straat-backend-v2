@@ -128,7 +128,7 @@ async function __removeMember (_user, _team) {
     const updateTeam = await Team.update({'_id': _team}, {'$pop': {'teamMembers': teamMember._id}});
     const delTM = await TeamMember.findOneAndRemove({'_user': _user, '_team': _team});
     const delTL = await TeamLeader.findOneAndRemove({'_user': _user, '_team': _team});
-    const updateConversation = await ConversationHelper.__removeParticipant(team._conversation, _user);
+    const updateConversation = await ConversationHelper.__removeParticipant(team._conversation, _user, _user, true);
     const updatedTeam = await Team.findById(_team);
     if (updatedTeam.teamMembers.length === 0) {
       const delTeam = await Team.findByIdAndRemove(_team);
