@@ -23,7 +23,12 @@ async function __findUserTeams (_user) {
     const queryBuilder = user.teamMembers.map((tm) => {
       return {'_id': tm._team};
     });
-    const teams = await Team.find({'$or': queryBuilder});
+    let teams;
+    if (queryBuilder.length > 0) {
+      teams = await Team.find({'$or': queryBuilder});
+    } else {
+      teams = []
+    }
     return Promise.resolve(teams);
   }
   catch (e) {
