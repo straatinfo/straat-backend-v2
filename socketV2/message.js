@@ -20,15 +20,22 @@ module.exports = function (io, socket) {
         user: user,
         text: text
       }
+      console.log('payload', payload)
       conversation.participants.map(async function (p) {
-        const findSocket = await SocketHelper.findSocketByUser(p)
+        const findSocket = await SocketHelper.findSocketByUser(p._user)
+        console.log('findSocket', p)
         if (findSocket.socket) {
           io.to(findSocket.socket._socket).emit('new-message', {
             status: 1,
             message: 'Updated message',
             _conversation: _conversation,
-            conversation: {_id: conversation._id, title: conversation.title, type: conversation.type, _profilePic: conversation._profilePic},
-            payload: payload
+            payload: payload,
+            conversation: {
+              _id: conversation._id,
+              title: conversation.title,
+              type: conversation.type,
+              _profilePic: conversation._profilePic
+            }
           })
         }
       })
