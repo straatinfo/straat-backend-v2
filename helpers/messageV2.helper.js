@@ -32,7 +32,7 @@ async function __getMessageById(_message) {
     return Promise.reject(e);
   }
 }
-
+ 
 async function __getLatestMessages(_conversation, page = 1, items = 10) {
   try {
     const getPage = Math.max(0, page);
@@ -56,6 +56,7 @@ async function __createMessage(_conversation, _author, body, attachments = []) {
     console.log(newMessage);
     const saveMessage = await newMessage.save();
     const message = await __getMessageById(saveMessage._id);
+    const updateConversation = await Conversation.update({'_id': message._conversation}, { '$addToSet': { 'messages': message._id } });
     return Promise.resolve(message);
   }
   catch (e) {
