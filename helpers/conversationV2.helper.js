@@ -37,6 +37,50 @@ async function __getUserConversation(_user) {
   }
 }
 
+// test get user conversation
+async function __getUserConversationV2(_user, type = false, types = '') {
+  const match = type ? { match:{type: {$in: types.split(',')}}} : {}
+  try {
+    const user = await User.findById(_user,{_id: true}).populate({
+      path: 'conversations',
+      ...match,
+      select: { messages: {$slice: -1}},
+      options: { sort: { updatedAt: -1 }},
+      populate: [{
+        path:'_author',
+        select: {_id: true, username: true}
+      },{
+        path:'participants._user',
+        select: {_id: true, username: true}
+      },{
+        path:'messages',
+        populate: {
+          path:'_author',
+          select: {_id: true, username: true}
+        }
+      }]
+    })
+   // .populate('conversations.participants._user');
+
+    return Promise.resolve(user ? user.conversations || [] : [])
+    // const conversations = await Promise.all(user.conversations.map(async (convoId) => {
+    //   const conversation = await Conversation.findById(convoId).populate('_author', ['_id', 'username']);
+    //   if (conversation) {
+    //     const participants = await Promise.all(conversation.participants.map(async(p) => {
+    //       const participant = await User.findById(p._user, ['_id', 'username']);
+    //       return {...p.toObject(), _user: participant};
+    //     }));
+    //     return {...conversation.toObject(), participants: participants};
+    //   }
+    // }));
+    // return Promise.resolve(_.filter(conversations, convo => { if (convo) { return convo; }}));
+    // return Promise.resolve(user.conversations);
+  }
+  catch (e) {
+    return Promise.reject(e);
+  }
+}
+
 async function __getUserConversationByType(_user, type) {
   try {
     const user = await User.findById(_user);
@@ -119,7 +163,9 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
     const updateChater = await User.update({'_id': _chater}, { '$addToSet': { 'conversations': newConversation._id } });
     const updateChatee = await User.update({'_id': _chatee}, { '$addToSet': { 'conversations': newConversation._id } });
     const conversation = await newConversation.save();
-    return Promise.resolve(conversation);
+    const Rconversation = await __getConversationById(conversation._id);
+
+    return Promise.resolve(Rconversation);
     return Promise.resolve();
   }
   catch (e) {
@@ -466,5 +512,7 @@ module.exports = {
   getConversation,
   createConversation,
   updateConversation,
-  deleteConversation
+  deleteConversation,
+
+  __getUserConversationV2
 };

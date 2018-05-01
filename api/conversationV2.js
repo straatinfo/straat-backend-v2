@@ -15,12 +15,15 @@ const getConversation = async function (req, res, next) {
       data = conversation;
     }
     else if (req.query.type && req.query._user) {
-      const conversations = await ConversationHelper.getConversation('userconversationsbytype', req.query._user, req.query.type);
-      data = conversations;
+      // const conversations = await ConversationHelper.getConversation('userconversationsbytype', req.query._user, req.query.type);
+      // data = conversations;
+      data = await ConversationHelper.__getUserConversationV2(req.query._user, true, req.query.type);
+      
     }
     else if (req.query._user) {
-      const conversations = await ConversationHelper.getConversation('userconversations', req.query._user);
-      data = conversations;
+      // const conversations = await ConversationHelper.getConversation('userconversations', req.query._user);
+      // data = conversations;
+      data = await ConversationHelper.__getUserConversationV2(req.query._user);
     }
     if (data) {
       res.status(200).send({
