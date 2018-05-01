@@ -16,6 +16,7 @@ const MessageRoute = require('./message.route');
 const LanguageRoute = require('./language.route');
 const ConversationRouteV2 = require('./conversationV2.route');
 const MessageRouteV2 = require('./messageV2.route');
+const TeamRouteV2 = require('./teamV2.route');
 
 // const TestRoute = require('./test.route');
  const TestRoute = require('./test.route');
@@ -42,7 +43,6 @@ module.exports = (app) => {
   app.use('/v1/api/language', LanguageRoute);
   app.use('/v2/api/conversation', ConversationRouteV2);
   app.use('/v2/api/message', MessageRouteV2);
-
-
+  app.use('/v2/api/team', TeamRouteV2);
    app.use('/v1/api/test', TestRoute);
 };

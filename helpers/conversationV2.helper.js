@@ -337,7 +337,7 @@ async function __addParticipant(_conversation, _user) {
   }
 }
 
-async function __removeParticipant(_conversation, _remover, _user) {
+async function __removeParticipant(_conversation, _remover, _user, isLeavingTeam = false) {
   try {
     const checkConvo = await Conversation.findById(_conversation);
     if (!checkConvo) {
@@ -349,7 +349,7 @@ async function __removeParticipant(_conversation, _remover, _user) {
       });
     }
     const conversation = await Conversation.findById(_conversation);
-    if (conversation._author.toString() === _remover || _remover === _user) {
+    if (conversation._author.toString() === _remover || _remover === _user || isLeavingTeam) {
       const newParticipants = _.remove(checkConvo.participants, (p) => {
         return p._user.toString() !== _user;
       });
