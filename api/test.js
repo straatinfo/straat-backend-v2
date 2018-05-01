@@ -3,10 +3,28 @@ const HostHelper = require('../helpers/host.helper')
 const CityAreaHelper = require('../helpers/cityarea.helper')
 // const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
 const hostList = require('../assets/jsonfiles/HostList_2018_4_17')
+const ConversationHelper = require('../helpers/conversationV2.helper');
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
   console.log(req.body)
+  res.end()
+}
+
+const testGetUserConvo = async (req, res, next) => {
+  console.log(req.query)
+  const { _user } = req.query
+  try {
+      const datas = await ConversationHelper.__getUserConversationV2(_user, true, 'PRIVATE,GROUP')
+
+    // const datas = await ConversationHelper.__getUserConversation(_user)
+
+    res.send(datas)
+  } catch (e) {
+    console.log(e)
+    res.send(e)
+  }
+
   res.end()
 }
 
@@ -3626,5 +3644,6 @@ module.exports = {
   testGegeofromNeo,
   geoParseGeometries,
   host,                    // get host data test
-  getHostList
+  getHostList,
+  testGetUserConvo
 }

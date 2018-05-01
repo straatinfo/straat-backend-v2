@@ -49,5 +49,9 @@ TestRoute.route('/')
 // .get(Test.getHostList)
 
 
+TestRoute.route('/convo')
+.get(Test.testGetUserConvo)
+
+
 
 module.exports = TestRoute
