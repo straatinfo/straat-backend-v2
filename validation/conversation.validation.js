@@ -8,7 +8,9 @@ const createSchema = {
     title: Joi.string().description('Title of the conversation'),
     _author: Joi.string().required().description('User ID of the reporter who initiates the chat'),
     _profilePic: Joi.string(),
-    _chatee: Joi.string().description('User Id of the reporter that will be chatted')
+    _chatee: Joi.string().description('User Id of the reporter that will be chatted'),
+    _report: Joi.string().description('Report ID'),
+    _team: Joi.string().description('Team ID'),
   }
 };
 

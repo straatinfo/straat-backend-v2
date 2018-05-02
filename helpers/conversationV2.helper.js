@@ -61,7 +61,7 @@ async function __getUserConversationV2(_user, type = false, types = '') {
       }]
     })
    // .populate('conversations.participants._user');
-
+   
     return Promise.resolve(user ? user.conversations || [] : [])
     // const conversations = await Promise.all(user.conversations.map(async (convoId) => {
     //   const conversation = await Conversation.findById(convoId).populate('_author', ['_id', 'username']);
@@ -222,7 +222,14 @@ async function __createTeamChat(_user, _team, _profilePic) {
 
 async function __createReportChat (_user, _team, _report, _profilePic) {
   try {
-    const team = await Team.findById(_team);
+
+    const checkConvo = await Conversation.findOne({_report: _report});
+   
+    if (checkConvo) {
+      return Promise.resolve(checkConvo);
+    }
+
+    const team = await Team.findById(_team).populate('teamMembers');
     if (!team) {
       return Promise.reject({
         statusCode: 404,
@@ -261,6 +268,7 @@ async function __createReportChat (_user, _team, _report, _profilePic) {
     const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
       const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
     }));
+    return Promise.resolve(conversation);
   }
   catch (e) {
     return Promise.reject(e);

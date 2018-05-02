@@ -53,16 +53,20 @@ const getConversation = async function (req, res, next) {
   }
 }
 
+
 const createConversation = async function (req, res, next) {
   try {
     const type = req.query.type;
-    const { title, _author, _profilePic, _chatee, _team } = req.body;
+    const { title, _author, _profilePic, _chatee, _team, _report } = req.body;
     let conversation;
     if (type.toLowerCase() === 'private') {
       conversation = await ConversationHelper.createConversation(type, _author, _chatee, _profilePic);
     }
     else if (type.toLowerCase() === 'team') {
       conversation = await ConversationHelper.createConversation(type, _author, _team, _profilePic);
+    }
+    else if (type.toLowerCase() === 'report') {
+      conversation = await ConversationHelper.__createReportChat(_author, _team, _report, _profilePic);
     }
     else if (type.toLowerCase() === 'group') {
       conversation = await ConversationHelper.createConversation(type, _author, title, _profilePic);

@@ -349,6 +349,10 @@ const getReportByQueryObjectClean = (queryObject) => {
     .populate('_mainCategory', ['_id', 'name', 'description'])
     .populate('_subCategory', ['_id', 'name', 'description'])
     .populate('_host', ['_id', 'hostName'])
+    .populate({
+      path: '_conversation',
+      select: { messages: {$slice: -1}}
+    })
     .populate('attachments')
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
