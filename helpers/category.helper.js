@@ -356,7 +356,8 @@ const flatMainCategory = (m) => {
         '_reportType._id': (m._reportType && m._reportType._id) ? m._reportType._id : null,
         '_reportType.code': (m._reportType && m._reportType.code) ? m._reportType.code : null,
         '_reportType.name': (m._reportType && m._reportType.name) ? m._reportType.name : null,
-        subCategories: m.subCategories || []
+        subCategories: m.subCategories || [],
+        translations: m.translations || []
       };
 
       resolve({err: null, mainCategory: flatMC});
@@ -376,7 +377,8 @@ const flatSubCategory = (s) => {
         createdAt: s.createdAt || null,
         updatedAt: s.updatedAt || null,
         '_mainCategory._id': (s._mainCategory && s._mainCategory._id) ? s._mainCategory._id : null,
-        '_mainCategory.name': (s._mainCategory && s._mainCategory.name) ? s._mainCategory.name : null
+        '_mainCategory.name': (s._mainCategory && s._mainCategory.name) ? s._mainCategory.name : null,
+        translations: s.translations || []
       };
       resolve({err: null, subCategory: flatSC});
     }

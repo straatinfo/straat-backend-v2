@@ -1,6 +1,7 @@
 const CategoryHelper = require('../helpers/category.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
+const LanguageHelper = require('../helpers/language.helper');
 
 const getMainCategories = async (req, res, next) => {
   const { hostId } = req.params;
@@ -10,11 +11,16 @@ const getMainCategories = async (req, res, next) => {
     if (getMC.err) {
       return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
     }
+    const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
+      const translations = await LanguageHelper.getTranslation(mc.name);
+      return {...mc.toObject(), translations: translations.translations};
+    }));
+    console.log(categoriesWithTranslations);
     if (req.query.flat == 'true') {
-      req.mainCategories = getMC.mainCategories;
+      req.mainCategories = categoriesWithTranslations;
       return next();
     }
-    SuccessHelper.success(res, getMC.mainCategories);
+    SuccessHelper.success(res, categoriesWithTranslations);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -30,11 +36,15 @@ const getMainCategoriesWithGeneral = async (req, res, next) => {
     if (getMC.err) {
       return ErrorHelper.ClientError(res, {error: getMC.err}, 400);
     }
+    const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
+      const translations = await LanguageHelper.getTranslation(mc.name);
+      return {...mc.toObject(), translations: translations.translations};
+    }));
     if (req.query.flat == 'true') {
-      req.mainCategories = getMC.mainCategories;
+      req.mainCategories = categoriesWithTranslations;
       return next();
     }
-    SuccessHelper.success(res, getMC.mainCategories);
+    SuccessHelper.success(res, categoriesWithTranslations);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -64,11 +74,16 @@ const getGeneralMainCategories = async (req, res, next) => {
         return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422);
     }
     if (getMC.err) { return ErrorHelper.ClientError(res, {error: getMC.err}); }
+    const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
+      const translations = await LanguageHelper.getTranslation(mc.name);
+      return {...mc.toObject(), translations: translations.translations};
+    }));
+    console.log(categoriesWithTranslations);
     if (req.query.flat == 'true') {
-      req.mainCategories = getMC.mainCategories;
+      req.mainCategories = categoriesWithTranslations;
       return next();
     }
-    SuccessHelper.success(res, getMC.mainCategories);
+    SuccessHelper.success(res, categoriesWithTranslations);
   }
   catch (e) {
     console.log(e);
@@ -82,12 +97,13 @@ const createGeneralMainCategory = async (req, res, next) => {
     if (!code || !name) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}); }
     const createGMC = await CategoryHelper.createMainCategoryForGeneralDesign({name, code, description});
     if (createGMC.err) { return ErrorHelper.ClientError(res, {error: createGMC.err}); }
+    const translations = await LanguageHelper.getTranslation(createGMC.mainCategory.name);
     if (req.query.flat == 'true') {
-      const flatMC = await CategoryHelper.flatMainCategory(createGMC.mainCategory);
+      const flatMC = await CategoryHelper.flatMainCategory({...createGMC.mainCategory.toObject(), translations: translations.translations});
       if (flatMC.err) { return ErrorHelper.ClientError(res, {error: flatMC.err}); }
       return SuccessHelper.success(res, flatMC.mainCategory);
     }
-    SuccessHelper.success(res, createGMC.mainCategory);
+    SuccessHelper.success(res, {...createGMC.mainCategory.toObject(), translations: translations.translations});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -104,12 +120,13 @@ const createMainCategory = async (req, res, next) => {
       return resolve({err: createMC.err});
     }
     if (!createMC.mainCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}, 422); }
+    const translations = await LanguageHelper.getTranslation(createMC.mainCategory.name);
     if (req.query.flat == 'true') {
-      const flatMC = await CategoryHelper.flatMainCategory(createMC.mainCategory);
+      const flatMC = await CategoryHelper.flatMainCategory({...createMC.mainCategory.toObject(), translations: translations.translations});
       if (flatMC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get MainCategory'}); }
       return SuccessHelper.success(res, flatMC.mainCategory);
     }
-    SuccessHelper.success(res, createMC.mainCategory);
+    SuccessHelper.success(res, {...createMC.mainCategory.toObject(), translations: translations.translations});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -124,12 +141,13 @@ const updateMainCategory = async (req, res, next) => {
       return ErrorHelper.ClientError(res, { error: updateMC.errr}, 400);
     }
     if (!updateMC.mainCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}, 422); }
+    const translations = await LanguageHelper.getTranslation(updateMC.mainCategory.name);
     if (req.query.flat == 'true') {
-      const flatMC = await CategoryHelper.flatMainCategory(updateMC.mainCategory);
+      const flatMC = await CategoryHelper.flatMainCategory({...updateMC.mainCategory.toObject(), translations: translations.translations});
       if (flatMC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get MainCategory'}); }
       return SuccessHelper.success(res, flatMC.mainCategory);
     }
-    SuccessHelper.success(res, updateMC.mainCategory);
+    SuccessHelper.success(res, {...updateMC.mainCategory.toObject(), translations: translations.translations});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -143,11 +161,15 @@ const getMainCategoriesByReportType = async (req,res, next) => {
     if (getMCBRT.err) {
       return ErrorHelper.ClientError(res, {error: getMCBRT.err}, 400);
     }
+    const categoriesWithTranslations = await Promise.all(getMCBRT.mainCategories.map(async(mc) => {
+      const translations = await LanguageHelper.getTranslation(mc.name);
+      return {...mc.toObject(), translations: translations.translations};
+    }));
     if (req.query.flat == 'true') {
-      req.mainCategories = getMCBRT.mainCategories;
+      req.mainCategories = categoriesWithTranslations;
       return next();
     }
-    SuccessHelper.success(res, getMCBRT.mainCategories);
+    SuccessHelper.success(res, categoriesWithTranslations);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -175,11 +197,15 @@ const getSubCategories = async (req, res, next) => {
     if (getSC.err) {
       return ErrorHelper.ClientError(res, { err: getSC.err}, 400);
     }
+    const scWithTranslation = await Promise.all(getSC.subCategories.map(async(sc) => {
+      const translations = await LanguageHelper.getTranslation(sc.name);
+      return {...sc.toObject(), translations: translations.translations};
+    }))
     if (req.query.flat == 'true') {
-      req.subCategories = getSC.subCategories;
+      req.subCategories = scWithTranslation;
       return next();
     }
-    SuccessHelper.success(res, getSC.subCategories);
+    SuccessHelper.success(res, scWithTranslation);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -196,12 +222,13 @@ const createSubCategory = async (req, res, next) => {
       return ErrorHelper.ClientError(res, { err: createSC.err }, 400);
     }
     if (!createSC.subCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422); }
+    const translations = await LanguageHelper.getTranslation(createSC.subCategory.name);
     if (req.query.flat == 'true') {
-      const flatSC = await CategoryHelper.flatSubCategory(createSC.subCategory);
+      const flatSC = await CategoryHelper.flatSubCategory({...createSC.subCategory.toObject(), translations: translations.translations});
       if (flatSC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get SubCategory'}, 400); }
       return SuccessHelper.success(res, flatSC.subCategory);
     }
-    SuccessHelper.success(res, createSC.subCategory);
+    SuccessHelper.success(res, {...createSC.subCategory.toObject(), translations: translations.translations});
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -216,12 +243,13 @@ const updateSubCategory = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: updateSC.err}, 400);
     }
     if (!updateSC.subCategory) { return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422); }
+    const translations = await LanguageHelper.getTranslation(updateSC.subCategory.name);
     if (req.query.flat == 'true') {
-      const flatSC = await CategoryHelper.flatSubCategory(updateSC.subCategory);
+      const flatSC = await CategoryHelper.flatSubCategory({...updateSC.subCategory.toObject(), translations: translations.translations});
       if (flatSC.err) { return ErrorHelper.ClientError(res, {error: 'Cannot get SubCategory'}, 400); }
       return SuccessHelper.success(res, flatSC.subCategory);
     }
-    SuccessHelper.success(res, updateSC.subCategory);
+    SuccessHelper.success(res, {...updateSC.subCategory.toObject(), translations: translations.translations});
   }
   catch (e) {
     console.log(e);
@@ -250,12 +278,13 @@ const createMainCategoryForHost = async (req, res, next) => {
     if (!code || !name) { return ErrorHelper.ClientError(res, {error: 'Invalid Inputs'}); }
     const createGMC = await CategoryHelper.createMainCategoryForHost({name, code, description}, _host);
     if (createGMC.err) { return ErrorHelper.ClientError(res, {error: createGMC.err}); }
+    const translations = await LanguageHelper.getTranslation(createGMC.mainCategory.name);
     if (req.query.flat == 'true') {
-      const flatMC = await CategoryHelper.flatMainCategory(createGMC.mainCategory);
+      const flatMC = await CategoryHelper.flatMainCategory({...createGMC.mainCategory.toObject(), translations: translations.translations});
       if (flatMC.err) { return ErrorHelper.ClientError(res, {error: flatMC.err}); }
       return SuccessHelper.success(res, flatMC.mainCategory);
     }
-    SuccessHelper.success(res, createGMC.mainCategory);
+    SuccessHelper.success(res, {...createGMC.mainCategory, translations: translations.translations});
   }
   catch (e) {
     console.log(e);
