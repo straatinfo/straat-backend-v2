@@ -1,4 +1,5 @@
 const TeamHelper = require('../helpers/teamV2.helper');
+const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 
 const updateTeam = async (req, res, next) => {
   try {
@@ -50,7 +51,11 @@ const createTeam = async (req, res, next) => {
       teamName, teamEmail, description,
       isVolunteer, creationMethod, _profilePic
     } = req.body;
-    const createNewTeam = await TeamHelper.createTeam(_user, _host, {...req.body, _host: _host, createdBy: _user});
+    const saveMedia = await MediaUploadHelper.createMediaUpload(req.file);
+    if (saveMedia.err) {
+      throw new Error('There is an expected problem in saving file');
+    }
+    const createNewTeam = await TeamHelper.createTeam(_user, _host, {...req.body, _host: _host, createdBy: _user, _profilePic: saveMedia.mediaUpload._id});
     res.status(200).send({
       status: 1,
       statusCode: 200,

@@ -18,8 +18,7 @@ const postSchema = {
     teamEmail: Joi.string().email().required(),
     description: Joi.string(),
     isVolunteer: Joi.boolean().required(),
-    creationMethod: Joi.string().required(),
-    _profilePic: Joi.string()
+    creationMethod: Joi.string().required()
   }
 };
 
