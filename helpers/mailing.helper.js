@@ -164,7 +164,7 @@ const deleteTeamNotif = () => {
 const forgotPasswordNotif = (email, newPassword) => {
   const receiver = email;
   const sender = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
-  const subject = 'Forgot Password';
+  const subject = 'New Password for logging in';
   const mailBody = MailTemplates.fogotPasswordNotif(newPassword, sender);
   return new Promise(async(resolve, reject) => {
     try {
