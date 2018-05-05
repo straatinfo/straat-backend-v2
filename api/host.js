@@ -2,6 +2,11 @@ const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const HostHelper = require('../helpers/host.helper');
 const DesignHelper = require('../helpers/design.helper');
+const UserHelper = require('../helpers/user.helper');
+const MailHelper = require('../helpers/mailing.helper');
+const CodeGenerator = require('node-code-generator');
+const generator = new CodeGenerator();
+const pattern = '************';
 
 const getHosts = async (req, res, next) => {
   try {
@@ -154,6 +159,67 @@ const updateHostDesign = async (req, res, next) => {
   }
 };
 
+const activateHost = async (req, res, next) => {
+  try {
+    console.log(req.query);
+    const { email } = req.query;
+    const checkU = await UserHelper.checkUserByCredentials(email);
+    if (checkU.err) {
+      return ErrorHelper.ClientError(res, {error: checkU.err}, 400);
+    }
+    if (!checkU.user) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid email'}, 400);
+    }
+    const userEmail = checkU.user.email;
+    const code = generator.generateCodes(pattern, 1);
+    const newPassword = code[0];
+    const forgotP = await UserHelper.activateUser(userEmail, newPassword);
+    if (forgotP.err) {
+      return ErrorHelper.ClientError(res, {error: forgotP.err}, 400);
+    }
+    // send email for the generated password
+    const sendMail = await MailHelper.activateHostNotif(userEmail, newPassword);
+    if (sendMail.err) {
+      return ErrorHelper.ClientError(res, {error: sendMail.err}, 400);
+    }
+    SuccessHelper.success(res, {message: 'Successfully activated the host'});
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+}
+
+const deactivateHost = async (req, res, next) => {
+  try {
+    console.log(req.query);
+    const { email } = req.query;
+    const checkU = await UserHelper.checkUserByCredentials(email);
+    if (checkU.err) {
+      return ErrorHelper.ClientError(res, {error: checkU.err}, 400);
+    }
+    if (!checkU.user) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid email'}, 400);
+    }
+    const userEmail = checkU.user.email;
+    const code = generator.generateCodes(pattern, 1);
+    const newPassword = code[0];
+    const forgotP = await UserHelper.deactivateUser(userEmail, newPassword);
+    if (forgotP.err) {
+      return ErrorHelper.ClientError(res, {error: forgotP.err}, 400);
+    }
+    // send email for the to notify deactivation to be discussed
+    // const sendMail = await MailHelper.activateHostNotif(userEmail, newPassword);
+    // if (sendMail.err) {
+    //   return ErrorHelper.ClientError(res, {error: sendMail.err}, 400);
+    // }
+    SuccessHelper.success(res, {message: 'Successfully deactivated the host'});
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+}
+
 
 module.exports = {
   getHostById: getHostById,
@@ -164,5 +230,7 @@ module.exports = {
   deleteHost: deleteHost,
   bulkCreateHost: bulkCreateHost,
   getFreeHost: getFreeHost,
-  updateHostDesign: updateHostDesign
+  updateHostDesign: updateHostDesign,
+  activateHost,
+  deactivateHost
 };

@@ -164,8 +164,28 @@ const deleteTeamNotif = () => {
 const forgotPasswordNotif = (email, newPassword) => {
   const receiver = email;
   const sender = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
-  const subject = 'New Password for logging in';
-  const mailBody = MailTemplates.fogotPasswordNotif(newPassword, sender);
+  const subject = 'Nieuw tijdelijk wachtwoord';
+  const mailBody = MailTemplates.fogotPasswordNotif(newPassword);
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
+      if (sendBasicMail.err) {
+        return resolve({err: sendBasicMail.err});
+      }
+      resolve({err: null});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+// Activate host notif
+const activateHostNotif = (email, password) => {
+  const receiver = email;
+  const sender = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
+  const subject = 'Nieuw tijdelijk wachtwoord';
+  const mailBody = MailTemplates.activateHostNotif(password);
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
@@ -190,5 +210,6 @@ module.exports = {
   sendReportCNotifToReporter: sendReportCNotifToReporter,
   sendFeedBackNotif: sendFeedBackNotif,
   // deleteTeamNotif: deleteTeamNotif,
-  forgotPasswordNotif: forgotPasswordNotif
+  forgotPasswordNotif: forgotPasswordNotif,
+  activateHostNotif
 };

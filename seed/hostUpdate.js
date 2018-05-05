@@ -12,13 +12,14 @@ Role.findOne({'code': 'HOST'}, (err, role) => {
     exit();
   }
   console.log(role);
-  User.find({'_role': role._id}, async(err, users) => {
+  User.find({'_id': '5a7b485a039e2860cf9dd19a'}, async(err, users) => {
     if (err) {
       console.log(err);
       return exit();
     }
     const updater = await Promise.all(users.map((d) => {
-      User.findByIdAndUpdate(d._id, {'language': 'en'}, (err, user) => {
+      const newUser = new User();
+      User.findByIdAndUpdate(d._id, {password: newUser.encryptPassword('test')}, (err, user) => {
         if (err) {
           console.log(err);
         }

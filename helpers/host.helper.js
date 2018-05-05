@@ -18,7 +18,8 @@ const getHosts = () => {
         '_id', 'hostName', 'houseNumber', 'streetName', 'state',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-        'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
+        'lname', 'fname', 'hostPersonalEmail', 'isSpecific',
+        'isActivated'
       ])
       .populate('_activeDesign')
       .populate('_role')
@@ -98,7 +99,8 @@ const getHostWithinRadius = (long, lat, radius) => {
         '_id', 'hostName', 'houseNumber', 'streetName', 'state',
         'city', 'state', 'country', 'postalCode', 'username',
         'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-        'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
+        'lname', 'fname', 'hostPersonalEmail', 'isSpecific',
+        'isActivated'
       ])
       .populate('_activeDesign')
       .populate('_role')
@@ -220,7 +222,8 @@ const getFreeHost = () => {
       '_id', 'hostName', 'houseNumber', 'streetName', 'state',
       'city', 'state', 'country', 'postalCode', 'username',
       'phoneNumber', 'long', 'lat', 'isPatron', 'email',
-      'lname', 'fname', 'hostPersonalEmail', 'isSpecific'
+      'lname', 'fname', 'hostPersonalEmail', 'isSpecific',
+      'isActivated'
     ])
     .populate('_role')
     .populate({
@@ -281,6 +284,7 @@ const flatHost = (h) => {
         designs: h.designs || [],
         teams: h.teams || [],
         isPatron: h.isPatron || false,
+        isActivated: h.isActivated || false,
         isSpecific: h.isSpecific || false,
         language: h.language || null,
         '_activeDesign._id': (h._activeDesign && h._activeDesign._id) ? h._activeDesign._id : null,
