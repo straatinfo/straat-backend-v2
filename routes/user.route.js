@@ -10,7 +10,7 @@ const UserValidation = require('../validator/user.validator');
 
 UserRoute.route('/profile/:id')
 .get(/* requireAuth, */ User.getUserDetails)
-.put(/* requireAuth, */ User.updateUserDetails);
+.put(/* requireAuth, */ User.updateUserDetails); 
 
 UserRoute.route('/pic/:id')
 .put(

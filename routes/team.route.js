@@ -41,4 +41,7 @@ TeamRoute.route('/:teamId')
 TeamRoute.route('/info/:teamId')
 .get(/*requireAuth,*/ Team.getTeamInfoById)
 
+TeamRoute.route('/list/:_user')
+.get(/*requireAuth,*/ Team.getTeamListByUserId);
+
 module.exports = TeamRoute;
