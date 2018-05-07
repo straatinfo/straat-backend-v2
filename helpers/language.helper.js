@@ -38,6 +38,9 @@ async function addTranslation (baseWord, code, word) {
       });
       const createTranslation = await newLanguage.save();
     }
+    const getTranslations = await Language.findOne({'baseWord': baseWord.toLowerCase()});
+    const getUnique = _.uniqBy(getTranslations.translations, (t) => { return t.code.toLowerCase(); });
+    const updatedTranslations = await Language.update({'_id': translation._id}, {'translations': getUnique});
     const updatedTranslation = await Language.findOne({'baseWord': baseWord.toLowerCase()});
     return Promise.resolve(updatedTranslation);
   }

@@ -5,9 +5,16 @@ const requireAuth = passport.authenticate('jwt', {session: false});
 const Host = require('../api/host');
 const HostRoute = express.Router();
 const FlatHost = require('../middleware/flatHost');
+const ExpressJoi = require('express-joi-validator');
+const HostValidation = require('../validation/host.validation');
 
 HostRoute.route('/freehost')
 .get(/* requireAuth, */ Host.getFreeHost);
+
+HostRoute.route('/activation')
+.put(ExpressJoi(HostValidation.putSchema), Host.activateHost)
+.delete(ExpressJoi(HostValidation.deleteSchema), Host.deactivateHost);
+
 
 HostRoute.route('/')
 .get(/*requireAuth,*/ Host.getHosts, FlatHost.getFlatHosts)

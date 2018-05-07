@@ -101,11 +101,20 @@ module.exports = {
   },
   fogotPasswordNotif: (newPassword) => {
     return `
-    <p>Greetings!</p>
-    <p>Here is your temporary password: ${newPassword}</p>
-    <p>Please change your password.</p>
+    <p>Geachte mevrouw, mijnheer,</p>
+    <p>Voor uw account hebben we een aanvraag gehad voor een nieuw wachtwoord. Als u dat niet heeft aangevraagd, hoeft u niets te doen.</p>
+    <p>Als u het heeft aangevraagd, kunt u de volgende tijdelijke code als wachtwoord gebruiken: ${newPassword} </p>
     </br>
-    <p>Sincerely,</p>
+    <p>Vriendelijke groet</p>
+    <p>Straat.info</p>
+    `;
+  },
+  activateHostNotif: (password) => {
+    return `
+    <p>Geachte mevrouw, mijnheer,</p>
+    <p>U of namens uw organisatie is  een tijdelijk wachtwoord voor uw account bij straat.info aangevraagd. Het wachtwoord is ${password}. </p>
+    </br>
+    <p>Vriendelijke groet</p>
     <p>Straat.info</p>
     `;
   }

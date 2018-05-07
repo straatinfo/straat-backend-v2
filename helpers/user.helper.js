@@ -181,6 +181,56 @@ const forgotPassword = (email, newPassword) => {
   });
 };
 
+const activateUser = (email, newPassword) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // find user
+      const checkU = await checkUserByCredentials(email);
+      if (checkU.err) {
+        return resolve({err: checkU.err});
+      }
+      if (!checkU.user) {
+        return resolve({err: 'Invalid email'});
+      }
+
+      // update user password
+      const userInstance = new User();
+      const encryptedPassword = userInstance.encryptPassword(newPassword);
+      const updateU = await updateUser(checkU.user._id, {'password': encryptedPassword, 'isActivated': true});
+      if (updateU.err) {
+        return resolve({err: updateU.err});
+      }
+      resolve({err: null, user: updateU.user});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const deactivateUser = (email) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // find user
+      const checkU = await checkUserByCredentials(email);
+      if (checkU.err) {
+        return resolve({err: checkU.err});
+      }
+      if (!checkU.user) {
+        return resolve({err: 'Invalid email'});
+      }
+      const updateU = await updateUser(checkU.user._id, {'password': null, 'isActivated': false});
+      if (updateU.err) {
+        return resolve({err: updateU.err});
+      }
+      resolve({err: null, user: updateU.user});
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 const changePassword = (_user, newPassword) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -237,5 +287,7 @@ module.exports = {
   addMessageToUser: addMessageToUser,
   removeMessageToUser: removeMessageToUser,
   checkUserByUNameEmail,
-  comparePassword
+  comparePassword,
+  activateUser,
+  deactivateUser
 };

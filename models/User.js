@@ -20,10 +20,11 @@ const userSchema = new Schema({
   phoneNumber: { type: String },
   long: { type: Number },
   lat: { type: Number },
-  language: { type: String, default: 'en' },
+  language: { type: String, default: 'nl' },
   isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
+  isActivated: { type: Boolean, default: false }, // this is for host
   isSpecific: { type: Boolean, default: false },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   softRemoved: { type: Boolean, default: false },

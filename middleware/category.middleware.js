@@ -11,7 +11,6 @@ const getFlatMainCategory = async (req, res, next) => {
       try {
         const flatMC = await CategoryHelper.flatMainCategory(m);
         if (flatMC.mainCategory) {
-          console.log(flatMC.mainCategory);
           return flatMC.mainCategory;
         }
       }
