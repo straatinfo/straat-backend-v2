@@ -51,6 +51,7 @@ const createTeam = async (req, res, next) => {
       teamName, teamEmail, description,
       isVolunteer, creationMethod, _profilePic
     } = req.body;
+    // failed when creating team if no pic
     const saveMedia = await MediaUploadHelper.createMediaUpload(req.file);
     if (saveMedia.err) {
       throw new Error('There is an expected problem in saving file');
