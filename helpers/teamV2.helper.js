@@ -149,7 +149,7 @@ async function __removeMember (_user, _team) {
 async function __addNewTeam (_user, _host, input) {
   try {
     const _profilePic = input._profilePic ? {_profilePic: input._profilePic} : {}
-    // will error if no logo uploaded
+    // will error if no logo uploaded 
     const newConversation = new Conversation({
       _author: _user,
       ..._profilePic,
@@ -187,7 +187,8 @@ async function setActiveTeam (_user, _team) {
   try {
     const memberships = await __findUserTeams(_user);
     const team = _.find(memberships, (m) => {
-      return m._id.toString() === _team;
+      // failed to compare ObjectID to string
+      return m._id.toString() === _team.toString();
     });
     if (!team) {
       return Promise.reject({
