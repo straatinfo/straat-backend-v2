@@ -148,6 +148,8 @@ async function __removeMember (_user, _team) {
 
 async function __addNewTeam (_user, _host, input) {
   try {
+
+    // will error if no logo uploaded
     const newConversation = new Conversation({
       _author: _user,
       _profilePic: input._profilePic,
