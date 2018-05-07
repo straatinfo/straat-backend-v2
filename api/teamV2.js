@@ -49,14 +49,21 @@ const createTeam = async (req, res, next) => {
     const { _host, _user } = req.query;
     const {
       teamName, teamEmail, description,
-      isVolunteer, creationMethod, _profilePic
+      isVolunteer, creationMethod
     } = req.body;
     // failed when creating team if no pic
-    const saveMedia = await MediaUploadHelper.createMediaUpload(req.file);
+  
+    let _profilePic = {}
+
+    const saveMedia = req.file ? await MediaUploadHelper.createMediaUpload(req.file) : null
     if (saveMedia.err) {
       throw new Error('There is an expected problem in saving file');
     }
-    const createNewTeam = await TeamHelper.createTeam(_user, _host, {...req.body, _host: _host, createdBy: _user, _profilePic: saveMedia.mediaUpload._id});
+    if (saveMedia) {
+      _profilePic = { _profilePic: saveMedia.mediaUpload._id }
+    }
+
+    const createNewTeam = await TeamHelper.createTeam(_user, _host, {...req.body, _host: _host, createdBy: _user, ..._profilePic});
     res.status(200).send({
       status: 1,
       statusCode: 200,
