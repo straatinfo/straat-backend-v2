@@ -148,11 +148,11 @@ async function __removeMember (_user, _team) {
 
 async function __addNewTeam (_user, _host, input) {
   try {
-
+    const _profilePic = input._profilePic ? {_profilePic: input._profilePic} : {}
     // will error if no logo uploaded
     const newConversation = new Conversation({
       _author: _user,
-      _profilePic: input._profilePic,
+      ..._profilePic,
       participants: [{
         _user: _user,
         isActive: true
