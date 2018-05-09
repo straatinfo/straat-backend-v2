@@ -123,6 +123,7 @@ const updateTeam = async (req, res, next) => {
   const { teamId } = req.params;
   try {
     let _profilePic, input;
+    // problem here is always saving upload even it fail to save text input
     if (req.file) {
       const createMU = await MediaUploadHelper.createMediaUpload(req.file);
       if (createMU.err) {
