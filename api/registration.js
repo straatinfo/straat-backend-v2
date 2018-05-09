@@ -9,6 +9,9 @@ const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 const JwtService = require('../service/jwt.service');
 const HostHelper = require('../helpers/host.helper');
 
+// will use till v2 registration fix
+const TeamHelperV2 = require('../helpers/teamV2.helper');
+
 const checkUserInput = async (req, res, next) => {
   const { username, email, teamEmail, teamName, code, city, coordinate, isCoor } = req.body;
   try {
@@ -265,7 +268,7 @@ const registerWithCodeV3 = async (req, res, next) => {
     // create or join team
     let teamInput = {}, createT, requestT, team;
     if (req.body._team) {
-      // if there is team id
+      // if there is team id 
       requestT = await TeamInviteHelper.sendRequest(createU.user._id, req.body._team);
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400);
@@ -303,15 +306,16 @@ const registerWithCodeV3 = async (req, res, next) => {
       }
 
       console.log(teamInput);
-      createT = await TeamHelper.createTeam(createU.user._id, teamInput);
-      if (createT.err) {
-        console.log(createT.err);
-        return ErrorHelper.ClientError(res, {error: 'There was an error in creating team'}, 400);
+      createT = await TeamHelperV2.createTeam(createU.user._id, createU.user._host, teamInput);
+      if (createT.error || !createT._id) {
+        console.log(createT.error);
+        return ErrorHelper.ClientError(res, {error: createT.error || 'There was an error in creating team'}, 400);
       }
-      const addActiveTeam = await UserHelper.updateUser(createU.user._id, {'_activeTeam': createT.team._id});
+      console.log('createTed: ', createT)
+      const addActiveTeam = await TeamHelperV2.setActiveTeam(createU.user._id, createT._id);
       let sendNewTeamRequest;
       if (req.body.isVolunteer != true) {
-        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT.team);
+        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT);
       }
       if (sendNewTeamRequest && sendNewTeamRequest.err) {
         return resolve({err: 'team was created but request to approve was not sent'});

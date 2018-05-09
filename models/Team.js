@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
   teamName: { type: String, required: true, unique: true, index: true },
-  teamEmail: { type: String, required: true, unique: true },
+  teamEmail: { type: String, required: true, unique: true }, // problem in creating new team @may 3 2018
   description: { type: String },
   isVolunteer: { type: Boolean, default: true },
   isApproved: { type: Boolean, default: true },
@@ -22,7 +22,7 @@ const teamSchema = new Schema({
   reports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
   }],
-  _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation', required: true }
+  _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation'}
 }, { timestamps: true });
 
 module.exports = mongoose.model('Team', teamSchema);

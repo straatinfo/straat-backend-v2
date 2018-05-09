@@ -112,7 +112,7 @@ async function __addNewMember (_user, _team) {
     const updateUser = await User.update({'_id': _user}, {'$addToSet': {'teamMembers': saveTM._id}});
     const updateTeam = await Team.update({'_id': _team}, {'$addToSet': {'teamMembers': saveTM._id}});
     const updateConversation = await ConversationHelper.__addParticipant(team._conversation, _user);
-    const updatedTeam = await Team.findById(_team);
+    const updatedTeam = await Team.findById(_team).populate('_profilePic');
     return Promise.resolve(updatedTeam);
   }
   catch (e) {
@@ -148,9 +148,11 @@ async function __removeMember (_user, _team) {
 
 async function __addNewTeam (_user, _host, input) {
   try {
+    const _profilePic = input._profilePic ? {_profilePic: input._profilePic} : {}
+    // will error if no logo uploaded 
     const newConversation = new Conversation({
       _author: _user,
-      _profilePic: input._profilePic,
+      ..._profilePic,
       participants: [{
         _user: _user,
         isActive: true
@@ -185,7 +187,8 @@ async function setActiveTeam (_user, _team) {
   try {
     const memberships = await __findUserTeams(_user);
     const team = _.find(memberships, (m) => {
-      return m._id.toString() === _team;
+      // failed to compare ObjectID to string
+      return m._id.toString() === _team.toString();
     });
     if (!team) {
       return Promise.reject({

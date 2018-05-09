@@ -82,6 +82,56 @@ const getTeamInfoById = (_id) => {
   });
 };
 
+
+
+const getTeamListByUserId = (_user) => {
+  return new Promise((resolve, reject) => {
+   
+    User.findOne({'_id': _user, softRemoved:false})
+    .populate({
+      path: 'teamMembers',
+      populate: {
+        path: '_team',
+        select: { _id: true, teamName: true, teamEmail: true  },
+        populate:[{
+          path: '_conversation',
+          select: { messages: {$slice: -1}}
+        },{
+          path: '_profilePic'
+        }
+
+        ]
+      }
+    })
+    .exec((err, user) => {
+          if (err) {
+            return resolve({err: err});
+          }
+          if(user.teamMembers.length > 0 ) {
+            resolve({err: null, team: user.teamMembers.map((team)=>{
+               return team._team
+            })});
+          }
+
+          resolve({err: null, team: []});
+        });
+
+    // Team.findOne({'_id': _id, 'softRemoved': false })
+    // .populate('teamLeaders')
+    // .populate('teamMembers')
+    // .populate('_profilePic')
+    // .populate('_host', [ '_id', 'hostName', 'email' ])
+    // .exec((err, team) => {
+    //   if (err) {
+    //     return resolve({err: err});
+    //   }
+    //   resolve({err: null, team: team});
+    // });
+  });
+};
+
+
+
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
   return new Promise(async(resolve, reject) => {
@@ -101,7 +151,8 @@ const createTeam = (_user, input) => {
         'description': input.description,
         'isVolunteer': findUser.user.isVolunteer,
         'isApproved': findUser.user.isVolunteer
-      };
+      }; 
+      // problem here cause in ui user will put team email but here team email will be overide by user email
       const newTeam = new Team({...input, ...data});
       newTeam.save(async(err, team) => {
         console.log('team', team);
@@ -537,5 +588,6 @@ module.exports = {
   flatTeam: flatTeam,
   declineTeam: declineTeam,
   getPendingTeamByUser: getPendingTeamByUser,
-  getTeamInfoById
+  getTeamInfoById,
+  getTeamListByUserId
 };

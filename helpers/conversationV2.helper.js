@@ -183,6 +183,10 @@ async function __createTeamChat(_user, _team, _profilePic) {
         message: 'Cannot find team with given ID'
       });
     }
+    if (team._conversation) { //   && mongoose.Types.ObjectId.isValid(team._conversation) not need cause when saving to db record objectID type is required in _convrersation field
+       const Rconversation = await __getConversationById(team._conversation);
+       return Promise.resolve(Rconversation);
+    }
     const participants = _.map(team.teamMembers, (tm) => {
       return {
         _user: tm._user,

@@ -47,6 +47,23 @@ const getTeamInfoById = async (req, res, next) => {
   }
 };
 
+const getTeamListByUserId = async (req, res, next) => {
+  const { _user } = req.params; // this must change ot req.user
+  try {
+    const getTBI = await TeamHelper.getTeamListByUserId(_user);
+    if (getTBI.err) {
+      return ErrorHelper.ClientError(res, {error: getTBI.err}, 400);
+    }
+    SuccessHelper.success(res, getTBI.team);
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res);
+  }
+};
+
+
+
+
 const getTeamWithFilter = async (req, res, next) => {
   const { queryObject } = req.body;
   console.log(queryObject);
@@ -103,29 +120,34 @@ const createTeam = async (req, res, next) => {
 };
 
 const updateTeam = async (req, res, next) => {
-  const { teamId } = req.params;
+  const { teamId } = req.params
+  const newInput = req.body      // must trip unnecessary data first
   try {
-    let _profilePic, input;
+    // save not upload first
+    const updateTe = await TeamHelper.updateTeam(teamId, newInput)
+    if (updateTe.err) {
+      return ErrorHelper.ClientError(res, {error: updateTe.err}, 400)
+    }
+
+    // after success in saving text, saving upload will be safe here
     if (req.file) {
-      const createMU = await MediaUploadHelper.createMediaUpload(req.file);
+      const createMU = await MediaUploadHelper.createMediaUpload(req.file)
       if (createMU.err) {
-        return ErrorHelper.ClientError(res, {error: createMU.err}, 422);
+        return ErrorHelper.ClientError(res, {error: createMU.err}, 422)
       }
-      _profilePic = (createMU.mediaUpload) ? createMU.mediaUpload._id : null;
+      const _profilePic = (createMU.mediaUpload) ? createMU.mediaUpload._id : null
+      if (_profilePic) {
+        const updateT = await TeamHelper.updateTeam(teamId, {_profilePic: _profilePic})
+        if (updateT.err) {
+          return ErrorHelper.ClientError(res, {error: updateT.err}, 400)
+        }
+        return SuccessHelper.success(res, updateT.team)
+      }
     }
-    if (_profilePic) {
-      input = {...req.body, '_profilePic': _profilePic};
-    } else {
-      input = req.body;
-    }
-    const updateT = await TeamHelper.updateTeam(teamId, input);
-    if (updateT.err) {
-      return ErrorHelper.ClientError(res, {error: updateT.err}, 400);
-    }
-    SuccessHelper.success(res, updateT.team);
+    SuccessHelper.success(res, updateTe.team)
   }
   catch (e) {
-    ErrorHelper.ServerError(res);
+    ErrorHelper.ServerError(res)
   }
 };
 
@@ -294,5 +316,6 @@ module.exports = {
   getApprovedTeam: getApprovedTeam,
   approveTeam: approveTeam,
   disApproveTeam: disApproveTeam,
-  getTeamInfoById
+  getTeamInfoById,
+  getTeamListByUserId
 };
