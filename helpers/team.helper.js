@@ -92,7 +92,7 @@ const getTeamListByUserId = (_user) => {
       path: 'teamMembers',
       populate: {
         path: '_team',
-        select: { _id: true, teamName: true  },
+        select: { _id: true, teamName: true, teamEmail: true  },
         populate:[{
           path: '_conversation',
           select: { messages: {$slice: -1}}

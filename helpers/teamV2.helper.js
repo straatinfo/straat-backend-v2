@@ -112,7 +112,7 @@ async function __addNewMember (_user, _team) {
     const updateUser = await User.update({'_id': _user}, {'$addToSet': {'teamMembers': saveTM._id}});
     const updateTeam = await Team.update({'_id': _team}, {'$addToSet': {'teamMembers': saveTM._id}});
     const updateConversation = await ConversationHelper.__addParticipant(team._conversation, _user);
-    const updatedTeam = await Team.findById(_team);
+    const updatedTeam = await Team.findById(_team).populate('_profilePic');
     return Promise.resolve(updatedTeam);
   }
   catch (e) {

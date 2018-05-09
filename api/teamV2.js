@@ -5,6 +5,7 @@ const updateTeam = async (req, res, next) => {
   try {
     const {keyword, _user, _team} = req.query;
     let processTeam;
+     // ma backtic tayo dito
     if (keyword.toLowerCase() === 'setactiveteam') {
       processTeam = await TeamHelper.setActiveTeam(_user, _team);
     } else if (keyword.toLowerCase() === 'setleader') {
@@ -56,9 +57,10 @@ const createTeam = async (req, res, next) => {
     let _profilePic = {}
 
     const saveMedia = req.file ? await MediaUploadHelper.createMediaUpload(req.file) : null
-    if (saveMedia.err) {
+    if (saveMedia && saveMedia.err) {
       throw new Error('There is an expected problem in saving file');
     }
+
     if (saveMedia) {
       _profilePic = { _profilePic: saveMedia.mediaUpload._id }
     }
