@@ -23,7 +23,6 @@ async function __addReporterToConversation (_conversation, _reporter) {
       return Promise.resolve(conversation);
     }
     const addParticipant = await ConversationHelper.__addParticipant(_conversation, _reporter);
-    console.log(addParticipant);
     return Promise.resolve(addParticipant);
   }
   catch (e) {
