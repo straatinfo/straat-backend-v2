@@ -78,7 +78,8 @@ const searchNear = (latlng, options) => {
  */
 const filterGeoJson = (result = [], bound = 'city') => {
   return result.find((nomi) => {
-    if (nomi.address && (nomi.address.county || nomi.address.city || !nomi.address.suburb || !nomi.address.village || !nomi.address.hamlet) && nomi.class === 'boundary') {
+    // if (nomi.address && (nomi.address.county || nomi.address.city || !nomi.address.suburb || !nomi.address.village || !nomi.address.hamlet) && nomi.class === 'boundary') {
+    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {  
       return true
     } else {
       return false
@@ -127,7 +128,7 @@ const getGeoJson = (city, bound = 'city') => {
         if (!error && response.statusCode === 200) {
           // success here
           // when come here that means it has atleast 1 record
-          console.log('result', result)
+          // console.log('result', result)
           const {address, display_name, geojson, lat, lon, osm_id, place_id, type} = result
           return resolve({ name: display_name.split(', ')[0], address_json: address, display_name, geojson, centralPoint: {type: 'Point', coordinates: [ parseFloat(lon), parseFloat(lat) ]}, osm_id, place_id, type, cityName: city })
         }

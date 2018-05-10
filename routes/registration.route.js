@@ -33,3 +33,4 @@ RegistrationRoute.route('/validation/host')
 .post(Registration.checkHostWithCode);
 
 module.exports = RegistrationRoute;
+ 
