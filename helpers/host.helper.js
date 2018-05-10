@@ -326,10 +326,11 @@ const getHostByCoordinates = async (latlng) => {
         const hostList = hosts.hosts.filter((h, i) => h.city ? h.city : false)
         const activeHosts = hostList.map((h, i) => h.city.toUpperCase())
         const specificHost = await CityAreaHelper.searchIntersect(latlng, {cityName: {$in: activeHosts}})
-console.log('hostList', hostList)
+        console.log('hostList', hostList)
         // no specific host - must find nearest host
         if (!specificHost.area) {
           const nearHost = await CityAreaHelper.searchNear(latlng, {cityName: {$in: activeHosts}})
+          // console.log('nearHost', nearHost)
           return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === nearHost.area.cityName.toUpperCase())})
         }
         if (specificHost.err) {

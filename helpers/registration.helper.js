@@ -40,7 +40,7 @@ const getHostId = (code) => {
 }
 
 // use by registration validation
-const getHostIdByCity = (city, coordinate, isCoor) => {
+const getHostIdByCity = (city, coordinate = {longitude: null, latitude: null}, isCoor = false) => {
   return new Promise(async(resolve, reject) => {
     try {
       
@@ -49,7 +49,7 @@ const getHostIdByCity = (city, coordinate, isCoor) => {
       const datas = await CityAreaHelper.getGeoJson(city.toUpperCase())
       if (datas.err) {
         // failed to fetch geoJson
-        return resolve({err: 'invalid city'});
+        return resolve({err: 'Invalid city'});
       }
 
       // use coordinate if pass
@@ -57,7 +57,7 @@ const getHostIdByCity = (city, coordinate, isCoor) => {
       const area = await HostHelper.getHostByCoordinates({lat, lng})
       if (area.err) {
         // failed to fetch geoJson
-        return resolve({err: 'invalid city'});
+        return resolve({err: 'No host available for this city'});
       }
 
       resolve({err: null, _host: area.hosts._id, coordinates: [lng, lat], area: area });
