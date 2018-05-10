@@ -25,7 +25,7 @@ const getUserDetails = async (req, res, next) => {
 };
 
 const updateUserDetails = async (req, res, next) => {
-  const { id } = req.params;
+  const { id } = req.params; // must change with current user _id
   try {
     const updateU = await UserHelper.updateUser(id, req.body);
     if (updateU.err) {

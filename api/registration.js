@@ -23,7 +23,7 @@ const checkUserInput = async (req, res, next) => {
         return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);
       }
       if (checkUsername.user) {
-        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);
+        return ErrorHelper.UserError(res, {error: 'already taken'}, 200);
       }
     }
     // check for email

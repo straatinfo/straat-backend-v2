@@ -95,15 +95,18 @@ const updateUser = (_id, input) => {
   return new Promise((resolve, reject) => {
     // failed to kc userData kunin lang nya ref ng input
     const userData = {
-      email, username, lname, fname, gender, houseNumber, streetName, city, state, country, postalCode, phoneNumber, long, lat, isVolunteer, isBlocked
-    } = input;
+      email: null, username: null, lname: null, fname: null, gender: null,
+      houseNumber: null, streetName: null, city: null, state: null,
+      country: null, postalCode: null, phoneNumber: null, long: null, lat: null,
+      isVolunteer: null, isBlocked: null, _profilePic: null
+    };
 
     // remove empty param
     const toSave = {}
-    for (f in userData) {
-       if(userData[f]) {
-        toSave[f] = userData[f]
-       }
+    for (let f in userData) {
+      if (input[f]) {
+        toSave[f] = input[f]
+      }
     }
 
 
