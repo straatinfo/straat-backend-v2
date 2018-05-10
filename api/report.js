@@ -416,6 +416,18 @@ const getReportAttachments = async (req, res, next) => {
   }
 };
 
+const getPublicReports = async (req, res, next) => {
+  try {
+    const { _reporter } = req.query;
+    const reports = await ReportHelper.getPublicReports(_reporter);
+    SuccessHelper.success(res, reports);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
 module.exports = {
   getReports: getReports,
   getReportById: getReportById,
@@ -431,5 +443,6 @@ module.exports = {
   getReportsByReporterAndTeam: getReportsByReporterAndTeam,
   getReportsByNear: getReportsByNear,
   getReportAttachments: getReportAttachments,
-  getReportByReporterClean
+  getReportByReporterClean,
+  getPublicReports
 };

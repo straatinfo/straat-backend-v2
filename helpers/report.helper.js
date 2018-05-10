@@ -6,6 +6,8 @@ const HostHelper = require('./host.helper');
 const TeamHelper = require('./team.helper');
 const CategoryHelper = require('./category.helper');
 const ConversationHelper = require('./conversationV2.helper');
+const Team = require('../models/Team');
+const User = require('../models/User');
 
 const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
@@ -438,6 +440,24 @@ const getReportAttachments = (_report) => {
       resolve({err: null, attachments: attachments})
     })
   })
+};
+
+const getPublicReports = async (_reporter) => {
+  try {
+    // get teams
+    const reporter = await User.findById(_reporter).populate('teamMembers');
+    const teamQueryGen = reporter.teamMembers.map((tm) => {
+      return { '_team': tm._team };
+    });
+    const reports = await Report.find({'$or': 
+      [ { 'isPublic': true }, { $or: teamQueryGen } ]
+    }).populate('_conversation').populate('attachments');
+    return Promise.resolve(reports);
+
+  }
+  catch (e) {
+    return Promise.reject(e);
+  }
 }
 
 module.exports = {
@@ -455,5 +475,6 @@ module.exports = {
   flatReport: flatReport,
   changeReportStatus: changeReportStatus,
   getReportAttachments: getReportAttachments,
-  getReportByQueryObjectClean
+  getReportByQueryObjectClean,
+  getPublicReports
 }

@@ -8,6 +8,8 @@ const CloudinaryService = require('../service/cloudinary.service');
 const ReportFormValidator = require('../validator/report.validator');
 const FlatReport = require('../middleware/flatReport');
 const ReportMiddleware = require('../middleware/report.middleware');
+const ExpressJoi = require('express-joi-validator');
+const ReportValidation = require('../validation/report.validation');
 
 ReportRoute.route('/')
 .get(/*requireAuth,*/ Report.getReports, FlatReport.getFlatReports)
@@ -26,6 +28,9 @@ ReportRoute.route('/V2')
   Report.createReportV2,
   ReportMiddleware.createReportTypeC
 );
+
+ReportRoute.route('/public')
+.get(ExpressJoi(ReportValidation.getSchema), Report.getPublicReports);
 
 ReportRoute.route('/:id')
 .get(/*requireAuth,*/ Report.getReportById)

@@ -10,12 +10,12 @@ const MessageHelper = require('../helpers/messageV2.helper');
 const getMessages = async function (req, res, next) {
   try {
     const { _message } = req.params;
-    const { keyword, _conversation, page, count } = req.query;
+    const { keyword, _conversation, page, count, _reporter } = req.query;
     let messages;
     if (keyword.toLowerCase() === 'byid' && _message) {
       messages = await MessageHelper.getMessage(keyword, _message);
     } else if (keyword) {
-      messages = await MessageHelper.getMessage(keyword, _conversation, page, count);
+      messages = await MessageHelper.getMessage(keyword, _conversation, _reporter, page, count);
     }
     if (!messages) {
       res.status(400).send({
@@ -34,6 +34,7 @@ const getMessages = async function (req, res, next) {
     }
   }
   catch (e) {
+    console.log(e);
     if (e.statusCode) {
       return res.status(e.statusCode).send(e);
     }

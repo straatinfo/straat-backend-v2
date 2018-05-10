@@ -11,10 +11,28 @@
  const Message = require('../models/Message');
  const Team = require('../models/Team');
  const TeamMember = require('../models/TeamMember');
+ const Report = require('../models/Report');
+ const ConversationHelper = require('./conversationV2.helper');
  
 // Private functions
-async function __getMessages(_conversation) {
+
+async function __addReporterToConversation (_conversation, _reporter) {
   try {
+    const conversation = await Conversation.findById(_conversation).populate('_report');
+    if (!conversation._report) {
+      return Promise.resolve(conversation);
+    }
+    const addParticipant = await ConversationHelper.__addParticipant(_conversation, _reporter);
+    console.log(addParticipant);
+    return Promise.resolve(addParticipant);
+  }
+  catch (e) {
+    return Promise.reject(e);
+  }
+}
+async function __getMessages(_conversation, _reporter) {
+  try {
+    const addParticipant = await __addReporterToConversation(_conversation, _reporter);
     const messages = await Message.find({ '_conversation': _conversation }).populate('_author', ['fname', 'lname', 'username', '_id']).populate('attachments');
     return Promise.resolve(messages);
   }
@@ -33,8 +51,9 @@ async function __getMessageById(_message) {
   }
 }
  
-async function __getLatestMessages(_conversation, page = 1, items = 10) {
+async function __getLatestMessages(_conversation, _reporter, page = 1, items = 10) {
   try {
+    const addParticipant = await __addReporterToConversation(_conversation, _reporter);
     const getPage = Math.max(0, page);
     const messages = await Message.find({ '_conversation': _conversation })
     .populate('_author', ['fname', 'lname', 'username', '_id'])
@@ -96,11 +115,11 @@ async function __deleteMessage(_message) {
 
 function getMessage () {
   if (arguments[0].toLowerCase() === 'all') {
-    return __getMessages(arguments[1]);
+    return __getMessages(arguments[1], arguments[2]);
   } else if (arguments[0].toLowerCase() === 'byid') {
     return __getMessageById(arguments[1]);
   } else if (arguments[0].toLowerCase() === 'latest') {
-    return __getLatestMessages(arguments[1], arguments[2], arguments[3])
+    return __getLatestMessages(arguments[1], arguments[2], arguments[3], arguments[4])
   } else {
     return Promise.reject({ statusCode: 404, error: 'INVALID_KEYWORD', message: 'Invalid first argument' });
   }
