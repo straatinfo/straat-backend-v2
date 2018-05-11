@@ -312,7 +312,7 @@ async function __createGroupChat(_author, title, _profilePic = null) {
     return Promise.reject(e);
   }
 }
-
+ 
 async function __addParticipant(_conversation, _user) {
   try {
     const checkConvo = await Conversation.findById(_conversation);
@@ -333,13 +333,29 @@ async function __addParticipant(_conversation, _user) {
         message: 'Cannot add another participant with private message'
       });
     }
+
+//     // check if user already member 
+//     if (checkConvo.participants.find(party => party._user.toString() === _user.toString())){
+//       console.log('%s is member of %s', _user, _conversation)
+//      // const populatedConvo = await __getConversationById(checkConvo._id);
+//      // console.log('populatedConvo', populatedConvo)
+//       return Promise.resolve({});
+//       // return Promise.resolve(checkConvo);
+//     }
+// //return
+     console.log('%s is not member of %s', _user, _conversation)
+    
     const newParticipant = { '_user': _user, isActive: false };
     const updatedConversation = await Conversation.update(
-      { '_id': _conversation },
+      { '_id': checkConvo._id },
       { '$addToSet': { 'participants': newParticipant  } });
-    const populatedConvo = await __getConversationById(checkConvo._id);
-    const trimedData = _.uniqBy(populatedConvo.participants, (e) => { return e._user.toString(); });
-    const trimedConversation = await Conversation.update({'_id': _conversation}, {'participants': trimedData});
+
+    // const populatedConvo = await __getConversationById(checkConvo._id);
+///console.log('populatedConvo.participants', populatedConvo.participants)
+
+   // const trimedData = _.uniqBy(populatedConvo.participants, (e) => { return e._user.toString(); });
+  //  const trimedConversation = await Conversation.update({'_id': _conversation}, {'participants': trimedData});
+
     const populatedConvo2 = await __getConversationById(checkConvo._id);
     const updateUser = await User.update({'_id': _user}, { '$addToSet': { 'conversations': conversation._id } });
     return Promise.resolve(populatedConvo2);

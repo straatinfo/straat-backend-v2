@@ -418,9 +418,10 @@ const getReportAttachments = async (req, res, next) => {
 
 const getPublicReports = async (req, res, next) => {
   try {
-    const { _reporter } = req.query;
-    const reports = await ReportHelper.getPublicReports(_reporter);
-    SuccessHelper.success(res, reports);
+    const { _reporter, _reportType } = req.query;
+    const reports = await ReportHelper.getPublicReports(_reporter, _reportType);
+    if (reports.err) { return ErrorHelper.ClientError(res, {error: reports.err}, 400); }
+    SuccessHelper.success(res, reports.reports);
   }
   catch (e) {
     console.log(e);

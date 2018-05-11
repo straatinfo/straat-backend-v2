@@ -16,7 +16,7 @@ const getMessages = async function (req, res, next) {
       messages = await MessageHelper.getMessage(keyword, _message);
     } else if (keyword) {
       messages = await MessageHelper.getMessage(keyword, _conversation, _reporter, page, count);
-    }
+    } 
     if (!messages) {
       res.status(400).send({
         status: 0,

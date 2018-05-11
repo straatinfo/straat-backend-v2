@@ -6,7 +6,7 @@ const getSchema = {
     keyword: Joi.string().required().description('Keyword of the service to call, ENUM["all", "byid", "latest"]'),
     page: Joi.number(),
     count: Joi.number(),
-    _reporter: Joi.string()
+    _reporter: Joi.string().required().description('iyak ka '),
   }
 };
 

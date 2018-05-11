@@ -342,8 +342,28 @@ const getReportByQueryObject = (queryObject) => {
   })
 }
 
+const filterExpired = (report, index) =>{
+
+  if (report.status === 'INPROGRESS') {
+    return true
+  }
+  if (report.status === 'NEW') {
+    return true
+  }
+  if (report.status === 'INPROGRESS') {
+    return true
+  }
+  // const present = new Date()
+  // let afterDays = new Date(time)
+  // afterDays.setDate(afterDays.getDate() + days)
+  // return afterDays <= present
+
+  // may be next time
+}
 // not include extra fields
-const getReportByQueryObjectClean = (queryObject) => {
+// getReports
+// isFilter , not include all expired and done + 1day in return obj : base on report Spec
+const getReportByQueryObjectClean = (queryObject, isFilter = false) => {
   return new Promise((resolve, reject) => {
     Report.find({...queryObject})
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
@@ -353,15 +373,18 @@ const getReportByQueryObjectClean = (queryObject) => {
     .populate('_host', ['_id', 'hostName'])
     .populate({
       path: '_conversation',
-      select: { messages: {$slice: -1}}
+      select: { messages: {$slice: -1}, _id: true}
     })
-    .populate('attachments')
+    .populate('attachments', ['_id', 'secure_url'])
     .sort([['createdAt', -1]])
     .exec((err, reports) => {
       if (err) {
         return resolve({err: err})
       }
-      resolve({err: null, reports: reports})
+      if (isFilter) {
+      //  return resolve({err: null, reports: reports.filter(filterExpired)})
+      }
+      return resolve({err: null, reports: reports})
     })
   })
 }
@@ -442,16 +465,34 @@ const getReportAttachments = (_report) => {
   })
 };
 
-const getPublicReports = async (_reporter) => {
+// use by notification in app
+const getPublicReports = async (_reporter, _reportType = null) => {
   try {
     // get teams
-    const reporter = await User.findById(_reporter).populate('teamMembers');
-    const teamQueryGen = reporter.teamMembers.map((tm) => {
-      return { '_team': tm._team };
-    });
-    const reports = await Report.find({'$or': 
-      [ { 'isPublic': true }, { $or: teamQueryGen } ]
-    }).populate('_conversation').populate('attachments');
+    const { teamMembers, _host } = await User.findById(_reporter).populate('teamMembers');
+
+    const teamList = teamMembers.map(tm => tm._team) 
+
+    const extendParam = _reportType ? {_reportType: _reportType} : {}
+
+    const publicReports = {
+      $and: [
+        {_host: _host, ...extendParam},
+        {'$or': [{isPublic: true}, {_team: {$in: teamList}}]},
+        
+        // {'$or':[ { 'isPublic': false }, { $or: teamQueryGen } ]}
+      ]
+    }
+
+       // const publicReports ={_host: _host, _reportType: '5a7888bb04866e4742f74957', _team: {$in: teamList}}
+        // {'$or': [{isPublic: true}, {}]},
+        
+        // {'$or':[ { 'isPublic': false }, { $or: teamQueryGen } ]}
+      
+ //   ).populate('_conversation').populate('attachments');
+
+    const reports = await getReportByQueryObjectClean(publicReports)
+    console.log('publicReports.reports count: ', reports.reports.length)
     return Promise.resolve(reports);
 
   }

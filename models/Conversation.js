@@ -10,7 +10,7 @@ const conversationSchema = new Schema({
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   participants: [{
     _user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    isActive: Boolean
+    isActive: {type: Boolean, default: false}
   }],
   messages: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Message'

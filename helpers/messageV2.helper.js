@@ -22,6 +22,18 @@ async function __addReporterToConversation (_conversation, _reporter) {
     if (!conversation._report) {
       return Promise.resolve(conversation);
     }
+    // filter here if user must add to convo first 
+
+
+    // check if user already member 
+    if (conversation.participants.find(party => party._user.toString() === _reporter.toString())){
+      console.log('%s is member of %s', _reporter, _conversation)
+     // const populatedConvo = await __getConversationById(checkConvo._id);
+     // console.log('populatedConvo', populatedConvo)
+      return Promise.resolve({});
+      // return Promise.resolve(checkConvo);
+    }
+  
     const addParticipant = await ConversationHelper.__addParticipant(_conversation, _reporter);
     return Promise.resolve(addParticipant);
   }
@@ -30,6 +42,7 @@ async function __addReporterToConversation (_conversation, _reporter) {
   }
 }
 async function __getMessages(_conversation, _reporter) {
+  console.log(_reporter)
   try {
     const addParticipant = await __addReporterToConversation(_conversation, _reporter);
     const messages = await Message.find({ '_conversation': _conversation }).populate('_author', ['fname', 'lname', 'username', '_id']).populate('attachments');
@@ -113,6 +126,7 @@ async function __deleteMessage(_message) {
 }
 
 function getMessage () {
+  console.log(arguments)
   if (arguments[0].toLowerCase() === 'all') {
     return __getMessages(arguments[1], arguments[2]);
   } else if (arguments[0].toLowerCase() === 'byid') {
