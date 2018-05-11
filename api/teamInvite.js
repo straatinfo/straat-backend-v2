@@ -2,6 +2,8 @@ const SuccessHelper = require('../helpers/success.helper');
 const ErrorHelper = require('../helpers/error.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
 const TeamMemberHelper = require('../helpers/teamMember.helper');
+const ConversationHelper = require('../helpers/conversationV2.helper');
+const Team = require('../models/Team');
 
 const checkInviteExist = async (req,res, next) => {
   const { teamId, userId } = req.params;
@@ -149,6 +151,13 @@ const acceptRequest = async (req, res, next) => {
       // failed to save teamMember on team, user
       return ErrorHelper.ServerError(res);
     }
+// will fixed later
+    const team = await Team.findById(teamId);
+    // adding usere to team convo
+    if( team && team._conversation ) {
+    const addMemberToChat = await ConversationHelper.__addParticipant(team._conversation, userId); // v2
+    }
+
     console.log('acceptR', acceptR)
     SuccessHelper.success(res, {message: 'Success'});
   }
