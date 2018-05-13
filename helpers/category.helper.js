@@ -327,9 +327,8 @@ const getMainCategoriesGeneral = () => {
       if (!freeHost) {
         return resolve({err: 'Cannot fetch freehost data'});
       }
-      MainCategory.find({'_host': freeHost.host._id}, {_id: true, name: true, description: true})
-      .populate('subCategories', ['_id', 'name', 'description'])
-      .populate('_reportType', ['_id', 'code', 'name', 'description'])
+      MainCategory
+      .Filter({'_host': freeHost.host._id}, true)
       .exec(function (err, mainCategories) {
         if (err) {
           return resolve({err: err});
