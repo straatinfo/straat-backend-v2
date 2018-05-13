@@ -11,7 +11,8 @@ module.exports = function (io) {
   	// this will bind all lister fo client socket
 
   	// shift to this style so binding will only need reference and minimum memmory need per route
-    socket.on('send-message-v2', (args) => { SocketApi.onSendMessage(io, socket, user, args) })
+    socket.on('send-message-v2', (args, cb) => { SocketApi.onSendMessage(io, socket, user, args, cb) })
+    // cb(socket.id)
  }) 
 }
   
