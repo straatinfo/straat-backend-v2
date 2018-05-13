@@ -106,9 +106,12 @@ async function __getUserConversationByType(_user, type) {
   }
 }
 
-async function __getConversationById(_conversation) {
+async function __getConversationById (_conversation) {
   try {
-    const conversation = await Conversation.findById(_conversation).populate('_profilePic').populate('_author', ['_id', 'username']);
+    const conversation = await Conversation.findById(_conversation).populate('_profilePic')
+    .populate('_author', ['_id', 'username'])
+    .populate({path: '_report', select: ['_id', '_reportType'], populate: {path: '_reportType', select: ['_id', 'name', 'code']}});
+    
     if (!conversation) {
       return Promise.reject({
         statusCode: 404,
