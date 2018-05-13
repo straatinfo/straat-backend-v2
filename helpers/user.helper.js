@@ -183,7 +183,8 @@ const forgotPassword = (email, newPassword) => {
       // update user password
       const userInstance = new User();
       const encryptedPassword = userInstance.encryptPassword(newPassword);
-      const updateU = await updateUser(checkU.user._id, {'password': encryptedPassword});
+      const updateU = await User.findByIdAndUpdate(checkU.user._id, {'password': encryptedPassword}); // updateUser(checkU.user._id, {'password': encryptedPassword});
+      console.log(updateU);
       if (updateU.err) {
         return resolve({err: updateU.err});
       }
@@ -210,7 +211,7 @@ const activateUser = (email, newPassword) => {
       // update user password
       const userInstance = new User();
       const encryptedPassword = userInstance.encryptPassword(newPassword);
-      const updateU = await updateUser(checkU.user._id, {'password': encryptedPassword, 'isActivated': true});
+      const updateU = await User.findByIdAndUpdate(checkU.user._id, {'password': encryptedPassword, 'isActivated': true});
       if (updateU.err) {
         return resolve({err: updateU.err});
       }
@@ -233,7 +234,7 @@ const deactivateUser = (email) => {
       if (!checkU.user) {
         return resolve({err: 'Invalid email'});
       }
-      const updateU = await updateUser(checkU.user._id, {'password': null, 'isActivated': false});
+      const updateU = await User.findByIdAndUpdate(checkU.user._id, {'password': encryptedPassword, 'isActivated': true});
       if (updateU.err) {
         return resolve({err: updateU.err});
       }
@@ -251,7 +252,7 @@ const changePassword = (_user, newPassword) => {
       // update user password
       const userInstance = new User();
       const encryptedPassword = userInstance.encryptPassword(newPassword);
-      const updateU = await updateUser(_user, {'password': encryptedPassword});
+      const updateU = await await User.findByIdAndUpdate(_user, {'password': encryptedPassword, 'isActivated': true});
       if (updateU.err) {
         return resolve({err: updateU.err});
       }
