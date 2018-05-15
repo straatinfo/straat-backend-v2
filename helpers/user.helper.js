@@ -54,7 +54,7 @@ const findUserById = (id) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked', 'isPatron',
       'hostName', 'username', '_host', 'isVolunteer',
-      '_profilePic'
+      '_profilePic', 'language'
     ])
     .populate({
       path: '_host',
