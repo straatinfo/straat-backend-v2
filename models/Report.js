@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const reportSchema = new Schema({
   generatedReportId: { type: String },
@@ -23,9 +23,9 @@ const reportSchema = new Schema({
 
   finishedDate: { type: Date },
   causeOfFinished: { type: String },
-  reportCoordinate : {
+  reportCoordinate: {
     type: {type: String, enum: 'Point', default: 'Point'},
-    coordinates: { type: [Number],default:[0,0]}
+    coordinates: { type: [Number], default: [0, 0]}
   },
   attachments: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload'
@@ -37,8 +37,19 @@ const reportSchema = new Schema({
   _subCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' },
   _team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
   _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' }
-}, { timestamps: true });
+}, { timestamps: true })
 
-reportSchema.index({reportCoordinate: '2dsphere'});
+reportSchema.index({reportCoordinate: '2dsphere'})
+// will contiue later
+// reportSchema.statics.Filter = function (filter, isMinify = true, cb) {
+//   if (isMinify) {
+//     return this.find(filter, {_id: true, name: true, description: true})
+//     .populate('subCategories', ['_id', 'name', 'description'])
+//     .populate('_reportType', ['_id', 'code', 'name', 'description'])
+//   }
+//   return this.find(filter)
+//     .populate(['subCategories', '_reportType'])
+// }
 
-module.exports = mongoose.model('Report', reportSchema);
+
+module.exports = mongoose.model('Report', reportSchema)

@@ -14,14 +14,40 @@ const mainCategorySchema = new Schema({
   }]
 }, {timestamps: true})
 
-mainCategorySchema.statics.Filter = function (filter, isMinify = true, cb) {
+//
+//   methods
+//
+//
+
+const mini = function (obj) {
+  return obj
+   .populate('subCategories', ['_id', 'name', 'description'])
+   .populate('_reportType', ['_id', 'code', 'name', 'description'])
+}
+const full = function (obj) {
+  return obj.populate(['subCategories', '_reportType'])
+}
+
+mainCategorySchema.statics.minifyOne = function (query, isMinify = true, cb) {
   if (isMinify) {
-    return this.find(filter, {_id: true, name: true, description: true})
-    .populate('subCategories', ['_id', 'name', 'description'])
-    .populate('_reportType', ['_id', 'code', 'name', 'description'])
+    return mini(
+      this.findById(query, {_id: true, name: true, description: true})
+    )
   }
-  return this.find(filter)
-    .populate(['subCategories', '_reportType'])
+  return full(
+    this.findById(query, {_id: true, name: true, description: true})
+  )
+}
+
+mainCategorySchema.statics.minify = function (query, isMinify = true, cb) {
+  if (isMinify) {
+    return mini(
+      this.find(query, {_id: true, name: true, description: true})
+    )
+  }
+  return full(
+    this.find(query, {_id: true, name: true, description: true})
+  )
 }
 
 module.exports = mongoose.model('MainCategory', mainCategorySchema)
