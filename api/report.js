@@ -36,12 +36,15 @@ const getReportById = async (req, res, next) => {
       const report = await ReportHelper.flatReport(getR.report);
       if (report.err) {
         return ErrorHelper.ClientError(res, {error: report.err}, 400);
-      }
+      } 
       return SuccessHelper.success(res, report.report);
     }
-    SuccessHelper.success(res, getR.report);
+    req.result = getR.report
+    return next()
+    // SuccessHelper.success(res, getR.report);
   }
   catch (e) {
+    console.log(e)
     ErrorHelper.ServerError(res);
   }
 }
@@ -273,7 +276,9 @@ const getReportByReporterClean = async (req, res, next) => {
     if (getRBR.err) {
       return ErrorHelper.ClientError(res, {error: getRBR.err}, 400);
     }
-    SuccessHelper.success(res, getRBR.reports);
+    req.reports = getRBR.reports
+    return next()
+    // SuccessHelper.success(res, getRBR.reports);
   }
   catch (e) {
     ErrorHelper.ServerError(res);
@@ -337,16 +342,14 @@ const getReportsByNear = async (req, res, next) => {
                 } 
              }
           };
-    const getRNB = await ReportHelper.getReportByQueryObjectClean(queryObject);
-    if (getRNB.err) {
-      return ErrorHelper.ClientError(res, {error: getRNB.err}, 400);
+    const { reports, err } = await ReportHelper.getReportByQueryObjectClean(queryObject, false);
+    if ( err) {
+      return ErrorHelper.ClientError(res, {error:  err}, 400);
     }
-    if (req.query.flat) {
-      const data = getRNB.reports;
-      req.reports = data;
-      return next();
-    }
-    SuccessHelper.success(res, getRNB.reports);
+
+    req.reports = reports
+    return next()
+    // SuccessHelper.success(res, result);
   }
   catch (e) {
     console.log(e)
@@ -421,7 +424,9 @@ const getPublicReports = async (req, res, next) => {
     const { _reporter, _reportType } = req.query;
     const reports = await ReportHelper.getPublicReports(_reporter, _reportType);
     if (reports.err) { return ErrorHelper.ClientError(res, {error: reports.err}, 400); }
-    SuccessHelper.success(res, reports.reports);
+    req.reports = reports.reports
+    return next()
+    //SuccessHelper.success(res, reports.reports);
   }
   catch (e) {
     console.log(e);

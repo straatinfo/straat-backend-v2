@@ -8,6 +8,7 @@ const CategoryHelper = require('./category.helper');
 const ConversationHelper = require('./conversationV2.helper');
 const Team = require('../models/Team');
 const User = require('../models/User');
+ 
 
 const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
@@ -363,7 +364,7 @@ const filterExpired = (report, index) =>{
 // not include extra fields
 // getReports
 // isFilter , not include all expired and done + 1day in return obj : base on report Spec
-const getReportByQueryObjectClean = (queryObject, isFilter = false) => {
+const getReportByQueryObjectClean = (queryObject, isFilter = false, language='') => {
   return new Promise((resolve, reject) => {
     Report.find({...queryObject})
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
@@ -377,13 +378,14 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false) => {
     })
     .populate('attachments', ['_id', 'secure_url'])
     .sort([['createdAt', -1]])
-    .exec((err, reports) => {
+    .exec(async(err, reports) => {
       if (err) {
         return resolve({err: err})
       }
-      if (isFilter) {
+      if (isFilter) { 
       //  return resolve({err: null, reports: reports.filter(filterExpired)})
       }
+
       return resolve({err: null, reports: reports})
     })
   })
