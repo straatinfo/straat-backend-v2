@@ -1,80 +1,86 @@
 const LanguageHelper = require('../helpers/language.helper')
 
-const __translating = async function (translated, obje, field, code) {
-  // key
-  const toSearch = obje.toObject()
-  const serchText = toSearch[field]
-
-  toSearch['trans'] = serchText
-  
-  if (!toSearch[field]) {
-    /// gago ka null value
-    toSearch[field] = toSearch.name
-    return Promise.resolve(toSearch)
-  }
-
-  if (translated.srch(serchText)) {
-   ///  toSearch.name = translated[toSearch.name]toSearch
-    toSearch[field] = translated[serchText]
-    return Promise.resolve(toSearch)
-  } else {
-    const record = await LanguageHelper.getTranslation(toSearch.name)
-    if (record.translations) {
-      const words = record.translations.find(translations => translations.code === code) // get only in by code
-      if (words.word) {
-        toSearch[field] = translated.insert(serchText, words.word) // translated[serchText] = words.word
-       // toSearch.name = translated[toSearch.name]
-       // toSearch[field] = serchText
-        return Promise.resolve(toSearch)
-      }
-    }
-    toSearch[field] = translated.insert(serchText, serchText)
-   // translated[serchText] = toSearch.name
-   // toSearch.name = translated[toSearch.name]
-  //  serchText
-
-    return Promise.resolve(toSearch)
-  }
-}
-
-const translate = function (categories, code = 'en') {
-  const TransCollection = { // inside: if this outside this will cause memory issue
+const TransCollection = function () {        // inside: if this outside this will cause memory issue
+  return {
     srch: function (key) {
       return this['X-' + key]
     },
     insert: function (key, value) {
       this['X-' + key] = value
-
       return value
     }
   }
-
-  return new Promise(async(resolve, reject) => {
-    console.log('categories', categories)
-
-  // check in store if not exist then get item form db
-    const result = await Promise.all(categories.map(async function (category, index) {
-      return __translating(TransCollection, category, 'name', code)
-    })
-  )
-    console.log('translated: ', TransCollection)
-    resolve(result)
-
-  // await Promise.all(
-
-  //   .map(async(mc) => {
-  //     const translations = await LanguageHelper.getTranslation(mc.name);
-  //     return {...mc.toObject(), translations: translations.translations};
-  //   })
-  })
-  // Promise.resolve(categories)
 }
 
-    // const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
-    //   const translations = await LanguageHelper.getTranslation(mc.name);
-    //   return {...mc.toObject(), translations: translations.translations};
-    // }));
+const getItem = function (path, obj) {
+  if (!path) { // return if no root given
+    return obj
+  }
+
+  return path.split('.').reduce(function (prev, curr) {
+    return prev ? prev[curr] : false
+  }, obj || self)
+}
+
+const __translating = async function (translated, obje, root, field, code) {
+  // the problem here is how  if fields is object not sstring
+  if (!obje) {
+    return
+  }
+  // key
+  const toSearch = obje.toObject ? obje.toObject() : obje
+ // const serchText = toSearch[field]
+  const item = getItem(root, toSearch)       // get define obj
+
+  if (!item || (item && !item[field])) {
+    return Promise.resolve(toSearch)
+  }
+  const serchText = item[field]
+  // toSearch['trans'] = serchText           // for test
+
+  if (translated.srch(serchText)) {
+    // console.log('exist: ', serchText)
+    item[field] = translated.srch(serchText) // set translated to return
+    return Promise.resolve(toSearch)
+  } else {                                   // no trans in collection so it will query to db
+    const record = await LanguageHelper.getTranslation(serchText)
+    if (record.translations) {
+      const words = record.translations.find(translations => translations.code === code) // get only in by code
+      if (words && words.word) {
+        item[field] = translated.insert(serchText, words.word)
+        // console.log(item[field], ' : ', serchText)
+        return Promise.resolve(toSearch)
+      }
+    }
+    item[field] = translated.insert(serchText, serchText)
+    return Promise.resolve(toSearch)         // return trans if not found any
+  }
+}
+
+/**
+ * @description translate qurery result
+ * @param {_categories} root
+ * @param {name} field
+ * @param {nl} code
+ * @param {dbDoc} model
+ * @param {TransCollection} transCollection use in recursive translation
+ * @returns {Promises} array of promises
+ * @example (reports, '_categories', 'name', 'nl')
+ *
+ */
+const translate = function (model, root, field, code = 'en', transCollection = new TransCollection()) {
+  if(!model) {
+    return
+  }
+  if (model.map) {
+    return Promise.all(model.map(function (entries, index) {
+      return __translating(transCollection, entries, root, field, code)
+    }))
+  }
+ return  __translating(transCollection, model, root, field, code)
+}
 
 module.exports = {
+  TransCollection,
   translate
 }
