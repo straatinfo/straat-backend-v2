@@ -6,10 +6,14 @@ const Report = require('../api/report');
 const ReportRoute = express.Router();
 const CloudinaryService = require('../service/cloudinary.service');
 const ReportFormValidator = require('../validator/report.validator');
-const FlatReport = require('../middleware/flatReport');
-const ReportMiddleware = require('../middleware/report.middleware');
 const ExpressJoi = require('express-joi-validator');
 const ReportValidation = require('../validation/report.validation');
+
+const FlatReport = require('../middleware/flatReport');
+const TransReport = require('../middleware/transReport');
+const ReportMiddleware = require('../middleware/report.middleware');
+
+
 
 ReportRoute.route('/')
 .get(/*requireAuth,*/ Report.getReports, FlatReport.getFlatReports)
@@ -30,10 +34,10 @@ ReportRoute.route('/V2')
 );
 
 ReportRoute.route('/public')
-.get(ExpressJoi(ReportValidation.getSchema), Report.getPublicReports);
+.get(ExpressJoi(ReportValidation.getSchema), Report.getPublicReports, TransReport.translate, FlatReport.getFlatReports);
 
 ReportRoute.route('/:id')
-.get(/*requireAuth,*/ Report.getReportById)
+.get(/*requireAuth,*/ Report.getReportById, TransReport.translateOnly)
 .put(/*requireAuth,*/ Report.updateReport)
 .delete(/*requireAuth,*/ Report.deleteReport);
 
@@ -58,11 +62,11 @@ ReportRoute.route('/myReport/:reporterId/:teamId')
 
 // used by app
 ReportRoute.route('/near/:long/:lat/:radius')
-.get(/* requireAuth, */ Report.getReportsByNear);
+.get(/* requireAuth, */ Report.getReportsByNear, TransReport.translate, FlatReport.getFlatReports);
 
 // used by app old '/reporter/:reporterId'
 ReportRoute.route('/clean/reporter/:reporterId')
-.get(/* requireAuth, */ Report.getReportByReporterClean);
+.get(/* requireAuth, */ Report.getReportByReporterClean, TransReport.translate, FlatReport.getFlatReports);
 
 ReportRoute.route('/attachments/:reportId')
 .get(/* requireAuth, */Report.getReportAttachments);

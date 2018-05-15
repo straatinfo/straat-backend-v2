@@ -6,6 +6,7 @@ const requireAuth = passport.authenticate('jwt', {session: false});
 const MainCategoryValidator = require('../validator/mainCategory.validator');
 const SubCategoryValidator = require('../validator/subCategory.validator');
 const CategoryMiddleware = require('../middleware/category.middleware');
+const TransMaincategory = require('../middleware/transMaincategory');
 
 const Category = require('../api/category');
 const CategoryRoute = express.Router();
@@ -30,10 +31,10 @@ CategoryRoute.route('/subCategory/:subCategoryId')
 .delete(/*requireAuth,*/ Category.deleteSubCategory);
 
 CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral, Category.createMainCategory);
+.get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
 
 CategoryRoute.route('/mainCategory/general')
-.get(/*requireAuth,*/ Category.getGeneralMainCategories, CategoryMiddleware.getFlatMainCategory)
+.get(/*requireAuth,*/ Category.getGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
 .post(/*requireAuth,*/  Category.createGeneralMainCategory);
 
 
