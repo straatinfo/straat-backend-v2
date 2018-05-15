@@ -301,9 +301,8 @@ const getMainCategoryByHostWithFreeHost = (_host) => {
 const getMainCategoriesByHost = (_host) => {
   return new Promise(async(resolve, reject) => {
     try { 
-      MainCategory.find({'_host': _host}, {_id: true, name: true, description: true})
-      .populate('subCategories', ['_id', 'name', 'description'])
-      .populate('_reportType', ['_id', 'code', 'name', 'description'])
+      MainCategory
+      .minify({'_host': _host}, true)
       .exec(function (err, mainCategories) {
         if (err) {
           return resolve({err: err});
@@ -317,30 +316,30 @@ const getMainCategoriesByHost = (_host) => {
   });
 };
 
-const getMainCategoriesGeneral = () => {
+const getMainCategoriesGeneral = (language) => {
   return new Promise(async(resolve, reject) => {
     try {
-      const freeHost = await HostHelper.getFreeHost();
+      const freeHost = await HostHelper.getFreeHost()
       if (freeHost.err) {
-        return resolve({err: freeHost.err});
+        return resolve({err: freeHost.err})
       }
       if (!freeHost) {
-        return resolve({err: 'Cannot fetch freehost data'});
+        return resolve({err: 'Cannot fetch freehost data'})
       }
       MainCategory
-      .Filter({'_host': freeHost.host._id}, true)
-      .exec(function (err, mainCategories) {
+      // .minifyOne('5af3527ec38e980014415ea0', true)
+      .minify({'_host': freeHost.host._id}, true)
+      .exec(async function (err, mainCategories) {
         if (err) {
           return resolve({err: err});
         }
-        resolve({err: null, mainCategories: mainCategories});
-      });
+        return resolve({err: null, mainCategories: mainCategories})
+      })
+    } catch (e) {
+      reject(e)
     }
-    catch(e) {
-      reject(e);
-    }
-  });
-};
+  })
+}
 
 const flatMainCategory = (m) => {
   return new Promise(async(resolve, reject) => {
