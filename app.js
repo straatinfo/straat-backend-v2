@@ -12,6 +12,7 @@ const MongoStore = require('connect-mongo')(session);
 const morgan = require('morgan');
 const Route = require('./routes');
 const TokenService = require('./service/token.service');
+const ReportHousekeeping = require('./middleware/housekeeping/report.housekeeping');
 const cors = require('cors');
 const Config = require('./config');
 var Boom = require('./middleware/error-handling/boom');
@@ -55,5 +56,9 @@ app.use(function(req, res, next) {
 
 Route(app);
 app.use(Boom);
+
+setInterval(function () {
+  ReportHousekeeping.updateExpiredReports();
+}, 43200000);
 
 module.exports = app;
