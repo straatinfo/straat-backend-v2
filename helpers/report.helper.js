@@ -228,12 +228,13 @@ const createReport = (input) => {
         if (updateReporter.err || updateHost.err || updateReportType.err || updateMainCategory.err || updateTeam.err) {
           return resolve({err: 'Error on updating related schema'})
         }
-        const getR = await getReportById(report._id)
+        // const getR = await getReportById(report._id)
+        const createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
+        const getR = await getReportByQueryObjectClean({_id: report._id})
         if (getR.err) {
           return resolve({err: getR.err})
         }
-        const createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
-        resolve({err: null, report: getR.report})
+        return resolve({err: null, report: getR.reports[0]})
       } catch (e) {
         reject(e)
       }
@@ -368,10 +369,10 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false, language='')
   return new Promise((resolve, reject) => {
     Report.find({...queryObject})
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
-    .populate('_reporter', ['_id', 'fname', 'lname', 'username'])
+    .populate('_reporter', ['_id', 'username'])
     .populate('_mainCategory', ['_id', 'name', 'description'])
     .populate('_subCategory', ['_id', 'name', 'description'])
-    .populate('_host', ['_id', 'hostName'])
+    .populate('_host', ['_id', 'hostName','email'])
     .populate({
       path: '_conversation',
       select: { messages: {$slice: -1}, _id: true}

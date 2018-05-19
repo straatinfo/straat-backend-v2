@@ -76,14 +76,21 @@ const searchNear = (latlng, options) => {
  * @param {} nominatim
  *
  */
-const filterGeoJson = (result = [], bound = 'city') => {
+const filterGeoJson = (result = [], bound = 'city', inset = false) => {
   return result.find((nomi) => {
     // if (nomi.address && (nomi.address.county || nomi.address.city || !nomi.address.suburb || !nomi.address.village || !nomi.address.hamlet) && nomi.class === 'boundary') {
+    // use by registration for getting host of city or bound by it
+    if (inset 
+      && (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.village || nomi.address.hamlet))) {
+       return true
+    }
+
     if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {  
       return true
     } else {
       return false
     }
+
   })
 }
 
@@ -93,7 +100,7 @@ const filterGeoJson = (result = [], bound = 'city') => {
  * @param {*} bound - 'city' & 'county'
  */
 
-const getGeoJson = (city, bound = 'city') => {
+const getGeoJson = (city, bound = 'city', inset = false) => {
   return new Promise((resolve, reject) => {
     const options = {
       // url: 'https://nominatim.openstreetmap.org/search/' + city + '?polygon_geojson=1&limit=1&addressdetails=1&format=json&countrycodes=NL,PH',
@@ -118,7 +125,7 @@ const getGeoJson = (city, bound = 'city') => {
           //throw new Error(error)
         }
 
-        const result = filterGeoJson(JSON.parse(body), bound)
+        const result = filterGeoJson(JSON.parse(body), bound, inset)
 
         if (!result) {
           return resolve({err: 'no data in: ' + city})
