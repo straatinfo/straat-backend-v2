@@ -46,7 +46,7 @@ const getHostIdByCity = (city, coordinate = {longitude: null, latitude: null}, i
       
 
       // get coordinate first
-      const datas = await CityAreaHelper.getGeoJson(city.toUpperCase())
+      const datas = await CityAreaHelper.getGeoJson(city.toUpperCase(), 'city', true)
       if (datas.err) {
         // failed to fetch geoJson
         return resolve({err: 'Invalid city'});
