@@ -24,12 +24,13 @@ const createReportTypeC = async (req, res, next) => {
         if (createR.err) {
           return error.push(createR.err);
         } 
-        // send emails
+        // send emails 
         const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt } = createR.report;
         const { code } = _reportType;
         switch (code.toUpperCase()) {
           case 'C':
-            const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, _mainCategory.name, location);
+           // bakit _reporter email tong andito?
+            const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, _mainCategory ? _mainCategory.name || null : null, location);
             if (sendReportCNotifToReporter.err) {
               error.push('Unable to send mail notifications at this time');
             }
@@ -38,6 +39,7 @@ const createReportTypeC = async (req, res, next) => {
             null
           break;
         }
+      
         // send photos
         if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
           const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
@@ -45,20 +47,23 @@ const createReportTypeC = async (req, res, next) => {
             // wil be return after change the model in public_id to not unique
             const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, {...photo, public_id: photo.public_id + '##' + createR.report._id});
             if (savePhoto.err) {
-              console.log(savePhoto.err);
               return savePhoto.err;
-            }
+            } 
             return savePhoto.reportPhoto;
           }));
-          return success.push(createR.report);
+          // return success.push(createR.report);
         }
     
-        success.push(createR.report);
+
+        const getR = await ReportHelper.getReportByQueryObjectClean({_id: createR.report._id});
+        success.push(getR.reports[0]);
       }
       catch (e) {
+        console.log('error in type c: ', e)
         error.push(e);
       }
     }));
+
     SuccessHelper.success(res, {error, success});
   }
   catch (e) {

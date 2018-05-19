@@ -131,7 +131,7 @@ const createReport = async (req, res, next) => {
 const createReportV2 = async (req, res, next) => {
   try {
     if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
-      return next();
+      return next(); 
     }
     const getGeneratedCode = await ReportHelper.reportIdGenerator(req.body._reportType);
     if (getGeneratedCode.err) {
@@ -269,7 +269,7 @@ const getReportByReporter = async (req, res, next) => {
 
 // clean reports list
 const getReportByReporterClean = async (req, res, next) => {
-  const { reporterId } = req.params;
+  const { reporterId } = req.params
   try {
     const queryObject = {'_reporter': reporterId};
     const getRBR = await ReportHelper.getReportByQueryObjectClean(queryObject);
@@ -325,7 +325,7 @@ const getReportNearBy = async (req, res, next) => {
 };
 
 const getReportsByNear = async (req, res, next) => {
-  const { long, lat, radius } = req.params;
+  const { long, lat, radius } = req.params
   try {
     if (!req.params || !long || !lat || !radius) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Parameters'}, 200);

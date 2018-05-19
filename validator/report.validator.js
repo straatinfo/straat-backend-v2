@@ -5,15 +5,20 @@ const ReportHelper = require('../helpers/report.helper');
 const ReportTypeHelper = require('../helpers/reportType.helper');
 
 const reportFormValidator = async (req, res, next) => {
+//
+
+// here must be validate all required fields
+ 
+
+//
   try {
     const messages = [];
     req.checkBody('_reportType', 'Report Type Cannot be empty').notEmpty();
 
-    const checkReportType = await ReportTypeHelper.getReportTypeById(req.body._reportType);
-    if (checkReportType.err) {
+    const checkReportType = await ReportTypeHelper.getReportTypeById(req.body._reportType); // this is wrong; so big response
+    if (checkReportType.err || !checkReportType.reportType) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Report Type'}, 400);
     }
-
     const { code } = checkReportType.reportType;
     req.reportTypeCode = code;
     if (code.toUpperCase() === 'A') {
@@ -82,6 +87,7 @@ const reportFormValidator = async (req, res, next) => {
     next();
   }
   catch (e) {
+    // console.log(e)
     ErrorHelper.ServerError(res);
   }
 };
