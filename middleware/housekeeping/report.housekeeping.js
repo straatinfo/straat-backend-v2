@@ -30,4 +30,3 @@ const updateExpiredReports = async () => {
 module.exports = {
   updateExpiredReports
 };
-
