@@ -151,7 +151,8 @@ const createReportV2 = async (req, res, next) => {
     const subName =  _subCategory ?_subCategory.name : ''
     switch (code.toUpperCase()) {
       case 'A':
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location );
+        const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location, reportDeeplink );
         const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, null, location, createdAt, mainName, subName);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
           return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
