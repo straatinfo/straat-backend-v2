@@ -254,7 +254,7 @@ async function __createReportChat (_user, _team, _report, _profilePic) {
     let reportConversation;
     
     // get report chat ttile first
-    const report = await Report.findById(_report).populate(_mainCategory, ['name'])
+    const report = await Report.findById(_report).populate('_mainCategory', ['name'])
     const title = ReportTrans.getReportChatTitle(report)
 
     if (_profilePic) {
