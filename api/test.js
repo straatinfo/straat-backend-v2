@@ -11,6 +11,12 @@ const testFunction = (req, res, next) => {
   res.end()
 }
 
+const validateCity =  async function (req, res, next) {
+  const { city } = req.params
+  const result = await CityAreaHelper.getGeoJson(city, 'city', true)
+  res.send(result)
+}
+
 const testGetUserConvo = async (req, res, next) => {
   console.log(req.query)
   const { _user } = req.query
@@ -3645,5 +3651,6 @@ module.exports = {
   geoParseGeometries,
   host,                    // get host data test
   getHostList,
-  testGetUserConvo
+  testGetUserConvo,
+  validateCity
 }

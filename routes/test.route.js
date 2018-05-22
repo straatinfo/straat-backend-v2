@@ -49,8 +49,12 @@ TestRoute.route('/')
 // .get(Test.getHostList)
 
 
-TestRoute.route('/convo')
-.get(Test.testGetUserConvo)
+// TestRoute.route('/convo')
+// .get(Test.testGetUserConvo)
+
+// TestRoute.route('/validateCity/:city')
+// .get(Test.validateCity)
+
 
 
 
