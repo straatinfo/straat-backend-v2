@@ -12,6 +12,7 @@ const Message = require('../models/Message');
 const Team = require('../models/Team');
 const TeamMember = require('../models/TeamMember');
 const Report = require('../models/Report');
+const ReportTrans = require('../transform/report.trans');
 const _ = require('lodash');
 
 // private functions
@@ -251,9 +252,14 @@ async function __createReportChat (_user, _team, _report, _profilePic) {
       }
     });
     let reportConversation;
+    
+    // get report chat ttile first
+    const report = await Report.findById(_report).populate(_mainCategory, ['name'])
+    const title = ReportTrans.getReportChatTitle(report)
+
     if (_profilePic) {
       reportConversation = new Conversation({
-        'title': `Report Chat for Report ID: ${_report}`,
+        'title': title,
         '_author': _user,
         'type': 'REPORT',
         '_report': _report,
@@ -262,7 +268,7 @@ async function __createReportChat (_user, _team, _report, _profilePic) {
       });
     } else {
       reportConversation = new Conversation({
-        'title': `Report Chat for Report ID: ${_report}`,
+        'title': title,
         'type': 'REPORT',
         '_author': _user,
         '_report': _report,
