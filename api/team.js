@@ -1,10 +1,16 @@
 const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const TeamHelper = require('../helpers/team.helper');
+const UserHelper = require('../helpers/user.helper');
 const MediaUploadHelper = require('../helpers/mediaUpload.helper');
 const ConversationHelper = require('../helpers/conversationV2.helper');
 const Team = require('../models/Team');
+const User = require('../models/User');
+const TeamInvite = require('../models/TeamInvite');
+const TeamInviteHelper = require('../helpers/teamInvite.helper');
+const TeamTransform = require('../transform/team.transform');
 const _ = require('lodash');
+
 
 const getTeams = async (req, res, next) => {
   try {
@@ -50,13 +56,32 @@ const getTeamInfoById = async (req, res, next) => {
 const getTeamListByUserId = async (req, res, next) => {
   const { _user } = req.params; // this must change ot req.user
   try {
-    const getTBI = await TeamHelper.getTeamListByUserId(_user);
-    if (getTBI.err) {
-      return ErrorHelper.ClientError(res, {error: getTBI.err}, 400);
+    const { team: teams, err } = await TeamHelper.getTeamListByUserId(_user)
+    if (err) {
+      return ErrorHelper.ClientError(res, {error: err}, 400);
     }
-    SuccessHelper.success(res, getTBI.team);
+    
+    // send invite for test
+    //       sendR = await TeamInviteHelper.sendRequest('5ad51a42b31ede0014e837db', '5a8b4afbac58ad00141a352f') // (userId, teamId);
+
+    const {teamLeaders: userTeamLeaders} = await User.findById(_user, {teamLeaders: true}).lean()
+    // const count = _.isEmpty(userTeamLeaders  );
+
+    const result = !_.isEmpty(userTeamLeaders) ? await Promise.all(teams.map(async function (team, index) {
+      // confirm if user is team leader of 
+      if (TeamTransform.intersection(userTeamLeaders, TeamTransform.getTeamLeadersId(team.teamLeaders)).length > 0 ) {
+        team.teamInvites = await TeamInvite.find({'_team': team._id, isRequest: true})
+        return team
+      }
+      // if not leader
+      return team
+    })) : teams
+
+    SuccessHelper.success(res, result);
+    // SuccessHelper.success(res, getTBI.team);
   }
   catch (e) {
+    console.log(e)
     ErrorHelper.ServerError(res);
   }
 };

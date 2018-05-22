@@ -158,8 +158,18 @@ const acceptRequest = async (req, res, next) => {
     const addMemberToChat = await ConversationHelper.__addParticipant(team._conversation, userId); // v2
     }
 
-    console.log('acceptR', acceptR)
-    SuccessHelper.success(res, {message: 'Success'});
+    // console.log('acceptR', acceptR)
+    // SuccessHelper.success(res, {message: 'Success'});
+
+
+
+      // get teamMember with user info
+      const teamMember = await TeamMemberHelper.getTeamMember(userId, teamId);
+
+
+     //  resolve({err: null, teamMembers: teamMember.teamMembers});
+    SuccessHelper.success(res, {message: 'Success', teamMembers: teamMember.teamMembers});
+
   }
   catch (e) {
     console.log(e)

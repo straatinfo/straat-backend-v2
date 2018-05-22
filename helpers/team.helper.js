@@ -60,14 +60,14 @@ const getTeamInfoById = (_id) => {
     .populate({
       path: 'teamLeaders',
       populate: {
-        select: { name: 1, fname: 1, lname: 1, _id: 1 },
+        select: { username: true, _id: 1 },
         path: '_user'
       }
     })
     .populate({
       path: 'teamMembers',
       populate: {
-        select: { name: 1, fname: 1, lname: 1, _id: 1 },
+        select: { username: true, _id: 1 },
         path: '_user'
       }
     })
@@ -87,27 +87,32 @@ const getTeamInfoById = (_id) => {
 const getTeamListByUserId = (_user) => {
   return new Promise((resolve, reject) => {
    
-    User.findOne({'_id': _user, softRemoved:false})
+    User.findOne({'_id': _user, softRemoved:false}).lean()
     .populate({
       path: 'teamMembers',
       populate: {
         path: '_team',
-        select: { _id: true, teamName: true, teamEmail: true  },
+        select: { _id: true, teamName: true, teamEmail: true},
         populate:[{
           path: '_conversation',
           select: { messages: {$slice: -1}}
         },{
           path: '_profilePic'
+        },{
+          path: 'teamLeaders'
         }
 
         ]
-      }
+      } 
     })
     .exec((err, user) => {
           if (err) {
             return resolve({err: err});
           }
-          if(user.teamMembers.length > 0 ) {
+          if (!user) {
+            return resolve({err: 'no user'});
+          }
+          if(user.teamMembers && user.teamMembers.length > 0 ) {
             resolve({err: null, team: user.teamMembers.map((team)=>{
                return team._team
             })});
@@ -121,7 +126,7 @@ const getTeamListByUserId = (_user) => {
     // .populate('teamMembers')
     // .populate('_profilePic')
     // .populate('_host', [ '_id', 'hostName', 'email' ])
-    // .exec((err, team) => {
+    // .exec((err, team) => { 
     //   if (err) {
     //     return resolve({err: err});
     //   }
