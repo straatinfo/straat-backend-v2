@@ -8,7 +8,7 @@ const CategoryHelper = require('./category.helper');
 const ConversationHelper = require('./conversationV2.helper');
 const Team = require('../models/Team');
 const User = require('../models/User');
- 
+const _ = require('lodash'); 
 
 const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
@@ -472,35 +472,25 @@ const getReportAttachments = (_report) => {
 const getPublicReports = async (_reporter, _reportType = null) => {
   try {
     // get teams
-    const { teamMembers, _host } = await User.findById(_reporter).populate('teamMembers');
+    const { teamMembers, teamLeaders, _host } = await User.findById(_reporter).populate('teamMembers').populate('teamLeaders')
 
-    const teamList = teamMembers.map(tm => tm._team) 
+    const teamLeadersList = teamLeaders.map(tm => tm._team.toString()) 
+    const teamMembersList = teamMembers.map(tm => tm._team.toString())
 
+    const teamList =_.union(teamLeadersList, teamMembersList)
     const extendParam = _reportType ? {_reportType: _reportType} : {}
 
     const publicReports = {
       $and: [
         {_host: _host, ...extendParam},
-        {'$or': [{isPublic: true}, {_team: {$in: teamList}}]},
-        
-        // {'$or':[ { 'isPublic': false }, { $or: teamQueryGen } ]}
+         {'$or': [{isPublic: true}, {_team: {$in: teamList}}]}
       ]
     }
-
-       // const publicReports ={_host: _host, _reportType: '5a7888bb04866e4742f74957', _team: {$in: teamList}}
-        // {'$or': [{isPublic: true}, {}]},
-        
-        // {'$or':[ { 'isPublic': false }, { $or: teamQueryGen } ]}
-      
- //   ).populate('_conversation').populate('attachments');
-
     const reports = await getReportByQueryObjectClean(publicReports)
-    console.log('publicReports.reports count: ', reports.reports.length)
-    return Promise.resolve(reports);
-
+    return Promise.resolve(reports)
   }
   catch (e) {
-    return Promise.reject(e);
+    return Promise.reject(e)
   }
 }
 
