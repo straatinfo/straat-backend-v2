@@ -71,7 +71,7 @@ const checkUserInput = async (req, res, next) => {
     if (city) {
       const data = await RegistrationHelper.getHostIdByCity(city, coordinate, isCoor);
       if (data.err) {
-        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);
+        return ErrorHelper.UserError(res, {error: data.err}, 200);
       }
       if (!data._host) {
         return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200);

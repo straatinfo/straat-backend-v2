@@ -3,9 +3,9 @@ const ErrorHelper = require('../helpers/error.helper');
 const MailingHelper = require('../helpers/mailing.helper');
 
 const sendFeedBack = async (req, res, next) => {
-  const { feedback, reporterName, reporterEmail } = req.body;
+  const { feedback, reporterName, reporterEmail, info } = req.body;
   try {
-    const sendFB = await MailingHelper.sendFeedBackNotif(reporterName, reporterEmail, feedback);
+    const sendFB = await MailingHelper.sendFeedBackNotif(reporterName, reporterEmail, feedback, info);
     if (sendFB.err) {
       return ErrorHelper.ClientError(res, {error: sendFB.err}, 400);
     }

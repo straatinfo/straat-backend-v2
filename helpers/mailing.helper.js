@@ -134,11 +134,11 @@ const sendReportCNotifToReporter = (reporterEmail, date, mainCategoryName, locat
 };
 
 // feedback notif
-const sendFeedBackNotif = (reporterName, reporterEmail, feedback) => {
+const sendFeedBackNotif = (reporterName, reporterEmail, feedback, info) => {
   const sender = Config.EMAIL_ADDRESSES.FEED_BACK_EMAIL;
   const receiver = Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL;
   const subject = 'FEEDBACK';
-  const mailBody = MailTemplates.sendFeedBackNotif(feedback, reporterName, reporterEmail);
+  const mailBody = MailTemplates.sendFeedBackNotif(feedback, reporterName, reporterEmail, info);
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);

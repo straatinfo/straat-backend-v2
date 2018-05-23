@@ -4,6 +4,7 @@ const _ = require('lodash');
 const jsonFile = path.join(__dirname, '../assets/jsonfiles/hostcode.json');
 const HostHelper = require('../helpers/host.helper')
 const CityAreaHelper = require('../helpers/cityarea.helper')
+const HostMigrationelper = require('../helpers/hostMigration.helper')
 
 const readJsonFile = () => {
   return new Promise((resolve, reject) => {
@@ -40,32 +41,63 @@ const getHostId = (code) => {
 }
 
 // use by registration validation
+// it used gps
+// const getHostIdByCity = (city, coordinate = {longitude: null, latitude: null}, isCoor = false) => {
+//   return new Promise(async(resolve, reject) => {
+//     try {
+      
+
+//       // get coordinate first
+//       const datas = await CityAreaHelper.getGeoJson(city.toUpperCase(), 'city', true)
+//       if (datas.err) {
+//         // failed to fetch geoJson
+//         return resolve({err: 'Invalid city'});
+//       }
+
+//       // use coordinate if pass
+//       const [lng, lat] = isCoor ? [coordinate.longitude, coordinate.latitude] : datas.centralPoint.coordinates
+//       const area = await HostHelper.getHostByCoordinates({lat, lng})
+//       if (area.err) {
+//         // failed to fetch geoJson
+//         return resolve({err: 'No host available for this city'});
+//       }
+
+//       resolve({err: null, _host: area.hosts._id, coordinates: [lng, lat], area: area });
+//     }
+//     catch (e) {
+//       reject(e);
+//     }
+//   });
+// }
+
 const getHostIdByCity = (city, coordinate = {longitude: null, latitude: null}, isCoor = false) => {
   return new Promise(async(resolve, reject) => {
     try {
-      
-
+      const cityName = city.toUpperCase ? city.toUpperCase() : ''
       // get coordinate first
-      const datas = await CityAreaHelper.getGeoJson(city.toUpperCase(), 'city', true)
-      if (datas.err) {
-        // failed to fetch geoJson
-        return resolve({err: 'Invalid city'});
+      const datas = await HostMigrationelper.validateCity(cityName)
+      if (datas.err || !datas.host) {
+        return resolve({err: 'Invalid city'})
       }
 
-      // use coordinate if pass
-      const [lng, lat] = isCoor ? [coordinate.longitude, coordinate.latitude] : datas.centralPoint.coordinates
-      const area = await HostHelper.getHostByCoordinates({lat, lng})
-      if (area.err) {
-        // failed to fetch geoJson
-        return resolve({err: 'No host available for this city'});
-      }
+      // for tet
+      // host List
+      // const hosts = await HostHelper.getHosts()
+      // console.log('hosts: ', hosts)
 
-      resolve({err: null, _host: area.hosts._id, coordinates: [lng, lat], area: area });
+
+      // get host by city
+      const host = await HostHelper.getHostByCity(cityName)
+      if (host.err || !host.hosts) {
+        return resolve({err: 'No host available for this city'})
+      }
+      resolve({err: null, _host: host.hosts._id, coordinates: [0, 0]})
     }
     catch (e) {
-      reject(e);
+      console.log(e)
+      reject(e)
     }
-  });
+  })
 }
 
 module.exports = {
