@@ -1,3 +1,13 @@
+const toHtml = (arrayOfDeviceInfo) => {
+  if (!arrayOfDeviceInfo.map) {
+    return ''
+  }
+  const html = arrayOfDeviceInfo.map((info) => {
+    return `${info.title}: ${info.info}<br />`
+  })
+  return html.join('')
+}
+
 module.exports = {
   sendRegistrationRequestNotifMail: (email, fname, lname, message, phoneNumber) => {
     return `
@@ -88,17 +98,23 @@ module.exports = {
   sendReportBNotifToHost: () => {
 
   },
-  sendFeedBackNotif: (feedBackMessage, reporterName, reporterEmail) => {
+
+  sendFeedBackNotif: (feedBackMessage, reporterName, reporterEmail, info = []) => {
+    const dInfo = toHtml(info)
     return `
       <p>Greetings!</p>
       <p>You receive a new feed back from ${reporterName}</p>
       <p>Email: ${reporterEmail}</p>
-      <p>Feedback:</p>
+      <h5>Feedback:</h5>
       <p>${feedBackMessage}</p>
-      </br>
+      <h5>Device Info:</h5>
+      <p>${dInfo}</p>
+
+      </br></br></br>
       <p>Thank you.</p>
     `;
   },
+
   fogotPasswordNotif: (newPassword) => {
     return `
     <p>Geachte mevrouw, mijnheer,</p>
