@@ -3269,9 +3269,14 @@ const getNoErroHostList = () => {
   })
 }
 
+const fullHostList = {
+
+}
+
 module.exports = {
   hostList: getNoErroHostList(),
   HostListTest,
-  failedHostList
+  failedHostList,
+  fullHostList: hostList
 }
   
