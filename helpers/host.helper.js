@@ -138,8 +138,8 @@ const getHostById = (_id) => {
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
     const hostData = {
-      email, username, lname, fname,  hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat
-    } = input;
+      email, username, lname, fname, hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat
+    } = input
     User.findByIdAndUpdate(_id, hostData, async(err, host) => {
       if (err) {
         return resolve({err: err})
@@ -315,36 +315,70 @@ const getHostByCoordinates = async (latlng) => {
   return new Promise(async(resolve, reject) => {
     // get specifc host first if none then get nearest host
     try {
-        const {lat, lng } = latlng 
-        if (!isValidCoordinates(parseFloat(lng), parseFloat(lat))) {
-            throw new Error('not valid coordinate')
-        }
-        const hosts = await getHostCities()
-        if (hosts.err) {
-          return resolve({err: hosts.err})
-        }
-        const hostList = hosts.hosts.filter((h, i) => h.city ? h.city : false)
-        const activeHosts = hostList.map((h, i) => h.city.toUpperCase())
-        const specificHost = await CityAreaHelper.searchIntersect(latlng, {cityName: {$in: activeHosts}})
-        console.log('hostList', hostList)
+      const {lat, lng } = latlng
+      if (!isValidCoordinates(parseFloat(lng), parseFloat(lat))) {
+        throw new Error('not valid coordinate')
+      }
+      const hosts = await getHostCities()
+      if (hosts.err) {
+        return resolve({err: hosts.err})
+      }
+      const hostList = hosts.hosts.filter((h, i) => h.city ? h.city : false)
+      const activeHosts = hostList.map((h, i) => h.city.toUpperCase())
+      const specificHost = await CityAreaHelper.searchIntersect(latlng, {cityName: {$in: activeHosts}})
+      console.log('hostList', hostList)
         // no specific host - must find nearest host
-        if (!specificHost.area) {
-          const nearHost = await CityAreaHelper.searchNear(latlng, {cityName: {$in: activeHosts}})
+      if (!specificHost.area) {
+        const nearHost = await CityAreaHelper.searchNear(latlng, {cityName: {$in: activeHosts}})
           // console.log('nearHost', nearHost)
-          return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === nearHost.area.cityName.toUpperCase())})
-        }
-        if (specificHost.err) {
-          return resolve({err: specificHost.err})
-        }
-        
-        return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === specificHost.area.cityName.toUpperCase())})
-     
+        return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === nearHost.area.cityName.toUpperCase())})
+      }
+      if (specificHost.err) {
+        return resolve({err: specificHost.err})
+      }
+
+      return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === specificHost.area.cityName.toUpperCase())})
     } catch (e) {
       return resolve({err: e.message})
     }
   })
 }
 
+const getHostByCity = async (cityName) => {
+  return new Promise(async(resolve, reject) => {
+
+    // get specifc host first if none then get nearest host
+    try {
+      const cityX = new RegExp(['^', cityName, '$'].join(''), 'i')
+      const getRole = await RoleHelper.getRoleByCode('HOST')
+      console.log('getRole: ', getRole)
+      if (getRole.err) {
+        return resolve({err: getRole.err})
+      }
+      const _role = getRole.role._id
+      const host = await User.findOne({'_role': _role, 'softRemoved': false, city: cityX}, {_id: true, city: true, hostName: true})
+
+      return resolve({err: null, hosts: host})
+
+
+      // const specificHost = await CityAreaHelper.searchIntersect(latlng, {cityName: {$in: activeHosts}})
+      // console.log('hostList', hostList)
+      //   // no specific host - must find nearest host
+      // if (!specificHost.area) {
+      //   const nearHost = await CityAreaHelper.searchNear(latlng, {cityName: {$in: activeHosts}})
+      //     // console.log('nearHost', nearHost)
+      //   return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === nearHost.area.cityName.toUpperCase())})
+      // }
+      // if (specificHost.err) {
+      //   return resolve({err: specificHost.err})
+      // }
+
+      // return resolve({err: null, hosts: hostList.find((h, i) => h.city.toUpperCase() === specificHost.area.cityName.toUpperCase())})
+    } catch (e) {
+      return resolve({err: e.message})
+    }
+  })
+}
 module.exports = {
   getHostById: getHostById,
   getHosts: getHosts,
@@ -356,5 +390,6 @@ module.exports = {
   getFreeHost: getFreeHost,
   updateHostReport: updateHostReport,
   flatHost: flatHost,
-  getHostByCoordinates
+  getHostByCoordinates,
+  getHostByCity
 }
