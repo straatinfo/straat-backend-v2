@@ -369,10 +369,11 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false, language='')
   return new Promise((resolve, reject) => {
     Report.find({...queryObject})
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
-    .populate('_reporter', ['_id', 'username'])
+    .populate('_reporter', ['_id', 'username', 'email'])
     .populate('_mainCategory', ['_id', 'name', 'description'])
     .populate('_subCategory', ['_id', 'name', 'description'])
-    .populate('_host', ['_id', 'hostName','email'])
+    .populate('_host', ['_id', 'hostName', 'email'])
+    .populate('_team', ['_id', 'teamName', 'email'])
     .populate({
       path: '_conversation',
       select: { messages: {$slice: -1}, _id: true}

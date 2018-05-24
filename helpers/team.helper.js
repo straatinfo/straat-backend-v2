@@ -571,6 +571,25 @@ const getPendingTeamByUser = (_user, isVolunteer = false) => {
 };
 
 
+const getTeamLeadersByTeamId = (_team) => {
+  return new Promise((resolve, reject) => {
+    Team.findById(_team, {id: true})
+      .populate({
+        path: 'teamLeaders',
+        select: ['id'],
+        populate:{
+          path: '_user',
+          select: ['id', 'username','email']
+        }
+      })
+      .exec((err, team) => {
+        // console.log('team', team)
+        if (err) { return resolve({err: err}); }
+        resolve({err: null, teamLeaders: team.teamLeaders || []});
+      })
+  });
+};
+
 module.exports = {
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
@@ -594,5 +613,6 @@ module.exports = {
   declineTeam: declineTeam,
   getPendingTeamByUser: getPendingTeamByUser,
   getTeamInfoById,
-  getTeamListByUserId
+  getTeamListByUserId,
+  getTeamLeadersByTeamId
 };

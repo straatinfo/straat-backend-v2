@@ -50,6 +50,7 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
   const receiver = hostEmail;
   const subject = 'Type A Report';
   const mailBody = MailTemplates.sendReportAToHost(username, teamName, teamEmail, text, category1, category2, location, reportDeepLink);
+  // console.log('SendGridService.basicMail(sender, receiver, subject, mailBody);', sender, receiver, subject, mailBody) 
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
@@ -65,15 +66,17 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
 };
 
 // report A notification to reporter
-const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null) => {
-  const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
-  const receiver = reporterEmail;
-  const subject = 'uw nieuwe melding openbare ruimte';
-  const mailBody = MailTemplates.sendReportANotifToReporter(location, date, category1, category2, text);
-  const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, teamLeaderEmail];
+const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail = [], location, date, category1, category2 = null, text = null) => {
+  const sender = Config.EMAIL_ADDRESSES.NO_REPLY
+  // const receiver = reporterEmail
+  const subject = 'uw nieuwe melding openbare ruimte'
+  const mailBody = MailTemplates.sendReportANotifToReporter(location, date, category1, category2, text)
+
+  const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, ...teamLeaderEmail] // reporterEmail];
+
   return new Promise(async(resolve, reject) => {
     try {
-      const sendEmailWithCC = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, CC, sender);
+      const sendEmailWithCC = await SendGridService.mailWithCC(sender, reporterEmail, subject, mailBody, CC, sender)
       if (sendEmailWithCC.err) {
         return resolve({err: sendEmailWithCC.err});
       }
