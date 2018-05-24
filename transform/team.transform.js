@@ -34,7 +34,21 @@ const intersection = function (ar1, ar2) {
   })
 }
 
+const getEmail = function ({model, data, isArray}) {
+  // console.log('getEmail', data)
+  if (model === 'teamLeaders' && isArray) {
+    return data.map(tl => {
+      if (tl && tl._user && tl._user.email) {
+        return tl._user.email
+      }
+      return null
+    }).filter(email => !!email)
+  }
+  return []
+}
+
 module.exports = {
   getTeamLeadersId,
-  intersection
+  intersection,
+  getEmail
 }
