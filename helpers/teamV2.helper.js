@@ -148,20 +148,26 @@ async function __removeMember (_user, _team) {
 
 async function __addNewTeam (_user, _host, input) {
   try {
+    // console.log('adding new team: ')
     const _profilePic = input._profilePic ? {_profilePic: input._profilePic} : {}
     // will error if no logo uploaded 
     const newConversation = new Conversation({
       _author: _user,
       ..._profilePic,
-      participants: [{
-        _user: _user,
-        isActive: true
-      }],
+      // participants: [{
+      //   _user: _user,
+      //   isActive: true
+      // }],
     });
     const conversation = await newConversation.save();
     const newTeam = new Team({...input, _conversation: conversation._id});
     const team = await newTeam.save();
-    const updateConversation = await Conversation.update({'_id': conversation._id}, {'title': `Team Chat of ${team.teamName} team`, '_team': team._id});
+    // const updateConversation = await Conversation.update({'_id': conversation._id},{ type: 'TEAM', 'title': `Team Chat of ${team.teamName} team`, '_team': team._id});
+    const updateConversation = await Conversation.update({'_id': conversation._id},{ type: 'TEAM', 'title': team.teamName, '_team': team._id});
+    const addToUserConversation = await ConversationHelper.__addParticipant(conversation._id, _user)
+
+  // console.log('addToUserConversation: ', addToUserConversation)
+
     const newTM = new TeamMember({'_user': _user, '_team': team._id});
     const newTL = new TeamLeader({'_user': _user, '_team': team._id});
     const tl = await newTL.save();
@@ -170,7 +176,7 @@ async function __addNewTeam (_user, _host, input) {
     const updateTeam = await Team.update({'_id': team._id}, {'$addToSet': {'teamMembers': tm._id, 'teamLeaders': tl._id}});
     const updatedTeam = await Team.findById(team._id);
     return Promise.resolve(updatedTeam);
-  }
+  } 
   catch (e) {
     return Promise.reject(e);
   }
@@ -311,6 +317,7 @@ async function unJoinTeam (_user, _team) {
 }
 
 async function createTeam (_user, _host, input) {
+  console.log('createam v2: params: ',_user, _host, input)
   try {
     const team = await Team.findOne({'teamEmail': input.teamEmail});
     const checkTeamName = await Team.findOne({'teamName': input.teamName});
@@ -323,7 +330,7 @@ async function createTeam (_user, _host, input) {
         error: 'CREDENTIALS_ALREADY_IN_USED',
         message: 'credentials already used by other teams'
       });
-    }
+    }  
     if (!host) {
       return Promise.reject({
         code: 0,
@@ -349,6 +356,9 @@ async function createTeam (_user, _host, input) {
       });
     }
     const newTeam = await __addNewTeam(_user, _host, input);
+    // must create convo
+
+
     return Promise.resolve(newTeam);
   }
   catch (e) {
