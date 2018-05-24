@@ -38,7 +38,7 @@ async function __getUserConversation(_user) {
   }
 }
 
-// test get user conversation
+// test get user conversation 
 async function __getUserConversationV2(_user, type = false, types = '') {
   const match = type ? { match:{type: {$in: types.split(',')}}} : {}
   try {
@@ -52,13 +52,20 @@ async function __getUserConversationV2(_user, type = false, types = '') {
         select: {_id: true, username: true}
       },{
         path:'participants._user',
-        select: {_id: true, username: true}
+        select: {_id: true, username: true},
+        populate: {
+          path:'_profilePic',
+          select: {_id: true, secure_url: true}
+          }
       },{
         path:'messages',
         populate: {
           path:'_author',
           select: {_id: true, username: true}
         }
+      },{
+        path:'_profilePic',
+        select: {_id: true, secure_url: true}
       }]
     })
    // .populate('conversations.participants._user');
