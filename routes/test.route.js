@@ -56,6 +56,10 @@ TestRoute.route('/')
 // .get(Test.validateCity)
 
 
+// must nt use cassually
+TestRoute.route('/hostlist')
+.get(Test.hostUser)
+
 
 
 module.exports = TestRoute
