@@ -294,6 +294,18 @@ const hostUser = async function (req, res, next) {
     console.log(e.message)
   }
 }
+
+const getJsonAddress = async function (req, res, next) {
+  try {
+    const address = req.body.address || req.query.address
+    const host = await CityAreaHelper.getHostNameByAddress(address)
+
+    SuccessHelper.success(res, host)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 module.exports = {
   testFunction,
   testGeo,
@@ -304,5 +316,6 @@ module.exports = {
   getHostList,
   testGetUserConvo,
   validateCity,
-  hostUser
+  hostUser,
+  getJsonAddress
 }

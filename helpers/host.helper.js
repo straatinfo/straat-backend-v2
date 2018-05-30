@@ -379,6 +379,20 @@ const getHostByCity = async (cityName) => {
     }
   })
 }
+
+const getHostByHostName = (hostName) => {
+  return new Promise((resolve, reject) => {
+    User.finOne({hostName: hostName}, {language: true, isSpecific: true})
+    .populate('_activeDesign')
+    .exec((err, host) => {
+      if (err) {
+        return resolve({err: err})
+      }
+      resolve({err: null, host: host})
+    })
+  })
+}
+
 module.exports = {
   getHostById: getHostById,
   getHosts: getHosts,
@@ -391,5 +405,6 @@ module.exports = {
   updateHostReport: updateHostReport,
   flatHost: flatHost,
   getHostByCoordinates,
-  getHostByCity
+  getHostByCity,
+  getHostByHostName
 }

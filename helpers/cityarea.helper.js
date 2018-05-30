@@ -1,6 +1,7 @@
 const CityArea = require('../models/CityArea')
 const http = require('http')
 const request = require('request')
+const Config = require('./../config')
 /**
  *
  * @description create new city area
@@ -149,9 +150,70 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
   })
 }
 
+/**
+ * @description filter GoogpeMap Api resut
+ * @param {} googleResult
+ *
+ */
+const filterGoogleAddress = (location = [], bound = 'administrative_area_level_2') => {
+  console.log('address', location)
+  if (location.results && location.results[0] && location.results[0].address_components) {
+    // get hostName field
+    for (const address of location.results[0].address_components) {
+      if (address.types.indexOf(bound)) {
+        return address.long_name
+      }
+    }
+  }
+  return false
+}
+
+/**
+ *
+ * @description get json address form google API
+ * @param {*} address string
+ * @returns string
+ *
+ */
+
+const getHostNameByAddress = (address, bound = 'administrative_area_level_2') => {
+  return new Promise((resolve, reject) => {
+    const { GOOGLE: { apiKey } } = Config
+    const options = {
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${apiKey}`
+    }
+    try {
+      request.get(options, function (error, response, body) {
+        if (error) {
+          console.log('error in : ' + address, error)
+          return resolve({err: 'no data in: ' + address})
+        }
+
+        const hostName = filterGoogleAddress(JSON.parse(body))
+ 
+        if (!hostName) {
+          return resolve({err: 'no data in: ' + address})
+         // throw new Error(' ')
+        }
+
+        if (!error && response.statusCode === 200) {
+          // return result
+          return resolve({hostName: hostName})
+        }
+        throw new Error(' ')
+      })
+    } catch (e) {
+      console.log('error in : ' + address, e)
+      return resolve({err: 'no data in: ' + address})
+    }
+  })
+}
+
+
 module.exports = {
   create,
   searchIntersect,
   searchNear,
-  getGeoJson
+  getGeoJson,
+  getHostNameByAddress
 }

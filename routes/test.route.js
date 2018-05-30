@@ -60,6 +60,9 @@ TestRoute.route('/')
 TestRoute.route('/hostlist')
 .get(Test.hostUser)
 
+TestRoute.route('/getJsonAddress')
+.get(Test.getJsonAddress)
+
 
 
 module.exports = TestRoute
