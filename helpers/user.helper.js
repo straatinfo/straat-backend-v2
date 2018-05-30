@@ -46,6 +46,8 @@ const comparePassword = (password, hash) => {
   });
 }
 
+
+
 const findUserById = (id) => {
   return new Promise((resolve, reject) => {
     User.findById(id, [
@@ -291,6 +293,23 @@ const removeMessageToUser = (_user, _message) => {
   });
 };
 
+const userModel = function () {
+  return User
+}
+
+const setActiveTeam = (_user, _team) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_user,
+    { _activeTeam: _team },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    })
+  })
+}
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
@@ -304,5 +323,7 @@ module.exports = {
   checkUserByUNameEmail,
   comparePassword,
   activateUser,
-  deactivateUser
+  deactivateUser,
+  userModel,
+  setActiveTeam
 };
