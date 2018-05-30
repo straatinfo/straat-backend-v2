@@ -6,6 +6,12 @@ const JwtService = require('../service/jwt.service');
 
 const login = async (req, res, next) => {
   try {
+    // require _activeTeam
+    // problem in reporting cause by user dont have activeTeam even it has a team
+    // this will be remove if setup of active team is fix
+    
+
+    // start
     const user = await UserHelper.findUserById(req.user._id);
     const data = {
       user: user.user,
