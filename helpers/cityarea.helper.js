@@ -81,17 +81,16 @@ const filterGeoJson = (result = [], bound = 'city', inset = false) => {
   return result.find((nomi) => {
     // if (nomi.address && (nomi.address.county || nomi.address.city || !nomi.address.suburb || !nomi.address.village || !nomi.address.hamlet) && nomi.class === 'boundary') {
     // use by registration for getting host of city or bound by it
-    if (inset 
+    if (inset
       && (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.village || nomi.address.hamlet))) {
-       return true
+      return true
     }
 
-    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {  
+    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {
       return true
     } else {
       return false
     }
-
   })
 }
 
@@ -123,7 +122,7 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
         if (error) {
           console.log('error in : ' + city, error)
           return resolve({err: 'no data in: ' + city})
-          //throw new Error(error)
+          // throw new Error(error)
         }
 
         const result = filterGeoJson(JSON.parse(body), bound, inset)
@@ -156,12 +155,14 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
  *
  */
 const filterGoogleAddress = (location = [], bound = 'administrative_area_level_2') => {
-  console.log('address', location)
+  if (location.status === 'ZERO_RESULTS') {
+    return false
+  }
   if (location.results && location.results[0] && location.results[0].address_components) {
     // get hostName field
     for (const address of location.results[0].address_components) {
-      if (address.types.indexOf(bound)) {
-        return address.long_name
+      if (address.types.indexOf(bound) >= 0) {
+        return address.short_name
       }
     }
   }
@@ -180,20 +181,18 @@ const getHostNameByAddress = (address, bound = 'administrative_area_level_2') =>
   return new Promise((resolve, reject) => {
     const { GOOGLE: { apiKey } } = Config
     const options = {
-      url: `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&key=${apiKey}`
+      url: `https://maps.googleapis.com/maps/api/geocode/json?address=${address}&components=country:NL&key=${apiKey}`
     }
     try {
       request.get(options, function (error, response, body) {
         if (error) {
-          console.log('error in : ' + address, error)
           return resolve({err: 'no data in: ' + address})
         }
 
         const hostName = filterGoogleAddress(JSON.parse(body))
- 
+
         if (!hostName) {
           return resolve({err: 'no data in: ' + address})
-         // throw new Error(' ')
         }
 
         if (!error && response.statusCode === 200) {
@@ -203,12 +202,10 @@ const getHostNameByAddress = (address, bound = 'administrative_area_level_2') =>
         throw new Error(' ')
       })
     } catch (e) {
-      console.log('error in : ' + address, e)
       return resolve({err: 'no data in: ' + address})
     }
   })
 }
-
 
 module.exports = {
   create,
