@@ -12,10 +12,19 @@ const _ = require('lodash');
 
 const getReportDateRange = (date) => {
   return new Promise((resolve, reject) => {
+    let lesYear = date.getFullYear()
+    let lesMont = date.getMonth() + 1
+    let lesDate = date.getDate()
+
+    date.setDate(date.getDate() + 1)
+    let gtrYear = date.getFullYear()
+    let gtrMont = date.getMonth() + 1
+    let gtrDate = date.getDate()
+
     Report.find({
       $and: [
-        { createdAt: { $gte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } },
-        { createdAt: { $lte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } }
+        { createdAt: { $gte: lesYear + '-' + lesMont + '-' + lesDate } },
+        { createdAt: { $lte: gtrYear + '-' + gtrMont + '-' + gtrDate } }
       ]
     }, (err, reports) => {
       if (err) {
