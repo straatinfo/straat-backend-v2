@@ -380,9 +380,10 @@ const getHostByCity = async (cityName) => {
   })
 }
 
-const getHostByHostName = (hostName) => {
+const getHostByHostName = (_hostName) => {
   return new Promise((resolve, reject) => {
-    User.finOne({hostName: hostName}, {language: true, isSpecific: true})
+    const hostName = new RegExp(['^', 'Gemeente ' + _hostName, '$'].join(''), 'i')
+    User.findOne({hostName: hostName}, {language: true, isSpecific: true, hostName: true})
     .populate('_activeDesign')
     .exec((err, host) => {
       if (err) {
