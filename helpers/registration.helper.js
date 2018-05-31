@@ -5,6 +5,8 @@ const jsonFile = path.join(__dirname, '../assets/jsonfiles/hostcode.json')
 const HostHelper = require('../helpers/host.helper')
 const CityAreaHelper = require('../helpers/cityarea.helper')
 const HostMigrationelper = require('../helpers/hostMigration.helper')
+const L = require('./../assets/dictionary')
+const CityHelper = require('../helpers/city.helper')
 
 const readJsonFile = () => {
   return new Promise((resolve, reject) => {
@@ -98,36 +100,30 @@ const getHostId = (code) => {
 //   })
 // }
 
-const getHostIdByCity = (city, coordinate = {longitude: null, latitude: null}, isCoor = false, hostName) => {
+// city, coordinate = {longitude: null, latitude: null}, isCoor = false, hostName
+const getHostIdByCity = (params) => {
+  const { city, language } = params
   return new Promise(async(resolve, reject) => {
     try {
       const cityName = city.toUpperCase ? city.toUpperCase() : ''
-      // get coordinate first
-      const datas = await HostMigrationelper.validateCity(cityName)
-      if (datas.err || !datas.host) {
-        return resolve({err: 'Invalid city'})
+      const datas = await CityHelper.validateCity(cityName)
+      if (!datas) {
+        return resolve({err: L(language, 'invalidCity')})
       }
 
-      // get host name
-      const hostName = await CityAreaHelper.getHostNameByAddress(cityName)   // get data from google api
+      // get host name | get data from google api
+      const {hostName, err} = await CityAreaHelper.getHostNameByAddress(cityName)
+      if (err) {
+        return resolve({err: L(language, 'noHostNameForThatAddress')})
+      }
 
       // get host base on hostName
       const host = await HostHelper.getHostByHostName(hostName)
-
-      return resolve({host})
-      // for tet
-      // host List
-      // const hosts = await HostHelper.getHosts()
-      // console.log('hosts: ', hosts)
-
-      // get host by city
-      const host1 = await HostHelper.getHostByHostName(hostName)
-      if (host.err || !host.hosts) {
-        return resolve({err: 'No host available for this address'})
+      if (host.err || !host.host) {
+        return resolve({err: L(language, 'noHostAvailableForThisAddress')})
       }
-      resolve({err: null, _host: host.hosts._id, coordinates: [0, 0]})
+      return resolve({host: host.host, _host: host.host._id})
     } catch (e) {
-      console.log(e)
       reject(e)
     }
   })
