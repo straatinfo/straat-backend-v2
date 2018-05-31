@@ -15,7 +15,7 @@ const getReportDateRange = (date) => {
     Report.find({
       $and: [
         { createdAt: { $gte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } },
-        { createdAt: { $lte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + 1) } }
+        { createdAt: { $lte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } }
       ]
     }, (err, reports) => {
       if (err) {

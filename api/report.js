@@ -131,6 +131,8 @@ const createReport = async (req, res, next) => {
 };
 
 const createReportV2 = async (req, res, next) => {
+  // error in converting createAt in model report
+  // due to may 32
   try {
     if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
       return next(); 

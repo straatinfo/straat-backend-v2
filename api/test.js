@@ -294,6 +294,16 @@ const hostUser = async function (req, res, next) {
     console.log(e.message)
   }
 }
+
+const timeTest = async function (req, res, next) {
+  try {
+    
+    res.send({createdAt: new Date(Date.now())})
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 module.exports = {
   testFunction,
   testGeo,
@@ -304,5 +314,6 @@ module.exports = {
   getHostList,
   testGetUserConvo,
   validateCity,
-  hostUser
+  hostUser,
+  timeTest
 }
