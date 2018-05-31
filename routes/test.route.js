@@ -56,25 +56,25 @@ TestRoute.route('/')
 // .get(Test.validateCity)
 
 // must nt use cassually
-TestRoute.route('/hostlist')
-.get(Test.hostUser)
+// TestRoute.route('/hostlist')
+// .get(Test.hostUser)
 
-TestRoute.route('/getJsonAddress')
-.get(Test.getJsonAddress)
+// TestRoute.route('/getJsonAddress')
+// .get(Test.getJsonAddress)
 
-TestRoute.route('/getHostIdByCity')
-.get(Test.getHostIdByCity)
+// TestRoute.route('/getHostIdByCity')
+// .get(Test.getHostIdByCity)
 
-// migrate city from json
-TestRoute.route('/migrate')
-.get(City.migrate)
+// // migrate city from json
+// TestRoute.route('/migrate')
+// .get(City.migrate)
 
-// display all unique city from json
-TestRoute.route('/citylist')
-.get(City.printCityList)
+// // display all unique city from json
+// TestRoute.route('/citylist')
+// .get(City.printCityList)
 
-// validiate City
-TestRoute.route('/isCity/:city')
-.get(City.validateCity)
+// // validiate City
+// TestRoute.route('/isCity/:city')
+// .get(City.validateCity)
 
 module.exports = TestRoute
