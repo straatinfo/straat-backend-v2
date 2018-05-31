@@ -4,6 +4,7 @@ const CityAreaHelper = require('../helpers/cityarea.helper')
 // const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
 const hostList = require('../assets/jsonfiles/HostList_2018_4_17')
 const ConversationHelper = require('../helpers/conversationV2.helper')
+const RegistrationHelper = require('../helpers/registration.helper')
 
 const SuccessHelper = require('../helpers/success.helper')
 const User = require('../models/User')
@@ -16,12 +17,6 @@ const testFunction = (req, res, next) => {
   console.log(req.files)
   console.log(req.body)
   res.end()
-}
-
-const validateCity = async function (req, res, next) {
-  const { city } = req.params
-  const result = await CityAreaHelper.getGeoJson(city, 'city', true)
-  res.send(result)
 }
 
 const testGetUserConvo = async (req, res, next) => {
@@ -306,6 +301,16 @@ const getJsonAddress = async function (req, res, next) {
   }
 }
 
+const getHostIdByCity = async function (req, res, next) {
+  try {
+    const { language, city } = req.query
+    const data = await RegistrationHelper.getHostIdByCity({language, city})
+
+    SuccessHelper.success(res, data)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
 module.exports = {
   testFunction,
   testGeo,
@@ -315,7 +320,7 @@ module.exports = {
   host,                    // get host data test
   getHostList,
   testGetUserConvo,
-  validateCity,
   hostUser,
-  getJsonAddress
+  getJsonAddress,
+  getHostIdByCity
 }
