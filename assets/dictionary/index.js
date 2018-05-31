@@ -11,7 +11,7 @@ const L = (code, term) => {
   if (code === lanuages.nl) {
     return nl[term]
   }
-  return null
+  return en[term]
 }
 
 module.exports = L
