@@ -60,14 +60,14 @@ const getTeamInfoById = (_id) => {
     .populate({
       path: 'teamLeaders',
       populate: {
-        select: { username: true, _id: 1 },
+        select: { username: true, _id: 1, fname: true, lname: true },
         path: '_user'
       }
-    })
+    }) 
     .populate({
       path: 'teamMembers',
       populate: {
-        select: { username: true, _id: 1 },
+        select: { username: true, _id: 1, fname: true, lname: true },
         path: '_user'
       }
     })
