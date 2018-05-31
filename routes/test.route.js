@@ -57,8 +57,10 @@ TestRoute.route('/')
 
 
 // must nt use cassually
-TestRoute.route('/hostlist')
-.get(Test.hostUser)
+?
+// time etesting : error in report
+// TestRoute.route('/timeTest')
+// .get(Test.timeTest)
 
 
 
