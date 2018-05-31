@@ -15,7 +15,7 @@ const getReportDateRange = (date) => {
     Report.find({
       $and: [
         { createdAt: { $gte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } },
-        { createdAt: { $lte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + (date.getDate() + 1) } }
+        { createdAt: { $lte: date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() } }
       ]
     }, (err, reports) => {
       if (err) {
@@ -202,7 +202,7 @@ const getReportsByReportType = (reportTypeId) => {
 
 const createReport = (input) => {
   return new Promise((resolve, reject) => {
-    const newReport = new Report(input)
+    const newReport = new Report({...input, createdAt: new Date(Date.now())})
     newReport.save(async(err, report) => {
       try {
         if (err) {
