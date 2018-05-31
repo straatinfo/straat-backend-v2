@@ -202,7 +202,7 @@ const getReportsByReportType = (reportTypeId) => {
 
 const createReport = (input) => {
   return new Promise((resolve, reject) => {
-    const newReport = new Report({...input, createdAt: new Date(Date.now())})
+    const newReport = new Report(input)
     newReport.save(async(err, report) => {
       try {
         if (err) {
