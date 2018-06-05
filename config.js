@@ -20,5 +20,10 @@ module.exports = {
     SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'johnhiggins.avila@gmail.com', // 'seqretary@gmail.com'
     DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
     FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info'
+  },
+
+  // postcode.ru
+  POSTCODE: {
+    POSTCODE_API_KEY: process.env.POSTCODE_API_KEY || 'uBN0JsxZOIvnr034fj7W5uNjTIiI8et6AZ8OQi50'
   }
-};
+}
