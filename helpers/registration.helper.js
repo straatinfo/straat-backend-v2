@@ -100,8 +100,49 @@ const getHostIdByCity = (city, coordinate = {longitude: null, latitude: null}, i
   })
 }
 
+
+
+const validatePostalCode = (postalCode) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const postcodeData = await CityAreaHelper.validatePostalCode(postalCode)
+      if (postcodeData.err) {
+        return resolve({err: 'Invalid postalCode'})
+      }
+      resolve(postcodeData)
+    }
+    catch (e) {
+      console.log(e)
+      reject(e)
+    }
+  })
+}
+
+const validateNumber = (postalCode, number) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const postcodeData = await CityAreaHelper.validateNumber(postalCode, number)
+      if (postcodeData.err) {
+        return resolve({err: 'Invalid address'})
+      }
+
+      // no error
+      console.log('postcodeData', postcodeData)
+      resolve({...postcodeData, _host: 'test host'})
+    }
+    catch (e) {
+      console.log(e) 
+      reject(e)
+    }
+  })
+}
+
+
 module.exports = {
   readJsonFile: readJsonFile,
   getHostId: getHostId,
-  getHostIdByCity
+  getHostIdByCity,
+  validatePostalCode,
+  validateNumber
 };
+
