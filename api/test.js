@@ -4,6 +4,7 @@ const CityAreaHelper = require('../helpers/cityarea.helper')
 // const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
 const hostList = require('../assets/jsonfiles/HostList_2018_4_17')
 const ConversationHelper = require('../helpers/conversationV2.helper')
+const RegistrationHelper = require('../helpers/registration.helper')
 
 const SuccessHelper = require('../helpers/success.helper')
 const User = require('../models/User')
@@ -17,12 +18,6 @@ const testFunction = (req, res, next) => {
   console.log(req.files)
   console.log(req.body)
   res.end()
-}
-
-const validateCity = async function (req, res, next) {
-  const { city } = req.params
-  const result = await CityAreaHelper.getGeoJson(city, 'city', true)
-  res.send(result)
 }
 
 const testGetUserConvo = async (req, res, next) => {
@@ -304,6 +299,17 @@ const timeTest = async function (req, res, next) {
   }
 }
 
+const getJsonAddress = async function (req, res, next) {
+  try {
+    const address = req.body.address || req.query.address
+    const host = await CityAreaHelper.getHostNameByAddress(address)
+
+    SuccessHelper.success(res, host)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 const mailtest = async function (req, res, next) {
   try {
     let data = {value: 'none'}
@@ -320,6 +326,16 @@ const mailtest = async function (req, res, next) {
     console.log(e.message)
   }
 }
+const getHostIdByCity = async function (req, res, next) {
+  try {
+    const { language, city } = req.query
+    const data = await RegistrationHelper.getHostIdByCity({language, city})
+
+    SuccessHelper.success(res, data)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
 
 module.exports = {
   testFunction,
@@ -330,8 +346,9 @@ module.exports = {
   host,                    // get host data test
   getHostList,
   testGetUserConvo,
-  validateCity,
   hostUser,
   timeTest,
-  mailtest
+  mailtest,
+  getJsonAddress,
+  getHostIdByCity
 }

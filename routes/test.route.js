@@ -1,4 +1,5 @@
 const Test = require('../api/test')
+const City = require('../api/city')
 const cloudinary = require('cloudinary')
 const cloudinaryStorage = require('multer-storage-cloudinary')
 
@@ -63,5 +64,26 @@ TestRoute.route('/')
 // // time etesting : error in report
 // TestRoute.route('/mailtest/:type')
 // .get(Test.mailtest)
+
+// TestRoute.route('/hostlist')
+// .get(Test.hostUser)
+
+// TestRoute.route('/getJsonAddress')
+// .get(Test.getJsonAddress)
+
+// TestRoute.route('/getHostIdByCity')
+// .get(Test.getHostIdByCity)
+
+// // migrate city from json
+// TestRoute.route('/migrate')
+// .get(City.migrate)
+
+// // display all unique city from json
+// TestRoute.route('/citylist')
+// .get(City.printCityList)
+
+// // validiate City
+// TestRoute.route('/isCity/:city')
+// .get(City.validateCity)
 
 module.exports = TestRoute

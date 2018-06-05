@@ -81,17 +81,16 @@ const filterGeoJson = (result = [], bound = 'city', inset = false) => {
   return result.find((nomi) => {
     // if (nomi.address && (nomi.address.county || nomi.address.city || !nomi.address.suburb || !nomi.address.village || !nomi.address.hamlet) && nomi.class === 'boundary') {
     // use by registration for getting host of city or bound by it
-    if (inset 
+    if (inset
       && (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.village || nomi.address.hamlet))) {
-       return true
+      return true
     }
 
-    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {  
+    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {
       return true
     } else {
       return false
     }
-
   })
 }
 
@@ -123,7 +122,7 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
         if (error) {
           console.log('error in : ' + city, error)
           return resolve({err: 'no data in: ' + city})
-          //throw new Error(error)
+          // throw new Error(error)
         }
 
         const result = filterGeoJson(JSON.parse(body), bound, inset)
@@ -223,12 +222,11 @@ const validateNumber = (postalCode, number) => {
         }
         if (!error && response.statusCode === 200) {
           const { geo, city, municipality, postcode, number, street } = result._embedded.addresses[0]
-          return resolve({ streetName: street, postalCode: postcode, geoLocation: geo.center.wgs84,city: city.label, hostName: municipality.label })
+          return resolve({ streetName: street, postalCode: postcode, houseNumber: number, geoLocation: geo.center.wgs84, city: city.label, hostName: municipality.label })
         }
         throw new Error(' ')
       })
     } catch (e) {
-      console.log('error in : ' + postalCode, number, e)
       return resolve({err: 'no data in: ' + postalCode, number})
     }
   })
