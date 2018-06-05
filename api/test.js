@@ -11,6 +11,7 @@ const RoleHelper = require('../helpers/role.helper')
 const CityArea = require('../models/CityArea')
 const _ = require('lodash')
 const isValidCoordinates = require('is-valid-coordinates')
+const mailing = require('../assets/mail-templates/simple-mails')
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
@@ -297,8 +298,24 @@ const hostUser = async function (req, res, next) {
 
 const timeTest = async function (req, res, next) {
   try {
-    
     res.send({createdAt: new Date(Date.now())})
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+const mailtest = async function (req, res, next) {
+  try {
+    let data = {value: 'none'}
+    if (req.params.type === 'sendReportAToHost') {
+      data = mailing.sendReportAToHost('username', 'teamName', 'teamEmail', 'text', 'category1', 'category2', 'location', 'reportDeepLink', 'en')
+    }
+
+    if (req.params.type === 'sendReportANotifToReporter') {
+      data = mailing.sendReportANotifToReporter('location', 'date', 'category1', 'category2', 'text', 'en')
+    }
+
+    res.send(data)
   } catch (e) {
     console.log(e.message)
   }
@@ -315,5 +332,6 @@ module.exports = {
   testGetUserConvo,
   validateCity,
   hostUser,
-  timeTest
+  timeTest,
+  mailtest
 }

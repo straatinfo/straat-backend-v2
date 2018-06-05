@@ -48,13 +48,11 @@ TestRoute.route('/')
 // TestRoute.route('/hostList')
 // .get(Test.getHostList)
 
-
 // TestRoute.route('/convo')
 // .get(Test.testGetUserConvo)
 
 // TestRoute.route('/validateCity/:city')
 // .get(Test.validateCity)
-
 
 // must nt use cassually
 
@@ -62,6 +60,8 @@ TestRoute.route('/')
 // TestRoute.route('/timeTest')
 // .get(Test.timeTest)
 
-
+// // time etesting : error in report
+// TestRoute.route('/mailtest/:type')
+// .get(Test.mailtest)
 
 module.exports = TestRoute
