@@ -1,3 +1,5 @@
+const ReportEmailFormat = require('./formats/reports')
+
 const toHtml = (arrayOfDeviceInfo) => {
   if (!arrayOfDeviceInfo.map) {
     return ''
@@ -28,7 +30,9 @@ module.exports = {
   sendTeamRequestNotifMail: (teamEmail, teamName, sender) => {
     return `<p>Greetings!</p><br/><p>A new Non-Volunteer Team is requesting for approval.<p/><p>User Details:<p/><p>Email: ${teamEmail}<p/><p>Team Name: ${teamName}<p/><p>Sincerely,<p>${sender}</p>`;
   },
-  sendReportAToHost: (username, teamName,teamEmail, text, category1, category2, location, reportDeepLink) => {
+  sendReportAToHost: (username, teamName, teamEmail, text, category1, category2, location, reportDeepLink, language) => {
+    // lanuage of host , not user
+    return ReportEmailFormat.sendReportAToHost(username, teamName, teamEmail, text, category1, category2, location, reportDeepLink, language)
     return `
     <p>NB deze mail niet replyen aub. De mailgegevens van de melder treft u hieronder aan</p>
     <p>Geachte mevrouw, mijnheer,</p>
@@ -47,7 +51,8 @@ module.exports = {
     <p>PS Deze melding is verzonden met de app straat.info dé app voor buurtpreventie. Als u vragen heeft, of tips ter verbetering over de app, kunt u terecht via het formulier op www.straat.info of via info@straat.info</p>
     `;
   },
-  sendReportANotifToReporter: (location, date, category1, category2 = null, text = null) => {
+  sendReportANotifToReporter: (location, date, category1, category2 = null, text = null, language) => {
+    return ReportEmailFormat.sendReportANotifToReporter(location, date, category1, category2, text, language)
     return `
       <p>Dear madam, sir,</p>
       <p> You just made a report ${date} </p>
