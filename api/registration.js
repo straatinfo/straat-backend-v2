@@ -13,7 +13,7 @@ const HostHelper = require('../helpers/host.helper')
 const TeamHelperV2 = require('../helpers/teamV2.helper')
 
 const checkUserInput = async (req, res, next) => {
-  const { username, email, teamEmail, teamName, code, city, coordinate, isCoor, postalcode } = req.body
+  const { username, email, teamEmail, teamName, code, city, coordinate, isCoor, postalCode, houseNumber } = req.body
   try {
     let checkUsername, checkEmail, checkTeamEmail, checkTeamName, checkCode
     // check for username
@@ -80,17 +80,31 @@ const checkUserInput = async (req, res, next) => {
     }
 
     // postal Code
-    if (postalcode) {
-      const data = await RegistrationHelper.getHostIdByCity(city, coordinate, isCoor)
+    if (postalCode && houseNumber) {
+      console.log('postalcode:', postalCode)
+      const data = await RegistrationHelper.validateNumber(postalCode, houseNumber)
+      if (!data) {
+        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200)
+      }
+
       if (data.err) {
         return ErrorHelper.UserError(res, {error: data.err}, 200)
-      }
-      if (!data._host) {
-        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200)
       }
       return SuccessHelper.success(res, data)
     }
 
+    // postal Code
+    if (postalCode) {
+      const data = await RegistrationHelper.validatePostalCode(postalCode)
+      if (!data) {
+        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200)
+      }
+
+      if (data.err) {
+        return ErrorHelper.UserError(res, {error: data.err}, 200)
+      }
+      return SuccessHelper.success(res, data)
+    }
     SuccessHelper.success(res, {message: 'Valid input'})
   } catch (e) {
     ErrorHelper.ServerError(e)
