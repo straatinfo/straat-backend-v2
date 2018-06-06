@@ -129,8 +129,6 @@ const getHostIdByCity = (params) => {
   })
 }
 
-
-
 const validatePostalCode = (postalCode) => {
   return new Promise(async(resolve, reject) => {
     try {
@@ -154,18 +152,21 @@ const validateNumber = (postalCode, number) => {
       if (postcodeData.err) {
         return resolve({err: 'Invalid address'})
       }
-
+      // console.log('postcodeData', postcodeData)
+      // get host base on hostName
+      const host = await HostHelper.getHostByHostName(postcodeData.hostName)
+      if (host.err || !host.host) {
+        return resolve({err: L('nl', 'noHostAvailableForThisHost') + ': ' + postcodeData.hostName})
+      }
       // no error
-      console.log('postcodeData', postcodeData)
-      resolve({...postcodeData, _host: 'test host'})
+      resolve({...postcodeData, _host: host.host._id, host: host.host})
     }
     catch (e) {
-      console.log(e) 
+      console.log(e)
       reject(e)
     }
   })
 }
-
 
 module.exports = {
   readJsonFile: readJsonFile,
