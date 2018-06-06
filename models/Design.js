@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
 const designSchema = new Schema({
   designName: { type: String, default: 'General', index: true },
@@ -8,7 +8,7 @@ const designSchema = new Schema({
   colorThree: { type: String },
   colorFour: { type: String },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
-  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
-}, {timestamps: true});
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true }
+}, {timestamps: true})
 
-module.exports = mongoose.model('Design', designSchema);
+module.exports = mongoose.model('Design', designSchema)

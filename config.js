@@ -5,7 +5,7 @@ module.exports = {
     cloud_name: 'hvina6sjo',
     api_key: '485521389972512',
     api_secret: 'QOaJKE9sXc1qe4GHFYjNSFkFT68',
-    url : 'cloudinary://485521389972512:QOaJKE9sXc1qe4GHFYjNSFkFT68@hvina6sjo'
+    url: 'cloudinary://485521389972512:QOaJKE9sXc1qe4GHFYjNSFkFT68@hvina6sjo'
   },
   SENDGRID: {
     SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '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',
@@ -20,5 +20,15 @@ module.exports = {
     SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'johnhiggins.avila@gmail.com', // 'seqretary@gmail.com'
     DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
     FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info'
+  },
+  GOOGLE: {
+    // used in app
+    apiKey: 'AIzaSyCYDM_gyqp1UGVClhh05ek_4G0zr4n55xA'
+  },
+
+  // postcode.ru
+  POSTCODE: {
+    POSTCODE_API_KEY: process.env.POSTCODE_API_KEY || 'uBN0JsxZOIvnr034fj7W5uNjTIiI8et6AZ8OQi50'
   }
-};
+
+}

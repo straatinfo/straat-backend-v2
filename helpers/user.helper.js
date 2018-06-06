@@ -60,9 +60,13 @@ const findUserById = (id) => {
     ])
     .populate({
       path: '_host',
-      select: { '_id': 1, 'hostName': 1, 'isSpecific': 1, language: true, geoLocation: true, long: true, lat: true },
+      select: { _id: 1, hostName: 1, isSpecific: 1, language: true, geoLocation: true, long: true, lat: true },
       populate: {
-        path: '_activeDesign'
+        path: '_activeDesign',
+        populate: {
+          path: '_profilePic',
+          select: { _id: true, secure_url: true }
+        }
       }
     })
     // .populate({

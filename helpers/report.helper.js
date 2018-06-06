@@ -381,7 +381,7 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false, language='')
     .populate('_reporter', ['_id', 'username', 'email'])
     .populate('_mainCategory', ['_id', 'name', 'description'])
     .populate('_subCategory', ['_id', 'name', 'description'])
-    .populate('_host', ['_id', 'hostName', 'email'])
+    .populate('_host', ['_id', 'hostName', 'email', 'language'])
     .populate('_team', ['_id', 'teamName', 'email'])
     .populate({
       path: '_conversation',

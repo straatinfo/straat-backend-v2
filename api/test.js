@@ -4,6 +4,7 @@ const CityAreaHelper = require('../helpers/cityarea.helper')
 // const hostList = require('../assets/jsonfiles/HostList_2018_3_32')
 const hostList = require('../assets/jsonfiles/HostList_2018_4_17')
 const ConversationHelper = require('../helpers/conversationV2.helper')
+const RegistrationHelper = require('../helpers/registration.helper')
 
 const SuccessHelper = require('../helpers/success.helper')
 const User = require('../models/User')
@@ -11,17 +12,12 @@ const RoleHelper = require('../helpers/role.helper')
 const CityArea = require('../models/CityArea')
 const _ = require('lodash')
 const isValidCoordinates = require('is-valid-coordinates')
+const mailing = require('../assets/mail-templates/simple-mails')
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
   console.log(req.body)
   res.end()
-}
-
-const validateCity = async function (req, res, next) {
-  const { city } = req.params
-  const result = await CityAreaHelper.getGeoJson(city, 'city', true)
-  res.send(result)
 }
 
 const testGetUserConvo = async (req, res, next) => {
@@ -297,8 +293,45 @@ const hostUser = async function (req, res, next) {
 
 const timeTest = async function (req, res, next) {
   try {
-    
     res.send({createdAt: new Date(Date.now())})
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+const getJsonAddress = async function (req, res, next) {
+  try {
+    const address = req.body.address || req.query.address
+    const host = await CityAreaHelper.getHostNameByAddress(address)
+
+    SuccessHelper.success(res, host)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+const mailtest = async function (req, res, next) {
+  try {
+    let data = {value: 'none'}
+    if (req.params.type === 'sendReportAToHost') {
+      data = mailing.sendReportAToHost('username', 'teamName', 'teamEmail', 'text', 'category1', 'category2', 'location', 'reportDeepLink', 'en')
+    }
+
+    if (req.params.type === 'sendReportANotifToReporter') {
+      data = mailing.sendReportANotifToReporter('location', 'date', 'category1', 'category2', 'text', 'en')
+    }
+
+    res.send(data)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+const getHostIdByCity = async function (req, res, next) {
+  try {
+    const { language, city } = req.query
+    const data = await RegistrationHelper.getHostIdByCity({language, city})
+
+    SuccessHelper.success(res, data)
   } catch (e) {
     console.log(e.message)
   }
@@ -313,7 +346,9 @@ module.exports = {
   host,                    // get host data test
   getHostList,
   testGetUserConvo,
-  validateCity,
   hostUser,
-  timeTest
+  timeTest,
+  mailtest,
+  getJsonAddress,
+  getHostIdByCity
 }
