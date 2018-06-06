@@ -28,7 +28,7 @@ module.exports = {
 
   // postcode.ru
   POSTCODE: {
-    POSTCODE_API_KEY: process.env.POSTCODE_API_KEY || 'uBN0JsxZOIvnr034fj7W5uNjTIiI8et6AZ8OQi50'
+    POSTCODE_API_KEY: process.env.POSTCODE_API_KEY || 'gvuwmtomsB8eRf5Zgsfnj7zs8DE2ihC79DlEbQnb' // 'uBN0JsxZOIvnr034fj7W5uNjTIiI8et6AZ8OQi50'
   }
 
 }
