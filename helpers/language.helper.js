@@ -91,12 +91,12 @@ async function translate (baseWord, language) {
   try {
     const translation = await Language.findOne({'baseWord': baseWord.toLowerCase()})
     if (translation) {
-      const words = translation.find(trans => trans.code === language) // get only in by code
+      const words = translation.translations.find(trans => trans.code === language) // get only in by code
       if (words && words.word) {
         return Promise.resolve(words.word)
       }
     }
-    console.log('no trans for: ', baseWord)
+    console.log('no trans for: ', baseWord) 
     return Promise.resolve(baseWord)
   }
   catch (e) {
