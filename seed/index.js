@@ -31,7 +31,11 @@ const run = async function () {
 }
 
 // ---------------------------------------------------------------------------------------------------------
+// must be aranged accordingly
+const roleSeed = require('./role.seed')
+const typeSeed = require('./reportType.seed')
 const hostSeed = require('./host.seed')
+const adminSeed = require('./admin.seed')
 
 /**
  *
@@ -39,5 +43,11 @@ const hostSeed = require('./host.seed')
  *
  */
 run(
-  hostSeed
+  // required
+  roleSeed,
+  typeSeed,
+  hostSeed,
+
+  // secondary
+  adminSeed
 )
