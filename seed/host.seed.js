@@ -4,14 +4,27 @@ const newUser = new User()
 const data = [
   {
     _id: '5a7b485a039e2860cf9dd19a',
-    hostName: 'Gemeente Den Haag',
+    hostName: '\'s-Gravenhage',
     email: 'denhaag@straat.info',
-    username: 'Gemeente Den Haag',
+    username: 'denhaag',
     streetName: 'Postbus 12600',
-    city: 'S-GRAVENHAGE',
+    city: '\'s-Gravenhage',
     country: 'Netherlands',
     postalCode: '2500 DJ',
     phoneNumber: '14070',
+    _role: '5a75c9de3a06a627a7e8af45',
+    password: newUser.encryptPassword('test')
+  },
+  {
+    _id: '5aab870bce08810014422977',
+    hostName: 'Vlaardingen',
+    email: 'vlaardingen@straat.info',
+    username: 'Vlaardingen',
+    streetName: 'Postbus 1002',
+    city: 'Vlaardingen',
+    country: 'Netherlands',
+    postalCode: '3130 EB',
+    phoneNumber: '(010) 248 40 00',
     _role: '5a75c9de3a06a627a7e8af45',
     password: newUser.encryptPassword('test')
   },
