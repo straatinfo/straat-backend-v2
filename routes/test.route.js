@@ -91,5 +91,9 @@ TestRoute.route('/')
 // .get(Test.getCategories)
 
 
+// languages
+TestRoute.route('/trans')
+.get(Test.getTranslations)
+
 
 module.exports = TestRoute

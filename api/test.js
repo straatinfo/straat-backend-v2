@@ -16,6 +16,7 @@ const mailing = require('../assets/mail-templates/simple-mails')
 const CategoryHelper = require('../helpers/category.helper')
 const MainCategory = require('../models/MainCategory');
 const SubCategory = require('../models/SubCategory');
+const Languages = require('../models/Language');
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
@@ -356,6 +357,15 @@ const getCategories = async function (req, res, next) {
   }
 }
 
+const getTranslations = async function (req, res, next) {
+  try {
+    const data = await Languages.find({}, {_id: false, baseWord: true, translations: true, 'translations.code': true, 'translations.word': true})
+    SuccessHelper.success(res, data)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 module.exports = {
   testFunction,
   testGeo,
@@ -370,5 +380,6 @@ module.exports = {
   mailtest,
   getJsonAddress,
   getHostIdByCity,
-  getCategories
+  getCategories,
+  getTranslations
 }
