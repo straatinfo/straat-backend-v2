@@ -43,16 +43,16 @@ const userSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId, ref: 'Team'
   }],
   teamLeaders: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader', unique: true
+    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
   }],
   teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember', unique: true
+    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
   }],
   designs: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Design'
   }],
   mainCategories: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory', unique: true
+    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
   }],
   hostReports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
