@@ -13,6 +13,9 @@ const CityArea = require('../models/CityArea')
 const _ = require('lodash')
 const isValidCoordinates = require('is-valid-coordinates')
 const mailing = require('../assets/mail-templates/simple-mails')
+const CategoryHelper = require('../helpers/category.helper')
+const MainCategory = require('../models/MainCategory');
+const SubCategory = require('../models/SubCategory');
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
@@ -337,6 +340,22 @@ const getHostIdByCity = async function (req, res, next) {
   }
 }
 
+const getCategories = async function (req, res, next) {
+  try {
+    const { _id } = req.params
+    console.log(_id)
+    const main = await MainCategory.find({_host: _id}, ['_id', 'name', 'description', '_reportType', '_host'])
+    // get all subcattegories
+    const mainIds = main.map(m => m._id)
+    const sub = await SubCategory.find({_mainCategory: {$in: mainIds}}, ['_id', 'name', 'description', '_mainCategory'])
+    // main
+    // _mainCategory
+    SuccessHelper.success(res, {main, sub})
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 module.exports = {
   testFunction,
   testGeo,
@@ -350,5 +369,6 @@ module.exports = {
   timeTest,
   mailtest,
   getJsonAddress,
-  getHostIdByCity
+  getHostIdByCity,
+  getCategories
 }

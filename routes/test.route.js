@@ -86,4 +86,10 @@ TestRoute.route('/')
 // TestRoute.route('/isCity/:city')
 // .get(City.validateCity)
 
+// // validiate City
+TestRoute.route('/categories/:_id')
+.get(Test.getCategories)
+
+
+
 module.exports = TestRoute
