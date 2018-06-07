@@ -87,8 +87,8 @@ TestRoute.route('/')
 // .get(City.validateCity)
 
 // // validiate City
-TestRoute.route('/categories/:_id')
-.get(Test.getCategories)
+// TestRoute.route('/categories/:_id')
+// .get(Test.getCategories)
 
 
 
