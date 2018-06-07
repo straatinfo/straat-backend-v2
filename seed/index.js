@@ -5,14 +5,14 @@ const Script = require('./index.helper')
  *              must be aranged accordingly
  */
 Script.run(
-  // required
-  require('./role.seed'),
-  require('./reportType.seed'),
-  require('./host.seed'),
+  // // required
+  // require('./role.seed'),
+  // require('./reportType.seed'),
+  // require('./host.seed'),
 
-  // secondary
-  require('./admin.seed'),
-  require('./mainCategory.seed'),
-  require('./subCategory.seed'),
+  // // secondary
+  // require('./admin.seed'),
+  // require('./mainCategory.seed'),
+  // require('./subCategory.seed'),
   require('./language.seed')
 )
