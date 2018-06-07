@@ -14,5 +14,5 @@ Script.run(
   // require('./admin.seed'),
   // require('./mainCategory.seed'),
   // require('./subCategory.seed'),
-  require('./language.seed')
+  // require('./language.seed')
 )
