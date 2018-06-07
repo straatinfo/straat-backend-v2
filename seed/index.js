@@ -13,5 +13,6 @@ Script.run(
   // secondary
   require('./admin.seed'),
   require('./mainCategory.seed'),
-  require('./subCategory.seed')
+  require('./subCategory.seed'),
+  require('./language.seed')
 )
