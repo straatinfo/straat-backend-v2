@@ -96,4 +96,11 @@ TestRoute.route('/trans')
 .get(Test.getTranslations)
 
 
+TestRoute.route('/fcmTest')
+.get(Test.fcmTest)
+
+
+
+
+
 module.exports = TestRoute
