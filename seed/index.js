@@ -8,10 +8,10 @@ Script.run(
   // // required
   // require('./role.seed'),
   // require('./reportType.seed'),
-  // require('./host.seed'),
+    // require('./host.seed'),
 
   // // secondary
-  // require('./admin.seed'),
+  //require('./admin.seed'),
   // require('./mainCategory.seed'),
   // require('./subCategory.seed'),
   // require('./language.seed')

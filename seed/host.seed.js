@@ -36,7 +36,16 @@ const data = [
     postalCode: '2500 DJ',
     password: newUser.encryptPassword('test'),
     _role: '5a75c9de3a06a627a7e8af45' // should be changed according to _role in db
-  }
+  },
+  {
+    // _id: '5a844e1bf154bc463543b987',
+    hostName: 'alblasserdam',
+    email: 'alblasserdamTest@straat.info',
+    username: 'alblasserdam',
+    postalCode: '2950 AA',
+    password: newUser.encryptPassword('test'),
+    _role: '5a75c9de3a06a627a7e8af45' // should be changed according to _role in db
+  },
 ]
 
 const model = function () {
