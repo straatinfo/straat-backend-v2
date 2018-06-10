@@ -14,9 +14,9 @@ const _ = require('lodash')
 const isValidCoordinates = require('is-valid-coordinates')
 const mailing = require('../assets/mail-templates/simple-mails')
 const CategoryHelper = require('../helpers/category.helper')
-const MainCategory = require('../models/MainCategory');
-const SubCategory = require('../models/SubCategory');
-const Languages = require('../models/Language');
+const MainCategory = require('../models/MainCategory')
+const SubCategory = require('../models/SubCategory')
+const Languages = require('../models/Language')
 const http = require('http')
 const request = require('request')
 
@@ -370,48 +370,60 @@ const getTranslations = async function (req, res, next) {
 
 const fcmTest = async function (req, res, next) {
   try {
-       var FCM = require('fcm-node')
-    
-    var serverKey = 'AAAAWIq665Q:APA91bERF8GwK4Z2RhUPeXvzWaUSMtXkqxFXDPu4GZa7CJFRNvBbLqSEEcxZ9phyGacvevatkiCuIVhl3oJqO51tUNfzrKcgPSrNKS9gcwYORcdKKHvfZTc0wkO-1IWdmzKZbagCdl5R'//put the generated private key path here    
-    
+    var FCM = require('fcm-node')
+
+    var serverKey = 'AAAAWIq665Q:APA91bERF8GwK4Z2RhUPeXvzWaUSMtXkqxFXDPu4GZa7CJFRNvBbLqSEEcxZ9phyGacvevatkiCuIVhl3oJqO51tUNfzrKcgPSrNKS9gcwYORcdKKHvfZTc0wkO-1IWdmzKZbagCdl5R'// put the generated private key path here
+
     var fcm = new FCM(serverKey)
- 
-    var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-        to: 'cRHpFOLiLzg:APA91bGv8rRc9yrymHJXO6cAkl0HYr4p-AcINzUa3OFRZ6isXvpCtnmytA87RGhIGpcVYQsHw-ow8ajahllU-VgIFCT4c8OBgxuiv012d487-bSnFq9-4hOpL99Nn9ckUU8BpbAQk4Ut', 
-        collapse_key: 'com.straatmobile',
-        
-        notification: {
-            title: 'Title of your push notification', 
-            body: 'Body of your push notification', 
-  autoCancel: true,
-  largeIcon: 'ic_launcher',
-  smallIcon: 'ic_notification',
-  vibrate: true,
-  vibration: 300,
-  playSound: true,
-  soundName: 'default'
-        },
-        
-        data: {  //you can send only notification or only data(or include both)
-            my_key: 'my value',
-            my_another_key: 'my another value'
-        }
+
+    var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
+      to: 'cRHpFOLiLzg:APA91bGv8rRc9yrymHJXO6cAkl0HYr4p-AcINzUa3OFRZ6isXvpCtnmytA87RGhIGpcVYQsHw-ow8ajahllU-VgIFCT4c8OBgxuiv012d487-bSnFq9-4hOpL99Nn9ckUU8BpbAQk4Ut',
+      collapse_key: 'com.straatmobile',
+
+      notification: {
+        title: 'Title of your push notification',
+        body: 'Body of your push notification',
+        autoCancel: true,
+        largeIcon: 'ic_launcher',
+        smallIcon: 'ic_notification',
+        vibrate: true,
+        vibration: 300,
+        playSound: true,
+        soundName: 'default'
+      },
+
+      data: {  // you can send only notification or only data(or include both)
+        my_key: 'my value',
+        my_another_key: 'my another value'
+      }
     }
-    
-    fcm.send(message, function(err, response){
-        if (err) {
-            console.log("Something has gone wrong!")
-        } else {
-            console.log("Successfully sent with response: ", response)
-        }
+
+    fcm.send(message, function (err, response) {
+      if (err) {
+        console.log('Something has gone wrong!')
+      } else {
+        console.log('Successfully sent with response: ', response)
+      }
     })
-    SuccessHelper.success(res, fcm) 
+    SuccessHelper.success(res, fcm)
   } catch (e) {
     console.log(e.message)
     return SuccessHelper.success(res, e)
   }
 }
 
+const socketTest = async function (req, res, next) {
+  try {
+    const { _id } = req.query
+    var io = req.app.get('sockectService')
+    console.log('io', io)
+
+    io.to(_id).emit('send-global-msg', { status: 0, message: 'Could not update users at this time'})
+    return SuccessHelper.success(res, 'sended: ' + _id)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
 
 module.exports = {
   testFunction,
@@ -429,5 +441,6 @@ module.exports = {
   getHostIdByCity,
   getCategories,
   getTranslations,
-  fcmTest
+  fcmTest,
+  socketTest
 }
