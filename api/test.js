@@ -377,24 +377,28 @@ const fcmTest = async function (req, res, next) {
     var fcm = new FCM(serverKey)
 
     var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
-      to: 'cRHpFOLiLzg:APA91bGv8rRc9yrymHJXO6cAkl0HYr4p-AcINzUa3OFRZ6isXvpCtnmytA87RGhIGpcVYQsHw-ow8ajahllU-VgIFCT4c8OBgxuiv012d487-bSnFq9-4hOpL99Nn9ckUU8BpbAQk4Ut',
+       to: "c_yedigoiwU:APA91bGBzkXNa9YMRfYvbhxzihxKrk0azqiN_cbDu-CLrzxE6HVv_B6ATvGQZYdQT2hhgPsydqG6KraaYSs3Zc1GjBkQ5zmoQkcVOtrMK6fHadExGZenh8u9VVpKPtYuwVNlMMfRwaak",
+      // to: 'testgroup',
       collapse_key: 'com.straatmobile',
 
       notification: {
         title: 'Title of your push notification',
         body: 'Body of your push notification',
-        autoCancel: true,
-        largeIcon: 'ic_launcher',
-        smallIcon: 'ic_notification',
+        autoCancel: false,
+        // largeIcon: 'ic_launcher',
+        // smallIcon: 'ic_launcher',
+        icon: 'ic_launcher',
         vibrate: true,
         vibration: 300,
         playSound: true,
-        soundName: 'default'
+        soundName: 'default',
+        sound: 'default',
+        badge: 1
       },
 
       data: {  // you can send only notification or only data(or include both)
-        my_key: 'my value',
-        my_another_key: 'my another value'
+        test1: 'test1 value',
+        test2: 'test2 value'
       }
     }
 
