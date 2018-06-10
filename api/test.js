@@ -366,6 +366,41 @@ const getTranslations = async function (req, res, next) {
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const socketTest = async function (req, res, next) {
+  try {
+    const { _id } = req.query
+    var io = req.app.get('sockectService')
+    console.log('io', io)
+
+     io.to(_id).emit('send-global-msg', { status: 0, message: 'Could not update users at this time'})
+     return SuccessHelper.success(res, 'sended: ' + _id)
+
+    
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
+
+
+
+
+
 module.exports = {
   testFunction,
   testGeo,
@@ -381,5 +416,6 @@ module.exports = {
   getJsonAddress,
   getHostIdByCity,
   getCategories,
-  getTranslations
+  getTranslations,
+  socketTest
 }

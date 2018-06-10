@@ -96,4 +96,7 @@ TestRoute.route('/trans')
 .get(Test.getTranslations)
 
 
+TestRoute.route('/socket')
+.get(Test.socketTest)
+
 module.exports = TestRoute
