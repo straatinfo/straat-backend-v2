@@ -56,7 +56,7 @@ const findUserById = (id) => {
       'country', 'postalCode', 'phoneNumber',
       'long', 'lat', 'isBlocked', 'isPatron',
       'hostName', 'username', '_host', 'isVolunteer',
-      '_profilePic', 'language'
+      '_profilePic', 'language', 'fcmToken', 'soketToken'
     ])
     .populate({
       path: '_host',
@@ -258,7 +258,7 @@ const changePassword = (_user, newPassword) => {
       // update user password
       const userInstance = new User();
       const encryptedPassword = userInstance.encryptPassword(newPassword);
-      const updateU = await await User.findByIdAndUpdate(_user, {'password': encryptedPassword, 'isActivated': true});
+      const updateU = await User.findByIdAndUpdate(_user, {'password': encryptedPassword, 'isActivated': true});
       if (updateU.err) {
         return resolve({err: updateU.err});
       }
@@ -269,6 +269,22 @@ const changePassword = (_user, newPassword) => {
     }
   });
 };
+
+const updateFcmToken = (_user, token) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // update user password
+      const updateU = await User.findByIdAndUpdate(_user, {fcmToken: token})
+      if (updateU.err) {
+        return resolve({err: updateU.err})
+      }
+      resolve({ err: null, data: 'success' })
+    }
+    catch (e) {
+      reject(e)
+    }
+  })
+}
 
 const addMessageToUser = (_user, _message) => {
   return new Promise((resolve, reject) => {
@@ -326,6 +342,7 @@ module.exports = {
   removeMessageToUser: removeMessageToUser,
   checkUserByUNameEmail,
   comparePassword,
+  updateFcmToken,
   activateUser,
   deactivateUser,
   userModel,

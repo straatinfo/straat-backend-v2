@@ -115,12 +115,29 @@ const addProfilePic = async (req, res, next) => {
   }
 };
 
+const updateFcmToken = async (req, res, next) => {
+  // will be protekted later
+  const { fcmToken, _user } = req.body
+  try {
+    // if (!req.user) {
+    //   return ErrorHelper.ClientError(res, {error: 'Invalid User'}, 400)
+    // }
+    const result = await UserHelper.updateFcmToken(_user, fcmToken)
+    if (result.err) {
+      return ErrorHelper.ClientError(res, {error: result.err}, 400)
+    }
+    SuccessHelper.success(res, result.data)
+  }
+  catch (e) {
+    ErrorHelper.ServerError(res)
+  }
+}
+
 module.exports = {
   getUserDetails: getUserDetails,
   updateUserDetails: updateUserDetails,
   forgotPassword: forgotPassword,
   changePassword: changePassword,
   addProfilePic: addProfilePic,
-  forgotPassword: forgotPassword,
-  changePassword: changePassword
+  updateFcmToken
 };
