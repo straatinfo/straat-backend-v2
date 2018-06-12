@@ -291,6 +291,51 @@ const createMainCategoryForHost = async (req, res, next) => {
   }
 }
 
+// mobile app backend
+
+
+const getAppMainCategoriesWithGeneral = async (req, res, next) => {
+  // !removed general
+  // get all categories of this _host
+  // use by app
+  const { hostId } = req.params
+  try {
+    const getMC = await CategoryHelper.getMainCategoriesByHost(hostId)
+    if (getMC.err) {
+      return ErrorHelper.ClientError(res, {error: getMC.err}, 400)
+    }
+    req.mainCategories = getMC.mainCategories
+    return next()
+
+  } catch (e) {
+    ErrorHelper.ServerError(res)
+  }
+}
+
+const getAppGeneralMainCategories = async (req, res, next) => {
+  try {
+    if (!req.query.code) { return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422) }
+    const code = req.query.code.toUpperCase()
+    let getMC
+    console.log('ddd')
+    switch (code) {
+      case 'ABC':
+        // get all categoriees of general
+        getMC = await CategoryHelper.getMainCategoriesGeneral()
+        break
+      default:
+        return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422)
+    }
+    if (getMC.err) { return ErrorHelper.ClientError(res, {error: getMC.err}, 422) }
+    req.mainCategories = getMC.mainCategories
+    return next()
+    // SuccessHelper.success(res, categoriesWithTranslations)
+  } catch (e) {
+    console.log(e)
+    ErrorHelper.ServerError(res)
+  }
+}
+
 module.exports = {
   getMainCategories: getMainCategories,
   createMainCategory: createMainCategory,
@@ -304,5 +349,7 @@ module.exports = {
   getMainCategoriesWithGeneral: getMainCategoriesWithGeneral,
   getGeneralMainCategories: getGeneralMainCategories,
   createGeneralMainCategory: createGeneralMainCategory,
-  createMainCategoryForHost: createMainCategoryForHost
+  createMainCategoryForHost: createMainCategoryForHost,
+  getAppMainCategoriesWithGeneral,
+  getAppGeneralMainCategories
 }
