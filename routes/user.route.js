@@ -24,4 +24,7 @@ UserRoute.route('/password')
 .post(User.forgotPassword)
 .put(requireSignin, User.changePassword);
 
+UserRoute.route('/fcm')
+.put(User.updateFcmToken)
+
 module.exports = UserRoute;
