@@ -20,6 +20,10 @@ const userSchema = new Schema({
   phoneNumber: { type: String },
   long: { type: Number },
   lat: { type: Number },
+  geoLocation: {
+    type: {type: String, enum: 'Point', default: 'Point'},
+    coordinates: { type: [Number], default: [0, 0]}                   // [long, lat] ; used by admin or user
+  },
   language: { type: String, default: 'nl' },
   isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
@@ -39,16 +43,16 @@ const userSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId, ref: 'Team'
   }],
   teamLeaders: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader', unique: true
+    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
   }],
   teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember', unique: true
+    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
   }],
   designs: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Design'
   }],
   mainCategories: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory', unique: true
+    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
   }],
   hostReports: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Report'
@@ -67,5 +71,7 @@ const userSchema = new Schema({
 userSchema.methods.encryptPassword = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
 };
+
+userSchema.index({geoLocation: '2dsphere'})
 
 module.exports = mongoose.model('User', userSchema);

@@ -76,7 +76,7 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
   try {
     console.log(req.body);
     const messages = [];
-    req.checkBody('code', 'Code is required').notEmpty();
+    // req.checkBody('code', 'Code is required').notEmpty();
     req.checkBody('email', 'Invalid email').isEmail();
 
     req.checkBody('password', 'Invalid password').notEmpty().isLength({ min: 4 });

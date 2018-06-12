@@ -3,8 +3,11 @@ const ErrorHelper = require('../helpers/error.helper');
 const ReportHelper = require('../helpers/report.helper');
 const ReportTypeHelper = require('../helpers/reportType.helper');
 const ReporterHelper = require('../helpers/reporter.helper');
+const TeamHelper = require('../helpers/team.helper');
 const MailingHelper = require('../helpers/mailing.helper');
 const HostHelper = require('../helpers/host.helper');
+const TeamTransform = require('../transform/team.transform');
+const LanguageHelper = require('../helpers/language.helper');
 
 const getReports = async (req, res, next) => {
   try {
@@ -129,6 +132,8 @@ const createReport = async (req, res, next) => {
 };
 
 const createReportV2 = async (req, res, next) => {
+  // error in converting createAt in model report
+  // due to may 32
   try {
     if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
       return next(); 
@@ -144,21 +149,30 @@ const createReportV2 = async (req, res, next) => {
     if (!createR.report) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422);
     }
+
+
     // send emails
-    const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt } = createR.report;
-    const { code } = _reportType;
-    const mainName = _mainCategory ? _mainCategory.name : ''
-    const subName =  _subCategory ?_subCategory.name : ''
+    const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt, _team } = createR.report;
+    const team = await TeamHelper.getTeamLeadersByTeamId(_team._id)
+    const lang = _host.language
+    const teamLeadersEmail = TeamTransform.getEmail({model: 'teamLeaders', data: team.teamLeaders, isArray: true})
+    // get trans of this
+    const { code } = _reportType
+    const mainName = _mainCategory ? (await LanguageHelper.translate(_mainCategory.name, lang)) : ''
+    const subName = _subCategory ? (await LanguageHelper.translate(_subCategory.name, lang)) : ''
+  
     switch (code.toUpperCase()) {
       case 'A':
         const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location, reportDeeplink );
-        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, null, location, createdAt, mainName, subName);
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location, reportDeeplink, lang);
+
+         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
+        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, mainName, subName, lang);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
           console.log('sendReportANotifToHost.err || sendReportANotifReporter.err', sendReportANotifToHost.err, sendReportANotifReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
-      break;
+      break; 
       case 'B':
         const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location);
         if (sendReportBNotifToReporter.err) {
@@ -204,7 +218,7 @@ const createReportV2 = async (req, res, next) => {
     SuccessHelper.success(res, getR.report);
   }
   catch (e) {
-    console.log(e);
+    console.log('createReportV2', e);
     ErrorHelper.ServerError(res);
   }
 };

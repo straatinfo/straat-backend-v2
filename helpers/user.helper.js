@@ -46,6 +46,8 @@ const comparePassword = (password, hash) => {
   });
 }
 
+
+
 const findUserById = (id) => {
   return new Promise((resolve, reject) => {
     User.findById(id, [
@@ -58,9 +60,13 @@ const findUserById = (id) => {
     ])
     .populate({
       path: '_host',
-      select: { '_id': 1, 'hostName': 1, 'isSpecific': 1, language: true },
+      select: { _id: 1, hostName: 1, isSpecific: 1, language: true, geoLocation: true, long: true, lat: true },
       populate: {
-        path: '_activeDesign'
+        path: '_activeDesign',
+        populate: {
+          path: '_profilePic',
+          select: { _id: true, secure_url: true }
+        }
       }
     })
     // .populate({
@@ -291,6 +297,23 @@ const removeMessageToUser = (_user, _message) => {
   });
 };
 
+const userModel = function () {
+  return User
+}
+
+const setActiveTeam = (_user, _team) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(_user,
+    { _activeTeam: _team },
+    (err, user) => {
+      if (err) {
+        return resolve({err: err});
+      }
+      resolve({err: null, user: user});
+    })
+  })
+}
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
@@ -304,5 +327,7 @@ module.exports = {
   checkUserByUNameEmail,
   comparePassword,
   activateUser,
-  deactivateUser
+  deactivateUser,
+  userModel,
+  setActiveTeam
 };

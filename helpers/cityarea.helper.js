@@ -1,6 +1,7 @@
 const CityArea = require('../models/CityArea')
 const http = require('http')
 const request = require('request')
+const Config = require('./../config')
 /**
  *
  * @description create new city area
@@ -80,17 +81,16 @@ const filterGeoJson = (result = [], bound = 'city', inset = false) => {
   return result.find((nomi) => {
     // if (nomi.address && (nomi.address.county || nomi.address.city || !nomi.address.suburb || !nomi.address.village || !nomi.address.hamlet) && nomi.class === 'boundary') {
     // use by registration for getting host of city or bound by it
-    if (inset 
+    if (inset
       && (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.village || nomi.address.hamlet))) {
-       return true
+      return true
     }
 
-    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {  
+    if (nomi.address && (nomi.address.county || nomi.address.city) && !(nomi.address.suburb || nomi.address.village || nomi.address.hamlet)) {
       return true
     } else {
       return false
     }
-
   })
 }
 
@@ -122,7 +122,7 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
         if (error) {
           console.log('error in : ' + city, error)
           return resolve({err: 'no data in: ' + city})
-          //throw new Error(error)
+          // throw new Error(error)
         }
 
         const result = filterGeoJson(JSON.parse(body), bound, inset)
@@ -149,9 +149,94 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
   })
 }
 
+
+
+
+/**
+ *
+ * @description get by postal code from postCode.ru
+ * @param {*} bound - 'city' & 'county'
+ *
+ */
+// url: 'https://api.postcodeapi.nu/v2/addresses/?postcode=postalCode&number=212',
+const validatePostalCode = (postalCode) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      url: `https://api.postcodeapi.nu/v2/addresses/?postcode=${postalCode}`,
+      headers: {
+        'X-Api-Key': Config.POSTCODE.POSTCODE_API_KEY
+      }
+    }
+    try {
+      request.get(options, function (error, response, body) {
+        if (error) {
+          console.log('error in : ' + postalCode, error)
+          return resolve({err: 'no data in: ' + postalCode})
+        }
+        const result = JSON.parse(body)
+        if (!result) {
+          return resolve({err: 'no data in: ' + postalCode})
+        }
+        if (!(result._embedded.addresses.length > 0)) {
+          return resolve({err: 'no data in: ' + postalCode})
+        }
+        if (!error && response.statusCode === 200) {
+          return resolve(result._embedded.addresses[0])
+        }
+        throw new Error(' ')
+      })
+    } catch (e) {
+      console.log('error in : ' + postalCode, e)
+      return resolve({err: 'no data in: ' + postalCode})
+    }
+  })
+}
+
+
+/**
+ *
+ * @description get by postal code from postCode.ru
+ * @param {*} bound - 'city' & 'county'
+ */
+// url: 'https://api.postcodeapi.nu/v2/addresses/?postcode=postalCode&number=212',
+const validateNumber = (postalCode, number) => {
+  return new Promise((resolve, reject) => {
+    const options = {
+      url: `https://api.postcodeapi.nu/v2/addresses/?postcode=${postalCode}&number=${number}`,
+      headers: {
+        'X-Api-Key': Config.POSTCODE.POSTCODE_API_KEY
+      }
+    }
+    try {
+      request.get(options, function (error, response, body) {
+        if (error) {
+          console.log('error in : ' + postalCode, error)
+          return resolve({err: 'no data in: ' + postalCode, number})
+        }
+        const result = JSON.parse(body)
+        if (!result) {
+          return resolve({err: 'no data in: ' + postalCode, number})
+        }
+        if (!(result._embedded.addresses.length > 0)) {
+          return resolve({err: 'no data in: ' + postalCode, number})
+        }
+        if (!error && response.statusCode === 200) {
+          const { geo, city, municipality, postcode, number, street } = result._embedded.addresses[0]
+          return resolve({ streetName: street, postalCode: postcode, houseNumber: number, geoLocation: geo.center.wgs84, city: city.label, hostName: municipality.label })
+        }
+        throw new Error(' ')
+      })
+    } catch (e) {
+      return resolve({err: 'no data in: ' + postalCode, number})
+    }
+  })
+}
+
 module.exports = {
   create,
   searchIntersect,
   searchNear,
-  getGeoJson
+  getGeoJson,
+  validatePostalCode,
+  validateNumber
 }

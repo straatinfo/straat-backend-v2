@@ -15,7 +15,10 @@
 // Private functions
 async function __getMessages(_conversation) {
   try {
-    const messages = await Message.find({ '_conversation': _conversation }).populate('_author', ['fname', 'lname', 'username', '_id']).populate('attachments');
+    const messages = await Message.find({ '_conversation': _conversation })
+    // .populate('_author', ['fname', 'lname', 'username', '_id'])
+    .populate({path: '_author', select: {username: true}, populate:{path:'_profilePic', select: {public_id:true, secure_url: true}}})
+    .populate('attachments');
     return Promise.resolve(messages);
   }
   catch (e) {

@@ -169,6 +169,7 @@ const flatReporter = (r) => {
         long: r.long || null,
         createdAt: r.createdAt || null,
         updatedAt: r.updatedAt || null,
+        phoneNumber: r.phoneNumber || null,
         '_role._id': (r._role && r._role._id) ? r._role._id : null,
         '_role.name': (r._role && r._role.name) ? r._role.name : null,
         '_role.code': (r._role && r._role.code) ? r._role.code : null,

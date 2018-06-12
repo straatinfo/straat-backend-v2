@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 mongoose.connect(Config.DATA_BASE);
 
 var users = [
+  // did not create separate file: used host.seed instead
   new User({
     _id: '5a844e1bf154bc463543b987',
     hostName: 'freeHost',
