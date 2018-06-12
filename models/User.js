@@ -24,10 +24,17 @@ const userSchema = new Schema({
     type: {type: String, enum: 'Point', default: 'Point'},
     coordinates: { type: [Number], default: [0, 0] }                         // [long, lat] ; used by admin or user
   },
+  setting: {
+    isNotification: { type: Boolean, default: true },
+    vibrate: { type: Boolean, default: true },
+    sound: { type: Boolean, default: true },
+    radius: { type: Number, default: 300 }
+  },
   language: { type: String, default: 'nl' },
   fcmToken: { type: String, default: null },                                 // fcm token: use for kiled, background notification for user
-  soketToken: { type: String, default: null },                               // soket token: use for websocket live connection broadcast
+  socketToken: { type: String, default: null },                              // soket token: use for websocket live connection broadcast
   isVolunteer: { type: Boolean, default: false },
+  isOnline: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
   isActivated: { type: Boolean, default: false },                            // this is for host

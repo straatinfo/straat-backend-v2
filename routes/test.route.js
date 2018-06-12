@@ -91,13 +91,13 @@ TestRoute.route('/')
 // .get(Test.getCategories)
 
 // languages
-TestRoute.route('/trans')
-.get(Test.getTranslations)
+// TestRoute.route('/trans')
+// .get(Test.getTranslations)
 
-TestRoute.route('/fcmTest')
-.get(Test.fcmTest)
+// TestRoute.route('/fcmTest')
+// .get(Test.fcmTest)
 
-TestRoute.route('/socket')
-.get(Test.socketTest)
+// TestRoute.route('/socket/:_id')
+// .get(Test.socketTest)
 
 module.exports = TestRoute

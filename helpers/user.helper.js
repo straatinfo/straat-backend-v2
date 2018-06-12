@@ -286,6 +286,55 @@ const updateFcmToken = (_user, token) => {
   })
 }
 
+const updateSocketToken = (_user, token) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // update user password
+      const updateU = await User.findByIdAndUpdate(_user, {socketToken: token})
+      if (updateU.err) {
+        return resolve({err: updateU.err})
+      }
+      resolve({ err: null, data: 'success' })
+    }
+    catch (e) {
+      reject(e)
+    }
+  })
+}
+
+const updateIsOnline = (_user, isOnline) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // update user password
+      const updateU = await User.findByIdAndUpdate(_user, {isOnline: isOnline})
+      if (updateU.err) {
+        return resolve({err: updateU.err})
+      }
+      resolve({ err: null, data: 'success' })
+    }
+    catch (e) {
+      reject(e)
+    }
+  })
+}
+
+const updateIsOnlineBySocketToken = (token, isOnline) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      // update user password
+      const updateU = await User.findOneAndUpdate({socketToken: token}, {isOnline: isOnline})
+      if (updateU.err) {
+        return resolve({err: updateU.err})
+      }
+      resolve({ err: null, data: 'success' })
+    }
+    catch (e) {
+      reject(e)
+    }
+  })
+}
+
+
 const addMessageToUser = (_user, _message) => {
   return new Promise((resolve, reject) => {
     User.findByIdAndUpdate(_user,
@@ -343,8 +392,11 @@ module.exports = {
   checkUserByUNameEmail,
   comparePassword,
   updateFcmToken,
+  updateSocketToken,
   activateUser,
   deactivateUser,
   userModel,
-  setActiveTeam
+  setActiveTeam,
+  updateIsOnline,
+  updateIsOnlineBySocketToken
 };
