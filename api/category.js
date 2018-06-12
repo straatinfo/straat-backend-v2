@@ -36,16 +36,17 @@ const getMainCategoriesWithGeneral = async (req, res, next) => {
     if (getMC.err) {
       return ErrorHelper.ClientError(res, {error: getMC.err}, 400)
     }
-    // const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
-    //   const translations = await LanguageHelper.getTranslation(mc.name)
-    //   return {...mc.toObject(), translations: translations.translations}
-    // }))
-    // if (req.query.flat == 'true') {
-    //   req.mainCategories = categoriesWithTranslations
-    //   return next()
-    // }
+    const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
+      const translations = await LanguageHelper.getTranslation(mc.name)
+      return {...mc.toObject(), translations: translations.translations}
+    }))
+    if (req.query.flat == 'true') {
+      req.mainCategories = categoriesWithTranslations
+      // return next()
+    } else {
+      req.mainCategories = getMC.mainCategories
+    }
     // SuccessHelper.success(res, categoriesWithTranslations)
-    req.mainCategories = getMC.mainCategories
     return next()
 
   } catch (e) {
@@ -76,22 +77,22 @@ const getGeneralMainCategories = async (req, res, next) => {
       default:
         return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422)
     }
-    //
-    // if (getMC.err) { return ErrorHelper.ClientError(res, {error: getMC.err}) }
-    // const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
-    //   const translations = await LanguageHelper.getTranslation(mc.name)
-    //   return {...mc.toObject(), translations: translations.translations}
-    // }))
 
-    // console.log(categoriesWithTranslations);
+    if (getMC.err) { return ErrorHelper.ClientError(res, {error: getMC.err}) }
+    const categoriesWithTranslations = await Promise.all(getMC.mainCategories.map(async(mc) => {
+      const translations = await LanguageHelper.getTranslation(mc.name)
+      return {...mc.toObject(), translations: translations.translations}
+    }))
+
+    console.log(categoriesWithTranslations);
     // const categoriesWithTranslations =  getMC
-    // if (req.query.flat == 'true') {
-    //   req.mainCategories = categoriesWithTranslations
-      
-    // }
+    if (req.query.flat == 'true') {
+      req.mainCategories = categoriesWithTranslations;
+    } else {
+      req.mainCategories = getMC.mainCategories
+    }
     if (getMC.err) { return ErrorHelper.ClientError(res, {error: getMC.err}, 422) }
-    req.mainCategories = getMC.mainCategories
-    return next()
+    return next();
     // SuccessHelper.success(res, categoriesWithTranslations)
   } catch (e) {
     console.log(e)
