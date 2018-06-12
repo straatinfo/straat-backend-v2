@@ -13,6 +13,8 @@ const register = async (io, socket, data = null, next) => {
       return {status: 0, message: 'Registration Failed', error: 'failed'}
     }
     const checkCon = await SocketHelper.findSocketByUserAndUpdate(checkU.user._id, socket.id)
+    const uSt = await UserHelper.updateSocketToken(checkU.user._id, socket.id)
+    await UserHelper.updateIsOnline(checkU.user._id, true)
 
     let conn
     if (!checkCon.socket) {
@@ -38,6 +40,7 @@ const onDisconnect = async (io, socket, data = null, next) => {
   try {
     const dc = await SocketHelper.removeSocket(socket.id)
     console.log(socket.id, 'Was Disconnected')
+    await UserHelper.updateIsOnlineBySocketToken(socket.id, false)
     // console.log('dc', dc)
   } catch (e) {
     console.log(e)
