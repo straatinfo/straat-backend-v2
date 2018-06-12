@@ -8,15 +8,19 @@ const RegistrationHelper = require('../helpers/registration.helper')
 
 const SuccessHelper = require('../helpers/success.helper')
 const User = require('../models/User')
+const ReportHelper = require('../helpers/report.helper')
 const RoleHelper = require('../helpers/role.helper')
 const CityArea = require('../models/CityArea')
 const _ = require('lodash')
 const isValidCoordinates = require('is-valid-coordinates')
 const mailing = require('../assets/mail-templates/simple-mails')
 const CategoryHelper = require('../helpers/category.helper')
-const MainCategory = require('../models/MainCategory');
-const SubCategory = require('../models/SubCategory');
-const Languages = require('../models/Language');
+const MainCategory = require('../models/MainCategory')
+const SubCategory = require('../models/SubCategory')
+const Languages = require('../models/Language')
+const SSS = require('../service/ServerSocketService')
+const http = require('http')
+const request = require('request')
 
 const testFunction = (req, res, next) => {
   console.log(req.files)
@@ -366,6 +370,71 @@ const getTranslations = async function (req, res, next) {
   }
 }
 
+const fcmTest = async function (req, res, next) {
+  try {
+    var FCM = require('fcm-node')
+
+    var serverKey = 'AAAAWIq665Q:APA91bERF8GwK4Z2RhUPeXvzWaUSMtXkqxFXDPu4GZa7CJFRNvBbLqSEEcxZ9phyGacvevatkiCuIVhl3oJqO51tUNfzrKcgPSrNKS9gcwYORcdKKHvfZTc0wkO-1IWdmzKZbagCdl5R'// put the generated private key path here
+
+    var fcm = new FCM(serverKey)
+
+    var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
+      to: 'c_yedigoiwU:APA91bGBzkXNa9YMRfYvbhxzihxKrk0azqiN_cbDu-CLrzxE6HVv_B6ATvGQZYdQT2hhgPsydqG6KraaYSs3Zc1GjBkQ5zmoQkcVOtrMK6fHadExGZenh8u9VVpKPtYuwVNlMMfRwaak',
+      // to: 'testgroup',
+      collapse_key: 'com.straatmobile',
+
+      notification: {
+        title: 'Title of your push notification',
+        body: 'Body of your push notification',
+        autoCancel: false,
+        // largeIcon: 'ic_launcher',
+        // smallIcon: 'ic_launcher',
+        icon: 'ic_launcher',
+        vibrate: true,
+        vibration: 300,
+        playSound: true,
+        soundName: 'default',
+        sound: 'default',
+        badge: 1
+      },
+
+      data: {  // you can send only notification or only data(or include both)
+        test1: 'test1 value',
+        test2: 'test2 value'
+      }
+    }
+
+    fcm.send(message, function (err, response) {
+      if (err) {
+        console.log('Something has gone wrong!')
+      } else {
+        console.log('Successfully sent with response: ', response)
+      }
+    })
+    SuccessHelper.success(res, fcm)
+  } catch (e) {
+    console.log(e.message)
+    return SuccessHelper.success(res, e)
+  }
+}
+
+const socketTest = async function (req, res, next) {
+  try {
+    const { _id } = req.params
+
+    // const reportModel = ReportHelper.getModel()
+    const reportTest = await ReportHelper.getReportByQueryObjectClean({_id: '5b1ad23fead53b00143dbf4b'})
+    //  console.log('reportTest', reportTest)
+    // const reportTest = await ReportHelper.getReportByQueryObjectClean({_id: '5b1ad23fead53b00143dbf4b'})
+
+    // IO(req, {to:_id, type: 'receive-global-msg', data: { data: {TYPE: 'REPORT', content: reportTest.reports[0]}}})
+    SSS.report.creation(req, reportTest.reports[0])
+    return SuccessHelper.success(res, 'sended: ' + _id)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 module.exports = {
   testFunction,
   testGeo,
@@ -381,5 +450,7 @@ module.exports = {
   getJsonAddress,
   getHostIdByCity,
   getCategories,
-  getTranslations
+  getTranslations,
+  fcmTest,
+  socketTest
 }

@@ -503,6 +503,9 @@ const getPublicReports = async (_reporter, _reportType = null) => {
     return Promise.reject(e)
   }
 }
+const getModel = function () {
+  return Report
+}
 
 module.exports = {
   reportIdGenerator: reportIdGenerator,
@@ -520,5 +523,6 @@ module.exports = {
   changeReportStatus: changeReportStatus,
   getReportAttachments: getReportAttachments,
   getReportByQueryObjectClean,
-  getPublicReports
+  getPublicReports,
+  getModel
 }

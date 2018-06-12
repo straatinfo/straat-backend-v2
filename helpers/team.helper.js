@@ -589,8 +589,12 @@ const getTeamLeadersByTeamId = (_team) => {
       })
   });
 };
+const getModel = function () {
+  return Team
+}
 
 module.exports = {
+  getModel,
   getTeams: getTeams,
   getTeamWithFilter: getTeamWithFilter,
   getTeamById: getTeamById,

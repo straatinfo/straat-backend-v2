@@ -8,6 +8,7 @@ const MailingHelper = require('../helpers/mailing.helper');
 const HostHelper = require('../helpers/host.helper');
 const TeamTransform = require('../transform/team.transform');
 const LanguageHelper = require('../helpers/language.helper');
+const SSS = require('../service/ServerSocketService')
 
 const getReports = async (req, res, next) => {
   try {
@@ -208,6 +209,9 @@ const createReportV2 = async (req, res, next) => {
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
+    // here will be space for sending notification offline base | socket base
+    SSS.report.creation(req, getR.report)
+    
     if (req.query.flat == 'true') {
       const flatR = await ReportHelper.flatReport(getR.report);
       if (flatR.err) {

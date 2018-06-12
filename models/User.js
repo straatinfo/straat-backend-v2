@@ -22,20 +22,29 @@ const userSchema = new Schema({
   lat: { type: Number },
   geoLocation: {
     type: {type: String, enum: 'Point', default: 'Point'},
-    coordinates: { type: [Number], default: [0, 0]}                   // [long, lat] ; used by admin or user
+    coordinates: { type: [Number], default: [0, 0] }                         // [long, lat] ; used by admin or user
+  },
+  setting: {
+    isNotification: { type: Boolean, default: true },
+    vibrate: { type: Boolean, default: true },
+    sound: { type: Boolean, default: true },
+    radius: { type: Number, default: 300 }
   },
   language: { type: String, default: 'nl' },
+  fcmToken: { type: String, default: null },                                 // fcm token: use for kiled, background notification for user
+  socketToken: { type: String, default: null },                              // soket token: use for websocket live connection broadcast
   isVolunteer: { type: Boolean, default: false },
+  isOnline: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isPatron: { type: Boolean, default: false },
-  isActivated: { type: Boolean, default: false }, // this is for host
+  isActivated: { type: Boolean, default: false },                            // this is for host
   isSpecific: { type: Boolean, default: false },
-  _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   softRemoved: { type: Boolean, default: false },
-  _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' }, // for host
+  _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
+  _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' },    // for host
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  _activeTeam: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' }, // for Reporters/ordinary user
+  _activeTeam: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },        // for Reporters/ordinary user
   reporters: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'User'
   }],
