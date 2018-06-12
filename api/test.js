@@ -8,6 +8,7 @@ const RegistrationHelper = require('../helpers/registration.helper')
 
 const SuccessHelper = require('../helpers/success.helper')
 const User = require('../models/User')
+const ReportHelper = require('../helpers/report.helper')
 const RoleHelper = require('../helpers/role.helper')
 const CityArea = require('../models/CityArea')
 const _ = require('lodash')
@@ -17,6 +18,7 @@ const CategoryHelper = require('../helpers/category.helper')
 const MainCategory = require('../models/MainCategory')
 const SubCategory = require('../models/SubCategory')
 const Languages = require('../models/Language')
+const SSS = require('../service/ServerSocketService')
 const http = require('http')
 const request = require('request')
 
@@ -377,7 +379,7 @@ const fcmTest = async function (req, res, next) {
     var fcm = new FCM(serverKey)
 
     var message = { // this may vary according to the message type (single recipient, multicast, topic, et cetera)
-       to: "c_yedigoiwU:APA91bGBzkXNa9YMRfYvbhxzihxKrk0azqiN_cbDu-CLrzxE6HVv_B6ATvGQZYdQT2hhgPsydqG6KraaYSs3Zc1GjBkQ5zmoQkcVOtrMK6fHadExGZenh8u9VVpKPtYuwVNlMMfRwaak",
+      to: 'c_yedigoiwU:APA91bGBzkXNa9YMRfYvbhxzihxKrk0azqiN_cbDu-CLrzxE6HVv_B6ATvGQZYdQT2hhgPsydqG6KraaYSs3Zc1GjBkQ5zmoQkcVOtrMK6fHadExGZenh8u9VVpKPtYuwVNlMMfRwaak',
       // to: 'testgroup',
       collapse_key: 'com.straatmobile',
 
@@ -418,11 +420,15 @@ const fcmTest = async function (req, res, next) {
 
 const socketTest = async function (req, res, next) {
   try {
-    const { _id } = req.query
-    var io = req.app.get('sockectService')
-    console.log('io', io)
+    const { _id } = req.params
 
-    io.to(_id).emit('send-global-msg', { status: 0, message: 'Could not update users at this time'})
+    // const reportModel = ReportHelper.getModel()
+    const reportTest = await ReportHelper.getReportByQueryObjectClean({_id: '5b1ad23fead53b00143dbf4b'})
+    //  console.log('reportTest', reportTest)
+    // const reportTest = await ReportHelper.getReportByQueryObjectClean({_id: '5b1ad23fead53b00143dbf4b'})
+
+    // IO(req, {to:_id, type: 'receive-global-msg', data: { data: {TYPE: 'REPORT', content: reportTest.reports[0]}}})
+    SSS.report.creation(req, reportTest.reports[0])
     return SuccessHelper.success(res, 'sended: ' + _id)
   } catch (e) {
     console.log(e.message)
