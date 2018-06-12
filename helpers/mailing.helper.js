@@ -25,12 +25,12 @@ const sendRegistrationRequestNotif = (userDetail) => {
 };
 
 // registration notification team request for approval
-const sendNewTeamRequestNotif = (teamDetails) => {
+const sendNewTeamRequestNotif = (teamDetails, userData) => {
   const { teamName, teamEmail } = teamDetails;
   const receiver = Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL;
   const sender = Config.EMAIL_ADDRESSES.NEW_TEAM_REQUEST;
   const subject = 'New Team Request Non Volunteer';
-  const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName, sender);
+  const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName, sender, userData);
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);

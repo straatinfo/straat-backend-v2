@@ -13,7 +13,7 @@ const HostHelper = require('../helpers/host.helper')
 const TeamHelperV2 = require('../helpers/teamV2.helper')
 
 const checkUserInput = async (req, res, next) => {
-  const { username, email, teamEmail, teamName, code, city, coordinate, isCoor, postalCode, houseNumber } = req.body
+  const { username, email, teamEmail, teamName, code, city, coordinate, isCoor, postalCode, houseNumber, phoneNumber } = req.body
   try {
     let checkUsername, checkEmail, checkTeamEmail, checkTeamName, checkCode
     // check for username
@@ -102,6 +102,15 @@ const checkUserInput = async (req, res, next) => {
 
       if (data.err) {
         return ErrorHelper.UserError(res, {error: data.err}, 200)
+      }
+      return SuccessHelper.success(res, data)
+    }
+
+    // 
+    if (phoneNumber) {
+      const data = await RegistrationHelper.validatePhoneNumber(phoneNumber)
+      if (data.err) {
+        return ErrorHelper.UserError(res, {error: 'Invalid input'}, 200)
       }
       return SuccessHelper.success(res, data)
     }
@@ -246,7 +255,7 @@ const registerWithCodeV2 = async (req, res, next) => {
 }
 
 const registerWithCodeV3 = async (req, res, next) => {
-  const { code, password, username, email, teamPhotoUploaded } = req.body
+  const { code, password, username, email, teamPhotoUploaded, first_name, last_name, mobile_num } = req.body
   try {
     let createU = {}
     /**
@@ -334,7 +343,7 @@ const registerWithCodeV3 = async (req, res, next) => {
       const addActiveTeam = await TeamHelperV2.setActiveTeam(createU.user._id, createT._id)
       let sendNewTeamRequest
       if (req.body.isVolunteer != true) {
-        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT)
+        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT, {first_name, last_name, mobile_num})
       }
       if (sendNewTeamRequest && sendNewTeamRequest.err) {
         return resolve({err: 'team was created but request to approve was not sent'})

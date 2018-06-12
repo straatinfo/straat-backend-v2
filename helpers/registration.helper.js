@@ -7,6 +7,7 @@ const CityAreaHelper = require('../helpers/cityarea.helper')
 const HostMigrationelper = require('../helpers/hostMigration.helper')
 const L = require('./../assets/dictionary')
 const CityHelper = require('../helpers/city.helper')
+const User = require('../models/User');
 
 const readJsonFile = () => {
   return new Promise((resolve, reject) => {
@@ -168,10 +169,27 @@ const validateNumber = (postalCode, number) => {
   })
 }
 
+const validatePhoneNumber = (PhoneNumber) => {
+  return new Promise(async(resolve, reject) => {
+    try {
+      const postcodeData = await User.findOne({phoneNumber: PhoneNumber})
+      if (postcodeData) {
+        return resolve({err: 'Invalid phoneNumber'})
+      }
+      return resolve({data: 'no uses this number'})
+    }
+    catch (e) {
+      console.log(e)
+      return resolve({err: 'Invalid phoneNumber'})
+    }
+  })
+}
+
 module.exports = {
   readJsonFile: readJsonFile,
   getHostId: getHostId,
   getHostIdByCity,
   validatePostalCode,
+  validatePhoneNumber,
   validateNumber
 }
