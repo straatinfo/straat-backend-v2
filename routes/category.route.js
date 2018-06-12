@@ -37,5 +37,10 @@ CategoryRoute.route('/mainCategory/general')
 .get(/*requireAuth,*/ Category.getGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
 .post(/*requireAuth,*/  Category.createGeneralMainCategory);
 
+CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
+.get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+
+CategoryRoute.route('/app/mainCategory/general')
+.get(/*requireAuth,*/ Category.getAppGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
 
 module.exports = CategoryRoute;
