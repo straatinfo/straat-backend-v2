@@ -128,13 +128,28 @@ async function __removeMember (_user, _team) {
   try {
     const team = await Team.findById(_team);
     const teamMember = await TeamMember.findOne({'_user': _user, '_team': _team}).populate('_team');
+    const teamMembers = await TeamMember.find({'_user': _user, '_team': _team}).populate('_team');
     const teamLeader = await TeamLeader.findOne({'_user': _user, '_team': _team}).populate('_team');
+    const oldUser = await User.findById(_user);
+    const oldTeam = await Team.findById(_team);
     if (teamLeader) {
-      const updateUser1 = await User.update({'_id': _user}, {'$pop': {'teamLeaders': teamLeader._id}});
-      const updateTeam1 = await Team.update({'_id': _team}, {'$pop': {'teamLeaders': teamLeader._id}});
+      const userLeaderList = _.filter(oldUser.teamLeaders, (tl) => {
+        return tl._id !== teamLeader._id;
+      });
+      const updateUser1 = await User.findByIdAndUpdate(_user, {'teamLeaders': userLeaderList});
+      const teamLeaderList = _.filter(oldTeam.teamLeaders, (tl) => {
+        return tl._id !== teamLeader._id;
+      });
+      const updateTeam1 = await Team.findByIdAndUpdate(_team, {'teamLeaders': userLeaderList});
     }
-    const updateUser = await User.update({'_id': _user}, {'$pop': {'teamMembers': teamMember._id}});
-    const updateTeam = await Team.update({'_id': _team}, {'$pop': {'teamMembers': teamMember._id}});
+    const newTeamMemberList = _.filter(oldUser.teamMembers, (tm) => {
+      return tm._id !== teamMember._id;
+    });
+    const updateUser = await User.findByIdAndUpdate(_user, {'teamMembers': newTeamMemberList});
+    const teamNewTeamMemberList = _.filter(oldTeam.teamMembers, (tm) => {
+      return tm._id !== teamMember._id;
+    });
+    const updateTeam = await Team.findByIdAndUpdate(_team, {'teamMembers': teamNewTeamMemberList});
     const delTM = await TeamMember.findOneAndRemove({'_user': _user, '_team': _team});
     const delTL = await TeamLeader.findOneAndRemove({'_user': _user, '_team': _team});
     const updateConversation = await ConversationHelper.__removeParticipant(team._conversation, _user, _user, true);
@@ -143,6 +158,7 @@ async function __removeMember (_user, _team) {
       const delTeam = await Team.findByIdAndRemove(_team);
       return Promise.resolve(delTeam);
     }
+    const newUser = await User.findById(_user);
     return Promise.resolve(updatedTeam);
   }
   catch (e) {
@@ -277,7 +293,6 @@ async function joinTeam (_user, _team) {
     // console.log('user', JSON.stringify(user, null, 2));
     // console.log('team to join', JSON.stringify(teamToJoin, null, 2));
     // console.log('team', team);
-    console.log(_user, _team);
     if (team) {
       return Promise.resolve(team);
     }
@@ -298,7 +313,6 @@ async function joinTeam (_user, _team) {
       });
     }
     const updatedTeam = await __addNewMember(_user, _team);
-    console.log('update1', updatedTeam);
     if (user.isVolunteer) {
       const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': _team});
     }
@@ -311,6 +325,7 @@ async function joinTeam (_user, _team) {
 
 async function unJoinTeam (_user, _team) {
   try {
+    console.log(_user, _team);
     const memberships = await __findUserTeams(_user);
     const user = await User.findById(_user);
     const team = _.find(memberships, (m) => {
@@ -324,7 +339,7 @@ async function unJoinTeam (_user, _team) {
         message: 'Team is not related to user'
       });
     }
-    if (_team === user._activeTeam.toString()) {
+    if (user._activeTeam && _team === user._activeTeam.toString()) {
       const updateActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': null});
     }
     const updatedTeam = await __removeMember(_user, _team);
