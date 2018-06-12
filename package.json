@@ -33,6 +33,7 @@
     "fcm-node": "^1.2.1",
     "flat": "^4.0.0",
     "hbs": "~3.1.0",
+    "highland": "^2.13.0",
     "is-valid-coordinates": "^1.0.0",
     "joi": "^13.2.0",
     "jwt-simple": "^0.5.0",
@@ -52,7 +53,8 @@
     "request": "^2.85.0",
     "sendgrid": "^5.2.3",
     "sequelize": "^4.13.10",
-    "socket.io": "2.1.0"
+    "socket.io": "2.1.0",
+    "xlsx-stream-reader": "^0.9.11"
   },
   "devDependencies": {
     "eslint-config-google": "^0.9.1"

@@ -239,7 +239,7 @@ const createReport = (input) => {
         }
         // const getR = await getReportById(report._id)
         const createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
-        const getR = await getReportByQueryObjectClean({_id: report._id})
+        const getR = await getReportByQueryObjectClean({_id: report._id});
         if (getR.err) {
           return resolve({err: getR.err})
         }
@@ -496,7 +496,7 @@ const getPublicReports = async (_reporter, _reportType = null) => {
          {'$or': [{isPublic: true}, {_team: {$in: teamList}}]}
       ]
     }
-    const reports = await getReportByQueryObjectClean(publicReports)
+    const reports = await getReportByQueryObjectClean(publicReports);
     return Promise.resolve(reports)
   }
   catch (e) {
