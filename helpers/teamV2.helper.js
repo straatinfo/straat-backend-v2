@@ -148,7 +148,8 @@ async function __removeMember (_user, _team) {
 
 async function __addNewTeam (_user, _host, input) {
   try {
-    const _profilePic = input._profilePic ? {_profilePic: input._profilePic} : {}
+    const _profilePic = input._profilePic ? {_profilePic: input._profilePic} : {};
+    const user = await User.findById(_user);
     // will error if no logo uploaded 
     const newConversation = new Conversation({
       _author: _user,
@@ -167,6 +168,9 @@ async function __addNewTeam (_user, _host, input) {
     const tl = await newTL.save();
     const tm = await newTM.save();
     const updateUser = await User.update({'_id': _user}, {'$addToSet': {'teamMembers': tm._id, 'teamLeaders': tl._id}});
+    if (user.isVolunteer) {
+      const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': team._id});
+    }
     const updateTeam = await Team.update({'_id': team._id}, {'$addToSet': {'teamMembers': tm._id, 'teamLeaders': tl._id}});
     const updatedTeam = await Team.findById(team._id);
     return Promise.resolve(updatedTeam);
@@ -280,6 +284,9 @@ async function joinTeam (_user, _team) {
         message: `${user.isVolunteer ? 'Volunteer' : 'Non-Volunteer'} User cannot join ${teamToJoin.isVolunteer ? 'Volunteer' : 'Non-Volunteer' } Teams`
       });
     }
+    if (user.isVolunteer) {
+      const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': _team});
+    }
     const updatedTeam = await __addNewMember(_user, _team);
     return Promise.resolve(updatedTeam);
   }
@@ -291,6 +298,7 @@ async function joinTeam (_user, _team) {
 async function unJoinTeam (_user, _team) {
   try {
     const memberships = await __findUserTeams(_user);
+    const user = await User.findById(_user);
     const team = _.find(memberships, (m) => {
       return m._id.toString() === _team;
     });
@@ -301,6 +309,9 @@ async function unJoinTeam (_user, _team) {
         error: 'TEAM_NOT_FOUND',
         message: 'Team is not related to user'
       });
+    }
+    if (_team === user._activeTeam.toString()) {
+      const updateActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': null});
     }
     const updatedTeam = await __removeMember(_user, _team);
     return Promise.resolve(updatedTeam);
