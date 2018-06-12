@@ -24,7 +24,8 @@ module.exports = {
   },
   GOOGLE: {
     // used in app
-    apiKey: 'AIzaSyCYDM_gyqp1UGVClhh05ek_4G0zr4n55xA'
+    apiKey: 'AIzaSyCYDM_gyqp1UGVClhh05ek_4G0zr4n55xA',
+    fcmKey: 'AAAAWIq665Q:APA91bERF8GwK4Z2RhUPeXvzWaUSMtXkqxFXDPu4GZa7CJFRNvBbLqSEEcxZ9phyGacvevatkiCuIVhl3oJqO51tUNfzrKcgPSrNKS9gcwYORcdKKHvfZTc0wkO-1IWdmzKZbagCdl5R'
   },
 
   // postcode.ru
