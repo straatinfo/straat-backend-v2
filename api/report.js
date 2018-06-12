@@ -168,7 +168,7 @@ const createReportV2 = async (req, res, next) => {
     switch (code.toUpperCase()) {
       case 'A':
         const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location, reportDeeplink, lang);
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, _team.teamName,  _team.teamEmail, null, mainName, subName, location, reportDeeplink, lang);
 
          // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
         const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, mainName, subName, lang);
