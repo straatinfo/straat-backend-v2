@@ -104,15 +104,19 @@ async function __addNewMember (_user, _team) {
   try {
     const team = await Team.findById(_team);
     const checkTeamMember = await TeamMember.findOne({'_user': _user, '_team': _team}).populate('_team');
+    let newTeamMember, saveTM;
     if (checkTeamMember) {
-      return Promise.resolve(checkTeamMember._team);
+      // return Promise.resolve(checkTeamMember._team);
+      saveTM = checkTeamMember;
+    } else {
+      newTeamMember = new TeamMember({'_user': _user, '_team': _team});
+      saveTM = await newTeamMember.save();
     }
-    const newTeamMember = new TeamMember({'_user': _user, '_team': _team});
-    const saveTM = await newTeamMember.save();
     const updateUser = await User.update({'_id': _user}, {'$addToSet': {'teamMembers': saveTM._id}});
     const updateTeam = await Team.update({'_id': _team}, {'$addToSet': {'teamMembers': saveTM._id}});
     const updateConversation = await ConversationHelper.__addParticipant(team._conversation, _user);
     const updatedTeam = await Team.findById(_team).populate('_profilePic');
+    console.log('updatedTeam', JSON.stringify(updatedTeam, null, 2));
     return Promise.resolve(updatedTeam);
   }
   catch (e) {
@@ -270,6 +274,10 @@ async function joinTeam (_user, _team) {
     const teamToJoin = _.find(teams, (t) => {
       return t._id.toString() === _team;
     });
+    // console.log('user', JSON.stringify(user, null, 2));
+    // console.log('team to join', JSON.stringify(teamToJoin, null, 2));
+    // console.log('team', team);
+    console.log(_user, _team);
     if (team) {
       return Promise.resolve(team);
     }
@@ -289,10 +297,11 @@ async function joinTeam (_user, _team) {
         message: `${user.isVolunteer ? 'Volunteer' : 'Non-Volunteer'} User cannot join ${teamToJoin.isVolunteer ? 'Volunteer' : 'Non-Volunteer' } Teams`
       });
     }
+    const updatedTeam = await __addNewMember(_user, _team);
+    console.log('update1', updatedTeam);
     if (user.isVolunteer) {
       const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': _team});
     }
-    const updatedTeam = await __addNewMember(_user, _team);
     return Promise.resolve(updatedTeam);
   }
   catch (e) {
