@@ -27,8 +27,19 @@ module.exports = {
       <p>Straat.info-team</p>
     `;
   },
-  sendTeamRequestNotifMail: (teamEmail, teamName, sender) => {
-    return `<p>Greetings!</p><br/><p>A new Non-Volunteer Team is requesting for approval.<p/><p>User Details:<p/><p>Email: ${teamEmail}<p/><p>Team Name: ${teamName}<p/><p>Sincerely,<p>${sender}</p>`;
+  sendTeamRequestNotifMail: (teamEmail, teamName, sender, userData) => {
+    return `
+    <p>Greetings!</p>
+    <br/>
+    <p>A new Non-Volunteer Team is requesting for approval.<p/>
+    <p>Team Details:<p/>
+    <p>Email: ${teamEmail}<p/>
+    <p>Team Name: ${teamName}<p/>
+    <p>User Details:<p/>
+    <p>FirstName: ${userData.first_name}<p/>
+    <p>LastName: ${userData.last_name}<p/>
+    <p>PhoneNumber: ${userData.mobile_num}<p/>
+    <p>Sincerely, ${sender}</p>`;
   },
   sendReportAToHost: (username, teamName, teamEmail, text, category1, category2, location, reportDeepLink, language) => {
     // lanuage of host , not user

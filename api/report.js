@@ -8,6 +8,8 @@ const MailingHelper = require('../helpers/mailing.helper');
 const HostHelper = require('../helpers/host.helper');
 const TeamTransform = require('../transform/team.transform');
 const LanguageHelper = require('../helpers/language.helper');
+const Translator = require('./../middleware/translator');
+const Languages = require('./../assets/jsonfiles/constants').Langauges
 const SSS = require('../service/ServerSocketService')
 
 const getReports = async (req, res, next) => {
@@ -150,6 +152,7 @@ const createReportV2 = async (req, res, next) => {
     if (!createR.report) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Input'}, 422);
     }
+    // tanslate
 
 
     // send emails
@@ -165,7 +168,7 @@ const createReportV2 = async (req, res, next) => {
     switch (code.toUpperCase()) {
       case 'A':
         const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, '', '', null, mainName, subName, location, reportDeeplink, lang);
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, _team.teamName,  _team.teamEmail, null, mainName, subName, location, reportDeeplink, lang);
 
          // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
         const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, mainName, subName, lang);
@@ -219,7 +222,16 @@ const createReportV2 = async (req, res, next) => {
       }
       return SuccessHelper.success(res, flatR.report);
     }
-    SuccessHelper.success(res, getR.report);
+    // translate report base on reporters host language
+    let result = getR.report
+    
+    if (Languages[lang]) {
+      const transCollection = new Translator.TransCollection()
+      result = await Translator.translate(result, '_mainCategory', 'name', lang, transCollection)
+      result = await Translator.translate(result, '_subCategory', 'name', lang, transCollection)
+    }
+
+    SuccessHelper.success(res, result);
   }
   catch (e) {
     console.log('createReportV2', e);

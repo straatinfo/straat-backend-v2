@@ -1,6 +1,7 @@
 const SendGridService = require('../service/sendgrid.service');
 const Config = require('../config');
 const MailTemplates = require('../assets/mail-templates/simple-mails');
+const L = require('./../assets/dictionary')
 
 // access code for android
 const sendRegistrationRequestNotif = (userDetail) => {
@@ -24,12 +25,12 @@ const sendRegistrationRequestNotif = (userDetail) => {
 };
 
 // registration notification team request for approval
-const sendNewTeamRequestNotif = (teamDetails) => {
+const sendNewTeamRequestNotif = (teamDetails, userData) => {
   const { teamName, teamEmail } = teamDetails;
   const receiver = Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL;
   const sender = Config.EMAIL_ADDRESSES.NEW_TEAM_REQUEST;
   const subject = 'New Team Request Non Volunteer';
-  const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName, sender);
+  const mailBody = MailTemplates.sendTeamRequestNotifMail(teamEmail, teamName, sender, userData);
   return new Promise(async(resolve, reject) => {
     try {
       const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
@@ -48,7 +49,7 @@ const sendNewTeamRequestNotif = (teamDetails) => {
 const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEmail, text = null, category1, category2 = null, location, reportDeepLink, language) => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = hostEmail;
-  const subject = 'Type A Report';
+  const subject = L(language, 'newNotificationOfPublicSpace')
   const mailBody = MailTemplates.sendReportAToHost(username, teamName, teamEmail, text, category1, category2, location, reportDeepLink, language);
   // console.log('SendGridService.basicMail(sender, receiver, subject, mailBody);', sender, receiver, subject, mailBody) 
   return new Promise(async(resolve, reject) => {
@@ -69,7 +70,7 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
 const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail = [], location, date, category1, category2 = null, text = null, language) => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY
   // const receiver = reporterEmail
-  const subject = 'uw nieuwe melding openbare ruimte'
+  const subject = L(language, 'yourNewNotificationPublicSpace')
   const mailBody = MailTemplates.sendReportANotifToReporter(location, date, category1, category2, text, language)
 
   const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, ...teamLeaderEmail] // reporterEmail];
