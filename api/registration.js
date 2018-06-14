@@ -255,7 +255,7 @@ const registerWithCodeV2 = async (req, res, next) => {
 }
 
 const registerWithCodeV3 = async (req, res, next) => {
-  const { code, password, username, email, teamPhotoUploaded, first_name, last_name, mobile_num } = req.body
+  const { code, password, username, email, teamPhotoUploaded, fname, lname, phoneNumber } = req.body
   try {
     let createU = {}
     /**
@@ -343,7 +343,7 @@ const registerWithCodeV3 = async (req, res, next) => {
       const addActiveTeam = await TeamHelperV2.setActiveTeam(createU.user._id, createT._id)
       let sendNewTeamRequest
       if (req.body.isVolunteer != true) {
-        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT, {first_name, last_name, mobile_num})
+        sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT, {fname, lname, phoneNumber})
       }
       if (sendNewTeamRequest && sendNewTeamRequest.err) {
         return resolve({err: 'team was created but request to approve was not sent'})
