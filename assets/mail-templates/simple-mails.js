@@ -36,9 +36,9 @@ module.exports = {
     <p>Email: ${teamEmail}<p/>
     <p>Team Name: ${teamName}<p/>
     <p>User Details:<p/>
-    <p>FirstName: ${userData.first_name}<p/>
-    <p>LastName: ${userData.last_name}<p/>
-    <p>PhoneNumber: ${userData.mobile_num}<p/>
+    <p>FirstName: ${userData.fname}<p/>
+    <p>LastName: ${userData.lname}<p/>
+    <p>PhoneNumber: ${userData.phoneNumber}<p/>
     <p>Sincerely, ${sender}</p>`;
   },
   sendReportAToHost: (username, teamName, teamEmail, text, category1, category2, location, reportDeepLink, language) => {
