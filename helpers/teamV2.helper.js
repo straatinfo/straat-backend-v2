@@ -25,7 +25,17 @@ async function __findUserTeams (_user) {
     });
     let teams;
     if (queryBuilder.length > 0) {
-      teams = await Team.find({'$or': queryBuilder});
+      teams = await Team.find({'$or': queryBuilder}).populate({
+        path: 'teamMembers',
+        populate: {
+          path: '_user'
+        }
+      }).populate({
+        path: 'teamLeaders',
+        populate: {
+          path: '_user'
+        }
+      });
     } else {
       teams = []
     }
@@ -130,24 +140,24 @@ async function __removeMember (_user, _team) {
     const teamMember = await TeamMember.findOne({'_user': _user, '_team': _team}).populate('_team');
     const teamMembers = await TeamMember.find({'_user': _user, '_team': _team}).populate('_team');
     const teamLeader = await TeamLeader.findOne({'_user': _user, '_team': _team}).populate('_team');
-    const oldUser = await User.findById(_user);
-    const oldTeam = await Team.findById(_team);
+    const oldUser = await User.findById(_user).populate('teamMembers').populate('teamLeaders');
+    const oldTeam = await Team.findById(_team).populate('teamMembers').populate('teamLeaders');
     if (teamLeader) {
       const userLeaderList = _.filter(oldUser.teamLeaders, (tl) => {
-        return tl._id !== teamLeader._id;
+        return tl._id.toString() !== teamLeader._id.toString();
       });
       const updateUser1 = await User.findByIdAndUpdate(_user, {'teamLeaders': userLeaderList});
       const teamLeaderList = _.filter(oldTeam.teamLeaders, (tl) => {
-        return tl._id !== teamLeader._id;
+        return tl._id.toString() !== teamLeader._id.toString();
       });
       const updateTeam1 = await Team.findByIdAndUpdate(_team, {'teamLeaders': userLeaderList});
     }
     const newTeamMemberList = _.filter(oldUser.teamMembers, (tm) => {
-      return tm._id !== teamMember._id;
+      return tm._id.toString() !== teamMember._id.toString();
     });
     const updateUser = await User.findByIdAndUpdate(_user, {'teamMembers': newTeamMemberList});
     const teamNewTeamMemberList = _.filter(oldTeam.teamMembers, (tm) => {
-      return tm._id !== teamMember._id;
+      return tm._id.toString() !== teamMember._id.toString();
     });
     const updateTeam = await Team.findByIdAndUpdate(_team, {'teamMembers': teamNewTeamMemberList});
     const delTM = await TeamMember.findOneAndRemove({'_user': _user, '_team': _team});
@@ -271,6 +281,17 @@ async function setAsMember (_user, _team) {
         message: 'Team is not related to user'
       });
     }
+    console.log(JSON.stringify(team, null, 2));
+    // check if the leader is only one
+    if (team.teamLeaders.length < 2) {
+      return Promise.reject({
+        code: 0,
+        statusCode: 400,
+        error: 'NOT_ALLOWED',
+        message: 'Can\'t set as member, There is only one leader remaining on this team'
+      });
+    }
+    console.log(JSON.stringify(team, null, 2));
     const updateTeam = await __setTeamMember(_user, _team);
     return Promise.resolve(updateTeam);
   }
@@ -290,9 +311,6 @@ async function joinTeam (_user, _team) {
     const teamToJoin = _.find(teams, (t) => {
       return t._id.toString() === _team;
     });
-    // console.log('user', JSON.stringify(user, null, 2));
-    // console.log('team to join', JSON.stringify(teamToJoin, null, 2));
-    // console.log('team', team);
     if (team) {
       return Promise.resolve(team);
     }
@@ -325,7 +343,6 @@ async function joinTeam (_user, _team) {
 
 async function unJoinTeam (_user, _team) {
   try {
-    console.log(_user, _team);
     const memberships = await __findUserTeams(_user);
     const user = await User.findById(_user);
     const team = _.find(memberships, (m) => {
@@ -337,6 +354,19 @@ async function unJoinTeam (_user, _team) {
         statusCode: 400,
         error: 'TEAM_NOT_FOUND',
         message: 'Team is not related to user'
+      });
+    }
+    // check if the member is a leader and if the team has only one leader left
+    // check if the leader is only one
+    const isTeamLeader = _.find(team.teamLeaders, (tl) => {
+      return tl._user._id.toString() === _user;
+    });
+    if (team.teamLeaders.length < 2 && team.teamLeaders[0]._user._id.toString() === _user) {
+      return Promise.reject({
+        code: 0,
+        statusCode: 400,
+        error: 'NOT_ALLOWED',
+        message: 'Can\'t leave team, The user is the only leader of the team'
       });
     }
     if (user._activeTeam && _team === user._activeTeam.toString()) {

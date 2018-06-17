@@ -294,7 +294,15 @@ const saveUploadLooper = (_report, inputArray = [], saveUploadPromise = saveUplo
   })
 }
 
-const updateReport = (_id, input) => {
+const updateReport = async(_id, input) => {
+  const oldReport = await Report.findById(_id);
+  if (oldReport.status.toLowerCase() === 'done' || oldReport.status.toLowerCase() === 'expired') {
+    return Promise.reject({
+      statusCode: 400,
+      err: 'UPDATE_NOT_ALLOWED',
+      message: 'Can\'t update done or expired reports'
+    });
+  }
   return new Promise((resolve, reject) => {
     Report.findByIdAndUpdate(_id, input, async(err, report) => {
       if (err) {

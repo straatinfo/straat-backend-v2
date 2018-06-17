@@ -240,6 +240,7 @@ const createReportV2 = async (req, res, next) => {
 };
 
 const updateReport = async (req, res, next) => {
+  console.log('updating........');
   const { id } = req.params;
   try {
     const updateR = await ReportHelper.updateReport(id, req.body);
@@ -263,6 +264,10 @@ const updateReport = async (req, res, next) => {
     SuccessHelper.success(res, getR.report);
   }
   catch (e) {
+    console.log(e);
+    if (e.statusCode) {
+      return res.status(e.statusCode).send(e);
+    }
     ErrorHelper.ServerError(res);
   }
 };

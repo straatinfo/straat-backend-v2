@@ -317,7 +317,6 @@ const getAppGeneralMainCategories = async (req, res, next) => {
     if (!req.query.code) { return ErrorHelper.ClientError(res, {error: 'Invalid Code'}, 422) }
     const code = req.query.code.toUpperCase()
     let getMC
-    console.log('ddd')
     switch (code) {
       case 'ABC':
         // get all categoriees of general
