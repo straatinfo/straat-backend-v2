@@ -36,12 +36,16 @@ TeamRoute.route('/:teamId')
   TeamValidator.updateTeamFormValidator,
   Team.updateTeam
 )
-.delete(/*requireAuth,*/ Team.softRemoveTeam);
+.delete(/*requireAuth,*/ Team.softRemoveTeam)
 
 TeamRoute.route('/info/:teamId')
 .get(/*requireAuth,*/ Team.getTeamInfoById)
 
 TeamRoute.route('/list/:_user')
 .get(/*requireAuth,*/ Team.getTeamListByUserId);
+
+TeamRoute.route('/nonvol/:_host')
+.get(/*requireAuth,*/ Team.getNonVolTeamListByHost);
+
 
 module.exports = TeamRoute;
