@@ -87,7 +87,37 @@ const getTeamListByUserId = async (req, res, next) => {
 };
 
 
+const getNonVolTeamListByHost = async (req, res, next) => {
+  const { _host } = req.params; // this must change ot req.user
+  try {
+    const teams = await TeamHelper.getNonVolTeamListByHost(_host)
 
+
+    // // send invite for test
+    // // sendR = await TeamInviteHelper.sendRequest('5afe8f6a65ab530014452641', '5b0669fc9eeb62519264606f') // (userId, teamId);
+    // // console.log('send invite for test', sendR)
+    // const {teamLeaders: userTeamLeaders} = await User.findById(_user, {teamLeaders: true}).lean()
+    // // const count = _.isEmpty(userTeamLeaders  );
+
+    // const result = !_.isEmpty(userTeamLeaders) ? await Promise.all(teams.map(async function (team, index) {
+    //   // confirm if user is team leader of 
+    //   if (TeamTransform.intersection(userTeamLeaders, TeamTransform.getTeamLeadersId(team.teamLeaders)).length > 0 ) {
+    //     team.teamInvites = await TeamInvite.find({'_team': team._id, isRequest: true})
+    //     return team
+    //   }
+    //   // if not leader
+    //   return team
+    // })) : teams
+
+    SuccessHelper.success(res, teams);
+    // SuccessHelper.success(res, getTBI.team);
+  }
+  catch (e) {
+    console.log(e)
+    return ErrorHelper.ClientError(res, {error: e.message}, 400);
+    // ErrorHelper.ServerError(res);
+  }
+};
 
 const getTeamWithFilter = async (req, res, next) => {
   const { queryObject } = req.body;
@@ -342,5 +372,6 @@ module.exports = {
   approveTeam: approveTeam,
   disApproveTeam: disApproveTeam,
   getTeamInfoById,
-  getTeamListByUserId
+  getTeamListByUserId,
+  getNonVolTeamListByHost
 };
