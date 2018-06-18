@@ -136,6 +136,11 @@ const getTeamListByUserId = (_user) => {
 };
 
 
+const getNonVolTeamListByHost = (_host) => {
+  return Team.find({ _host: _host, isVolunteer: true, isApproved: true, softRemoved: false },
+    {teamName: true, teamEmail: true, _profilePic: true, isVolunteer: true })
+  .populate(['_profilePic'])
+};
 
 // this requires _user to add a default user as leader
 const createTeam = (_user, input) => {
@@ -618,5 +623,6 @@ module.exports = {
   getPendingTeamByUser: getPendingTeamByUser,
   getTeamInfoById,
   getTeamListByUserId,
-  getTeamLeadersByTeamId
+  getTeamLeadersByTeamId,
+  getNonVolTeamListByHost
 };
