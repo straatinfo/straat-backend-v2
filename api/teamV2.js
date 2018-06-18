@@ -87,7 +87,32 @@ const createTeam = async (req, res, next) => {
   }
 };
 
+const deleteTeam = async (req, res, next) => {
+  try {
+    const deleteT = await TeamHelper.deleteTeam(req.query._team);
+    res.status(200).send({
+      status: 1,
+      statusCode: 200,
+      message: 'Successfully deleted team',
+      data: {}
+    });
+  }
+  catch (e) {
+    console.log(e);
+    if (e.statusCode) {
+      return res.status(e.statusCode).send(e);
+    }
+    res.status(500).send({
+      status: 0,
+      error: 'SERVER_ERROR',
+      message: 'Internal Server Error',
+      statusCode: 500
+    });
+  }
+};
+
 module.exports = {
   updateTeam,
-  createTeam
+  createTeam,
+  deleteTeam
 };

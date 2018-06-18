@@ -22,7 +22,14 @@ const postSchema = {
   }
 };
 
+const deleteSchema = {
+  query: {
+    _team: Joi.string().required()
+  }
+}
+
 module.exports = {
   putSchema,
-  postSchema
+  postSchema,
+  deleteSchema
 };

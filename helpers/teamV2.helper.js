@@ -134,7 +134,7 @@ async function __addNewMember (_user, _team) {
   }
 }
 
-async function __removeMember (_user, _team) {
+async function __removeMember (_user, _team, forTeamDelete = false) {
   try {
     const team = await Team.findById(_team);
     const teamMember = await TeamMember.findOne({'_user': _user, '_team': _team}).populate('_team');
@@ -160,11 +160,17 @@ async function __removeMember (_user, _team) {
       return tm._id.toString() !== teamMember._id.toString();
     });
     const updateTeam = await Team.findByIdAndUpdate(_team, {'teamMembers': teamNewTeamMemberList});
-    const delTM = await TeamMember.findOneAndRemove({'_user': _user, '_team': _team});
-    const delTL = await TeamLeader.findOneAndRemove({'_user': _user, '_team': _team});
+    const delTM = await TeamMember.findOne({'_user': _user, '_team': _team});
+    if (delTM && delTM._id) {
+      const delTeamMember = await TeamMember.findByIdAndRemove(delTM._id);
+    }
+    const delTL = await TeamLeader.findOne({'_user': _user, '_team': _team});
+    if (delTL && delTL._id) {
+      const delTeamLeader = await TeamLeader.findByIdAndRemove(delTL._id);
+    }
     const updateConversation = await ConversationHelper.__removeParticipant(team._conversation, _user, _user, true);
     const updatedTeam = await Team.findById(_team);
-    if (updatedTeam.teamMembers.length === 0) {
+    if (updatedTeam.teamMembers.length === 0 && !forTeamDelete) {
       const delTeam = await Team.findByIdAndRemove(_team);
       return Promise.resolve(delTeam);
     }
@@ -187,7 +193,7 @@ async function __addNewTeam (_user, _host, input) {
       // participants: [{
       //   _user: _user,
       //   isActive: true
-      // }],
+      // }]
     });
     const conversation = await newConversation.save();
     const newTeam = new Team({...input, _conversation: conversation._id});
@@ -203,9 +209,7 @@ async function __addNewTeam (_user, _host, input) {
     const tl = await newTL.save();
     const tm = await newTM.save();
     const updateUser = await User.update({'_id': _user}, {'$addToSet': {'teamMembers': tm._id, 'teamLeaders': tl._id}});
-    if (user.isVolunteer) {
-      const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': team._id});
-    }
+    const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': team._id});
     const updateTeam = await Team.update({'_id': team._id}, {'$addToSet': {'teamMembers': tm._id, 'teamLeaders': tl._id}});
     const updatedTeam = await Team.findById(team._id);
     return Promise.resolve(updatedTeam);
@@ -331,9 +335,7 @@ async function joinTeam (_user, _team) {
       });
     }
     const updatedTeam = await __addNewMember(_user, _team);
-    if (user.isVolunteer) {
-      const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': _team});
-    }
+    const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': _team});
     return Promise.resolve(updatedTeam);
   }
   catch (e) {
@@ -430,13 +432,61 @@ async function createTeam (_user, _host, input) {
   }
 }
 
+
+/**
+ *
+ * Delete team
+ * @param {*} _user
+ * @param {*} _team
+ * @returns
+ * This function can be used to delete a team
+ */
+async function deleteTeam (_team) {
+  try {
+    // get team Users
+    const team = await Team.findById(_team)
+    .populate({
+      path: 'teamMembers',
+      populate: {
+        path: '_user'
+      }
+    })
+    .populate({
+      path: 'teamLeaders',
+      populate: {
+        path: '_user'
+      }
+    });
+    // unjoin members
+    const unjoinMembers = await Promise.all(team.teamMembers.map(async(tm) => {
+      try {
+        const unjoinMember = await __removeMember(tm._user._id, _team);
+        return unjoinMember;
+      }
+      catch (e) {
+        return e;
+      }
+    }));
+    // soft remove team
+    const updateTeam = await Team.findByIdAndUpdate(_team, {'softRemoved': true});
+    // return team
+    return Promise.resolve(updateTeam);
+  }
+  catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+
 /**
  * 
  * @param {*} _user 
- * @param {*} _team 
+ * @param {*} _team
+ * @returns promise()
  * this function will be used if there are some error on setting as leader or member
  * this function will restore the user and will become a normal member
  */
+
 async function restore (_user, _team) {
   try {
     const findTeamMembers = await TeamMember.find({'_user': _user, '_team': _team});
@@ -456,5 +506,6 @@ module.exports = {
   joinTeam,
   unJoinTeam,
   createTeam,
+  deleteTeam,
   restore
 };

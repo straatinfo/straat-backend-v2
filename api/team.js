@@ -130,12 +130,18 @@ const getTeamWithFilter = async (req, res, next) => {
     if (getTeamWF.err) {
       ErrorHelper.ClientError(res, {error: getTeamWF.err}, 400);
     }
-    const flatTeams = await Promise.all(getTeamWF.teams.map(async (t) => {
+    const getFlatTeams = await Promise.all(getTeamWF.teams.map(async (t) => {
       const flatTeam = await TeamHelper.flatTeam(t);
       if (flatTeam.team) {
         return flatTeam.team;
       }
     }));
+    const flatTeams = getFlatTeams.reduce((p, c) => {
+      if (c) {
+        return [...p, c];
+      }
+      return c;
+    }, []);
     if (req.query.flat) {
       return SuccessHelper.success(res, flatTeams);
     }
