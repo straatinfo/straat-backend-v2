@@ -171,7 +171,7 @@ const createReportV2 = async (req, res, next) => {
         const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, _team.teamName,  _team.teamEmail, null, mainName, subName, location, reportDeeplink, lang);
 
          // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
-        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, mainName, subName, lang);
+        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, mainName, subName, null, lang);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
           console.log('sendReportANotifToHost.err || sendReportANotifReporter.err', sendReportANotifToHost.err, sendReportANotifReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
