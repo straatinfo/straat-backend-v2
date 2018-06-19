@@ -390,8 +390,8 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false, language='')
     .populate('_mainCategory', ['_id', 'name', 'description'])
     .populate('_subCategory', ['_id', 'name', 'description'])
     .populate('_host', ['_id', 'hostName', 'email', 'language'])
-    .populate('_team', ['_id', 'teamName', 'email'])
-    .populate({
+    .populate('_team', ['_id', 'teamName', 'teamEmail'])
+    .populate({ 
       path: '_conversation',
       select: { messages: {$slice: -1}, _id: true}
     })
