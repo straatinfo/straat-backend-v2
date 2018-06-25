@@ -27,7 +27,7 @@ const creation = async function (req, report) {
     if (toFcmReceiver.length > 0) {
       fc.send(Helper.createReportNotification(report, toFcmReceiver.map(u => u._user.fcmToken)), function (err, response) {
         if (err) {
-          console.log('Something has gone wrong!')
+          console.log('Something has gone wrong!: ', err)
         } else {
           console.log('Successfully sent with response: ', response)
         }
