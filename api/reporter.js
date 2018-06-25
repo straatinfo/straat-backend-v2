@@ -3,6 +3,7 @@ const ErrorHelper = require('../helpers/error.helper');
 const SuccessHelper = require('../helpers/success.helper');
 const TeamHelper = require('../helpers/team.helper');
 const TeamInviteHelper = require('../helpers/teamInvite.helper');
+const SSS = require('../service/ServerSocketService')
 const _ = require('lodash');
 
 const getReporters = async (req, res, next) => {
@@ -176,6 +177,9 @@ const blockReporter = async (req, res, next) => {
     if (blockR.err) {
       return ErrorHelper.ClientError(res, {error: blockR.err}, 400);
     }
+    // send socket to user
+    SSS.userSetting.blockUser(req, blockR.reporter)
+
     SuccessHelper.success(res, blockR.reporter, `User ID: ${id} has been blocked`);
   }
   catch (e) {
