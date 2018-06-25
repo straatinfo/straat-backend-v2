@@ -386,7 +386,7 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false, language='')
   return new Promise((resolve, reject) => {
     Report.find({...queryObject})
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
-    .populate('_reporter', ['_id', 'username', 'email'])
+    .populate('_reporter', ['_id', 'username', 'email', 'language'])
     .populate('_mainCategory', ['_id', 'name', 'description'])
     .populate('_subCategory', ['_id', 'name', 'description'])
     .populate('_host', ['_id', 'hostName', 'email', 'language'])

@@ -138,6 +138,7 @@ const createReportV2 = async (req, res, next) => {
   // error in converting createAt in model report
   // due to may 32
   try {
+    let langUserMain, langUserSub, langUser
     if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
       return next(); 
     }
@@ -154,7 +155,7 @@ const createReportV2 = async (req, res, next) => {
     }
     // tanslate
 
-
+ 
     // send emails
     const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt, _team } = createR.report;
     const team = await TeamHelper.getTeamLeadersByTeamId(_team._id)
@@ -170,8 +171,13 @@ const createReportV2 = async (req, res, next) => {
         const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
         const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, _team.teamName,  _team.teamEmail, null, mainName, subName, location, reportDeeplink, lang);
 
-         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
-        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, mainName, subName, null, lang);
+        // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
+        // email to user
+        langUser = createR._reporter ? createR._reporter.language || 'nl' : 'nl'
+        langUserMain = _mainCategory ? (await LanguageHelper.translate(_mainCategory.name, langUser)) : ''
+        langUserSub = _subCategory ? (await LanguageHelper.translate(_subCategory.name, langUser)) : ''
+        // const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter('isens.jaylord@gmail.com', teamLeadersEmail, location, createdAt, langUserMain, langUserSub, null, langUser);
+        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, langUserMain, langUserSub, null, langUser);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
           console.log('sendReportANotifToHost.err || sendReportANotifReporter.err', sendReportANotifToHost.err, sendReportANotifReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
