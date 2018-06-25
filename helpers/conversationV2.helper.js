@@ -141,6 +141,7 @@ async function __getConversationById (_conversation) {
 
 async function __createPrivateConversation(_chater, _chatee, _profilePic = null) {
   try {
+    let Rconversation
     const membersArray = [_chatee, _chater];
     const sortedChatArray = membersArray.sort();
     const title = membersArray[0] + '|' + membersArray[1];
@@ -148,6 +149,8 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
     let newConversation;
     if (checkConvo) {
       newConversation = checkConvo;
+      Rconversation = await __getConversationById(checkConvo._id);
+      return Promise.resolve(Rconversation);
     }
     else if (_profilePic) {
       newConversation = new Conversation({
@@ -174,7 +177,7 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
     const updateChater = await User.update({'_id': _chater}, { '$addToSet': { 'conversations': newConversation._id } });
     const updateChatee = await User.update({'_id': _chatee}, { '$addToSet': { 'conversations': newConversation._id } });
     const conversation = await newConversation.save();
-    const Rconversation = await __getConversationById(conversation._id);
+    Rconversation = await __getConversationById(conversation._id);
 
     return Promise.resolve(Rconversation);
     return Promise.resolve();
