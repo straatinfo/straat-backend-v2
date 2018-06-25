@@ -435,6 +435,19 @@ const socketTest = async function (req, res, next) {
   }
 }
 
+const blockTest = async function (req, res, next) {
+  try {
+    // const { _id } = req.params
+    const reporter = await User.findById('5b30a0087549730014268476')
+    if (reporter) {
+      SSS.userSetting.blockUser(req, reporter)
+    }
+    return SuccessHelper.success(res, reporter)
+  } catch (e) {
+    console.log(e.message)
+  }
+}
+
 module.exports = {
   testFunction,
   testGeo,
@@ -452,5 +465,6 @@ module.exports = {
   getCategories,
   getTranslations,
   fcmTest,
-  socketTest
+  socketTest,
+  blockTest
 }

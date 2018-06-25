@@ -100,4 +100,8 @@ TestRoute.route('/')
 // TestRoute.route('/socket/:_id')
 // .get(Test.socketTest)
 
+// TestRoute.route('/blockTest/:_id')
+// .get(Test.blockTest)
+
+
 module.exports = TestRoute
