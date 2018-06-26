@@ -1,5 +1,6 @@
 const TeamInvite = require('../models/TeamInvite');
 const TeamMemberHelper = require('../helpers/teamMember.helper');
+const User = require('../models/User');
 
 const checkInviteExist = (_team, _user) => {
   return new Promise((resolve, reject) => {
@@ -132,6 +133,8 @@ const acceptRequest = (_user, _team) => {
       if (removedInvite.err) {
         return resolve({err: null, warning: 'The invite was not removed.'});
       }
+      // update user
+      const updateUserActiveTeam = await User.findByIdAndUpdate(_user, {'_activeTeam': _team});
       resolve({err: null, teamMember: addMember.teamMember});
     }
     catch (e) {
