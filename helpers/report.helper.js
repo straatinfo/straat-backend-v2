@@ -530,6 +530,37 @@ const getPublicReports = async (_reporter, _reportType = null) => {
     return Promise.reject(e)
   }
 }
+
+// use by notification in app
+const getNearbyReports = async (_reporter, long, lat, radius) => {
+  try {
+    // get teams
+    const { teamMembers } = await User.findById(_reporter, {_id: true, teamMembers: true}).populate('teamMembers')
+    const teamList = teamMembers.map(tm => tm._team.toString())
+
+    const near = {
+      reportCoordinate: {
+        $near: {
+          $maxDistance: parseFloat(radius),
+          $minDistance: 0,
+          $geometry: {
+            type: 'Point',
+            coordinates: [ parseFloat(long), parseFloat(lat) ]
+          }
+        }
+      }
+    }
+    const status = {
+      status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
+    }
+    const publicReports = { $and: [near,  {'$or': [{isPublic: true}, {_team: {$in: teamList}}]}] }
+    const reports = await getReportByQueryObjectClean(publicReports)
+    return Promise.resolve(reports)
+  } catch (e) {
+    return Promise.reject(e)
+  }
+}
+
 const getModel = function () {
   return Report
 }
@@ -552,5 +583,6 @@ module.exports = {
   getReportByQueryObjectClean,
   getPublicReports,
   getModel,
-  changeIsPublic
+  changeIsPublic,
+  getNearbyReports
 }
