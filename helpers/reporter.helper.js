@@ -232,6 +232,10 @@ const deleteReporter = (_reporter) => {
   });
 };
 
+
+const model = () => {
+  return User
+}
 module.exports = {
   getReporters: getReporters,
   getReporterById: getReporterById,
@@ -240,5 +244,6 @@ module.exports = {
   getReportersByHost: getReportersByHost,
   updateReporterReports: updateReporterReports,
   flatReporter: flatReporter,
-  deleteReporter: deleteReporter
+  deleteReporter: deleteReporter,
+  model
 };

@@ -172,13 +172,17 @@ const getReportersByHost = async (req, res, next) => {
 
 const blockReporter = async (req, res, next) => {
   const { id } = req.params;
+  const userModel = ReporterHelper.model()
+  let userData
   try {
     const blockR = await ReporterHelper.blockReporter(id);
     if (blockR.err) {
       return ErrorHelper.ClientError(res, {error: blockR.err}, 400);
     }
+    userData = await userModel.findById(id, {_id: true, isOnline: true, socketToken: true, fname: true, lname: true}).lean(true)
+
     // send socket to user
-    SSS.userSetting.blockUser(req, blockR.reporter)
+    SSS.userSetting.blockUser(req, userData)
 
     SuccessHelper.success(res, blockR.reporter, `User ID: ${id} has been blocked`);
   }
