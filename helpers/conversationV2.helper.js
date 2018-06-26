@@ -116,10 +116,28 @@ async function __getUserConversationByType(_user, type) {
 
 async function __getConversationById (_conversation) {
   try {
-    const conversation = await Conversation.findById(_conversation).populate('_profilePic')
+    const conversation = await Conversation.findById(_conversation, { messages: {$slice: -1} })
+    .populate('_profilePic')
     .populate('_author', ['_id', 'username'])
-    .populate({path: '_report', select: ['_id', '_reportType'], populate: {path: '_reportType', select: ['_id', 'name', 'code']}});
+    .populate({path: '_report', select: ['_id', '_reportType'], populate: {path: '_reportType', select: ['_id', 'name', 'code']}})
+    .populate({
+      path: 'messages',
+      populate: {
+        path: '_author',
+        select: {_id: true, username: true}
+      }
+    })
+    .populate({
+      path: 'participants._user',
+      select: {_id: true, username: true},
+      populate: {
+        path: '_profilePic',
+        select: {_id: true, secure_url: true}
+      }
+    })
     
+    ;
+          
     if (!conversation) {
       return Promise.reject({
         statusCode: 404,
