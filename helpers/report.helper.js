@@ -178,6 +178,25 @@ const changeReportStatus = (_report, status = 'DONE') => {
   })
 }
 
+const changeIsPublic = (_report, isPublic = true) => {
+  return new Promise((resolve, reject) => {
+    Report.findByIdAndUpdate(_report, {'isPublic': isPublic}, async (err, report) => {
+      try {
+        if (err) {
+          return resolve({err: err})
+        }
+        const getReport = await getReportById(report._id)
+        if (getReport.err) {
+          return resolve({err: getReport.err})
+        }
+        resolve({err: null, report: getReport.report})
+      } catch (e) {
+        reject(e)
+      }
+    })
+  })
+}
+
 const getReportsByReportType = (reportTypeId) => {
   return new Promise((resolve, reject) => {
     Report.find({'_reportType': reportTypeId})
@@ -532,5 +551,6 @@ module.exports = {
   getReportAttachments: getReportAttachments,
   getReportByQueryObjectClean,
   getPublicReports,
-  getModel
+  getModel,
+  changeIsPublic
 }

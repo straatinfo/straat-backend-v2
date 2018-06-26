@@ -405,6 +405,7 @@ const getReportsByNear = async (req, res, next) => {
 const changeReportStatus = async (req, res, next) => {
   const { reportId } = req.params;
   const { status } = req.body;
+  const { language } = req.query
   try {
     const changeRS = await ReportHelper.changeReportStatus(reportId, status);
     if (changeRS.err) {
@@ -424,7 +425,17 @@ const changeReportStatus = async (req, res, next) => {
       }
       return SuccessHelper.success(res, flatR.report);
     }
-    SuccessHelper.success(res, changeRS.report);
+    // translate report base on reporters host language
+    let result = getR.report
+
+    if (Languages[language]) {
+      const transCollection = new Translator.TransCollection()
+      result = await Translator.translate(result, '_mainCategory', 'name', language, transCollection)
+      result = await Translator.translate(result, '_subCategory', 'name', language, transCollection)
+    }
+
+    SuccessHelper.success(res, result);
+    // SuccessHelper.success(res, changeRS.report);
   }
   catch (e) {
     console.log(e);
@@ -432,6 +443,47 @@ const changeReportStatus = async (req, res, next) => {
   }
 };
 
+const changeIsPublic = async (req, res, next) => {
+  const { reportId } = req.params;
+  const { isPublic } = req.body;
+  const { language } = req.query
+  
+  try {
+    const changeRS = await ReportHelper.changeIsPublic(reportId, isPublic);
+    if (changeRS.err) {
+      return ErrorHelper.ClientError(res, {error: changeRS.err}, 400);
+    }
+    if (!changeRS.report) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid ID'}, 422);
+    }
+    const getR = await ReportHelper.getReportById(changeRS.report._id);
+    if (getR.err) {
+      return ErrorHelper.ClientError(res, {error: getR.err}, 422);
+    }
+    if (req.query.flat == 'true') {
+      const flatR = await ReportHelper.flatReport(getR.report);
+      if (flatR.err) {
+        return ErrorHelper.ClientError(res, {error: flatR.err}, 422);
+      }
+      return SuccessHelper.success(res, flatR.report);
+    }
+    // translate report base on reporters host language
+    let result = getR.report
+
+    if (Languages[language]) {
+      const transCollection = new Translator.TransCollection()
+      result = await Translator.translate(result, '_mainCategory', 'name', language, transCollection)
+      result = await Translator.translate(result, '_subCategory', 'name', language, transCollection)
+    }
+
+    SuccessHelper.success(res, result);
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+ 
 const getReportsByReporterAndTeam = async (req, res, next) => {
   const { reporterId, teamId } = req.params;
   try {
@@ -495,5 +547,6 @@ module.exports = {
   getReportsByNear: getReportsByNear,
   getReportAttachments: getReportAttachments,
   getReportByReporterClean,
-  getPublicReports
+  getPublicReports,
+  changeIsPublic
 };

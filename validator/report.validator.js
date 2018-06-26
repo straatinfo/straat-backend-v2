@@ -132,8 +132,35 @@ const changeReportStatusFormValidator = async (req, res, next) => {
   }
 };
 
+
+const changeIsPublicFormValidator = async (req, res, next) => {
+  try {
+    const messages = [];
+    req.checkBody('isPublic', 'isPublic Cannot be empty').notEmpty();
+    const checkReportId = await ReportHelper.getReportById(req.params.reportId);
+    if (checkReportId.err) {
+      return ErrorHelper.ClientError(res, {error: 'Invalid Report ID'}, 400);
+    }
+    const errors = req.validationErrors();
+    if (errors) {
+      errors.forEach(function (error) {
+        messages.push(error.msg);
+      });
+      return ErrorHelper.ClientError(res, messages, 400);
+    }
+
+    next();
+  }
+  catch (e) {
+    console.log(e);
+    ErrorHelper.ServerError(res);
+  }
+};
+
+
 module.exports = {
   reportFormValidator: reportFormValidator,
   updateReportFormValidator: updateReportFormValidator,
-  changeReportStatusFormValidator: changeReportStatusFormValidator
+  changeReportStatusFormValidator: changeReportStatusFormValidator,
+  changeIsPublicFormValidator
 };

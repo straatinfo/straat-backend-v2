@@ -57,6 +57,9 @@ ReportRoute.route('/nearby/:long/:lat/:radius')
 ReportRoute.route('/status/:reportId')
 .put(/* requireAuth, */ReportFormValidator.changeReportStatusFormValidator, Report.changeReportStatus);
 
+ReportRoute.route('/isPublic/:reportId')
+.put(/* requireAuth, */ReportFormValidator.changeIsPublicFormValidator, Report.changeIsPublic);
+
 ReportRoute.route('/myReport/:reporterId/:teamId')
 .get(/* requireAuth, */Report.getReportsByReporterAndTeam, FlatReport.getFlatReports);
 
