@@ -233,6 +233,7 @@ const createReport = (input) => {
     const newReport = new Report(input)
     newReport.save(async(err, report) => {
       try {
+        let updateTeam, createReportChat
         if (err) {
           return resolve({err: err})
         }
@@ -245,7 +246,10 @@ const createReport = (input) => {
         // update mainCategory
         const updateMainCategory = await CategoryHelper.updateMainCategoryReport(report._mainCategory, report._id)
         // update team
-        const updateTeam = await TeamHelper.updateTeamReport(report._team, report._id)
+        if (report._team) {
+          updateTeam = await TeamHelper.updateTeamReport(report._team, report._id)
+        }
+
         // update subCategory
         if (report._subCategory) {
           const updateSubCategory = await CategoryHelper.updateSubCategoryReport(report._subCategory, report._id)
@@ -253,11 +257,13 @@ const createReport = (input) => {
             return resolve({err: 'Error on updating related schema'})
           }
         }
-        if (updateReporter.err || updateHost.err || updateReportType.err || updateMainCategory.err || updateTeam.err) {
+        if (updateReporter.err || updateHost.err || updateReportType.err || updateMainCategory.err) {
           return resolve({err: 'Error on updating related schema'})
         }
         // const getR = await getReportById(report._id)
-        const createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
+        if (report._team) {
+          createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
+        }
         const getR = await getReportByQueryObjectClean({_id: report._id});
         if (getR.err) {
           return resolve({err: getR.err})

@@ -34,10 +34,14 @@ const reportFormValidator = async (req, res, next) => {
       // only required if it has subcategory
       // req.checkBody('_subCategory', 'SubCategory cannot be empty').notEmpty();
       req.checkBody('isUrgent', 'Is Urgent cannot be empty').notEmpty();
-      req.checkBody('_team', 'Team Cannot be empty').notEmpty();
-      const checkTeam = await TeamHelper.getTeamById(req.body._team);
-      if (checkTeam.err || !checkTeam.team) {
-        return ErrorHelper.ClientError(res, { error: 'Invalid Team ID'}, 400);
+
+      // not be required
+      // req.checkBody('_team', 'Team Cannot be empty').notEmpty();
+      if (req.body._team) {
+        const checkTeam = await TeamHelper.getTeamById(req.body._team);
+        if (checkTeam.err || !checkTeam.team) {
+          return ErrorHelper.ClientError(res, { error: 'Invalid Team ID'}, 400);
+        }
       }
     }
     if (code.toUpperCase() === 'B') {
@@ -51,10 +55,12 @@ const reportFormValidator = async (req, res, next) => {
       req.checkBody('_host', 'Host cannot be empty').notEmpty();
       req.checkBody('_mainCategory', 'Main Category cannot be empty').notEmpty();
       req.checkBody('isUrgent', 'Is Urgent cannot be empty').notEmpty();
-      req.checkBody('_team', 'Team Cannot be empty').notEmpty();
-      const checkTeam = await TeamHelper.getTeamById(req.body._team);
-      if (checkTeam.err || !checkTeam.team) {
-        return ErrorHelper.ClientError(res, { error: 'Invalid Team ID'}, 400);
+      // req.checkBody('_team', 'Team Cannot be empty').notEmpty();
+      if (req.body._team) {
+        const checkTeam = await TeamHelper.getTeamById(req.body._team);
+        if (checkTeam.err || !checkTeam.team) {
+          return ErrorHelper.ClientError(res, { error: 'Invalid Team ID'}, 400);
+        }
       }
     }
     if (code.toUpperCase() === 'C') {

@@ -68,12 +68,16 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
 
 // report A notification to reporter
 const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail = [], location, date, category1, category2 = null, text = null, language) => {
+  let CC
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY
   // const receiver = reporterEmail
   const subject = L(language, 'yourNewNotificationPublicSpace')
   const mailBody = MailTemplates.sendReportANotifToReporter(location, date, category1, category2, text, language)
-
-  const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, ...teamLeaderEmail] // reporterEmail];
+  if (teamLeaderEmail.length > 0) {
+    CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, ...teamLeaderEmail] // reporterEmail];
+  } else {
+    CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL]
+  }
 
   return new Promise(async(resolve, reject) => {
     try {

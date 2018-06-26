@@ -138,7 +138,7 @@ const createReportV2 = async (req, res, next) => {
   // error in converting createAt in model report
   // due to may 32
   try {
-    let langUserMain, langUserSub, langUser
+    let langUserMain, langUserSub, langUser, teamName, teamEmail
     if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
       return next(); 
     }
@@ -158,9 +158,15 @@ const createReportV2 = async (req, res, next) => {
  
     // send emails
     const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt, _team } = createR.report;
-    const team = await TeamHelper.getTeamLeadersByTeamId(_team._id)
+    teamName = ''
+    teamEmail = ''
+    if (_team) {
+      teamName = _team.teamName
+      teamEmail = _team.teamEmail
+    }
+    const team = _team ? await TeamHelper.getTeamLeadersByTeamId(_team._id) : ''
     const lang = _host.language
-    const teamLeadersEmail = TeamTransform.getEmail({model: 'teamLeaders', data: team.teamLeaders, isArray: true})
+    const teamLeadersEmail = _team ? TeamTransform.getEmail({model: 'teamLeaders', data: team.teamLeaders, isArray: true}) : []
     // get trans of this
     const { code } = _reportType
     const mainName = _mainCategory ? (await LanguageHelper.translate(_mainCategory.name, lang)) : ''
@@ -169,7 +175,7 @@ const createReportV2 = async (req, res, next) => {
     switch (code.toUpperCase()) {
       case 'A':
         const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, _team.teamName,  _team.teamEmail, null, mainName, subName, location, reportDeeplink, lang);
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, null, mainName, subName, location, reportDeeplink, lang);
 
         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
         // email to user
