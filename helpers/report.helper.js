@@ -419,7 +419,7 @@ const getReportByQueryObjectClean = (queryObject, isFilter = false, language='')
     .populate('_team', ['_id', 'teamName', 'teamEmail'])
     .populate({ 
       path: '_conversation',
-      select: { messages: {$slice: -1}, _id: true}
+      select: {messages: true, _id: true}
     })
     .populate('attachments', ['_id', 'secure_url'])
     .sort([['createdAt', -1]])
@@ -516,18 +516,16 @@ const getReportAttachments = (_report) => {
 const getPublicReports = async (_reporter, _reportType = null) => {
   try {
     // get teams
-    const { teamMembers, teamLeaders, _host } = await User.findById(_reporter).populate('teamMembers').populate('teamLeaders')
+    const { teamMembers, _host } = await User.findById(_reporter).populate('teamMembers')
 
-    const teamLeadersList = teamLeaders.map(tm => tm._team.toString()) 
-    const teamMembersList = teamMembers.map(tm => tm._team.toString())
+    const teamList = teamMembers.map(tm => tm._team.toString())
 
-    const teamList =_.union(teamLeadersList, teamMembersList)
     const extendParam = _reportType ? {_reportType: _reportType} : {}
 
     const publicReports = {
       $and: [
         {_host: _host, ...extendParam},
-         {'$or': [{isPublic: true}, {_team: {$in: teamList}}]}
+        {'$or': [{isPublic: true}, {_reporter: _reporter}, {_team: {$in: teamList}}]}
       ]
     }
     const reports = await getReportByQueryObjectClean(publicReports);
@@ -559,7 +557,7 @@ const getNearbyReports = async (_reporter, long, lat, radius) => {
     const status = {
       status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
     }
-    const publicReports = { $and: [near, status, {$or: [{isPublic: true}, {_team: {$in: teamList}}]}] }
+    const publicReports = { $and: [near, status, {$or: [{isPublic: true}, {_reporter: _reporter}, {_team: {$in: teamList}}]}] }
     const reports = await getReportByQueryObjectClean(publicReports)
     return Promise.resolve(reports)
   } catch (e) {
