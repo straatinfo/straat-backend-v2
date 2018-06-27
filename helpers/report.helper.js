@@ -543,7 +543,6 @@ const getNearbyReports = async (_reporter, long, lat, radius) => {
     // get teams
     const { teamMembers } = await User.findById(_reporter, {_id: true, teamMembers: true}).populate('teamMembers')
     const teamList = teamMembers.map(tm => tm._team.toString())
-
     const near = {
       reportCoordinate: {
         $near: {
@@ -559,7 +558,7 @@ const getNearbyReports = async (_reporter, long, lat, radius) => {
     const status = {
       status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
     }
-    const publicReports = { $and: [near,  {'$or': [{isPublic: true}, {_team: {$in: teamList}}]}] }
+    const publicReports = { $and: [near, status, {$or: [{isPublic: true}, {_team: {$in: teamList}}]}] }
     const reports = await getReportByQueryObjectClean(publicReports)
     return Promise.resolve(reports)
   } catch (e) {
