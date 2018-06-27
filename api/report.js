@@ -62,7 +62,7 @@ const getReportsByHostId = async (req, res, next) => {
     if (getReportTypeA.err) {
       return ErrorHelper.ClientError(res, {error: getReportTypeA.err});
     }
-    const getR = await ReportHelper.getReportByHost(hostId, getReportTypeA.reportType._id);
+    const getR = await ReportHelper.getReportByHost(hostId);
     if (getR.err) {
       return ErrorHelper.ClientError(res, {error: getR.err}, 400);
     }
