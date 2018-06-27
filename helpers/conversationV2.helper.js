@@ -258,11 +258,13 @@ async function __createTeamChat(_user, _team, _profilePic) {
 
 async function __createReportChat (_user, _team, _report, _profilePic) {
   try {
-
-    const checkConvo = await Conversation.findOne({_report: _report});
+    let Rconversation
+    const checkConvo = await Conversation.findOne({_report: _report}, {_id: true});
    
     if (checkConvo) {
-      return Promise.resolve(checkConvo);
+
+      Rconversation = await __getConversationById(checkConvo._id);
+      return Promise.resolve(Rconversation);
     }
 
     const team = await Team.findById(_team).populate('teamMembers');
@@ -309,7 +311,9 @@ async function __createReportChat (_user, _team, _report, _profilePic) {
     const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
       const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
     }));
-    return Promise.resolve(conversation);
+
+    Rconversation = await __getConversationById(conversation._id);
+    return Promise.resolve(Rconversation);
   }
   catch (e) {
     return Promise.reject(e);
