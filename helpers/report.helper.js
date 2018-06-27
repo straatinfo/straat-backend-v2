@@ -99,8 +99,9 @@ const getReports = () => {
 }
 
 const getReportByHost = (hostId, _reportType = null) => {
+  const queryObject = _reportType ? {'_host': hostId, '_reportType': _reportType} : {'_host': hostId};
   return new Promise((resolve, reject) => {
-    Report.find({'_host': hostId, '_reportType': _reportType})
+    Report.find(queryObject)
     .populate('_reporter', [
       '_id', 'fname', 'lname', 'email', 'gender',
       'username', 'houseNumber', 'streetName',
