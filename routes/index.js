@@ -18,7 +18,7 @@ const ConversationRouteV2 = require('./conversationV2.route');
 const MessageRouteV2 = require('./messageV2.route');
 const TeamRouteV2 = require('./teamV2.route');
 const HostMigrationRoute = require('./hostMigration.route');
-
+const InternalRoute = require('./internal.route');
 // const TestRoute = require('./test.route');
  const TestRoute = require('./test.route');
 
@@ -47,6 +47,6 @@ module.exports = (app) => {
   app.use('/v2/api/team', TeamRouteV2);
    app.use('/v1/api/test', TestRoute);
   app.use('/v1/api/hostmigration', HostMigrationRoute);
-
+  app.use('/v1/api/internal', InternalRoute);
    
 };

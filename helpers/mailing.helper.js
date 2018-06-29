@@ -208,6 +208,34 @@ const activateHostNotif = (email, password) => {
   });
 };
 
+const databaseBackup = (email, dbURL, time) => {
+  const receiver = email;
+  const sender = Config.EMAIL_ADDRESSES.STRAAT_INFO_EMAIL;
+  const subject = 'DATABASE BACKUP -' + time ;
+  const mailBody = MailTemplates.databaseBackupNotif(dbURL, time);
+  return new Promise(async(resolve, reject) => {
+    try {
+      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
+      console.log(sendBasicMail);
+      if (sendBasicMail.err) {
+        return reject({
+          status: 'ERROR',
+          statusCode: 400,
+          message: sendBasicMail.err
+        });
+      }
+      return resolve({
+        status: 'SUCCESS',
+        statusCode: 200,
+        message: 'Successfully sent EMAIL'
+      });
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   sendRegistrationRequestNotif: sendRegistrationRequestNotif,
   sendNewTeamRequestNotif: sendNewTeamRequestNotif,
@@ -219,5 +247,6 @@ module.exports = {
   sendFeedBackNotif: sendFeedBackNotif,
   // deleteTeamNotif: deleteTeamNotif,
   forgotPasswordNotif: forgotPasswordNotif,
-  activateHostNotif
+  activateHostNotif,
+  databaseBackup
 };

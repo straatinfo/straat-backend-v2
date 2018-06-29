@@ -61,4 +61,8 @@ setInterval(function () {
   ReportHousekeeping.updateExpiredReports();
 }, 43200000);
 
+setInterval(function () {
+  ReportHousekeeping.backupDB();
+}, 1000 * 60 * 60 * 12);
+
 module.exports = app;

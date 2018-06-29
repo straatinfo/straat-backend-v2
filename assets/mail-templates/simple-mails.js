@@ -149,5 +149,15 @@ module.exports = {
     <p>Vriendelijke groet</p>
     <p>Straat.info</p>
     `;
-  }
+  },
+
+  databaseBackupNotif: (dbURL, time) => {
+    return `
+      <p>Greetings!</p>
+      <p>You receive a new database back up click The link <a href=${dbURL}> ${dbURL}</a></p>
+      <p>DATE and TIME: ${time}</p>
+      </br></br></br>
+      <p>Thank you.</p>
+    `;
+  },
 }

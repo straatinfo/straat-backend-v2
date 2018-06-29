@@ -20,7 +20,8 @@ module.exports = {
     UPDATE_REQUEST_EMAIL: process.env.UPDATE_REQUEST_EMAIL || 'updaterequest@straat.info',
     SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'johnhiggins.avila@gmail.com', // 'seqretary@gmail.com'
     DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
-    FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info'
+    FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info',
+    DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL || 'mikusobrown@gmail.com'
   },
   GOOGLE: {
     // used in app
@@ -31,6 +32,10 @@ module.exports = {
   // postcode.ru
   POSTCODE: {
     POSTCODE_API_KEY: process.env.POSTCODE_API_KEY || 'gvuwmtomsB8eRf5Zgsfnj7zs8DE2ihC79DlEbQnb' // 'uBN0JsxZOIvnr034fj7W5uNjTIiI8et6AZ8OQi50'
+  },
+
+  SERVER_API: {
+    INTERNAL: process.env.SERVER_API_INTERNAL || `http://127.0.0.1:${process.env.PORT || 5000}`
   }
 
 }
