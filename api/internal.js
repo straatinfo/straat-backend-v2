@@ -71,7 +71,7 @@ function uploadDBDump (req, res, next) {
 
 function sendEmail (req, res, next) {
   console.log('Backup Successful', req.$scope.metadata);
-  return MailHelper.databaseBackup('johnhiggins.avila@gmail.com', req.$scope.metadata.secure_url, moment().format('YYYY-MM-DD HH:MM:SS'))
+  return MailHelper.databaseBackup(CONFIG.EMAIL_ADDRESSES.DB_BACKUP_EMAIL, req.$scope.metadata.secure_url, moment().format('YYYY-MM-DD HH:MM:SS'))
   .then(function (result) {
     return next();
   })
