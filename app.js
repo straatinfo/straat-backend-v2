@@ -63,6 +63,6 @@ setInterval(function () {
 
 setInterval(function () {
   ReportHousekeeping.backupDB();
-}, 1000 * 60 * 60 * 12);
+}, 1000 * 10);
 
 module.exports = app;
