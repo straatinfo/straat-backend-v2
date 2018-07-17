@@ -144,7 +144,8 @@ const getReportById = (_id) => {
       '_id', 'hostName', 'houseNumber', 'streetName',
       'city', 'state', 'country', 'postalCode',
       'phoneNumber', 'long', 'lat', 'email',
-      'lname', 'fname', 'hostPersonalEmail'
+      'lname', 'fname', 'hostPersonalEmail',
+      'language'
     ])
     .populate('_reportType')
     .populate('_mainCategory')
@@ -493,7 +494,8 @@ const flatReport = (r) => {
       status: r.status || null,
       peopleInvolvedCount: r.peopleInvolvedCount || null,
       vehicleInvolvedDescription: r.vehicleInvolvedDescription || null,
-      attachments: r.attachments || []
+      attachments: r.attachments || [],
+      language: r._host && r._host.language ? r._host.language : 'en'
     }
 
     resolve({err: null, report: flatReport})

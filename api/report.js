@@ -42,7 +42,7 @@ const getReportById = async (req, res, next) => {
       const report = await ReportHelper.flatReport(getR.report);
       if (report.err) {
         return ErrorHelper.ClientError(res, {error: report.err}, 400);
-      } 
+      }
       return SuccessHelper.success(res, report.report);
     }
     req.result = getR.report
