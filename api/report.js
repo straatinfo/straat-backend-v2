@@ -169,8 +169,8 @@ const createReportV2 = async (req, res, next) => {
     const teamLeadersEmail = _team ? TeamTransform.getEmail({model: 'teamLeaders', data: team.teamLeaders, isArray: true}) : []
     // get trans of this
     const { code } = _reportType
-    const mainName = _mainCategory ? (await LanguageHelper.translate(_mainCategory.name, lang)) : ''
-    const subName = _subCategory ? (await LanguageHelper.translate(_subCategory.name, lang)) : ''
+    const mainName = _mainCategory ? _mainCategory.name, lang : ''
+    const subName = _subCategory ? _subCategory.name, lang : ''
   
     switch (code.toUpperCase()) {
       case 'A':
@@ -180,8 +180,8 @@ const createReportV2 = async (req, res, next) => {
         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
         // email to user
         langUser = createR._reporter ? createR._reporter.language || 'nl' : 'nl'
-        langUserMain = _mainCategory ? (await LanguageHelper.translate(_mainCategory.name, langUser)) : ''
-        langUserSub = _subCategory ? (await LanguageHelper.translate(_subCategory.name, langUser)) : ''
+        langUserMain = _mainCategory ? _mainCategory.name : ''
+        langUserSub = _subCategory ? _subCategory.name : ''
         // const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter('isens.jaylord@gmail.com', teamLeadersEmail, location, createdAt, langUserMain, langUserSub, null, langUser);
         const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, langUserMain, langUserSub, null, langUser);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
