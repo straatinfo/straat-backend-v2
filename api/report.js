@@ -169,8 +169,8 @@ const createReportV2 = async (req, res, next) => {
     const teamLeadersEmail = _team ? TeamTransform.getEmail({model: 'teamLeaders', data: team.teamLeaders, isArray: true}) : []
     // get trans of this
     const { code } = _reportType
-    const mainName = _mainCategory ? _mainCategory.name, lang : ''
-    const subName = _subCategory ? _subCategory.name, lang : ''
+    const mainName = _mainCategory ? _mainCategory.name : ''
+    const subName = _subCategory ? _subCategory.name: ''
   
     switch (code.toUpperCase()) {
       case 'A':
