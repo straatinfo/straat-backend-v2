@@ -25,12 +25,12 @@ const createReportTypeC = async (req, res, next) => {
           return error.push(createR.err);
         } 
         // send emails 
-        const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt } = createR.report;
+        const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, description, reporter, location, createdAt } = createR.report;
         const { code } = _reportType;
         switch (code.toUpperCase()) {
           case 'C':
            // bakit _reporter email tong andito?
-            const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, _mainCategory ? _mainCategory.name || null : null, location);
+            const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, _mainCategory ? _mainCategory.name || null : null, location, description);
             if (sendReportCNotifToReporter.err) {
               error.push('Unable to send mail notifications at this time');
             }

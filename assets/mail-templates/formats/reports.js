@@ -43,7 +43,7 @@ const sendReportAToHost = (username, teamName, teamEmail, text, category1, categ
         <p>Sincerely </ p>
         <p>${teamName} </ p>
         </br>
-        <p>PS This message was sent with the app street.info the app for neighborhood prevention. If you have any questions or suggestions for improvement about the app, you can go to the form on www.straat.info or via info@straat.info </ p>
+        <p>PS This message was sent with the app straat.info the app for neighborhood prevention. If you have any questions or suggestions for improvement about the app, you can go to the form on www.straat.info or via info@straat.info </ p>
         `
   }
   // dutch
@@ -78,7 +78,7 @@ const sendReportANotifToReporter = (location, date, category1, category2 = null,
       <p>Location: ${location} </p>
       </br>
       <p>This report has been sent to the relevant host. </p>
-      <p>Thank you for using street.info </p>
+      <p>Thank you for using straat.info </p>
       </br>
       <p>If you have any questions or ideas, could you please use the feedback form in the app? </p>
     `
@@ -93,7 +93,7 @@ const sendReportANotifToReporter = (location, date, category1, category2 = null,
   <p>Locatie: ${location} </p>
   </br>
   <p>Dit rapport is verzonden naar de betreffende host. </p>
-  <p>Bedankt voor het gebruik van street.info </p>
+  <p>Bedankt voor het gebruik van straat.info </p>
   </br>
   <p>Als je vragen of ideeën hebt, kun je het feedbackformulier in de app gebruiken? </p>
 `

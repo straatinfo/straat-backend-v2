@@ -157,7 +157,7 @@ const createReportV2 = async (req, res, next) => {
 
  
     // send emails
-    const { _reportType, _reporter, _host, _mainCategory, _subCategory, host, reporter, location, createdAt, _team } = createR.report;
+    const { _reportType, _reporter, _host, _mainCategory, _subCategory, description, host, reporter, location, createdAt, _team } = createR.report;
     teamName = ''
     teamEmail = ''
     if (_team) {
@@ -175,7 +175,8 @@ const createReportV2 = async (req, res, next) => {
     switch (code.toUpperCase()) {
       case 'A':
         const reportDeeplink = `https://straatinfo-frontend-v2-staging.herokuapp.com/public/report/${createR.report._id}`;
-        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, null, mainName, subName, location, reportDeeplink, lang);
+        // const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, null, mainName, subName, location, reportDeeplink, lang);
+        const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
 
         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
         // email to user
@@ -183,21 +184,22 @@ const createReportV2 = async (req, res, next) => {
         langUserMain = _mainCategory ? _mainCategory.name : ''
         langUserSub = _subCategory ? _subCategory.name : ''
         // const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter('isens.jaylord@gmail.com', teamLeadersEmail, location, createdAt, langUserMain, langUserSub, null, langUser);
-        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, langUserMain, langUserSub, null, langUser);
+        const sendReportANotifReporter = await MailingHelper.sendReportANotifToReporter(_reporter.email, teamLeadersEmail, location, createdAt, langUserMain, langUserSub, description, langUser);
         if (sendReportANotifToHost.err || sendReportANotifReporter.err) {
           console.log('sendReportANotifToHost.err || sendReportANotifReporter.err', sendReportANotifToHost.err, sendReportANotifReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
       break; 
       case 'B':
-        const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location);
+        // const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location);
+        const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location, description);
         if (sendReportBNotifToReporter.err) {
           console.log('sendReportBNotifToReporter.err', sendReportBNotifToReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
       break;
       case 'C':
-        const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, mainName, location);
+        const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, mainName, location, description);
         if (sendReportCNotifToReporter.err) {
           console.log('sendReportBNotifToReporter.err', sendReportBNotifToReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);

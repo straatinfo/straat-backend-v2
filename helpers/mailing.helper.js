@@ -46,7 +46,7 @@ const sendNewTeamRequestNotif = (teamDetails, userData) => {
 };
 
 // report A nofication
-const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEmail, text = null, category1, category2 = null, location, reportDeepLink, language) => {
+const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEmail, text, category1, category2 = null, location, reportDeepLink, language) => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = hostEmail;
   const subject = L(language, 'newNotificationOfPublicSpace')
@@ -67,7 +67,7 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
 };
 
 // report A notification to reporter
-const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail = [], location, date, category1, category2 = null, text = null, language) => {
+const sendReportANotifToReporter = (reporterEmail, teamLeaderEmail = [], location, date, category1, category2 = null, text, language) => {
   let CC
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY
   // const receiver = reporterEmail
@@ -100,7 +100,7 @@ const sendReportANotifForTeamLeader = () => {
 };
 
 // report B notification
-const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, location, text=null) => {
+const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, location, text) => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = reporterEmail;
   const subject = 'Report B';
@@ -121,7 +121,7 @@ const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, locat
 };
 
 // report C notification
-const sendReportCNotifToReporter = (reporterEmail, date, mainCategoryName, location, text=null) => {
+const sendReportCNotifToReporter = (reporterEmail, date, mainCategoryName, location, text) => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = reporterEmail;
   const subject = 'Report C';
