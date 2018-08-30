@@ -66,7 +66,7 @@ const sendReportAToHost = (username, teamName, teamEmail, text, category1, categ
     `
 }
 
-const sendReportANotifToReporter = (location, date, category1, category2 = null, text = null, language) => {
+const sendReportANotifToReporter = (username, lastname, location, date, category1, category2 = null, text = null, language) => {
   // English
   if (language === Langauges.en) {
     return `
@@ -85,17 +85,20 @@ const sendReportANotifToReporter = (location, date, category1, category2 = null,
   }
 
   return `
-  <p>Geachte mevrouw, mijnheer, </p>
-  <p>U heeft zojuist een rapport ${date} </p> gemaakt
-  <p>Meldingscategorie 1: ${category1} </p>
-  <p>Meldingscategorie 2: ${category2 || '-'} </p>
-  <p>Alle uitleg: ${text || '-'} </p>
+  <p>Geachte mevrouw / mijnheer ${lastname || username} </p>
+  <p>U heeft met de app straat.info op ${date} een nieuwe melding gedaan met de volgende gegevens: </p>
   <p>Locatie: ${location} </p>
+  <p>Melding: ${category1} ${category2 || '-'} </p>
+  <p>Uw eventuele toelichting: ${text || '-'} </p>
+  
   </br>
-  <p>Dit rapport is verzonden naar de betreffende host. </p>
-  <p>Bedankt voor het gebruik van straat.info </p>
+  <p>De melding is naar de gemeente gestuurd met het verzoek om de melding af te handelen.</p>
+  <p>Dank voor het gebruiken van straat.info!</p>
   </br>
-  <p>Als je vragen of ideeën hebt, kun je het feedbackformulier in de app gebruiken? </p>
+  <p>Vriendelijke groet</p>
+  <p>Het straat.info team</p>
+  </br>
+  <p>PS als u vragen of ideeën voor verbetering heeft, zou u die dan aan ons willen doorgeven via het feedback formulier in het menu van de app?</p>
 `
 }
 

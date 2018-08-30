@@ -62,8 +62,8 @@ module.exports = {
     <p>PS Deze melding is verzonden met de app straat.info dé app voor buurtpreventie. Als u vragen heeft, of tips ter verbetering over de app, kunt u terecht via het formulier op www.straat.info of via info@straat.info</p>
     `;
   },
-  sendReportANotifToReporter: (location, date, category1, category2 = null, text = null, language) => {
-    return ReportEmailFormat.sendReportANotifToReporter(location, date, category1, category2, text, language)
+  sendReportANotifToReporter: (username,lastname, location, date, category1, category2 = null, text = null, language) => {
+    return ReportEmailFormat.sendReportANotifToReporter(username, lastname, location, date, category1, category2, text, language)
     return `
       <p>Dear madam, sir,</p>
       <p> You just made a report ${date} </p>

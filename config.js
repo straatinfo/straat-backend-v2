@@ -18,7 +18,7 @@ module.exports = {
     NO_REPLY: 'no-reply@straat.info',
     NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST || 'jaylord@globalbrainforce.com', // 'jaylord@globalbrainforce.com'
     UPDATE_REQUEST_EMAIL: process.env.UPDATE_REQUEST_EMAIL || 'updaterequest@straat.info',
-    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'johnhiggins.avila@gmail.com', // 'seqretary@gmail.com'
+    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'seqretary@gmail.com', // 'johnhiggins.avila@gmail.com'
     DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
     FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info',
     DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL || 'mikusobrown@gmail.com'
