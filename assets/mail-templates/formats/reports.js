@@ -85,7 +85,7 @@ const sendReportANotifToReporter = (username, lastname, location, date, category
   }
 
   return `
-  <p>Geachte mevrouw / mijnheer ${lastname || username} </p>
+  <p>Geachte mevrouw / mijnheer </p>
   <p>U heeft met de app straat.info op ${date} een nieuwe melding gedaan met de volgende gegevens: </p>
   <p>Locatie: ${location} </p>
   <p>Melding: ${category1} ${category2 || '-'} </p>
