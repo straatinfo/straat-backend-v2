@@ -28,7 +28,7 @@ const userSchema = new Schema({
     isNotification: { type: Boolean, default: true },
     vibrate: { type: Boolean, default: true },
     sound: { type: Boolean, default: true },
-    radius: { type: Number, default: 300 }
+    radius: { type: Number }
   },
   language: { type: String, default: 'nl' },
   fcmToken: { type: String, default: null },                                 // fcm token: use for kiled, background notification for user

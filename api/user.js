@@ -133,11 +133,26 @@ const updateFcmToken = async (req, res, next) => {
   }
 }
 
+const mapRadiusSetting = async (req, res, next) => {
+  
+  try {
+    const result = await UserHelper.mapRadiusSetting(req.params, req.body);
+    if(!!result.error) {
+      return ErrorHelper.ClientError(res, {error: result.error}, 400)
+    }
+
+    SuccessHelper.success(res, result.data)
+  } catch(error) {
+    ErrorHelper.ServerError(res)
+  }
+}
+
 module.exports = {
   getUserDetails: getUserDetails,
   updateUserDetails: updateUserDetails,
   forgotPassword: forgotPassword,
   changePassword: changePassword,
   addProfilePic: addProfilePic,
+  mapRadiusSetting: mapRadiusSetting,
   updateFcmToken
 };

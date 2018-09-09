@@ -27,4 +27,7 @@ UserRoute.route('/password')
 UserRoute.route('/fcm')
 .put(User.updateFcmToken)
 
+UserRoute.route('/map-radius-setting/:id')
+.put(User.mapRadiusSetting);
+
 module.exports = UserRoute;

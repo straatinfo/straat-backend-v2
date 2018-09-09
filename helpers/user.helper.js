@@ -54,7 +54,7 @@ const findUserById = (id) => {
       '_id', 'email', 'fname', 'lname', 'gender',
       'houseNumber', 'streetName', 'city', 'state',
       'country', 'postalCode', 'phoneNumber',
-      'long', 'lat', 'isBlocked', 'isPatron',
+      'long', 'lat', 'setting', 'isBlocked', 'isPatron',
       'hostName', 'username', '_host', 'isVolunteer',
       '_profilePic', 'language', 'fcmToken', 'soketToken'
     ])
@@ -379,6 +379,23 @@ const setActiveTeam = (_user, _team) => {
   })
 }
 
+const mapRadiusSetting = async (params, body) => {
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(params.id, 
+      { 
+        setting: { 
+          radius: body.radius
+        } 
+      }, (error, user) => {
+        if(error) {
+          return resolve({error});
+        } else {
+          resolve({error: null, user})
+        }
+      });
+  });
+}
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
@@ -398,5 +415,6 @@ module.exports = {
   userModel,
   setActiveTeam,
   updateIsOnline,
-  updateIsOnlineBySocketToken
+  updateIsOnlineBySocketToken,
+  mapRadiusSetting: mapRadiusSetting
 };
