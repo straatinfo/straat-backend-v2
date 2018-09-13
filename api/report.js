@@ -55,6 +55,20 @@ const getReportById = async (req, res, next) => {
   }
 }
 
+const unfollowReport = async (req, res, next) => {
+  try {
+    const result = ReportHelper.unfollowReportType(req.params, req.body);
+
+    if (!!result.error) {
+      return ErrorHelper.ClientError(res, {error: result.error}, 400);
+    }
+
+    SuccessHelper.success(res, result.data);
+  } catch(error) {
+    ErrorHelper.ServerError(error);
+  }
+}
+
 const getReportsByHostId = async (req, res, next) => {
   const { hostId } = req.params;
   try {
@@ -516,6 +530,7 @@ const getReportAttachments = async (req, res, next) => {
 const getPublicReports = async (req, res, next) => {
   try {
     const { _reporter, _reportType } = req.query;
+    console.log("reporter", _reporter);
     const reports = await ReportHelper.getPublicReports(_reporter, _reportType);
     if (reports.err) { return ErrorHelper.ClientError(res, {error: reports.err}, 400); }
     req.reports = reports.reports
@@ -545,5 +560,6 @@ module.exports = {
   getReportAttachments: getReportAttachments,
   getReportByReporterClean,
   getPublicReports,
-  changeIsPublic
+  changeIsPublic,
+  unfollowReport: unfollowReport
 };

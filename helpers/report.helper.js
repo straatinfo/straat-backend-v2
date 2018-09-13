@@ -161,6 +161,20 @@ const getReportById = (_id) => {
   })
 }
 
+const unfollowReportType = (params, body) => {
+  return new Promise((resolve, reject) => {
+    Report.findByIdAndUpdate(params.id, 
+      { unfollow: { user: body.user_id } },
+      (error, user) => {
+        if (error) {
+          return resolve({error});
+        } else {
+          resolve({error: null, user});
+        }
+      });
+  })
+}
+
 const changeReportStatus = (_report, status = 'DONE') => {
   return new Promise((resolve, reject) => {
     Report.findByIdAndUpdate(_report, {'status': status}, async (err, report) => {
@@ -590,5 +604,6 @@ module.exports = {
   getPublicReports,
   getModel,
   changeIsPublic,
-  getNearbyReports
+  getNearbyReports,
+  unfollowReportType: unfollowReportType
 }

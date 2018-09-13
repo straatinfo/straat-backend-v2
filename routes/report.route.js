@@ -41,6 +41,8 @@ ReportRoute.route('/:id')
 .put(/*requireAuth,*/ Report.updateReport)
 .delete(/*requireAuth,*/ Report.deleteReport);
 
+ReportRoute.route('/unfollow/:id')
+.put(Report.unfollowReport);
 
 ReportRoute.route('/reportType/:reportTypeId')
 .get(/*requireAuth,*/ Report.getReportsByReportType, FlatReport.getFlatReports);
