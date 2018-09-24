@@ -20,7 +20,7 @@ const addTeamMember = (_user, _team) => {
       if (checkTM.err) {
         return resolve({err: checkTM.err});
       }
-      if (checkTM.teamMember) {
+      if (checkTM.teamMember) {   
         return resolve({err: null, teamMember: checkTM.teamMember});
       }
       const newTeamMember = new TeamMember({'_user': _user, '_team': _team});
@@ -28,6 +28,13 @@ const addTeamMember = (_user, _team) => {
         if (err) {
           return resolve({err: err});
         }
+
+        User.findByIdAndUpdate({'_id': _user}, {
+          setting: { isNotified: true }
+        }, 
+          (error, user) => {
+          }
+        )
         resolve({err: null, teamMember:teamMember});
       });
     }

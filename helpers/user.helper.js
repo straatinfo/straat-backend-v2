@@ -396,6 +396,26 @@ const mapRadiusSetting = async (params, body) => {
   });
 }
 
+const changeViewed = async (id) => {
+  console.log(id);
+  return new Promise((resolve, reject) => {
+    User.findByIdAndUpdate(id,
+      {
+        setting: {
+          isNotified: false,
+        }
+      },(error, user) => {
+        if(error) {
+          console.log('error log of changeViewed', error);
+          return resolve({error});
+        } else {
+          console.log('succuss log of changeViewed', error);
+          resolve({error: null, user})
+        }
+      })
+  });
+}
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
@@ -416,5 +436,6 @@ module.exports = {
   setActiveTeam,
   updateIsOnline,
   updateIsOnlineBySocketToken,
-  mapRadiusSetting: mapRadiusSetting
+  mapRadiusSetting: mapRadiusSetting,
+  changeViewed: changeViewed,
 };

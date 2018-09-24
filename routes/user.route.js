@@ -30,4 +30,7 @@ UserRoute.route('/fcm')
 UserRoute.route('/map-radius-setting/:id')
 .put(User.mapRadiusSetting);
 
+UserRoute.route('/change-notified-view/:id')
+.put(User.changeViewed);
+
 module.exports = UserRoute;

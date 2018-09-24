@@ -147,6 +147,19 @@ const mapRadiusSetting = async (req, res, next) => {
   }
 }
 
+const changeViewed = async (req, res, next) => {
+  try {
+    const result = await UserHelper.changeViewed(req.params.id);
+    if (!!result.error) {
+      return ErrorHelper.ClientError(res, {error: result.error}, 400)
+    } 
+
+    SuccessHelper.success(res, result)
+  } catch(e) {
+    ErrorHelper.ServerError(res);
+  }
+}
+
 module.exports = {
   getUserDetails: getUserDetails,
   updateUserDetails: updateUserDetails,
@@ -154,5 +167,6 @@ module.exports = {
   changePassword: changePassword,
   addProfilePic: addProfilePic,
   mapRadiusSetting: mapRadiusSetting,
+  changeViewed: changeViewed,
   updateFcmToken
 };
