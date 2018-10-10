@@ -34,5 +34,19 @@ module.exports = function (io) {
 	       console.log(e)
       }
     })
+
+    socket.on('approved-member', async function(data) {
+      try {
+        return io.to(socket.id).emit('received-approval', { 
+          status: 1, 
+          message: "success", 
+          dutch: "Gefeliciteerd, de team coördinator heeft uw verzoek geaccepteerd en u heeft nu toegang tot het team.", 
+          english: "English: congratulations, the team leader has accepted your request. Now you have full access to the app.",
+          data,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    });
   })
 }
