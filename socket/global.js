@@ -37,7 +37,7 @@ module.exports = function (io) {
 
     socket.on('approved-member', async function(data) {
       try {
-        return io.to(socket.id).emit('received-approval', { 
+        return io.emit('received-approval', {
           status: 1, 
           message: "success", 
           dutch: "Gefeliciteerd, de team coördinator heeft uw verzoek geaccepteerd en u heeft nu toegang tot het team.", 
