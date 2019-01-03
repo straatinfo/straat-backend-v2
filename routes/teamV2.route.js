@@ -15,7 +15,8 @@ TeamRoute.route('/')
 .post(
   (req, res, next) => {
     console.log(req.body);
-    if (req.query.photo == 'true') {
+    console.log(req.headers["content-type"]);
+    if (req.headers && req.headers["content-type"] == 'multipart/form-data') {
       return CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']);
     } else {
       next();
