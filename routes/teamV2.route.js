@@ -17,7 +17,7 @@ TeamRoute.route('/')
     console.log(req.body);
     console.log(req.headers["content-type"]);
     if (req.headers && req.headers["content-type"] == 'multipart/form-data') {
-      return CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']);
+      return CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg'])(req, res, next);
     } else {
       next();
     }
