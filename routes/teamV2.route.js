@@ -12,7 +12,16 @@ const upload = multer();
 
 TeamRoute.route('/')
 .put(ExpressJoi(TeamValidation.putSchema), Team.updateTeam)
-.post(CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']), ExpressJoi(TeamValidation.postSchema), Team.createTeam)
+.post(
+  (req, res, next) => {
+    console.log(req.body);
+    if (req.query.photo == 'true') {
+      return CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']);
+    } else {
+      next();
+    }
+  },
+  ExpressJoi(TeamValidation.postSchema), Team.createTeam)
 .delete(ExpressJoi(TeamValidation.deleteSchema), Team.deleteTeam);
 
 module.exports = TeamRoute;
