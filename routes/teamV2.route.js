@@ -15,14 +15,11 @@ let uploadMiddleware
 TeamRoute.route('/')
 .put(ExpressJoi(TeamValidation.putSchema), Team.updateTeam)
 .post(
+  CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']),
   (req, res, next) => {
     console.log(req.body);
     console.log(req.headers["content-type"]);
-    if (req.headers && req.headers["content-type"] == 'multipart/form-data') {
-      CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']);
-    } else {
-      next();
-    }
+    next();
   },
   ExpressJoi(TeamValidation.postSchema), Team.createTeam)
 .delete(ExpressJoi(TeamValidation.deleteSchema), Team.deleteTeam);
