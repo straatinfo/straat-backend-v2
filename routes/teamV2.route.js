@@ -10,6 +10,8 @@ const CloudinaryService = require('../service/cloudinary.service');
 const multer = require('multer');
 const upload = multer();
 
+let uploadMiddleware
+
 TeamRoute.route('/')
 .put(ExpressJoi(TeamValidation.putSchema), Team.updateTeam)
 .post(
@@ -17,7 +19,7 @@ TeamRoute.route('/')
     console.log(req.body);
     console.log(req.headers["content-type"]);
     if (req.headers && req.headers["content-type"] == 'multipart/form-data') {
-      return CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg'])(req, res, next);
+      CloudinaryService.singleUpload('photo', 'teams',['jpg', 'png', 'jpeg']);
     } else {
       next();
     }
