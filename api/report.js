@@ -225,15 +225,14 @@ const createReportV2 = async (req, res, next) => {
     }
 
     // send photos
-    let photos;
     try {
-      photos = JSON.parse(req.body.reportUploadedPhotos)
+      req.body.reportUploadedPhotos = JSON.parse(req.body.reportUploadedPhotos)
     } catch (e) {
-      photos = req.body.reportUploadedPhotos;
+      req.body.reportUploadedPhotos = req.body.reportUploadedPhotos;
     }
-    console.log(photos);
+    console.log(req.body.reportUploadedPhotos);
 
-    if (photos && photos.length !== 0) {
+    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
       const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
         const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
         if (savePhoto.err) {
