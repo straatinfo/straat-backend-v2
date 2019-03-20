@@ -182,6 +182,7 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
         ]
       });
     } else {
+      console.log('loging params', title, _chater, _chatee);
       newConversation = new Conversation({
         'type': 'PRIVATE',
         'title': title,
@@ -195,6 +196,7 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
     const updateChater = await User.update({'_id': _chater}, { '$addToSet': { 'conversations': newConversation._id } });
     const updateChatee = await User.update({'_id': _chatee}, { '$addToSet': { 'conversations': newConversation._id } });
     const conversation = await newConversation.save();
+    console.log(conversation);
     Rconversation = await __getConversationById(conversation._id);
 
     return Promise.resolve(Rconversation);
