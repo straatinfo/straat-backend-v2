@@ -515,6 +515,7 @@ function getConversation () {
 
 function createConversation () {
   console.log('creating conversation arguments:', arguments);
+  console.log('logging conversation:', arguments[0], arguments[1], arguments[2]);
   if (arguments[0].toLowerCase() === 'private') {
     return __createPrivateConversation(arguments[1], arguments[2]);
   } else if (arguments[0].toLowerCase() === 'team') {
