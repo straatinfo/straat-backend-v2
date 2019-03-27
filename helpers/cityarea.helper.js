@@ -177,7 +177,7 @@ const validatePostalCode = (postalCode) => {
         if (!result) {
           return resolve({err: 'no data in: ' + postalCode})
         }
-        if (!(result && result._embedded) && !(result._embedded.addresses.length > 0)) {
+        if (!(result && result._embedded && result._embedded.addresses.length > 0)) {
           return resolve({err: 'no data in: ' + postalCode})
         }
         if (!error && response.statusCode === 200) {
