@@ -17,7 +17,7 @@ function getMainCategories (req, res, next) {
   const host = req.$scope.host;
   console.log(host);
 
-  return req.db.MainCategory.find({ _host: host._host }, {_id: true, name: true, description: true})
+  req.db.MainCategory.find({ _host: host._host }, {_id: true, name: true, description: true})
     .populate('subCategories', ['_id', 'name', 'description'])
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .exec((err , mainCategories) => {
@@ -25,11 +25,9 @@ function getMainCategories (req, res, next) {
         return internals.catchError(err, req, res);
       }
 
-      req.$scope.mainCategories = mainCategories || [];
+      req.$scope.mainCategories = mainCategories;
 
       next();
-
-      return (undefined);
     });
 }
 
