@@ -59,7 +59,7 @@ CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
 // .post(/*requireAuth,*/  Category.createGeneralMainCategory);
 
 CategoryRoute.route('/mainCategory/general')
-.get(/*requireAuth,*/ Category.getGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
+.get(/*requireAuth,*/ Category.getGeneralMainCategories, CategoryMiddleware.getFlatMainCategory)
 .post(
   /*requireAuth,*/
   mainCategoryHandlers.createMainCategoryForHost.validateParams,
