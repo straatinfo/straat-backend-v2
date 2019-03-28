@@ -47,14 +47,14 @@ function getReportType (req, res, next) {
       query = null;
   }
 
-  if (!query) {
-    return next();
-  }
+  // if (!query) {
+  //   return next();
+  // }
 
-  return req.db.ReportType.findOne(query)
+  return req.db.ReportType.findOne({ code })
     .then((reportType) => {
       req.$scope.reportType = reportType;
-
+      console.log(reportType);
       next();
       return (undefined);
     })
