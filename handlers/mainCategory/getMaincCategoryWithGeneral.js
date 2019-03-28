@@ -15,8 +15,11 @@ internals.catchError = function (err, req, res) {
 
 function getMainCategories (req, res, next) {
   const host = req.$scope.host;
+  console.log(host);
 
-  return req.db.MainCategory.minify({ _host: host._host }, true)
+  return req.db.MainCategory.find({ _host: host._host }, {_id: true, name: true, description: true})
+    .populate('subCategories', ['_id', 'name', 'description'])
+    .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .exec((err , mainCategories) => {
       if (err) {
         return internals.catchError(err, req, res);
