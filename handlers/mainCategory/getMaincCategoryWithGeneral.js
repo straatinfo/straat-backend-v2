@@ -17,18 +17,21 @@ function getMainCategories (req, res, next) {
   const host = req.$scope.host;
 
   return req.db.MainCategory.minify({ _host: host._host }, true)
-    .then((mainCategories) => {
+    .exec((err , mainCategories) => {
+      if (err) {
+        return internals.catchError(err, req, res);
+      }
+
       req.$scope.mainCategories = mainCategories || [];
 
       next();
 
       return (undefined);
-    })
-    .catch((err) => internals.catchError(err, req, res));
+    });
 }
 
 // for backwards compatibility
-function translate (req, res, next) {
+function translate (req, res) {
   const mainCategories = req.$scope.mainCategories;
   const lang = req.query.language || 'en';
 

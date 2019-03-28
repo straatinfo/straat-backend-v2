@@ -124,6 +124,7 @@ function getFreeHost (req, res, next) {
       }
 
       req.$scope.host = host;
+      console.log('Free host loaded');
       return next();
     })
     .catch((err) => internals.catchError(err, req, res));
