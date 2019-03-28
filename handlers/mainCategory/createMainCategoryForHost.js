@@ -12,7 +12,7 @@ function validateParams (req, res, next) {
     name: {
       isEmpty: {
         negated: true,
-        errorMessage: 'Missing Parameter: Code'
+        errorMessage: 'Missing Parameter: Name'
       }
     },
     description: {

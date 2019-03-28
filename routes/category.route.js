@@ -57,7 +57,8 @@ CategoryRoute.route('/subCategory/mainCategoryId/:mainCategoryId')
   subCategoryHandlers.createSubCategory.validateParams,
   subCategoryHandlers.createSubCategory.createSubCategory,
   subCategoryHandlers.createSubCategory.updateMainCategory,
-  subCategoryHandlers.createSubCategory.respond
+  subCategoryHandlers.createSubCategory.respond,
+  subCategoryHandlers.getSubCategories.flatSubCategories
 );
 
 CategoryRoute.route('/subCategory/:subCategoryId')

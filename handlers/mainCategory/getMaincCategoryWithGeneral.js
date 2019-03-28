@@ -45,7 +45,7 @@ function translate (req, res) {
       }).word;
 
       mco.subCategories.map(sc => {
-        const sco = sc.toObject();
+        const sco = sc;
         sco.name = _.find(sco.translations, (t) => {
           return t.code == lang;
         }).word;

@@ -18,7 +18,7 @@ function validateParams (req, res, next) {
     name: {
       isEmpty: {
         negated: true,
-        errorMessage: 'Missing Parameter: Code'
+        errorMessage: 'Missing Parameter: Name'
       }
     },
     description: {
@@ -84,6 +84,10 @@ function updateMainCategory (req, res, next) {
 
 function respond (req, res, next) {
   const subCategory = req.$scope.subCategory;
+
+  if (req.query.flat == 'true') {
+    return next();
+  }
 
   res.status(200).send({
     status: 'SUCCESS',
