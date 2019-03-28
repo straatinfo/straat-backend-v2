@@ -52,7 +52,7 @@ function translate (req, res, next) {
     return mc;
   });
 
-  console.log('Successfully fetch data');
+  console.log('Successfully fetch data', translatedMC);
 
   res.status(200).send({
     status: 1, // for backwards compatibility
