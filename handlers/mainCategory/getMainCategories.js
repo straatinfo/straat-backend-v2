@@ -104,7 +104,7 @@ function getMainCategories (req, res, next) {
         status: 'SUCCESS',
         statusCode: 0,
         httpCode: 200,
-        data: mainCategories
+        data: mainCategories || []
       });
 
       return (undefined);
