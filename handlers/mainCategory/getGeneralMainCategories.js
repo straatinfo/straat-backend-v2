@@ -35,7 +35,6 @@ function getGeneralCategories (req, res, next) {
   const host = req.$scope.host;
   const code = req.query.code.toUpperCase();
   let query;
-  console.log(host, code);
   switch (code) {
     case 'A':
       query = { _host: host._id, code: 'A' };
@@ -49,7 +48,7 @@ function getGeneralCategories (req, res, next) {
     default:
       query = { _host: host._id };
   }
-
+  console.log(query);
   return req.db.MainCategory.find(query)
     .populate('_host', [
       '_id', 'hostName', 'email', 'houseNumber',
@@ -60,6 +59,7 @@ function getGeneralCategories (req, res, next) {
     .populate('subCategories')
     .populate('_reportType')
     .then((mainCategories) => {
+      console.log('loading main cat', mainCategories);
       if (req.query.flat == 'true') {
         req.$scope.mainCategories = mainCategories;
         return next();
