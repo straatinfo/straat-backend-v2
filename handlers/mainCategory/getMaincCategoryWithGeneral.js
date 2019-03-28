@@ -17,18 +17,15 @@ function getMainCategories (req, res, next) {
   const host = req.$scope.host;
   console.log(host);
 
-  req.db.MainCategory.find({ _host: host._host }, {_id: true, name: true, description: true})
+  return req.db.MainCategory.find({ _host: host._host }, {_id: true, name: true, description: true})
     .populate('subCategories', ['_id', 'name', 'description'])
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
-    .exec((err , mainCategories) => {
-      if (err) {
-        return internals.catchError(err, req, res);
-      }
-
+    .then((mainCategories) => {
+      console.log('main categories fetched', mainCategories);
       req.$scope.mainCategories = mainCategories;
-
       next();
-    });
+    })
+    .then((err) => internals.catchError(err, req, res));
 }
 
 // for backwards compatibility
