@@ -67,7 +67,7 @@ function getGeneralCategories (req, res, next) {
   let query;
   
   if (reportType) {
-    query = { _host: host._id, reportType: reportType._id };
+    query = { _host: host._id, _reportType: reportType._id };
   } else {
     query = { _host: host._id }
   }
