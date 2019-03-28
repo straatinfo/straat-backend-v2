@@ -36,10 +36,12 @@ function translate (req, res) {
     console.log(mainCategories);
     let lang = req.query.language || 'en';
 
-    if (lang != 'en' || lang != 'nl') {
+    if (lang = 'nl') {
+      lang = 'nl';
+    } else {
       lang = 'en';
     }
-
+    console.log('\n\n\n\nlanguage', lang);
     const translatedMC = mainCategories.map(mc => {
       const mco = mc.toObject();
       console.log(mco, mco.translations);
