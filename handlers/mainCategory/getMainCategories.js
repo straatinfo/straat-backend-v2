@@ -113,7 +113,7 @@ function getMainCategories (req, res, next) {
 }
 
 function flatMainCategories (req, res, next) {
-  const mainCategories = req.$scope.mainCategories;
+  const mainCategories = req.$scope.mainCategories || [];
   
   const flatMC = mainCategories.map(internals.flatMainCategory);
 
