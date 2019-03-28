@@ -32,10 +32,10 @@ internals.flatMainCategory = function (m) {
 }
 
 function getGeneralCategories (req, res, next) {
-  const host = req.$scope.host || 'A';
+  const host = req.$scope.host;
   const code = req.query.code.toUpperCase();
   let query;
-
+  console.log(host, code);
   switch (code) {
     case 'A':
       query = { _host: host._id, code: 'A' };
@@ -47,7 +47,7 @@ function getGeneralCategories (req, res, next) {
       query = { _host: host._id, code: 'C' };
       break;
     default:
-      query = { _host: host._id};
+      query = { _host: host._id };
   }
 
   return req.db.MainCategory.find(query)
