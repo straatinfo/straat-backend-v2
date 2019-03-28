@@ -51,8 +51,17 @@ CategoryRoute.route('/subCategory/:subCategoryId')
 .put(/*requireAuth,*/ SubCategoryValidator.updateSubCategoryFormValidator, Category.updateSubCategory)
 .delete(/*requireAuth,*/ Category.deleteSubCategory);
 
+// CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
+// .get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+
 CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+.get(
+  /*requireAuth,*/
+  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.translate
+);
+
 
 // CategoryRoute.route('/mainCategory/general')
 // .get(/*requireAuth,*/ Category.getGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
