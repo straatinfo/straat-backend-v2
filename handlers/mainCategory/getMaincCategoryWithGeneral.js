@@ -15,7 +15,6 @@ internals.catchError = function (err, req, res) {
 
 function getMainCategories (req, res, next) {
   const host = req.$scope.host;
-  console.log(host);
 
   return req.db.MainCategory.find({ _host: host._id })
     .populate('subCategories', ['_id', 'name', 'description'])
@@ -30,10 +29,8 @@ function getMainCategories (req, res, next) {
 
 // for backwards compatibility
 function translate (req, res) {
-  console.log('translating');
   try {
     const mainCategories = req.$scope.mainCategories;
-    console.log(mainCategories);
     let lang = req.query.language || 'en';
 
     if (lang = 'nl') {
@@ -41,15 +38,11 @@ function translate (req, res) {
     } else {
       lang = 'en';
     }
-    console.log('\n\n\n\nlanguage', lang);
     const translatedMC = mainCategories.map(mc => {
       const mco = mc.toObject();
-      console.log(mco, mco.translations);
       mco.name = _.find(mco.translations, (t) => {
         return t.code == lang;
       }).word;
-
-      console.log(mco.name);
 
       mco.subCategories.map(sc => {
         const sco = sc.toObject();
@@ -59,7 +52,6 @@ function translate (req, res) {
 
         return sco;
       });
-      console.log(mco);
       return mco;
     });
 
