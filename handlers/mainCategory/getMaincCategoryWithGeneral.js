@@ -39,7 +39,7 @@ function translate (req, res) {
   console.log('translating');
   try {
     const mainCategories = req.$scope.mainCategories;
-    const lang = req.query.language || 'en';
+    let lang = req.query.language || 'en';
 
     if (lang != 'en' || lang != 'nl') {
       lang = 'en';
