@@ -12,17 +12,7 @@ const Category = require('../api/category');
 const CategoryRoute = express.Router();
 
 const mainCategoryHandlers = require('../handlers/mainCategory');
-
-// CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
-// .get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
-
-CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
-.get(/*requireAuth,*/
-  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
-  mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
-  mainCategoryHandlers.getMainCategoriesWithGeneral.translate
-);
-
+const subCategoryHandlers = require('../handlers/subCategory');
 
 // CategoryRoute.route('/mainCategory/hostId/:hostId')
 // .get(/*requireAuth,*/ Category.getMainCategories, CategoryMiddleware.getFlatMainCategory)
@@ -54,9 +44,21 @@ CategoryRoute.route('/mainCategory/:mainCategoryId')
 CategoryRoute.route('/mainCategory/reportTypeId/:reportTypeId')
 .get(/* requireAuth, */ Category.getMainCategoriesByReportType, CategoryMiddleware.getFlatMainCategory);
 
+// CategoryRoute.route('/subCategory/mainCategoryId/:mainCategoryId')
+// .get(/*requireAuth,*/ Category.getSubCategories, CategoryMiddleware.getFlatSubCategory)
+// .post(/*requireAuth,*/ SubCategoryValidator.subCategoryFormValidator, Category.createSubCategory);
+
 CategoryRoute.route('/subCategory/mainCategoryId/:mainCategoryId')
-.get(/*requireAuth,*/ Category.getSubCategories, CategoryMiddleware.getFlatSubCategory)
-.post(/*requireAuth,*/ SubCategoryValidator.subCategoryFormValidator, Category.createSubCategory);
+.get(/*requireAuth,*/
+  subCategoryHandlers.getSubCategories.logic,
+  subCategoryHandlers.getSubCategories.flatSubCategories
+)
+.post(/*requireAuth,*/
+  subCategoryHandlers.createSubCategory.validateParams,
+  subCategoryHandlers.createSubCategory.createSubCategory,
+  subCategoryHandlers.createSubCategory.updateMainCategory,
+  subCategoryHandlers.createSubCategory.respond
+);
 
 CategoryRoute.route('/subCategory/:subCategoryId')
 .put(/*requireAuth,*/ SubCategoryValidator.updateSubCategoryFormValidator, Category.updateSubCategory)
@@ -96,8 +98,22 @@ CategoryRoute.route('/mainCategory/general')
   mainCategoryHandlers.createMainCategoryForHost.response
 );
 
+// CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
+// .get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+
+CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
+.get(/*requireAuth,*/
+  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.translate
+);
+
 CategoryRoute.route('/app/mainCategory/general')
-.get(/*requireAuth,*/ Category.getAppGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
+.get(/*requireAuth,*/
+  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.translate
+);
 
 
 module.exports = CategoryRoute;
