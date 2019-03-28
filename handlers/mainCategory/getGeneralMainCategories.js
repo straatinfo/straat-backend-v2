@@ -50,14 +50,8 @@ function getGeneralCategories (req, res, next) {
   }
   console.log(query);
   return req.db.MainCategory.find(query)
-    .populate('_host', [
-      '_id', 'hostName', 'email', 'houseNumber',
-      'streetName', 'city', 'state', 'country',
-      'postalCode', 'long', 'lat', '_role',
-      'lname', 'fname', 'hostPersonalEmail'
-    ])
-    .populate('subCategories')
-    .populate('_reportType')
+    .populate('subCategories', ['_id', 'name', 'description'])
+    .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .then((mainCategories) => {
       console.log('loading main cat', mainCategories);
       if (req.query.flat == 'true') {
