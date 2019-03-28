@@ -71,7 +71,7 @@ CategoryRoute.route('/subCategory/:subCategoryId')
 CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
 .get(
   /*requireAuth,*/
-  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategories.checkHost,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );
@@ -104,7 +104,7 @@ CategoryRoute.route('/mainCategory/general')
 
 CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
 .get(/*requireAuth,*/
-  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategories.checkHost,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );
