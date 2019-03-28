@@ -13,6 +13,9 @@ const CategoryRoute = express.Router();
 
 const mainCategoryHandlers = require('../handlers/mainCategory');
 
+CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
+.get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+
 // CategoryRoute.route('/mainCategory/hostId/:hostId')
 // .get(/*requireAuth,*/ Category.getMainCategories, CategoryMiddleware.getFlatMainCategory)
 // .post(/*requireAuth,*/ /*MainCategoryValidator.mainCategoryFormValidator, */ Category.createMainCategoryForHost);
@@ -80,10 +83,8 @@ CategoryRoute.route('/mainCategory/general')
   mainCategoryHandlers.createMainCategoryForHost.response
 );
 
-CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
-
 CategoryRoute.route('/app/mainCategory/general')
 .get(/*requireAuth,*/ Category.getAppGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
+
 
 module.exports = CategoryRoute;
