@@ -44,13 +44,20 @@ function translate (req, res) {
         return t.code == lang;
       }).word;
 
-      mco.subCategories.map(sc => {
-        const sco = sc;
-        sco.name = _.find(sco.translations, (t) => {
-          return t.code == lang;
-        }).word;
+      mco.subCategories = mco.subCategories.map(sc => {
+        
+        try {
+          const tsc = _.find(sc.translations, (t) => {
+            console.log(t.code == lang);
+            return t.code == lang;
+          });
+  
+          sc.name = tsc.name;
+        } catch (e) {
+          console.log(e);
+        }
 
-        return sco;
+        return sc;
       });
       return mco;
     });
