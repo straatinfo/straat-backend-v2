@@ -95,6 +95,7 @@ function getMainCategories (req, res, next) {
     .populate('subCategories')
     .populate('_reportType')
     .then((mainCategories) => {
+      console.log(mainCategories);
       if (req.query.flat == 'true') {
         req.$scope.mainCategories = mainCategories;
         return next();
@@ -115,7 +116,13 @@ function getMainCategories (req, res, next) {
 function flatMainCategories (req, res, next) {
   const mainCategories = req.$scope.mainCategories || [];
   
-  const flatMC = mainCategories.map(internals.flatMainCategory);
+  let flatMC;
+
+  try {
+    flatMC = mainCategories.map(internals.flatMainCategory);
+  } catch (e) {
+    console.log(e);
+  }
 
   res.status(200).send({
     status: 'SUCCESS',
