@@ -229,12 +229,12 @@ function response (req, res, next) {
       return internals.flatMainCategory({...mainCat.toObject()})
     })
     .then((mainCat) => {
-      console.log('Success: ', (message) ? message : 'Successfully sent request');
+      console.log('Success: ', mainCat, ': Successfully sent request');
       res.status(200).send({
         status: 'SUCCESS',
         statusCode: 0,
         httpCode: 200,
-        data: mainCat
+        data: mainCat 
       })
 
       return (undefined);
