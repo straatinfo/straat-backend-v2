@@ -113,7 +113,7 @@ function getFreeHost (req, res, next) {
     })
     .populate('_activeDesign')
     .populate('design')
-    .then(() => {
+    .then((host) => {
       if (!host) {
         return res.status(400).send({
           status: 'ERROR',
