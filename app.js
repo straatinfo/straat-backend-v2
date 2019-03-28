@@ -16,6 +16,7 @@ const ReportHousekeeping = require('./middleware/housekeeping/report.housekeepin
 const cors = require('cors');
 const Config = require('./config');
 var Boom = require('./middleware/error-handling/boom');
+const validator = require('express-validator');
 
 const app = express();
 
@@ -30,6 +31,15 @@ app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
+
+app.use(validator({}));
+
+app.use((req, res, next) => {
+  req.$scope = {};
+  req.db = require('./models');
+  next();
+});
+
 app.use(logger('dev'));
 app.use(morgan());
 app.use(bodyParser.json());

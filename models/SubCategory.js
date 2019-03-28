@@ -3,6 +3,10 @@ const Schema = mongoose.Schema;
 
 const subCategorySchema = new Schema({
   name: { type: String },
+  translations: {
+    nl: { type: String },
+    en: { type: String }
+  },
   description: { type: String },
   _mainCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory' },
   reports: [{

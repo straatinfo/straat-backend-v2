@@ -278,6 +278,7 @@ const createReport = (input) => {
         }
         // const getR = await getReportById(report._id)
         if (report._team) {
+          console.log('creating chat', report._team);
           createReportChat = await ConversationHelper.__createReportChat(report._reporter, report._team, report._id);
         }
         const getR = await getReportByQueryObjectClean({_id: report._id});

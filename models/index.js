@@ -1,0 +1,23 @@
+module.exports = {
+  City: require('./City'),
+  CityArea: require('./CityArea'),
+  Conversation: require('./Conversation'),
+  Design: require('./Design'),
+  Host: require('./Host'),
+  Language: require('./Language'),
+  MainCategory: require('./MainCategory'),
+  MediaUpload: require('./MediaUpload'),
+  Message: require('./Message'),
+  Participant: require('./Participant'),
+  Report: require('./Report'),
+  ReportType: require('./ReportType'),
+  Role: require('./Role'),
+  Socket: require('./Socket'),
+  SubCategory: require('./SubCategory'),
+  Subscription: require('./Subscription'),
+  Team: require('./Team'),
+  TeamInvite: require('./TeamInvite'),
+  TeamLeader: require('./TeamLeader'),
+  TeamMember: require('./TeamMember'),
+  User: require('./User')
+};

@@ -11,9 +11,30 @@ const TransMaincategory = require('../middleware/transMaincategory');
 const Category = require('../api/category');
 const CategoryRoute = express.Router();
 
+const mainCategoryHandlers = require('../handlers/mainCategory');
+
+// CategoryRoute.route('/mainCategory/hostId/:hostId')
+// .get(/*requireAuth,*/ Category.getMainCategories, CategoryMiddleware.getFlatMainCategory)
+// .post(/*requireAuth,*/ /*MainCategoryValidator.mainCategoryFormValidator, */ Category.createMainCategoryForHost);
+
 CategoryRoute.route('/mainCategory/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getMainCategories, CategoryMiddleware.getFlatMainCategory)
-.post(/*requireAuth,*/ /*MainCategoryValidator.mainCategoryFormValidator, */ Category.createMainCategoryForHost);
+.get(
+  /*requireAuth,*/
+  mainCategoryHandlers.getMainCategories.checkHost,
+  mainCategoryHandlers.getMainCategories.checkReportType,
+  mainCategoryHandlers.getMainCategories.getMainCategories,
+  mainCategoryHandlers.getMainCategories.flatMainCategories
+)
+.post(
+  /*requireAuth,*/
+  mainCategoryHandlers.createMainCategoryForHost.validateParams,
+  mainCategoryHandlers.createMainCategoryForHost.checkHost,
+  mainCategoryHandlers.createMainCategoryForHost.checkReportType,
+  mainCategoryHandlers.createMainCategoryForHost.addMainCategory,
+  mainCategoryHandlers.createMainCategoryForHost.updateHost,
+  mainCategoryHandlers.createMainCategoryForHost.updateReportType,
+  mainCategoryHandlers.createMainCategoryForHost.response
+);
 
 CategoryRoute.route('/mainCategory/:mainCategoryId')
 .put(/*requireAuth,*/ MainCategoryValidator.updateMainCategoryFormValidator, Category.updateMainCategory)
