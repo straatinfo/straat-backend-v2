@@ -13,8 +13,16 @@ const CategoryRoute = express.Router();
 
 const mainCategoryHandlers = require('../handlers/mainCategory');
 
+// CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
+// .get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+
 CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
-.get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
+.get(/*requireAuth,*/
+  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.translate
+);
+
 
 // CategoryRoute.route('/mainCategory/hostId/:hostId')
 // .get(/*requireAuth,*/ Category.getMainCategories, CategoryMiddleware.getFlatMainCategory)
