@@ -17,7 +17,7 @@ function getMainCategories (req, res, next) {
   const host = req.$scope.host;
 
   return req.db.MainCategory.find({ _host: host._id })
-    .populate('subCategories', ['_id', 'name', 'description'])
+    .populate('subCategories')
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .then((mainCategories) => {
       console.log('main categories fetched', mainCategories);
