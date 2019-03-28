@@ -100,6 +100,39 @@ function checkHost (req, res, next) {
     .catch((err) => internals.catchError(err, req, res));
 }
 
+function getFreeHost (req, res, next) {
+  return req.db.User.findOne({ hostName: 'freeHost' }, [
+    '_id', 'hostName', 'houseNumber', 'streetName', 'state',
+    'city', 'state', 'country', 'postalCode', 'username',
+    'phoneNumber', 'long', 'lat', 'isPatron', 'email',
+    'lname', 'fname', 'hostPersonalEmail', 'isSpecific',
+    'isActivated'
+  ])
+  .populate('_role')
+    .populate({
+      path: 'mainCategories',
+      populate: {
+        path: 'subCategories'
+      }
+    })
+    .populate('_activeDesign')
+    .populate('design')
+    .then(() => {
+      if (!host) {
+        return res.status(400).send({
+          status: 'ERROR',
+          statusCode: 102,
+          httpCode: 400,
+          message: 'Invalid Parameter: Host ID'
+        });
+      }
+
+      req.$scope.host = host;
+      return next();
+    })
+    .catch((err) => internals.catchError(err, req, res));
+}
+
 function checkReportType (req, res, next) {
   const code = req.body.code;
   return req.db.ReportType.findOne({ code })
@@ -216,6 +249,7 @@ function response (req, res, next) {
 module.exports = {
   validateParams,
   checkHost,
+  getFreeHost,
   checkReportType,
   addMainCategory,
   updateReportType,

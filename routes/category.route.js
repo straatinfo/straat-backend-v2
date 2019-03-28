@@ -54,9 +54,22 @@ CategoryRoute.route('/subCategory/:subCategoryId')
 CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
 .get(/*requireAuth,*/ Category.getMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
 
+// CategoryRoute.route('/mainCategory/general')
+// .get(/*requireAuth,*/ Category.getGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
+// .post(/*requireAuth,*/  Category.createGeneralMainCategory);
+
 CategoryRoute.route('/mainCategory/general')
 .get(/*requireAuth,*/ Category.getGeneralMainCategories, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory)
-.post(/*requireAuth,*/  Category.createGeneralMainCategory);
+.post(
+  /*requireAuth,*/
+  mainCategoryHandlers.createMainCategoryForHost.validateParams,
+  mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.createMainCategoryForHost.checkReportType,
+  mainCategoryHandlers.createMainCategoryForHost.addMainCategory,
+  mainCategoryHandlers.createMainCategoryForHost.updateHost,
+  mainCategoryHandlers.createMainCategoryForHost.updateReportType,
+  mainCategoryHandlers.createMainCategoryForHost.response
+);
 
 CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
 .get(/*requireAuth,*/ Category.getAppMainCategoriesWithGeneral, TransMaincategory.translate, CategoryMiddleware.getFlatMainCategory);
