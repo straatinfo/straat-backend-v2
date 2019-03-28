@@ -44,21 +44,24 @@ function translate (req, res) {
         return t.code == lang;
       }).word;
 
-      mco.subCategories = mco.subCategories.map(sc => {
-        
+      const subCategories = mco.subCategories.map(sc => {
+        console.log(sc);
         try {
           const tsc = _.find(sc.translations, (t) => {
             console.log(t.code == lang);
             return t.code == lang;
           });
   
-          sc.name = tsc.name;
+          sc.name = tsc.word;
         } catch (e) {
           console.log(e);
         }
 
         return sc;
       });
+
+      mco.subCategories = subCategories;
+
       return mco;
     });
 
