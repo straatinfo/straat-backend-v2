@@ -21,7 +21,6 @@ function getMainCategories (req, res, next) {
     .populate('subCategories', ['_id', 'name', 'description'])
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .exec((err , mainCategories) => {
-      console.log(mainCategories);
       if (err) {
         return internals.catchError(err, req, res);
       }
@@ -39,6 +38,7 @@ function translate (req, res) {
   console.log('translating');
   try {
     const mainCategories = req.$scope.mainCategories;
+    console.log(mainCategories);
     let lang = req.query.language || 'en';
 
     if (lang != 'en' || lang != 'nl') {
@@ -46,19 +46,24 @@ function translate (req, res) {
     }
 
     const translatedMC = mainCategories.map(mc => {
-      mc.name = _.find(mc.translations, (t) => {
-        return t.code === lang;
+      const mco = mc.toObject();
+      console.log(mco, mco.translations);
+      mco.name = _.find(mco.translations, (t) => {
+        return t.code == lang;
       }).word;
 
-      mc.subCategories.map(sc => {
-        sc.name = _.find(sc.translations, (t) => {
+      console.log(mco.name);
+
+      mco.subCategories.map(sc => {
+        const sco = sc.toObject();
+        sco.name = _.find(sco.translations, (t) => {
           return t.code == lang;
         }).word;
 
-        return sc;
+        return sco;
       });
-
-      return mc;
+      console.log(mco);
+      return mco;
     });
 
     console.log('Successfully fetch data', translatedMC);
