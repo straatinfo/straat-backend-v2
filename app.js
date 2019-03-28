@@ -16,7 +16,7 @@ const ReportHousekeeping = require('./middleware/housekeeping/report.housekeepin
 const cors = require('cors');
 const Config = require('./config');
 var Boom = require('./middleware/error-handling/boom');
-const validator = require('express-validator');
+const expressValidator = require('express-validator');
 
 const app = express();
 
@@ -32,7 +32,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use(validator({}));
+// app.use(expressValidator({}));
 
 app.use((req, res, next) => {
   req.$scope = {};
