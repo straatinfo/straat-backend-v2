@@ -31,24 +31,46 @@ internals.flatMainCategory = function (m) {
   return flat;
 }
 
-function getGeneralCategories (req, res, next) {
-  const host = req.$scope.host;
+function getReportType (req, res, next) {
   const code = req.query.code.toUpperCase();
-  let query;
   switch (code) {
     case 'A':
-      query = { _host: host._id, code: 'A' };
+      query = { code: 'A' };
       break;
     case 'B':
-      query = { _host: host._id, code: 'B' };
+      query = { code: 'B' };
       break;
     case 'C':
-      query = { _host: host._id, code: 'C' };
+      query = { code: 'C' };
       break;
     default:
-      query = { _host: host._id };
+      query = null;
   }
-  console.log(query);
+
+  if (!query) {
+    return next();
+  }
+
+  return req.db.ReportType.findOne(query)
+    .then((reportType) => {
+      req.$scope.reportType = reportType;
+
+      next();
+      return (undefined);
+    })
+    .catch((err) => internals.catchError(err, req, res));
+}
+
+function getGeneralCategories (req, res, next) {
+  const host = req.$scope.host;
+  const reportType = req.$scope.reportType;
+  let query;
+  
+  if (reportType) {
+    query = { _host: host._id, reportType: reportType._id };
+  } else {
+    query = { _host: host._id }
+  }
   return req.db.MainCategory.find(query)
     .populate('subCategories', ['_id', 'name', 'description'])
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
@@ -90,5 +112,6 @@ function flatMainCategories (req, res, next) {
 
 module.exports = {
   getGeneralCategories,
+  getReportType,
   flatMainCategories
 };

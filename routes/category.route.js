@@ -81,6 +81,7 @@ CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
 CategoryRoute.route('/mainCategory/general')
 .get(/*requireAuth,*/
   mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getGeneralMainCategories.getReportType,
   mainCategoryHandlers.getGeneralMainCategories.getGeneralCategories,
   mainCategoryHandlers.getGeneralMainCategories.flatMainCategories
 )
