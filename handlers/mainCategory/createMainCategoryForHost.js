@@ -1,4 +1,5 @@
 const CategoryHelper = require('../../helpers/category.helper');
+const lib = requre('../../lib');
 
 function validateParams (req, res, next) {
   var schema = {
@@ -29,14 +30,9 @@ function validateParams (req, res, next) {
   const validationErrors = req.validationErrors();
 
   if (validationErrors) {
-    res.status(400).send({
-      status: 'ERROR',
-      statusCode: 101,
-      httpCode: 400,
-      message: validationErrors
-    });
-
-    return (undefined);
+    const errorObject = lib.errorResponses.validationError(validationErrors);
+    // req.logger.warn(errorObject, 'POST /api/hosts');
+    return res.status(errorObject.httpCode).send(errorObject);
   } else {
     return next();
   }
