@@ -85,7 +85,7 @@ function getMainCategories (req, res, next) {
   const reportType = req.$scope.reportType;
   const _host = req.params.hostId;
 
-  return req.db.MainCategory.findOne({ _reportType: reportType._id, _host: _host })
+  return req.db.MainCategory.find({ _reportType: reportType._id, _host: _host })
     .populate('_host', [
       '_id', 'hostName', 'email', 'houseNumber',
       'streetName', 'city', 'state', 'country',
