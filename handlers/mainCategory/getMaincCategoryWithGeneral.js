@@ -21,6 +21,7 @@ function getMainCategories (req, res, next) {
     .populate('subCategories', ['_id', 'name', 'description'])
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .exec((err , mainCategories) => {
+      console.log(mainCategories);
       if (err) {
         return internals.catchError(err, req, res);
       }
@@ -35,40 +36,48 @@ function getMainCategories (req, res, next) {
 
 // for backwards compatibility
 function translate (req, res) {
-  const mainCategories = req.$scope.mainCategories;
-  const lang = req.query.language || 'en';
+  console.log('translating');
+  try {
+    const mainCategories = req.$scope.mainCategories;
+    const lang = req.query.language || 'en';
 
-  if (lang != 'en' || lang != 'nl') {
-    lang = 'en';
-  }
+    if (lang != 'en' || lang != 'nl') {
+      lang = 'en';
+    }
 
-  const translatedMC = mainCategories.map(mc => {
-    mc.name = _.find(mc.translations, (t) => {
-      return t.code === lang;
-    }).word;
-
-    mc.subCategories.map(sc => {
-      sc.name = _.find(sc.translations, (t) => {
-        return t.code == lang;
+    const translatedMC = mainCategories.map(mc => {
+      mc.name = _.find(mc.translations, (t) => {
+        return t.code === lang;
       }).word;
 
-      return sc;
+      mc.subCategories.map(sc => {
+        sc.name = _.find(sc.translations, (t) => {
+          return t.code == lang;
+        }).word;
+
+        return sc;
+      });
+
+      return mc;
     });
 
-    return mc;
-  });
+    console.log('Successfully fetch data', translatedMC);
 
-  console.log('Successfully fetch data', translatedMC);
+    res.status(200).send({
+      status: 1, // for backwards compatibility
+      statusCode: 0,
+      httpCode: 200,
+      message: null,
+      data: translatedMC
+    });
+  
+    return (undefined);
+  }
+  catch (e) {
+    internals.catchError(e, req, res);
+    return (undefined);
+  }
 
-  res.status(200).send({
-    status: 1, // for backwards compatibility
-    statusCode: 0,
-    httpCode: 200,
-    message: null,
-    data: translatedMC
-  });
-
-  return (undefined);
 }
 
 module.exports = {
