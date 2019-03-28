@@ -1,5 +1,5 @@
 const CategoryHelper = require('../../helpers/category.helper');
-const lib = requre('../../lib');
+const lib = require('../../lib');
 
 function validateParams (req, res, next) {
   var schema = {
