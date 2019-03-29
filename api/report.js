@@ -153,11 +153,11 @@ const createReportV2 = async (req, res, next) => {
   // error in converting createAt in model report
   // due to may 32
   try {
-    if (!req.body.reportCoordinate) {
-      req.body.reportCoordinate = {
-        coordinates: [ Number(req.body.long), Number(req.body.lat) ]
-      }
-    }
+    req.body.reportCoordinate = {
+      coordinates: [req.body.long, req.body.lat]
+    };
+
+    console.log(req.body);
     let langUserMain, langUserSub, langUser, teamName, teamEmail
     if (req.reportTypeCode && req.reportTypeCode.toUpperCase() === 'C') {
       return next(); 
