@@ -103,11 +103,12 @@ const registerWithCodeFormValidatorV2 = async (req, res, next) => {
       req.body.country = 'Netherlands';
     }
 
-    if (!req.body._team && req.body._team != '') {
-      req.checkBody('teamName', 'Team Name must not be empty').notEmpty();
-      req.checkBody('teamEmail', 'Team Email must not be empty').notEmpty();
-      req.checkBody('teamEmail', 'Invalid Team Email').isEmail();
-    }
+    // @TODO fix registration logic in ios
+    // if (!req.body._team && req.body._team != '') {
+    //   req.checkBody('teamName', 'Team Name must not be empty').notEmpty();
+    //   req.checkBody('teamEmail', 'Team Email must not be empty').notEmpty();
+    //   req.checkBody('teamEmail', 'Invalid Team Email').isEmail();
+    // }
 
     // will be checked on next()
     // const checkUser = await UserHelper.checkUserByCredentials(req.body.username);
