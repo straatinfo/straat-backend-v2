@@ -301,7 +301,7 @@ const registerWithCodeV3 = async (req, res, next) => {
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400)
       }
-    } else {
+    } else if (req.body._team != null && req.body._team != '') {
       // if isVolunteer === true can create team and isApproved = true
       if (req.body.isVolunteer === true || req.body.isVolunteer === 'true') {
         teamInput = {
