@@ -301,7 +301,7 @@ const registerWithCodeV3 = async (req, res, next) => {
       if (requestT.err) {
         return ErrorHelper.ClientError(res, {error: 'There was an error requesting team'}, 400)
       }
-    } else if (req.body._team != null && req.body._team != '') {
+    } else {
       // if isVolunteer === true can create team and isApproved = true
       if (req.body.isVolunteer === true || req.body.isVolunteer === 'true') {
         teamInput = {
@@ -331,6 +331,8 @@ const registerWithCodeV3 = async (req, res, next) => {
 
       if (teamPhotoUploaded && teamPhotoUploaded._id) {
         teamInput._profilePic = teamPhotoUploaded._id
+      }else if (teamPhotoId && teamPhotoId != "") {
+        teamInput._profilePic = teamPhotoId;
       }
 
       console.log(teamInput)
