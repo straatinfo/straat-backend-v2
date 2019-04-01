@@ -255,7 +255,7 @@ const registerWithCodeV2 = async (req, res, next) => {
 }
 
 const registerWithCodeV3 = async (req, res, next) => {
-  const { code, password, username, email, teamPhotoUploaded, fname, lname, phoneNumber } = req.body
+  const { code, password, username, email, teamPhotoUploaded, teamPhotoId, fname, lname, phoneNumber } = req.body
   try {
     let createU = {}
     /**
@@ -331,6 +331,8 @@ const registerWithCodeV3 = async (req, res, next) => {
 
       if (teamPhotoUploaded && teamPhotoUploaded._id) {
         teamInput._profilePic = teamPhotoUploaded._id
+      } else if (teamPhotoId && teamPhotoId != "") {
+        teamInput._profilePic = teamPhotoId;
       }
 
       console.log(teamInput)

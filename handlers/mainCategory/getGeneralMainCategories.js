@@ -1,21 +1,20 @@
-
-const CategoryHelper = require('../../helpers/category.helper');
-const Promise = require('bluebird');
-
 const internals = {};
+
 
 internals.catchError = function (err, req, res) {
   console.log(err);
-  return res.status(500).send({
+  res.status(500).send({
     status: 'ERROR',
     statusCode: 100,
     httpCode: 500,
     message: 'Internal Server Error'
   });
+
+  return (undefined);
 };
 
 internals.flatMainCategory = function (m) {
-  const flatMC = {
+  const flat = {
     _id: m._id || null,
     name: m.name || null,
     createdAt: m.createdAt || null,
@@ -29,63 +28,50 @@ internals.flatMainCategory = function (m) {
     translations: m.translations || []
   };
 
-  return flatMC;
+  return flat;
 }
 
-function checkHost (req, res, next) {
-  const _host = req.params.hostId;
-  if (!_host) {
-    return res.status(400).send({
-      status: 'ERROR',
-      statusCode: 102,
-      httpCode: 400,
-      message: 'Invalid Parameter: Host ID'
-    });
+function getReportType (req, res, next) {
+  const code = req.query.code.toUpperCase();
+  switch (code) {
+    case 'A':
+      query = { code: 'A' };
+      break;
+    case 'B':
+      query = { code: 'B' };
+      break;
+    case 'C':
+      query = { code: 'C' };
+      break;
+    default:
+      query = null;
   }
 
-  return req.db.User.findById(_host)
-    .then((host) => {
-      if (!host) {
-        return res.status(400).send({
-          status: 'ERROR',
-          statusCode: 102,
-          httpCode: 400,
-          message: 'Invalid Parameter: Host ID'
-        });
-      }
+  // if (!query) {
+  //   return next();
+  // }
 
-      req.$scope.host = host;
-      return next();
-    })
-    .catch((err) => internals.catchError(err, req, res));
-}
-
-function checkReportType (req, res, next) {
-  const code = req.query.code || 'A'
   return req.db.ReportType.findOne({ code })
     .then((reportType) => {
-      if (!reportType) {
-        return res.status(400).send({
-          status: 'ERROR',
-          statusCode: 101,
-          httpCode: 400,
-          message: 'Invalid Parameter: Code',
-          err: 'Invalid Report Type Code'
-        });
-      }
-
       req.$scope.reportType = reportType;
-
-      return next();
+      console.log(reportType);
+      next();
+      return (undefined);
     })
     .catch((err) => internals.catchError(err, req, res));
 }
 
-function getMainCategories (req, res, next) {
+function getGeneralCategories (req, res, next) {
+  const host = req.$scope.host;
   const reportType = req.$scope.reportType;
-  const _host = req.params.hostId;
-
-  return req.db.MainCategory.find({ _reportType: reportType._id, _host: _host })
+  let query;
+  
+  if (reportType) {
+    query = { _host: host._id, _reportType: reportType._id };
+  } else {
+    query = { _host: host._id }
+  }
+  return req.db.MainCategory.find(query)
     .populate('_host', [
       '_id', 'hostName', 'email', 'houseNumber',
       'streetName', 'city', 'state', 'country',
@@ -95,17 +81,16 @@ function getMainCategories (req, res, next) {
     .populate('subCategories')
     .populate('_reportType')
     .then((mainCategories) => {
-      console.log(mainCategories);
+      console.log('loading main cat', mainCategories);
       if (req.query.flat == 'true') {
         req.$scope.mainCategories = mainCategories;
         return next();
       }
-
       res.status(200).send({
-        status: 'SUCCESS',
+        satus: 'SUCCESS',
         statusCode: 0,
         httpCode: 200,
-        data: mainCategories || []
+        data: mainCategories
       });
 
       return (undefined);
@@ -114,29 +99,25 @@ function getMainCategories (req, res, next) {
 }
 
 function flatMainCategories (req, res, next) {
-  const mainCategories = req.$scope.mainCategories || [];
-  
-  let flatMC;
+  const mainCategories = req.$scope.mainCategories;
+  const flatMainCategories = mainCategories.map(mc => {
+    const mco = mc.toObject();
 
-  try {
-    flatMC = mainCategories.map(internals.flatMainCategory);
-  } catch (e) {
-    console.log(e);
-  }
+    return internals.flatMainCategory(mco);
+  });
 
   res.status(200).send({
-    status: 'SUCCESS',
+    satus: 'SUCCESS',
     statusCode: 0,
     httpCode: 200,
-    data: flatMC
+    data: flatMainCategories
   });
 
   return (undefined);
 }
 
 module.exports = {
-  checkHost,
-  checkReportType,
-  getMainCategories,
+  getGeneralCategories,
+  getReportType,
   flatMainCategories
 };

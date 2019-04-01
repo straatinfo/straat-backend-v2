@@ -12,7 +12,7 @@ function validateParams (req, res, next) {
     name: {
       isEmpty: {
         negated: true,
-        errorMessage: 'Missing Parameter: Code'
+        errorMessage: 'Missing Parameter: Name'
       }
     },
     description: {
@@ -113,7 +113,7 @@ function getFreeHost (req, res, next) {
     })
     .populate('_activeDesign')
     .populate('design')
-    .then(() => {
+    .then((host) => {
       if (!host) {
         return res.status(400).send({
           status: 'ERROR',
@@ -124,6 +124,7 @@ function getFreeHost (req, res, next) {
       }
 
       req.$scope.host = host;
+      console.log('Free host loaded');
       return next();
     })
     .catch((err) => internals.catchError(err, req, res));
@@ -229,12 +230,12 @@ function response (req, res, next) {
       return internals.flatMainCategory({...mainCat.toObject()})
     })
     .then((mainCat) => {
-      console.log('Success: ', (message) ? message : 'Successfully sent request');
+      console.log('Success: ', mainCat, ': Successfully sent request');
       res.status(200).send({
         status: 'SUCCESS',
         statusCode: 0,
         httpCode: 200,
-        data: mainCat
+        data: mainCat 
       })
 
       return (undefined);
