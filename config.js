@@ -3,10 +3,10 @@ module.exports = {
   // DATA_BASE: 'mongodb://localhost:27017/straat',
   SESSION_SECRET: process.env.SESSION_SECRET || 'mysupersecretkey',
   CLOUDINARY: {
-    cloud_name: 'hvina6sjo',
-    api_key: '485521389972512',
-    api_secret: 'QOaJKE9sXc1qe4GHFYjNSFkFT68',
-    url: 'cloudinary://485521389972512:QOaJKE9sXc1qe4GHFYjNSFkFT68@hvina6sjo'
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'hvina6sjo',
+    api_key: process.env.CLOUDINARY_API_KEY || '485521389972512',
+    api_secret: process.env.CLOUDINARY_API_SECRET || 'QOaJKE9sXc1qe4GHFYjNSFkFT68',
+    url: process.env.CLOUDINARY_URL || 'cloudinary://485521389972512:QOaJKE9sXc1qe4GHFYjNSFkFT68@hvina6sjo'
   },
   SENDGRID: {
     SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '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',
