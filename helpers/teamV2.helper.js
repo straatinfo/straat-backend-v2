@@ -413,7 +413,7 @@ async function createTeam (_user, _host, input) {
         message: 'cannot find user'
       });
     }
-    if (user.isVolunteer !== input.isVolunteer) {
+    if (user.isVolunteer != input.isVolunteer) {
       return Promise.reject({
         code: 0,
         statusCode: 400,
