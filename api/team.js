@@ -64,7 +64,7 @@ const getTeamListByUserId = async (req, res, next) => {
     // send invite for test
     // sendR = await TeamInviteHelper.sendRequest('5afe8f6a65ab530014452641', '5b0669fc9eeb62519264606f') // (userId, teamId);
     // console.log('send invite for test', sendR)
-    const {teamLeaders: userTeamLeaders} = await User.findById(_user, {teamLeaders: true}).lean()
+    const {teamLeaders: userTeamLeaders} = await User.findById(_user, {teamLeaders: true, isApproved: true, isVolunteer: true, teamName: true, teamEmail: true }).lean()
     // const count = _.isEmpty(userTeamLeaders  );
 
     const result = !_.isEmpty(userTeamLeaders) ? await Promise.all(teams.map(async function (team, index) {
