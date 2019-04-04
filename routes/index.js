@@ -22,6 +22,8 @@ const InternalRoute = require('./internal.route');
 // const TestRoute = require('./test.route');
  const TestRoute = require('./test.route');
 
+const UtilityRoute = require('./utility.route');
+
 module.exports = (app) => {
   app.get('/', function(req, res, next) {
     res.send({message: 'Web API is now online, waiting for requests..', status: 1, online: true});
@@ -48,5 +50,5 @@ module.exports = (app) => {
    app.use('/v1/api/test', TestRoute);
   app.use('/v1/api/hostmigration', HostMigrationRoute);
   app.use('/v1/api/internal', InternalRoute);
-   
+  app.use(UtilityRoute);
 };
