@@ -10,20 +10,20 @@ const _ = require('lodash');
 const internals = {};
 
 internals.tranlateMainAndSub = (object, lang) => {
-  let data;
-  try {
-    data = object.toObject()
-  } catch (e) {
-    data = object;
-  }
+  const data = object.toObject() ? object.toObject() : object;
 
-  console.log('DATA TO TEST', data);
+  console.log('DATA TO TEST', data)
 
   const _mainCategory = data._mainCategory;
   const _subCategory = data._subCategory;
 
   const mainTran = _.find(_mainCategory.translations, (t) => { return t.code == lang });
-  const subTran = _.find(_subCategory.translations, (t) => { return t.code == lang });
+
+  let subTran;
+  
+  if (_subCategory) {
+    subTran = _.find(_subCategory.translations, (t) => { return t.code == lang });
+  }
 
 
   if (mainTran) {
