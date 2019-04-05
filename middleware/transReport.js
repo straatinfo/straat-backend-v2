@@ -5,6 +5,43 @@ const ReportHelper = require('../helpers/report.helper');
 const Translator = require('./../middleware/translator');
 const Languages = require('./../assets/jsonfiles/constants').Langauges
 
+const _ = require('lodash');
+
+const internals = {};
+
+internals.tranlateMainAndSub = (object, lang) => {
+  let data;
+  try {
+    data = object.toObject()
+  } catch (e) {
+    data = object;
+  }
+
+  const _mainCategory = data._mainCategory;
+  const _subCategory = data._subCategory;
+
+  const mainTran = _.find(_mainCategory.translations, (t) => { return t.code == lang });
+  const subTran = _.find(_subCategory.translations, (t) => { return t.code == lang });
+
+
+  if (mainTran) {
+    _mainCategory.name = mainTran.word;
+  }
+
+  if (subTran) {
+    _subCategory.name = subTran.word;
+  }
+
+  data._mainCategory = _mainCategory;
+  data._subCategory = _subCategory;
+
+  return data;
+};
+
+
+
+
+
 const translate = async (req, res, next) => {
   let { reports: result } = req
   const { language, flat } = req.query
@@ -14,11 +51,16 @@ const translate = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: 'no reports'}, 400);
     }
 
-    if (Languages[language]) {
-      console.log('  trans')
-      const transCollection = new Translator.TransCollection()
-      result = await Translator.translate(result, '_mainCategory', 'name', language, transCollection)
-      result = await Translator.translate(result, '_subCategory', 'name', language, transCollection)
+    // if (Languages[language]) {
+    //   console.log('  trans')
+    //   const transCollection = new Translator.TransCollection()
+    //   result = await Translator.translate(result, '_mainCategory', 'name', language, transCollection)
+    //   result = await Translator.translate(result, '_subCategory', 'name', language, transCollection)
+    // }
+
+    if (language.toLowerCase() == 'nl') {
+      if (result.map) result = result.map(r => internals.tranlateMainAndSub(r, language));
+      if (!result.map) result = internals.tranlateMainAndSub(result, language);
     }
 
     if (flat == 'true') {
