@@ -17,6 +17,8 @@ internals.tranlateMainAndSub = (object, lang) => {
     data = object;
   }
 
+  console.log('DATA TO TEST', data);
+
   const _mainCategory = data._mainCategory;
   const _subCategory = data._subCategory;
 
