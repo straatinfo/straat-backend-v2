@@ -23,6 +23,8 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
       } catch (e) {
         userData = { _id: user };
       }
+    } else {
+      userData = user;
     }
     const conversation = await ConversationHelper.__getConversationById(_conversation)
     const newMessage = await MessageHelper.__createMessage(_conversation, userData._id, text)
