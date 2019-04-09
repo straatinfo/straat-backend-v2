@@ -1,6 +1,8 @@
 const ConversationHelper = require('../helpers/conversationV2.helper')
 const MessageHelper = require('../helpers/messageV2.helper')
 const SocketHelper = require('../helpers/socket.helper')
+const User = require('../models/User');
+
 const onSendMessage = async (io, socket, userData, args = {}, callback) => {
   console.log('onSendMessage: ', args)
 
@@ -14,12 +16,20 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
         message: 'Failed to send Message'
       })
     }
+    let userData;
+    if (!user._id) {
+      try {
+        userData = await User.findById(user);
+      } catch (e) {
+        userData = { _id: user };
+      }
+    }
     const conversation = await ConversationHelper.__getConversationById(_conversation)
-    const newMessage = await MessageHelper.__createMessage(_conversation, user._id, text)
+    const newMessage = await MessageHelper.__createMessage(_conversation, userData._id, text)
     const payload = {
       _id: newMessage._id,
       createdAt: newMessage.createdAt,
-      user: user,
+      user: userData,
       text: text,
       sourceId: _id
     }
