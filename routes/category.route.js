@@ -79,6 +79,7 @@ CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
     }
     return next();
   },
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getReportTypeA,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );
@@ -119,6 +120,7 @@ CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
     }
     return next();
   },
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getReportTypeA,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );
