@@ -13,10 +13,25 @@ internals.catchError = function (err, req, res) {
   return (undefined);
 }
 
+function getReportTypeA (req, res, next) {
+  req.db.ReportType.findOne({ code: 'A' })
+    .then((reportType) => {
+      req.$scope._reportType = reportType && reportType._id ? reportType._id : null;
+      next();
+    })
+}
+
 function getMainCategories (req, res, next) {
   const host = req.$scope.host;
+  const type = req.query.type;
 
-  return req.db.MainCategory.find({ _host: host._id })
+  const query = { _host: host._id };
+
+  if (req.params && req.params.hostId && req.$scope._reportType) {
+    query._reportType = req.$scope._reportType;
+  }
+
+  return req.db.MainCategory.find(query)
     .populate('subCategories')
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .then((mainCategories) => {
@@ -85,6 +100,7 @@ function translate (req, res) {
 }
 
 module.exports = {
+  getReportTypeA,
   getMainCategories,
   translate
 };
