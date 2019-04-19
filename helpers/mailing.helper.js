@@ -83,6 +83,7 @@ const sendReportANotifToReporter = (reporterUsername, reporterLastname, reporter
     try {
       const sendEmailWithCC = await SendGridService.mailWithCC(sender, reporterEmail, subject, mailBody, CC, sender)
       if (sendEmailWithCC.err) {
+        console.log(sendEmailWithCC.err);
         return resolve({err: sendEmailWithCC.err});
       }
       resolve({err: null});
