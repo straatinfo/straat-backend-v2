@@ -21,7 +21,8 @@ module.exports = {
     SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'seqretary@gmail.com', // 'johnhiggins.avila@gmail.com'
     DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
     FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info',
-    DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL || 'mikusobrown@gmail.com'
+    DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL || 'mikusobrown@gmail.com',
+    TEST_HOST_EMAIL: process.env.TEST_HOST_EMAIL
   },
   GOOGLE: {
     // used in app
