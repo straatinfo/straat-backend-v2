@@ -72,6 +72,14 @@ CategoryRoute.route('/mainCategory/withGeneral/hostId/:hostId')
 .get(
   /*requireAuth,*/
   mainCategoryHandlers.getMainCategories.checkHost,
+  function (req, res, next) {
+    const host = req.$scope.host;
+    if (!host.isSpecific || host.isSpecific == false) {
+      return mainCategoryHandlers.createMainCategoryForHost.getFreeHost(req, res, next);
+    }
+    return next();
+  },
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getReportTypeA,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );
@@ -105,6 +113,14 @@ CategoryRoute.route('/mainCategory/general')
 CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
 .get(/*requireAuth,*/
   mainCategoryHandlers.getMainCategories.checkHost,
+  function (req, res, next) {
+    const host = req.$scope.host;
+    if (!host.isSpecific || host.isSpecific == false) {
+      return mainCategoryHandlers.createMainCategoryForHost.getFreeHost(req, res, next);
+    }
+    return next();
+  },
+  mainCategoryHandlers.getMainCategoriesWithGeneral.getReportTypeA,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );

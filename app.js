@@ -11,6 +11,7 @@ const validator = require('express-validator');
 const MongoStore = require('connect-mongo')(session);
 const morgan = require('morgan');
 const Route = require('./routes');
+const RouteV2 = require('./routesV2');
 const TokenService = require('./service/token.service');
 const ReportHousekeeping = require('./middleware/housekeeping/report.housekeeping');
 const cors = require('cors');
@@ -64,7 +65,8 @@ app.use(function(req, res, next) {
   next();
 });
 
-Route(app);
+Route(app); // backwards compatible
+RouteV2(app); // optimized and refractored version of routes
 app.use(Boom);
 
 setInterval(function () {
