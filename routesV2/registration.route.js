@@ -26,10 +26,10 @@ const CloudinaryService = require('../service/cloudinary.service');
 //   Registration.registerWithCodeV3
 // );
 
-RegistrationRoute.route('/v3/api/validation/input')
+RegistrationRoute.route('/v3/api/registration/validation/input')
 .post(Registration.checkUserInput);
 
-RegistrationRoute.route('/v3/api/validation/host')
+RegistrationRoute.route('/v3/api/registration/validation/host')
 .post(Registration.checkHostWithCode);
 
 module.exports = RegistrationRoute;
