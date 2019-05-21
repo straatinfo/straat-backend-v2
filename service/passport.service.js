@@ -39,6 +39,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, async function (payload, done) {
   try {
     console.log(payload);
     const findUser = await UserHelper.findUserById(payload.sub);
+    console.log('findUser', findUser);
     if (findUser.err) { 
       return done(null, false);
     }
