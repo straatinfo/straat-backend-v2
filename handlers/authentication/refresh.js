@@ -30,7 +30,6 @@ function validateUserParams (req, res, next) {
   };
 
   req.checkBody(schema);
-  req.check('gender', 'Invalid Parameter: Gender').isIn(['M', 'F'])
   const validationErrors = req.validationErrors();
 
   if (validationErrors) {
@@ -63,8 +62,6 @@ async function refreshUserData (req, res, next) {
     // require _activeTeam
     // problem in reporting cause by user dont have activeTeam even it has a team
     // this will be remove if setup of active team is fix
-
-    await LoginInit(req.user._id)
 
     // start
     const user = await UserHelper.findUserById(req.user._id)
