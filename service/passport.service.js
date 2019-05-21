@@ -77,6 +77,8 @@ const jwtLogin = new JwtStrategy(jwtOptions, async function (payload, done) {
         }
       });
 
+      console.log('user', user);
+
       done(null, user);
   }
   catch (e) {
