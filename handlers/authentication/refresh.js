@@ -43,7 +43,52 @@ function validateUserParams (req, res, next) {
 }
 
 function checkEmail (req, res, next) {
-  console.log(req.user)
+  const user = req.user;
+
+  console.log('user', user);
+  if (user.email !== req.body.email) {
+    return res.status(400).send({
+      status: 'ERROR',
+      statusCode: 102,
+      httpCode: 400,
+      message: 'Invalid Parameter: Email'
+    });
+  }
+
+  next();
+}
+
+async function refreshUserData (req, res, next) {
+  try {
+    // require _activeTeam
+    // problem in reporting cause by user dont have activeTeam even it has a team
+    // this will be remove if setup of active team is fix
+
+    await LoginInit(req.user._id)
+
+    // start
+    const user = await UserHelper.findUserById(req.user._id)
+    const data = {
+      user: user.user,
+      setting: user.user.setting,
+      token: JwtService.tokenForUser(user.user),
+      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null
+    }
+    res.status(200).send({
+      status: 'SUCCESS',
+      statusCode: 0,
+      httpCode: 200,
+      data: data
+    })
+  } catch (e) {
+    console.log(e)
+    res.status(500).send({
+      status: 'ERROR',
+      statusCode: 100,
+      httpCode: 500,
+      message: 'Internal Server Error'
+    })
+  }
 }
 
 module.exports = {
