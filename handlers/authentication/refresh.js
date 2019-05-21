@@ -64,7 +64,7 @@ async function refreshUserData (req, res, next) {
     // this will be remove if setup of active team is fix
 
     // start
-    const user = await UserHelper.findUserById(req.user._id)
+    const user = await userHelper.findUserById(req.user._id)
     const data = {
       user: user.user,
       setting: user.user.setting,
