@@ -38,12 +38,46 @@ const jwtOptions = {
 const jwtLogin = new JwtStrategy(jwtOptions, async function (payload, done) {
   try {
     console.log(payload);
-    const findUser = await UserHelper.findUserById(payload.sub);
-    console.log('findUser', findUser);
-    if (findUser.err) { 
-      return done(null, false);
-    }
-    done(null, findUser.user);
+    // const findUser = await UserHelper.findUserById(payload.sub);
+    // console.log('findUser', findUser);
+    // if (findUser.err) { 
+    //   return done(null, false);
+    // }
+    // done(null, findUser.user);
+
+    const user = await User.findOne({ _id: payload.sub })
+      .populate({
+        path: '_host',
+        select: { _id: 1, hostName: 1, isSpecific: 1, language: true, geoLocation: true, long: true, lat: true },
+        populate: {
+          path: '_activeDesign',
+          populate: {
+            path: '_profilePic',
+            select: { _id: true, secure_url: true }
+          }
+        }
+      })
+      // .populate({
+      //   path: '_activeTeam',
+      //   populate: [{path: 'teamMembers'}, {path: 'teamLeaders'}]
+      // })
+      .populate('_activeTeam')
+      .populate('_role')
+      .populate('_profilePic')
+      .populate({
+        path: 'teamMembers',
+        populate: {
+          path: '_team'
+        }
+      })
+      .populate({
+        path: 'teamLeaders',
+        populate: {
+          path: '_team'
+        }
+      });
+
+      done(null, user);
   }
   catch (e) {
     return done(e, false);
