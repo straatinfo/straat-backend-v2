@@ -93,5 +93,6 @@ async function refreshUserData (req, res, next) {
 
 module.exports = {
   validateUserParams,
-  checkEmail
+  checkEmail,
+  refreshUserData
 };
