@@ -1,5 +1,6 @@
 const lib = require('../../lib');
 const JwtService = require('../../service/token.service');
+const jwtService = require('../../service/jwt.service')
 const teamHelperV2 = require('../../helpers/teamV2.helper');
 const teamInviteHelper = require('../../helpers/teamInvite.helper');
 const userHelper = require('../../helpers/user.helper');
@@ -68,7 +69,7 @@ async function refreshUserData (req, res, next) {
     const data = {
       user: user.user,
       setting: user.user.setting,
-      token: JwtService.tokenForUser(user.user),
+      token: jwtService.tokenForUser(user.user),
       _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null
     }
     res.status(200).send({
