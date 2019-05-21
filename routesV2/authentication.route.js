@@ -6,6 +6,7 @@ const Authentication = require('../api/authentication');
 const AuthRoute = express.Router();
 const UserValidator = require('../validator/user.validator');
 const authHandlers = require('../handlers/authentication');
+const requireAuth = passport.authenticate('jwt', {session: false});
 
 AuthRoute.route('/v3/api/auth/login')
 .post(requireSignin, Authentication.login);
@@ -24,5 +25,11 @@ AuthRoute.route('/v3/api/auth/register')
   authHandlers.registration.sendTeamRequest,
   authHandlers.registration.respond
 );
+
+AuthRoute.route('/v3/api/auth/refresh')
+  .post(
+    requireAuth,
+    authHandlers.refresh.checkEmail
+  );
 
 module.exports = AuthRoute;

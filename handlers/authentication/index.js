@@ -1,3 +1,4 @@
 module.exports = {
-  registration: require('./registration')
+  registration: require('./registration'),
+  refresh: require('./refresh')
 };
