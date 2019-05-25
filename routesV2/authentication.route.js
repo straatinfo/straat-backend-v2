@@ -29,7 +29,9 @@ AuthRoute.route('/v3/api/auth/register')
 AuthRoute.route('/v3/api/auth/refresh')
   .post(
     requireAuth,
-    authHandlers.refresh.checkEmail
+    authHandlers.refresh.validateUserParams,
+    authHandlers.refresh.checkEmail,
+    authHandlers.refresh.refreshUserData
   );
 
 module.exports = AuthRoute;

@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const teamSchema = new Schema({
   teamName: { type: String, required: true, unique: true, index: true },
-  teamEmail: { type: String, required: true, unique: true }, // problem in creating new team @may 3 2018
+  teamEmail: { type: String, required: true }, // problem in creating new team @may 3 2018
   description: { type: String },
   isVolunteer: { type: Boolean, default: true },
   isApproved: { type: Boolean, default: true },
