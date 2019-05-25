@@ -113,7 +113,7 @@ const getTeamListByUserId = (_user) => {
             return resolve({err: 'no user'});
           }
           if(user.teamMembers && user.teamMembers.length > 0 ) {
-            resolve({err: null, team: user.teamMembers.map((team)=>{
+            return resolve({err: null, team: user.teamMembers.map((team)=>{
                return team._team
             })});
           }
