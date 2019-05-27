@@ -576,6 +576,7 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
     }
     const publicReports = {
       $or: [
+        near,
         {
           $and: [
             status,
@@ -586,8 +587,7 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
             }]}
           ]
         }
-      ],
-      ...near
+      ]
     };
     if (reportId) {
       publicReports.$or.push({ _id: reportId });
