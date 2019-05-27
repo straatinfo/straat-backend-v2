@@ -406,12 +406,12 @@ const getReportNearBy = async (req, res, next) => {
 
 const getReportsByNear = async (req, res, next) => {
   const { long, lat, radius } = req.params
-  const { _reporter } = req.query
+  const { _reporter, reportId } = req.query
   try {
     if (!req.params || !long || !lat || !radius) {
       return ErrorHelper.ClientError(res, {error: 'Invalid Parameters'}, 200);
     }
-    const { reports, err } = await ReportHelper.getNearbyReports(_reporter, long, lat, radius)
+    const { reports, err } = await ReportHelper.getNearbyReports(_reporter, long, lat, radius, reportId)
     if (err) {
       return ErrorHelper.ClientError(res, {error: err}, 400);
     }
