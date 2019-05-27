@@ -591,11 +591,12 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
     };
     console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
+    let reportsArray = reports.toObject();
     if (reportId) {
       const addedRep = await getReportByQueryObjectClean({ _id: reportId });
-      reports.concat(addedRep);
+      reportsArray.concat(addedRep.toObject());
     }
-    return Promise.resolve(reports)
+    return Promise.resolve(reportsArray)
   } catch (e) {
     return Promise.reject(e)
   }
