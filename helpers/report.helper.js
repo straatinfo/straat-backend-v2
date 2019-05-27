@@ -590,7 +590,7 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
     if (reportId) {
       const addedRep = await getReportByQueryObjectClean({ _id: reportId });
       console.log('\n\n\n\naddedRep', addedRep)
-      if (addedRep.length > 0) reports.push(addedRep[0]);
+      if (addedRep.reports && addedRep.reports.length > 0) reports.reports.push(addedRep.reports[0]);
     }
     return Promise.resolve(reports)
   } catch (e) {
