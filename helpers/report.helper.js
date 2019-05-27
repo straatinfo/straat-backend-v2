@@ -575,8 +575,8 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
       status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
     }
     const publicReports = {
+      ...near,
       $or: [
-        near,
         {
           $and: [
             status,
@@ -589,11 +589,12 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
         }
       ]
     };
-    if (reportId) {
-      publicReports.$or.push({ _id: reportId });
-    }
     console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
+    if (reportId) {
+      const addedRep = await getReportByQueryObjectClean({ _id: reportId });
+      reports.concat(addedRep);
+    }
     return Promise.resolve(reports)
   } catch (e) {
     return Promise.reject(e)
