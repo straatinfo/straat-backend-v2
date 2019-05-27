@@ -578,7 +578,6 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
       $or: [
         {
           $and: [
-            near,
             status,
             {$or: [
               {isPublic: true},
@@ -588,7 +587,8 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
           ]
         },
         { _id: reportId }
-      ]
+      ],
+      ...near
     };
     console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
