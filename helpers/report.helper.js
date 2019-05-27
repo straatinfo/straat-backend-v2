@@ -587,7 +587,7 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
     };
     console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
-    if (reportId) {
+    if (reportId && !_.find(reports.reports, (r) => { return r._id.toString() == reportId })) {
       const addedRep = await getReportByQueryObjectClean({ _id: reportId });
       console.log('\n\n\n\naddedRep', addedRep)
       if (addedRep.reports && addedRep.reports.length > 0) reports.reports.push(addedRep.reports[0]);
