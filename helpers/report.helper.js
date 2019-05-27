@@ -554,7 +554,7 @@ const getPublicReports = async (_reporter, _reportType = null) => {
 }
 
 // use by notification in app
-const getNearbyReports = async (_reporter, long, lat, radius) => {
+const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
   try {
     // get teams
     const { teamMembers } = await User.findById(_reporter, {_id: true, teamMembers: true}).populate('teamMembers')
@@ -574,7 +574,24 @@ const getNearbyReports = async (_reporter, long, lat, radius) => {
     const status = {
       status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
     }
-    const publicReports = { $and: [near, status, {$or: [{isPublic: true}, {_reporter: _reporter}, {_team: {$in: teamList}}]}] }
+    const publicReports = {
+      $or: [
+        {
+          $and: [
+            near,
+            status,
+            {$or: [
+              {isPublic: true},
+              {_reporter: _reporter},
+              {_team: {$in: teamList}
+            }]}
+          ]
+        }
+      ]
+    }
+    if (reportId) {
+      publicReports.$or.push = { _id: reportId };
+    }
     const reports = await getReportByQueryObjectClean(publicReports)
     return Promise.resolve(reports)
   } catch (e) {
