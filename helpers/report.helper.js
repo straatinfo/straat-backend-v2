@@ -575,24 +575,21 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
       status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
     }
     const publicReports = {
-      ...near,
-      $or: [
-        {
-          $and: [
-            status,
-            {$or: [
-              {isPublic: true},
-              {_reporter: _reporter},
-              {_team: {$in: teamList}
-            }]}
-          ]
-        }
+      $and: [
+        near,
+        status,
+        {$or: [
+          {isPublic: true},
+          {_reporter: _reporter},
+          {_team: {$in: teamList}
+        }]}
       ]
     };
     console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
     if (reportId) {
       const addedRep = await getReportByQueryObjectClean({ _id: reportId });
+      console.log('\n\n\n\naddedRep', addedRep)
       if (addedRep.length > 0) reports.push(addedRep[0]);
     }
     return Promise.resolve(reports)
