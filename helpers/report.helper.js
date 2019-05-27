@@ -585,11 +585,13 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
               {_team: {$in: teamList}
             }]}
           ]
-        },
-        { _id: reportId }
+        }
       ],
       ...near
     };
+    if (reportId) {
+      publicReports.$or.push({ _id: reportId });
+    }
     console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
     return Promise.resolve(reports)
