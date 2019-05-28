@@ -385,11 +385,11 @@ async function unJoinTeam (_user, _team) {
 async function createTeam (_user, _host, input) {
   console.log('createam v2: params: ',_user, _host, input)
   try {
-    const team = await Team.findOne({'teamEmail': input.teamEmail});
+    // const team = await Team.findOne({'teamEmail': input.teamEmail});
     const checkTeamName = await Team.findOne({'teamName': input.teamName});
     const user = await User.findById(_user);
     const host = await User.findById(_host);
-    if (team || checkTeamName) {
+    if (checkTeamName) {
       return Promise.reject({
         code: 0,
         statusCode: 400,
