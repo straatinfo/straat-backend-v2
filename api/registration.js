@@ -246,7 +246,7 @@ const registerWithCodeV2 = async (req, res, next) => {
     }
     const getU = await UserHelper.findUserById(createU.user._id)
     // give token
-    const token = JwtService.tokenForUser(getU.user._id)
+    const token = JwtService.tokenForUser(getU.user)
     SuccessHelper.success(res, { user: getU.user, token: token })
   } catch (e) {
     console.log(e)
@@ -354,7 +354,7 @@ const registerWithCodeV3 = async (req, res, next) => {
 
     const getU = await UserHelper.findUserById(createU.user._id)
     // give token
-    const token = JwtService.tokenForUser(getU.user._id)
+    const token = JwtService.tokenForUser(getU.user)
     SuccessHelper.success(res, { user: getU.user, token: token })
   } catch (e) {
     console.log(e)

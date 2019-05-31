@@ -37,7 +37,7 @@ ReportRoute.route('/public')
 .get(ExpressJoi(ReportValidation.getSchema), Report.getPublicReports, TransReport.translate, FlatReport.getFlatReports);
 
 ReportRoute.route('/:id')
-.get(/*requireAuth,*/ Report.getReportById, TransReport.translateOnly)
+.get(/*requireAuth,*/ Report.getReportById, TransReport.translate)
 .put(/*requireAuth,*/ Report.updateReport)
 .delete(/*requireAuth,*/ Report.deleteReport);
 

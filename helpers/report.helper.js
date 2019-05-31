@@ -426,7 +426,7 @@ const filterExpired = (report, index) =>{
 // isFilter , not include all expired and done + 1day in return obj : base on report Spec
 const getReportByQueryObjectClean = (queryObject, isFilter = false, language='') => {
   return new Promise((resolve, reject) => {
-    Report.find({...queryObject})
+    Report.find(queryObject)
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .populate('_reporter', ['_id', 'username', 'email', 'language'])
     .populate('_mainCategory', ['_id', 'name', 'description', 'translations'])
@@ -575,24 +575,23 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
       status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
     }
     const publicReports = {
-      $or: [
-        {
-          $and: [
-            near,
-            status,
-            {$or: [
-              {isPublic: true},
-              {_reporter: _reporter},
-              {_team: {$in: teamList}
-            }]}
-          ]
-        }
+      $and: [
+        near,
+        status,
+        {$or: [
+          {isPublic: true},
+          {_reporter: _reporter},
+          {_team: {$in: teamList}
+        }]}
       ]
-    }
-    if (reportId) {
-      publicReports.$or.push = { _id: reportId };
-    }
+    };
+    console.log(publicReports);
     const reports = await getReportByQueryObjectClean(publicReports)
+    if (reportId && !_.find(reports.reports, (r) => { return r._id.toString() == reportId })) {
+      const addedRep = await getReportByQueryObjectClean({ _id: reportId });
+      console.log('\n\n\n\naddedRep', addedRep)
+      if (addedRep.reports && addedRep.reports.length > 0) reports.reports.push(addedRep.reports[0]);
+    }
     return Promise.resolve(reports)
   } catch (e) {
     return Promise.reject(e)
