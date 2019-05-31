@@ -46,7 +46,8 @@ const getReportById = async (req, res, next) => {
       }
       return SuccessHelper.success(res, report.report);
     }
-    req.result = getR.report
+    req.result = getR.report;
+    req.report = getR.report;
     return next()
     // SuccessHelper.success(res, getR.report);
   }
