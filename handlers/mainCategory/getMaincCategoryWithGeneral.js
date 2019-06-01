@@ -61,7 +61,7 @@ function getMainCategories (req, res, next) {
       if (req.$scope.codeQuery) {
         mainCategories = mainCategories.filter((mc) => {
           const sameReportType = _.find(req.$scope.codeQuery, (cQ) => {
-            return mc._reportType._id.toString();
+            return cQ == mc._reportType._id.toString();
           })
           return sameReportType != null;
         });
