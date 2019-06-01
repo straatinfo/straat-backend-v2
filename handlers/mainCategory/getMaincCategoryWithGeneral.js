@@ -22,7 +22,8 @@ function getReportTypeA (req, res, next) {
 }
 
 function setReportTypeCode (req, res, next) {
-  const code = req.query.code || 'ABC';
+  const code = req.query.code;
+  if (!code) return next();
   const codeList = code.split('');
   return req.db.ReportType.find({
     $or: codeList.map(c => ({ code: c }))
@@ -30,7 +31,7 @@ function setReportTypeCode (req, res, next) {
     .then((reportTypes) => {
       console.log('report types', reportTypes)
       if (reportTypes.length > 0) {
-        const codeQuery = reportTypes.map(rt => rt._id)
+        const codeQuery = reportTypes.map(rt => rt._id.toString())
         console.log('code query', codeQuery);
         req.$scope.codeQuery = codeQuery
       }
@@ -59,7 +60,10 @@ function getMainCategories (req, res, next) {
 
       if (req.$scope.codeQuery) {
         mainCategories = mainCategories.filter((mc) => {
-          return req.$scope.codeQuery.indexOf(mc._reportType._id) > 0
+          const sameReportType = _.find(req.$scope.codeQuery, (cQ) => {
+            return mc._reportType._id.toString();
+          })
+          return sameReportType != null;
         });
       }
       req.$scope.mainCategories = mainCategories;
