@@ -28,16 +28,19 @@ function setReportTypeCode (req, res, next) {
     $or: codeList.map(c => ({ code: c }))
   })
     .then((reportTypes) => {
+      console.log('report types', reportTypes)
       if (reportTypes.length > 0) {
         const codeQuery = { $in: reportTypes.map(rt => rt._id) }
+        console.log('code query', codeQuery);
         req.$scope.codeQuery = codeQuery
       }
-      return next();
+      next();
     })
     .catch((err) => internals.catchError(err, req, res));
 }
 
 function getMainCategories (req, res, next) {
+  console.log('loading main categories');
   const host = req.$scope.host;
   const type = req.query.type;
 
