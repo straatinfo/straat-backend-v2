@@ -21,6 +21,22 @@ function getReportTypeA (req, res, next) {
     })
 }
 
+function setReportTypeCode (req, res, next) {
+  const code = req.query.code || 'ABC';
+  const codeList = code.split('');
+  return req.db.ReportType.find({
+    $or: codeList.map(c => ({ code: c }))
+  })
+    .then((reportTypes) => {
+      if (reportTypes.length > 0) {
+        const codeQuery = { $in: reportTypes.map(rt => rt._id) }
+        req.$scope.codeQuery = codeQuery
+      }
+      return next();
+    })
+    .catch((err) => internals.catchError(err, req, res));
+}
+
 function getMainCategories (req, res, next) {
   const host = req.$scope.host;
   const type = req.query.type;
@@ -29,6 +45,10 @@ function getMainCategories (req, res, next) {
 
   if (req.params && req.params.hostId && req.$scope._reportType) {
     query._reportType = req.$scope._reportType;
+  }
+
+  if (req.$scope.codeQuery) {
+    query._reportType = codeQuery;
   }
 
   return req.db.MainCategory.find(query)
@@ -101,6 +121,7 @@ function translate (req, res) {
 
 module.exports = {
   getReportTypeA,
+  setReportTypeCode,
   getMainCategories,
   translate
 };

@@ -128,6 +128,7 @@ CategoryRoute.route('/app/mainCategory/withGeneral/hostId/:hostId')
 CategoryRoute.route('/app/mainCategory/general')
 .get(/*requireAuth,*/
   mainCategoryHandlers.createMainCategoryForHost.getFreeHost,
+  mainCategoryHandlers.getMainCategoriesWithGeneral.setReportTypeCode,
   mainCategoryHandlers.getMainCategoriesWithGeneral.getMainCategories,
   mainCategoryHandlers.getMainCategoriesWithGeneral.translate
 );
