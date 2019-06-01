@@ -54,6 +54,8 @@ function getMainCategories (req, res, next) {
     query._reportType = codeQuery;
   }
 
+  console.log('query', query);
+
   return req.db.MainCategory.find(query)
     .populate('subCategories')
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
@@ -67,6 +69,7 @@ function getMainCategories (req, res, next) {
 
 // for backwards compatibility
 function translate (req, res) {
+  console.log('loading translations');
   try {
     const mainCategories = req.$scope.mainCategories;
     let lang = req.query.language || 'en';
