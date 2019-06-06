@@ -22,22 +22,26 @@ function getReportTypeA (req, res, next) {
 }
 
 function setReportTypeCode (req, res, next) {
-  const code = req.query.code || 'ABC';
+  const code = req.query.code;
+  if (!code) return next();
   const codeList = code.split('');
   return req.db.ReportType.find({
     $or: codeList.map(c => ({ code: c }))
   })
     .then((reportTypes) => {
+      console.log('report types', reportTypes)
       if (reportTypes.length > 0) {
-        const codeQuery = { $in: reportTypes.map(rt => rt._id) }
+        const codeQuery = reportTypes.map(rt => rt._id.toString())
+        console.log('code query', codeQuery);
         req.$scope.codeQuery = codeQuery
       }
-      return next();
+      next();
     })
     .catch((err) => internals.catchError(err, req, res));
 }
 
 function getMainCategories (req, res, next) {
+  console.log('loading main categories');
   const host = req.$scope.host;
   const type = req.query.type;
 
@@ -47,15 +51,21 @@ function getMainCategories (req, res, next) {
     query._reportType = req.$scope._reportType;
   }
 
-  if (req.$scope.codeQuery) {
-    query._reportType = codeQuery;
-  }
-
   return req.db.MainCategory.find(query)
     .populate('subCategories')
     .populate('_reportType', ['_id', 'code', 'name', 'description'])
     .then((mainCategories) => {
       console.log('main categories fetched', mainCategories);
+
+
+      if (req.$scope.codeQuery) {
+        mainCategories = mainCategories.filter((mc) => {
+          const sameReportType = _.find(req.$scope.codeQuery, (cQ) => {
+            return cQ == mc._reportType._id.toString();
+          })
+          return sameReportType != null;
+        });
+      }
       req.$scope.mainCategories = mainCategories;
       next();
     })
@@ -64,6 +74,7 @@ function getMainCategories (req, res, next) {
 
 // for backwards compatibility
 function translate (req, res) {
+  console.log('loading translations');
   try {
     const mainCategories = req.$scope.mainCategories;
     let lang = req.query.language || 'en';
@@ -101,6 +112,8 @@ function translate (req, res) {
     });
 
     console.log('Successfully fetch data', translatedMC);
+
+    translatedMC = _.sortBy(translatedMC, (tmc) => tmc.name);
 
     res.status(200).send({
       status: 1, // for backwards compatibility
