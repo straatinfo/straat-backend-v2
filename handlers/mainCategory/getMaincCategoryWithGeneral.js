@@ -106,7 +106,7 @@ function translate (req, res) {
         return sc;
       });
 
-      mco.subCategories = subCategories;
+      mco.subCategories = _.sortBy(subCategories, (sb) => sb.name);
 
       return mco;
     });
