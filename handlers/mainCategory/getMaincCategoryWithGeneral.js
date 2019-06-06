@@ -113,6 +113,8 @@ function translate (req, res) {
 
     console.log('Successfully fetch data', translatedMC);
 
+    translatedMC = _.sortBy(translatedMC, (tmc) => tmc.name);
+
     res.status(200).send({
       status: 1, // for backwards compatibility
       statusCode: 0,
