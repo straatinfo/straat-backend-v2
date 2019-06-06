@@ -230,10 +230,11 @@ function deleteReporter (_reporter) {
           error: 'Can\'t find reporter'
         }, reporter: null };
       }
-
+      const now = moment();
       return User.findByIdAndUpdate(_reporter, {
         softRemoved: true,
-        email: 'deleted-reporter-' + moment() + '-' + reporter.email
+        email: 'deleted-reporter-' + now + '-' + reporter.email,
+        phoneNumber: 'deleted-reporter-' + now + '-' + reporter.phoneNumber
       });
     })
     .then((result) => {
