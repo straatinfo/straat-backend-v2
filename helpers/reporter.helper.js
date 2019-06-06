@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const RoleHelper = require('./role.helper');
+const moment = require('moment');
 
 const getReporters = () => {
   return new Promise(async(resolve, reject) => {
@@ -221,16 +222,28 @@ const flatReporter = (r) => {
   });
 };
 
-const deleteReporter = (_reporter) => {
-  return new Promise((resolve, reject) => {
-    User.findByIdAndUpdate(_reporter, {'softRemoved': true}, (err, reporter) => {
-      if (err) {
-        return resolve({err: err});
+function deleteReporter (_reporter) {
+  return User.findById(_reporter)
+    .then((reporter) => {
+      if (!reporter) {
+        return { err: {
+          error: 'Can\'t find reporter'
+        }, reporter: null };
       }
-      resolve({err: null, reporter: reporter});
+
+      return User.findByIdAndUpdate(_reporter, {
+        softRemoved: true,
+        email: 'deleted-reporter-' + moment() + '-' + reporter.email
+      });
+    })
+    .then((result) => {
+      if (result.err) return result;
+      return { err: null, reporter: result }
+    })
+    .catch((err) => {
+      return Promise.resolve({err: err, reporter: null});
     });
-  });
-};
+}
 
 
 const model = () => {
