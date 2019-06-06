@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const RoleHelper = require('./role.helper');
+const moment = require('moment');
 
 const getReporters = () => {
   return new Promise(async(resolve, reject) => {
@@ -232,7 +233,7 @@ function deleteReporter (_reporter) {
 
       return User.findByIdAndUpdate(_reporter, {
         softRemoved: true,
-        email: 'deleted-reporter-' + reporter.email
+        email: 'deleted-reporter-' + moment() + '-' + reporter.email
       });
     })
     .then((result) => {
