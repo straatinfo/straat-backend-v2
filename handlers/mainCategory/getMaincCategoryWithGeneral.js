@@ -84,7 +84,7 @@ function translate (req, res) {
     } else {
       lang = 'en';
     }
-    const translatedMC = mainCategories.map(mc => {
+    let translatedMC = mainCategories.map(mc => {
       const mco = mc.toObject();
       mco.name = _.find(mco.translations, (t) => {
         return t.code == lang;
