@@ -4,6 +4,7 @@ require('../service/passport.service');
 const requireAuth = passport.authenticate('jwt', {session: false});
 const TeamInvite = require('../api/teamInvite');
 const TeamInviteRoute = express.Router();
+const authentication = require('../handlers/authentication');
 
 
 TeamInviteRoute.route('/teamInvites/:teamId')
@@ -25,7 +26,11 @@ TeamInviteRoute.route('/sendRequest/:userId/:teamId')
 .get(/*requireAuth,*/ TeamInvite.sendRequest);
 
 TeamInviteRoute.route('/declineRequest/:userId/:teamId')
-.get(/*requireAuth,*/ TeamInvite.declineRequest);
+.get(
+  requireAuth,
+  authentication.deleteUser,
+  TeamInvite.declineRequest
+);
 
 TeamInviteRoute.route('/declineInvite/:userId/:teamId')
 .get(/*requireAuth,*/ TeamInvite.declineInvite);
