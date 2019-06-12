@@ -69,7 +69,7 @@ function getHostByCoordinates (req, res, next) {
     return res.status(error.httpCode).send(error);
   }
 
-  return req.db.User.findOne({
+  return req.db.User.find({
     $and: [
       { _role: roleId },
       {
@@ -87,6 +87,85 @@ function getHostByCoordinates (req, res, next) {
       }
     ]
   })
+    .then((hosts) => {
+      if (hosts.length < 1) {
+        return next();
+      }
+      const sortedHost = _.sortBy(hosts, (h) => h.distance);
+      req.$scope.host = sortedHost[0];
+
+      next();
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).send({
+        status: 'ERROR',
+        statusCode: 100,
+        httpCode: 500,
+        message: 'Internal server error'
+      });
+    });
+}
+
+function getHostUsingAddress (req, res, next) {
+  const address = req.$scope.address;
+  const role = req.$scope.role;
+
+  const addressObject = address._embedded && address._embedded.addresses && address._embedded.addresses[0]
+  if (!addressObject) {
+    return res.status(400).send({
+      status: 'ERROR',
+      statusCode: 102,
+      httpCode: 400,
+      message: 'Invalid Postcode'
+    });
+  }
+
+  return req.db.User.findOne({
+    $and: [
+      { _role: roleId },
+      { hostName: addressObject.municipality.label }
+    ]
+  })
+    .populate('_activeDesign')
+    .then((host) => {
+      if (host) {
+        req.$scope.host = host;
+        return next();
+      }
+      const radius = 5000;
+      const lat
+      = addressObject.geo
+      && addressObject.geo.center
+      && addressObject.geo.center.wgs84
+      && addressObject.geo.center.wgs84.coordinates
+      && addressObject.geo.center.wgs84.coordinates[0] || 0;
+      const long
+      = addressObject.geo
+      && addressObject.geo.center
+      && addressObject.geo.center.wgs84
+      && addressObject.geo.center.wgs84.coordinates
+      && addressObject.geo.center.wgs84.coordinates[1] || 0;
+      return req.db.User.find({
+        $and: [
+          { _role: roleId },
+          {
+            geoLocation: {
+              $near: {
+                $maxDistance: parseFloat(radius),
+                $minDistance: 0,
+                $geometry: {
+                  type: 'Point',
+                  coordinates: [ parseFloat(long), parseFloat(lat) ]
+                },
+                distanceField: 'distance'
+              }
+            }
+          }
+        ]
+      })
+    })
     .then((hosts) => {
       if (hosts.length < 1) {
         return next();
@@ -134,6 +213,7 @@ function catchMiddlewareError (req, res, next) {
 module.exports = {
   getHostByName,
   getHostByCoordinates,
+  getHostUsingAddress,
   response,
   catchMiddlewareError
 };
