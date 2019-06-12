@@ -19,6 +19,11 @@ HostRoute.route('/v3/api/hosts/search')
 
 HostRoute.route('/v3/api/hosts/searchByPostcode')
   .get(
+    // requireAuth,
+    function (req,res,next) {
+      console.log('\n\n\n\n/v3/api/hosts/searchByPostcode\n\n\n\n')
+      next();
+    },
     handlers.authentication.registration.getHostRole,
     handlers.utility.getFullAddress,
     handlers.host.getHost.getHostUsingAddress,
