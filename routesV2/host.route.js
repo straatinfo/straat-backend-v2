@@ -12,8 +12,18 @@ HostRoute.route('/v3/api/hosts/search')
     handlers.authentication.registration.getHostRole,
     handlers.host.getHost.getHostByName,
     handlers.host.getHost.response,
-    handlers.utility.getFullAddress,
     handlers.host.getHost.getHostByCoordinates,
     handlers.host.getHost.response,
     handlers.host.getHost.catchMiddlewareError
   );
+
+HostRoute.route('/v3/api/hosts/searchByPostcode')
+  .get(
+    handlers.authentication.registration.getHostRole,
+    handlers.utility.getFullAddress,
+    handlers.host.getHost.getHostUsingAddress,
+    handlers.host.getHost.response,
+    handlers.host.getHost.catchMiddlewareError
+  );
+
+module.exports = HostRoute;
