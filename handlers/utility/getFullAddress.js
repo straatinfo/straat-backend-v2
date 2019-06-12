@@ -14,7 +14,8 @@ module.exports = function (req, res, next) {
 
   return rp.get(options)
     .then((response) => {
-      res.status(200).send(response);
+      req.$scope.address = response;
+      next();
     })
     .catch((err) => {
       res.status(err.statusCode || 500).send(err.error);

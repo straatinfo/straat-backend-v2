@@ -1,3 +1,4 @@
 module.exports = {
-  getPostCode: require('./getPostCode')
+  getPostCode: require('./getPostCode'),
+  getFullAddress: require('./getFullAddress')
 };
