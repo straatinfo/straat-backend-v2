@@ -8,7 +8,7 @@ const HostRoute = express.Router();
 
 HostRoute.route('/v3/api/hosts/search')
   .get(
-    requireAuth,
+    // requireAuth,
     handlers.authentication.registration.getHostRole,
     handlers.host.getHost.getHostByName,
     handlers.host.getHost.response,
