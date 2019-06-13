@@ -108,7 +108,7 @@ function getHostByCoordinates (req, res, next) {
     });
 }
 
-function getHostUsingAddress (req, res, next) {
+function appendHostToAddress (req, res, next) {
   const address = req.$scope.address;
   const role = req.$scope.role;
 
@@ -124,57 +124,111 @@ function getHostUsingAddress (req, res, next) {
 
   return req.db.User.findOne({
     $and: [
-      { _role: roleId },
+      { _role: role._id },
       { hostName: addressObject.municipality.label }
     ]
   })
-    .populate('_activeDesign')
     .then((host) => {
-      if (host) {
-        req.$scope.host = host;
-        return next();
+      if (!host) {
+        return res.status(400).send({
+          status: 'ERROR',
+          statusCode: 102,
+          httpCode: 400,
+          message: 'Municipality is not registered'
+        });
       }
-      const radius = 5000;
-      const lat
-      = addressObject.geo
-      && addressObject.geo.center
-      && addressObject.geo.center.wgs84
-      && addressObject.geo.center.wgs84.coordinates
-      && addressObject.geo.center.wgs84.coordinates[0] || 0;
-      const long
-      = addressObject.geo
-      && addressObject.geo.center
-      && addressObject.geo.center.wgs84
-      && addressObject.geo.center.wgs84.coordinates
-      && addressObject.geo.center.wgs84.coordinates[1] || 0;
-      return req.db.User.find({
-        $and: [
-          { _role: roleId },
-          {
-            geoLocation: {
-              $near: {
-                $maxDistance: parseFloat(radius),
-                $minDistance: 0,
-                $geometry: {
-                  type: 'Point',
-                  coordinates: [ parseFloat(long), parseFloat(lat) ]
-                },
-                distanceField: 'distance'
-              }
-            }
-          }
-        ]
-      })
-    })
-    .then((hosts) => {
-      if (hosts.length < 1) {
-        return next();
-      }
-      const sortedHost = _.sortBy(hosts, (h) => h.distance);
-      req.$scope.host = sortedHost[0];
 
-      next();
+      req.$scope.address._host = host;
+      const data = req.$scope.address
+      res.status(200).send(data);
     })
+    .catch((err) => {
+      console.log(err);
+
+      res.status(500).send({
+        status: 'ERROR',
+        statusCode: 100,
+        httpCode: 500,
+        message: 'Internal server error'
+      });
+    });
+}
+
+function getHostUsingAddress (req, res, next) {
+  const address = req.$scope.address;
+  const role = req.$scope.role;
+
+  const addressObject = address._embedded && address._embedded.addresses && address._embedded.addresses[0]
+  if (!addressObject) {
+    return res.status(400).send({
+      status: 'ERROR',
+      statusCode: 102,
+      httpCode: 400,
+      message: 'Invalid Postcode'
+    });
+  }
+
+  console.log(req.db.User.findOne);
+
+  return req.db.User.findOne({
+    $and: [
+      { _role: role._id },
+      { hostName: addressObject.municipality.label }
+    ]
+  })
+    .then((host) => {
+      console.log(addressObject.geo.center.wgs84);
+      req.$scope.host = host;
+      return next();
+      // if (host) {
+      //   req.$scope.host = host;
+      //   return next();
+      // }
+      
+      // else {
+      //   const radius = 6000000;
+      //   console.log(addressObject);
+      //   const lat
+      //   = addressObject.geo
+      //   && addressObject.geo.center
+      //   && addressObject.geo.center.wgs84
+      //   && addressObject.geo.center.wgs84.coordinates
+      //   && addressObject.geo.center.wgs84.coordinates[0] || 0;
+      //   const long
+      //   = addressObject.geo
+      //   && addressObject.geo.center
+      //   && addressObject.geo.center.wgs84
+      //   && addressObject.geo.center.wgs84.coordinates
+      //   && addressObject.geo.center.wgs84.coordinates[1] || 0;
+      //   console.log(long, lat)
+      //   return req.db.User.find({
+      //     $and: [
+      //       { _role: role._id },
+      //       {
+      //         geoLocation: {
+      //           $near: {
+      //             $maxDistance: parseFloat(radius),
+      //             $minDistance: 0,
+      //             $geometry: {
+      //               type: 'Point',
+      //               coordinates: [ parseFloat(long), parseFloat(lat) ]
+      //             }
+      //           }
+      //         }
+      //       }
+      //     ]
+      //   })
+      // }
+    })
+    // .then((hosts) => {
+    //   if (!hosts || hosts.length < 1) {
+    //     return next();
+    //   }
+    //   const sortedHost = _.sortBy(hosts, (h) => h.distance);
+    //   req.$scope.host = sortedHost[0];
+
+    //   next();
+    // })
     .catch((err) => {
       console.log(err);
 
@@ -191,23 +245,27 @@ function response (req, res, next) {
   const host = req.$scope.host;
   if (!host) {
     return next();
+  } else {
+    res.status(200).send({
+      status: 'SUCCESS',
+      statusCode: 0,
+      httpCode: 200,
+      _host: host,
+      data: host
+    });
   }
-  res.status(200).send({
-    status: 'SUCCESS',
-    statusCode: 0,
-    httpCode: 200,
-    host: host,
-    data: host
-  });
 }
 
 function catchMiddlewareError (req, res, next) {
-  res.status(400).send({
-    status: 'ERROR',
-    statusCode: 102,
-    httpCode: 400,
-    message: 'Cant find host'
-  });
+  const host = req.$scope.host;
+  if (!host) {
+    res.status(400).send({
+      status: 'ERROR',
+      statusCode: 102,
+      httpCode: 400,
+      message: 'Cant find host'
+    });
+  }
 }
 
 module.exports = {
@@ -215,5 +273,6 @@ module.exports = {
   getHostByCoordinates,
   getHostUsingAddress,
   response,
-  catchMiddlewareError
+  catchMiddlewareError,
+  appendHostToAddress
 };
