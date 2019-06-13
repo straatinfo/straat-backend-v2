@@ -13,7 +13,6 @@ UtilityRoute.route('/api/v1/utility/postcode')
   /* requireAuth, */
   utilityHandler.getPostCode,
   handlers.authentication.registration.getHostRole,
-  (req, res, next) => { console.log(req); next(); },
   handlers.host.getHost.appendHostToAddress
 );
 
