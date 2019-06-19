@@ -268,6 +268,7 @@ function catchMiddlewareError (req, res, next) {
   }
 }
 
+
 module.exports = {
   getHostByName,
   getHostByCoordinates,

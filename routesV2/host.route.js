@@ -27,4 +27,13 @@ HostRoute.route('/v3/api/hosts/searchByPostcode')
     handlers.host.getHost.catchMiddlewareError
   );
 
+HostRoute.route('/v3/api/hosts/searchByName/:hostName')
+  .get(
+    // requireAuth,
+    handlers.authentication.registration.getHostRole,
+    handlers.host.getHost.getHostByName,
+    handlers.host.getHost.response,
+    handlers.host.getHost.catchMiddlewareError
+  );
+
 module.exports = HostRoute;
