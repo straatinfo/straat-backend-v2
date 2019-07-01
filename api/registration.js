@@ -344,7 +344,10 @@ const registerWithCodeV3 = async (req, res, next) => {
       console.log('createTed: ', createT)
       const addActiveTeam = await TeamHelperV2.setActiveTeam(createU.user._id, createT._id)
       let sendNewTeamRequest
-      if (req.body.isVolunteer != true) {
+      if (req.body.isVolunteer === true || req.body.isVolunteer === 'true') {
+        // not sending request
+        console.log('Team is volunteer not sending request');
+      } else {
         sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT, {fname, lname, phoneNumber})
       }
       if (sendNewTeamRequest && sendNewTeamRequest.err) {
