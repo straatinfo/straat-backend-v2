@@ -29,7 +29,7 @@ const getHosts = async (req, res, next) => {
 const createHost = async (req, res, next) => {
   try {
     const {
-      hostName, email, hostPersonalEmail, username,
+      hostName, hostAlternateName, email, hostPersonalEmail, username,
       fname, lname, housNumber, streetName, city, state,
       country, postalCode, phoneNumber, long, lat, houseNumber
     } = req.body;
@@ -38,7 +38,7 @@ const createHost = async (req, res, next) => {
       return ErrorHelper.ClientError(res, {error: getGD.err}, 400);
     }
     const input = {
-      hostName, email, hostPersonalEmail, username,
+      hostName, hostAlternateName, email, hostPersonalEmail, username,
       fname, lname, housNumber, streetName, city, state,
       country, postalCode, phoneNumber, long, lat, houseNumber,
       '_activeDesign': getGD.design_id
@@ -94,6 +94,7 @@ const getHostById = async (req, res, next) => {
 const updateHost = async (req, res, next) => {
   const { id } = req.params;
   try {
+    console.log(req.body);
     const updateH = await HostHelper.updateHost(id, req.body);
     if (updateH.err) {
       return ErrorHelper.ClientError(res, { error: updateH.err }, 400);
