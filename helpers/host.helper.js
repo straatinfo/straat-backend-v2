@@ -263,6 +263,7 @@ const flatHost = (h) => {
       const flattenHost = {
         _id: h._id || null,
         hostName: h.hostName || null,
+        hostAlternateName: h.hostAlternateName || null,
         email: h.email || null,
         username: h.username || null,
         streetName: h.streetName || null,
