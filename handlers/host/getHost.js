@@ -10,9 +10,18 @@ function getHostByName (req, res, next) {
     $and: [
       { _role: roleId },
       {
-        hostName: {
-          $regex: new RegExp(hostName, 'ig')
-        }
+        $or: [
+          {
+            hostName: {
+              $regex: new RegExp(hostName, 'ig')
+            }
+          },
+          {
+            hostAlternateName: {
+              $regex: new RegExp(hostName, 'ig')
+            }
+          }
+        ]
       }
     ]
   })
