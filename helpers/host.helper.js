@@ -138,12 +138,13 @@ const getHostById = (_id) => {
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
     const hostData = {
-      email, username, lname, fname, hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat,
-      geoLocation: {
-        type: 'Point',
-        coordinates: [long, lat]
-      }
+      email, username, lname, fname, hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat
     } = input
+
+    input.geoLocation = {
+      type: 'Point',
+      coordinates: [long, lat]
+    };
     User.findByIdAndUpdate(_id, hostData, async(err, host) => {
       if (err) {
         return resolve({err: err})
