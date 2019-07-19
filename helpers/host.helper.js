@@ -138,7 +138,11 @@ const getHostById = (_id) => {
 const updateHost = (_id, input) => {
   return new Promise((resolve, reject) => {
     const hostData = {
-      email, username, lname, fname, hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat
+      email, username, lname, fname, hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat,
+      geoLocation: {
+        type: 'Point',
+        coordinates: [long, lat]
+      }
     } = input
     User.findByIdAndUpdate(_id, hostData, async(err, host) => {
       if (err) {
@@ -176,7 +180,13 @@ const createHost = (input) => {
         return resolve({err: getRole.err})
       }
       _role = getRole.role._id
-      const newUser = new User({...input, '_role': _role})
+      const newUser = new User({
+        ...input,
+        geoLocation: {
+          type: 'Point',
+          coordinates: [input.long || 0, input.lat || 0]
+        }
+        , '_role': _role})
       newUser.save(async(err, host) => {
         if (err) {
           return resolve({err: err})
