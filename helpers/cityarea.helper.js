@@ -149,7 +149,9 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
   })
 }
 
-
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
 
 
 /**
@@ -160,11 +162,13 @@ const getGeoJson = (city, bound = 'city', inset = false) => {
  */
 // url: 'https://api.postcodeapi.nu/v2/addresses/?postcode=postalCode&number=212',
 const validatePostalCode = (postalCode) => {
+  const postcodeApis = config.POSTCODE.POSTCODE_API_KEY.split(':|:');
+
   return new Promise((resolve, reject) => {
     const options = {
       url: `https://api.postcodeapi.nu/v2/addresses/?postcode=${postalCode}`,
       headers: {
-        'X-Api-Key': Config.POSTCODE.POSTCODE_API_KEY
+        'X-Api-Key': postcodeApis[getRandomInt(postcodeApis.length)]
       }
     }
     try {
@@ -200,11 +204,12 @@ const validatePostalCode = (postalCode) => {
  */
 // url: 'https://api.postcodeapi.nu/v2/addresses/?postcode=postalCode&number=212',
 const validateNumber = (postalCode, number) => {
+  const postcodeApis = config.POSTCODE.POSTCODE_API_KEY.split(':|:');
   return new Promise((resolve, reject) => {
     const options = {
       url: `https://api.postcodeapi.nu/v2/addresses/?postcode=${postalCode}&number=${number}`,
       headers: {
-        'X-Api-Key': Config.POSTCODE.POSTCODE_API_KEY
+        'X-Api-Key': postcodeApis[getRandomInt(postcodeApis.length)]
       }
     }
     try {
