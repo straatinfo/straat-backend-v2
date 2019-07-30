@@ -56,7 +56,10 @@ const getTeamById = (_id) => {
 const getTeamInfoById = (_id) => {
   return new Promise((resolve, reject) => {
     Team.findOne({'_id': _id, 'softRemoved': false },
-    { _id: 1, teamName: 1, teamEmail: 1, logoSecuredUrl: 1 })
+    { _id: 1, teamName: 1, teamEmail: 1, logoSecuredUrl: 1, _conversation: 1 })
+    .populate({
+      path: '_conversation'
+    })
     .populate({
       path: 'teamLeaders',
       populate: {
