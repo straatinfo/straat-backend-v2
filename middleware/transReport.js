@@ -10,7 +10,7 @@ const _ = require('lodash');
 const internals = {};
 
 internals.tranlateMainAndSub = (object, lang) => {
-  const data = object.toObject() ? object.toObject() : object;
+  const data = object.toObject ? object.toObject() : object;
 
   console.log('DATA TO TEST', data)
 
@@ -46,7 +46,7 @@ internals.tranlateMainAndSub = (object, lang) => {
 
 const translate = async (req, res, next) => {
   let { reports: result } = req
-  const { language, flat } = req.query
+  const { language = 'nl', flat } = req.query
 
   try {
     if (!result) {

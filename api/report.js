@@ -548,6 +548,7 @@ const getPublicReports = async (req, res, next) => {
     const reports = await ReportHelper.getPublicReports(_reporter, _reportType);
     if (reports.err) { return ErrorHelper.ClientError(res, {error: reports.err}, 400); }
     req.reports = reports.reports
+    req.$scope.reports = reports.reports;
     return next()
     //SuccessHelper.success(res, reports.reports);
   }

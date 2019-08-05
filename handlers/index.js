@@ -4,5 +4,6 @@ module.exports = {
   mainCategory: require('./mainCategory'),
   subCategory: require('./subCategory'),
   utility: require('./utility'),
-  message: require('./message')
+  message: require('./message'),
+  report: require('./report')
 };
