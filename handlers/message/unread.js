@@ -30,7 +30,7 @@ function getUnreadMessage (req, res, next) {
 
   return req.db.UnreadMessage.find({ _user: userId, _conversation: conversationId })
     .populate('_message')
-    .populate('_user')
+    .populate('_user', '-password')
     .then((unreadMessages) => {
       res.status(200).send({
         status: 'SUCCESS',
@@ -54,7 +54,7 @@ function getUnreadMessage (req, res, next) {
 function deleteUnreadMessage (req, res, next) {
   const { userId, conversationId } = req.$scope;
 
-  return req.db.UnreadMessage.destroy({ _user: userId, _conversation: conversationId })
+  return req.db.UnreadMessage.remove({ _user: userId, _conversation: conversationId })
     .then(() => {
       res.status(201).send({
         status: 'SUCCESS',
