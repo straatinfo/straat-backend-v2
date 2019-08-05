@@ -13,7 +13,7 @@ const FlatReport = require('../middleware/flatReport');
 const TransReport = require('../middleware/transReport');
 const ReportMiddleware = require('../middleware/report.middleware');
 
-
+const handlers = require('../handlers');
 
 ReportRoute.route('/')
 .get(/*requireAuth,*/ Report.getReports, FlatReport.getFlatReports)
@@ -34,10 +34,20 @@ ReportRoute.route('/V2')
 );
 
 ReportRoute.route('/public')
-.get(ExpressJoi(ReportValidation.getSchema), Report.getPublicReports, TransReport.translate, FlatReport.getFlatReports);
+.get(
+  ExpressJoi(ReportValidation.getSchema),
+  Report.getPublicReports,
+  handlers.report.getUnreadMessage.populateUnreadMessage,
+  TransReport.translate,
+  FlatReport.getFlatReports
+);
 
 ReportRoute.route('/:id')
-.get(/*requireAuth,*/ Report.getReportById, TransReport.translate)
+.get(
+  /*requireAuth,*/
+  Report.getReportById,
+  handlers.report.getUnreadMessage.populateUnreadMessage,
+  TransReport.translate)
 .put(/*requireAuth,*/ Report.updateReport)
 .delete(/*requireAuth,*/ Report.deleteReport);
 
@@ -45,7 +55,10 @@ ReportRoute.route('/unfollow/:id')
 .put(Report.unfollowReport);
 
 ReportRoute.route('/reportType/:reportTypeId')
-.get(/*requireAuth,*/ Report.getReportsByReportType, FlatReport.getFlatReports);
+.get(
+  /*requireAuth,*/ Report.getReportsByReportType,
+  handlers.report.getUnreadMessage.populateUnreadMessage,
+  FlatReport.getFlatReports);
 
 ReportRoute.route('/host/:hostId')
 .get(/*requireAuth,*/ Report.getReportsByHostId, FlatReport.getFlatReports);
