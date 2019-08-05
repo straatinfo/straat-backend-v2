@@ -53,11 +53,13 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
     conversation.participants.map(async function (p) {
       // send unread notification to participants
 
-      const unreadMessage = await UnreadMessage.create({
-        _message: newMessage._id,
-        _conversation: _conversation,
-        _user: p._user
-      });
+      if (p._user && p._user !== userData._id) {
+        const unreadMessage = await UnreadMessage.create({
+          _message: newMessage._id,
+          _conversation: _conversation,
+          _user: p._user
+        });
+      }
 
 
       // notify participants that are active
