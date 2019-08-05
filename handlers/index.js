@@ -3,5 +3,6 @@ module.exports = {
   host: require('./host'),
   mainCategory: require('./mainCategory'),
   subCategory: require('./subCategory'),
-  utility: require('./utility')
+  utility: require('./utility'),
+  message: require('./message')
 };
