@@ -2,6 +2,7 @@ const ConversationHelper = require('../helpers/conversationV2.helper')
 const MessageHelper = require('../helpers/messageV2.helper')
 const SocketHelper = require('../helpers/socket.helper')
 const User = require('../models/User');
+const UnreadMessage = require('../models/UnreadMessage');
 
 const onSendMessage = async (io, socket, userData, args = {}, callback) => {
   console.log('onSendMessage: ', args)
@@ -50,6 +51,16 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
       conversation: conversation
     }
     conversation.participants.map(async function (p) {
+      // send unread notification to participants
+
+      const unreadMessage = await UnreadMessage.create({
+        _message: newMessage._id,
+        _conversation: _conversation,
+        _user: p._user
+      });
+
+
+      // notify participants that are active
       const findSocket = await SocketHelper.findSocketByUser(p._user)
       console.log('findSocket', p)
       if (findSocket.socket) {
