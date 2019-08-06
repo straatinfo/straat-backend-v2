@@ -2,11 +2,13 @@ const Promise = require('bluebird');
 
 async function populateUnreadMessage (req, res, next) {
   const reports = req.reports;
+  const userId = req.query.userId || req.query._reporter;
+
+  if (!userId) return next();
   
   if (!Array.isArray(reports)) {
     try {
       const r = (reports.toObject) ? reports.toObject() : reports;
-      const userId = r._reporter && r._reporter._id;
       const conversationId = r._conversation && r._conversation._id;
       const unreadMessage = await req.db.UnreadMessage.find({  _user: userId, _conversation: conversationId });
       const conversation = {
@@ -32,7 +34,6 @@ async function populateUnreadMessage (req, res, next) {
     const populatedReports = await Promise.mapSeries(reports, async (report) => {
       try {
         const r = report.toObject ? report.toObject() : report;
-        const userId = r._reporter && r._reporter._id;
         const conversationId = r._conversation && r._conversation._id;
 
         const unreadMessage = await req.db.UnreadMessage.find({  _user: userId, _conversation: conversationId });
