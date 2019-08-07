@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 function validateParams (req, res, next) {
   const userId = req.params.userId || req.query.userId || null
   const conversationId = req.params.conversationId || req.query.conversationId || null;
@@ -51,6 +53,38 @@ function getUnreadMessage (req, res, next) {
     });
 }
 
+function getUnreadMessageCountGroupByReportType (req, res, next) {
+  const { userId } = req.$scope;
+
+  return req.db.UnreadMessage.find({ _user: userId, _report: { $ne: null } })
+    .populate({
+      path: '_report',
+      populate: {
+        path: '_reportType'
+      }
+    })
+      .then((unreadMessages) => {
+        const a = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'A').length
+        const b = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'B').length
+        const c = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'C').length
+        res.status(200).send({
+          status: 'SUCCESS',
+          statusCode: 0,
+          httpCode: 200,
+          a, b, c
+        })
+      })
+      .catch((err) => {
+        console.error('Get Unread Message ERROR', err);
+        res.status(500).send({
+          status: 'ERROR',
+          statusCode: 100,
+          httpCode: 500,
+          message: 'Internal server error'
+        })
+      });
+}
+
 function deleteUnreadMessage (req, res, next) {
   const { userId, conversationId } = req.$scope;
 
@@ -76,5 +110,6 @@ function deleteUnreadMessage (req, res, next) {
 module.exports = {
   validateParams,
   getUnreadMessage,
-  deleteUnreadMessage
+  deleteUnreadMessage,
+  getUnreadMessageCountGroupByReportType
 };

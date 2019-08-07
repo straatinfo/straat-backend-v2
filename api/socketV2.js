@@ -9,7 +9,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
 
 
   try {
-    const { user, text, _conversation, _id } = args
+    const { user, text, _conversation, _id, _report, _team, type } = args
     if (!_conversation) {
       console.log('Error: Invalid conversation ID')
       return io.to(socket.id).emit('send-message-v2', {
@@ -53,12 +53,20 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
     conversation.participants.map(async function (p) {
       // send unread notification to participants
 
-      if (p._user && p._user !== userData._id) {
-        const unreadMessage = await UnreadMessage.create({
-          _message: newMessage._id,
-          _conversation: _conversation,
-          _user: p._user
-        });
+      if (type && p._user && p._user !== userData._id) {
+        try {
+          const unreadMessage = await UnreadMessage.create({
+            _message: newMessage._id,
+            _conversation: _conversation,
+            _user: p._user,
+            type: type,
+            _team: _team,
+            _report: _report
+          });
+        }
+        catch (e) {
+          // ignore error
+        }
       }
 
 
