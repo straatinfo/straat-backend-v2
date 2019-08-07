@@ -18,4 +18,10 @@ MessageRoute.route('/v3/api/message/unread/:conversationId/:userId')
     handlers.message.unread.deleteUnreadMessage
   );
 
+MessageRoute.route('/v3/api/message/unread/report/count/:userId')
+    .get(
+      // requireAuth,
+      handlers.message.unread.getUnreadMessageCountGroupByReportType
+    )
+
 module.exports = MessageRoute;
