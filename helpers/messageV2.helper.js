@@ -45,7 +45,7 @@ async function __getMessages(_conversation, _reporter) {
   console.log(_reporter)
   try {
     const addParticipant = await __addReporterToConversation(_conversation, _reporter);
-    const messages = await Message.find({ '_conversation': _conversation }).populate('_author', ['fname', 'lname', 'username', '_id']).populate('attachments');
+    const messages = await Message.find({ '_conversation': _conversation }).populate('_author', ['fname', 'lname', 'username', '_id']).populate('attachments').sort('createdAt');
     return Promise.resolve(messages);
   }
   catch (e) {
@@ -69,7 +69,7 @@ async function __getLatestMessages(_conversation, _reporter, page = 1, items = 1
     const getPage = Math.max(0, page);
     const messages = await Message.find({ '_conversation': _conversation })
     .populate('_author', ['fname', 'lname', 'username', '_id'])
-    .populate('attachments').limit(items).sort({'createdAt': -1}).skip(items * getPage);
+    .populate('attachments').limit(items).sort('createdAt').skip(items * getPage);
     return Promise.resolve(messages);
   }
   catch (e) {
