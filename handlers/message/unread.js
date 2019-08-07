@@ -54,7 +54,7 @@ function getUnreadMessage (req, res, next) {
 }
 
 function getUnreadMessageCountGroupByReportType (req, res, next) {
-  const { userId } = req.$scope;
+  const { userId } = req.params;
 
   return req.db.UnreadMessage.find({ _user: userId, _report: { $ne: null } })
     .populate({
@@ -64,6 +64,7 @@ function getUnreadMessageCountGroupByReportType (req, res, next) {
       }
     })
       .then((unreadMessages) => {
+        console.log(unreadMessages);
         const a = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'A').length
         const b = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'B').length
         const c = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'C').length
