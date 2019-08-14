@@ -6,6 +6,12 @@ const handlers = require('../handlers');
 
 const MessageRoute = express.Router();
 
+MessageRoute.route('/v3/api/message/unread/all/count/:userId')
+  .get(
+    // requireAuth,
+    handlers.message.unread.getUnreadMessageCount
+  );
+
 MessageRoute.route('/v3/api/message/unread/:conversationId/:userId')
   .get(
     // requireAuth,

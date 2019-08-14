@@ -86,6 +86,41 @@ function getUnreadMessageCountGroupByReportType (req, res, next) {
       });
 }
 
+function getUnreadMessageCount (req, res, next) {
+  const { userId } = req.params;
+
+  return req.db.UnreadMessage.find({ _user: userId })
+    .populate({
+      path: '_report',
+      populate: {
+        path: '_reportType'
+      }
+    })
+      .then((unreadMessages) => {
+        console.log(unreadMessages);
+        const a = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'A').length
+        const b = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'B').length
+        const c = _.filter(unreadMessages, (um) => um && um._report && um._report._reportType && um._report._reportType.code == 'C').length
+
+        const team = _.filter(unreadMessages, (um) => um && um._team).length
+        res.status(200).send({
+          status: 'SUCCESS',
+          statusCode: 0,
+          httpCode: 200,
+          a, b, c, team
+        })
+      })
+      .catch((err) => {
+        console.error('Get Unread Message ERROR', err);
+        res.status(500).send({
+          status: 'ERROR',
+          statusCode: 100,
+          httpCode: 500,
+          message: 'Internal server error'
+        })
+      });
+}
+
 function deleteUnreadMessage (req, res, next) {
   const { userId, conversationId } = req.$scope;
 
@@ -112,5 +147,6 @@ module.exports = {
   validateParams,
   getUnreadMessage,
   deleteUnreadMessage,
-  getUnreadMessageCountGroupByReportType
+  getUnreadMessageCountGroupByReportType,
+  getUnreadMessageCount
 };
