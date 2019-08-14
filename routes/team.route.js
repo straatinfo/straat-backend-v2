@@ -8,6 +8,8 @@ const CloudinaryService = require('../service/cloudinary.service');
 const TeamValidator = require('../validator/team.validator');
 const TeamMiddleware = require('../middleware/team.middleware');
 
+const handlers = require('../handlers');
+
 TeamRoute.route('/')
 .get(/*requireAuth,*/ Team.getTeams)
 .post(/*requireAuth,*/ Team.getTeamWithFilter);
@@ -42,7 +44,12 @@ TeamRoute.route('/info/:teamId')
 .get(/*requireAuth,*/ Team.getTeamInfoById)
 
 TeamRoute.route('/list/:_user')
-.get(/*requireAuth,*/ Team.getTeamListByUserId);
+.get(
+  /*requireAuth,*/
+  Team.getTeamListByUserId,
+  handlers.report.getUnreadMessage.populateUnreadMessageForTeams,
+  Team.respondToGetTeamListByUserId
+);
 
 TeamRoute.route('/nonvol/:_host')
 .get(/*requireAuth,*/ Team.getNonVolTeamListByHost);

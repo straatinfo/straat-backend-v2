@@ -77,7 +77,11 @@ const getTeamListByUserId = async (req, res, next) => {
       return team
     })) : teams
 
-    SuccessHelper.success(res, result);
+    req.teams = result;
+
+    next();
+
+    // SuccessHelper.success(res, result);
     // SuccessHelper.success(res, getTBI.team);
   }
   catch (e) {
@@ -85,6 +89,12 @@ const getTeamListByUserId = async (req, res, next) => {
     ErrorHelper.ServerError(res);
   }
 };
+
+function respondToGetTeamListByUserId (req, res, next) {
+  const teams = req.teams;
+
+  SuccessHelper.success(res, teams);
+}
 
 
 const getNonVolTeamListByHost = async (req, res, next) => {
@@ -379,5 +389,6 @@ module.exports = {
   disApproveTeam: disApproveTeam,
   getTeamInfoById,
   getTeamListByUserId,
-  getNonVolTeamListByHost
+  getNonVolTeamListByHost,
+  respondToGetTeamListByUserId
 };

@@ -66,6 +66,73 @@ async function populateUnreadMessage (req, res, next) {
   }
 }
 
+async function populateUnreadMessageForTeams (req, res, next) {
+  const userId = req.query.userId || req.query._reporter || req.params.userId || req.params._user;
+  const teams = req.teams;
+  if (!userId) return next();
+
+  if (!Array.isArray(teams)) {
+    try {
+      const t = (teams.toObject) ? teams.toObject() : reports;
+      const conversationId = t._conversation && t._conversation._id;
+      const unreadMessage = await req.db.UnreadMessage.find({  _user: userId, _conversation: conversationId });
+      const conversation = {
+        ...t._conversation,
+        unreadMessageCount: unreadMessage.length || 0
+      };
+      const populatedTeam = {
+        ...t,
+        _conversation: conversation
+      };
+
+      req.teams = populatedTeam;
+      req.team = populatedTeam;
+      return next();
+    }
+    catch (e) {
+      console.error('unread message populattion error', e);
+      return next();
+    }
+  }
+
+  try {
+    const populatedTeams = await Promise.mapSeries(teams, async (team) => {
+      try {
+        const t = team.toObject ? team.toObject() : team;
+        const conversationId = t._conversation && t._conversation._id;
+
+        const unreadMessage = await req.db.UnreadMessage.find({  _user: userId, _conversation: conversationId });
+        const conversation = {
+          ...t._conversation,
+          unreadMessageCount: unreadMessage.length || 0
+        }
+        return {
+          ...t,
+          _conversation: conversation
+        };
+      }
+      catch (e) {
+        const conversation = {
+          ...r._conversation,
+          unreadMessageCount: 0
+        }
+        return {
+          ...r,
+          _conversation: conversation
+        };
+      }
+    });
+
+    req.teams = populatedTeams;
+    next();
+  }
+  catch (e) {
+    console.error('unread message populattion error', e);
+    next();
+  }
+}
+
 module.exports = {
-  populateUnreadMessage
+  populateUnreadMessage,
+  populateUnreadMessageForTeams
 };
