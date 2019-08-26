@@ -338,7 +338,7 @@ const saveUploadLooper = (_report, inputArray = [], saveUploadPromise = saveUplo
 
 const updateReport = async(_id, input) => {
   const oldReport = await Report.findById(_id);
-  if (oldReport.status.toLowerCase() === 'done' || oldReport.status.toLowerCase() === 'expired') {
+  if (input.status && (oldReport.status.toLowerCase() === 'done' || oldReport.status.toLowerCase() === 'expired')) {
     return Promise.reject({
       statusCode: 400,
       err: 'UPDATE_NOT_ALLOWED',
