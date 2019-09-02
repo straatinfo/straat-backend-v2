@@ -572,7 +572,7 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
       }
     }
     const status = {
-      status: {$in: ['NEW', 'INPROGRESS', 'DONE']}
+      status: {$in: ['NEW', 'INPROGRESS', 'DONE', 'EXPIRED']}
     }
     const publicReports = {
       $and: [
