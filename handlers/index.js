@@ -5,5 +5,6 @@ module.exports = {
   subCategory: require('./subCategory'),
   utility: require('./utility'),
   message: require('./message'),
-  report: require('./report')
+  report: require('./report'),
+  cronJobs: require('./cronJobs')
 };
