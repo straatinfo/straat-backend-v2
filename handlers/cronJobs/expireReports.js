@@ -23,7 +23,10 @@ function createQuery (req, res, next) {
 
 function logic (req, res, next) {
   const query = req.$scope.reportQuery;
-  return req.db.Report.updateMany(query, { status: 'EXPIRED' })
+  return req.db.Report.updateMany(query, { 
+    status: 'EXPIRED',
+    updatedAt: Date.now()
+  })
     .then((reports) => {
       res.status(200).send({
         status: 'SUCCESS',

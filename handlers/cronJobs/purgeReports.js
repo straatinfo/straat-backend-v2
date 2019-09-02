@@ -2,13 +2,33 @@ const moment = require('moment');
 
 function createQuery (req, res, next) {
   const query = {
-    status: 'EXPIRED',
-    updatedAt: {
-      $lte: moment().subtract(5, 'd')
-    }
+    $or: [
+      {
+        status: {
+          $in: ['NEW', 'INPROGRESS']
+        },
+        updatedAt: {
+          $lte: moment().subtract(5, 'd')
+        }
+      },
+      {
+        status: {
+          $in: ['EXPIRED']
+        },
+        updatedAt: {
+          $lte: moment().subtract(4, 'd')
+        }
+      },
+      {
+        status: {
+          $in: ['DONE']
+        },
+        updatedAt: {
+          $lte: moment().subtract(3, 'd')
+        }
+      }
+    ]
   };
-
-
   req.$scope.reportQuery = query;
   next();
 }
@@ -58,7 +78,7 @@ function getAllConversationIds (req, res, next) {
 
 function getMessagesIds (req, res, next) {
   const convoIds = req.$scope.convoIds;
-  return res.db.Message.find({
+  return req.db.Message.find({
     _conversation: {
       $in: convoIds
     }
@@ -66,7 +86,6 @@ function getMessagesIds (req, res, next) {
     .then((messages) => {
       const messageIds = messages.map(m => m._id);
       req.$scope.messageIds = messageIds;
-
       next();
     })
     .catch((e) => {
@@ -109,7 +128,9 @@ function deleteAllConversation (req, res, next) {
       $in: convoIds
     }
   })
-    .then(() => next())
+    .then(() => {
+      next();
+    })
     .catch((e) => {
       console.log('ERROR in purging reports', e);
       res.status(500).send({
