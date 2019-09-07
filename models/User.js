@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
+const _ = require('lodash');
 
 const userSchema = new Schema({
   hostName: { type: String, indexed: true },
@@ -89,8 +90,9 @@ userSchema.methods.encryptPassword = function(password) {
 };
 
 userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, platform }) => {
+  console.log('loading')
   try {
-    const user = await this.findOne({ _id: reporterId }).populate('firebaseTokens');
+    const user = await User.findOne({ _id: reporterId }).populate('firebaseTokens');
     const firebaseTokens = user.firebaseTokens || [];
     const firebaseToken = _.find(firebaseTokens, (fbt) => {
       return fbt.deviceId === deviceId;
@@ -107,14 +109,15 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
     }
     let update;
     if (newFirebaseTokens && Array.isArray(newFirebaseTokens)) {
-      update = await this.findOneAndUpdate({ _id: reporterId }, {
+      update = await User.findOneAndUpdate({ _id: reporterId }, {
         firebaseTokens: newFirebaseTokens
       });
     } else {
-      update = await this.findOneAndUpdate({ _id: reporterId }, {
+      update = await User.findOneAndUpdate({ _id: reporterId }, {
         $addToSet: { firebaseTokens: { deviceId: deviceId, token: token, platform: platform || 'ANDROID' }}
       });
     }
+    console.log(update.firebaseTokens);
     return update;
   }
   catch (e) {
@@ -124,4 +127,6 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
 
 userSchema.index({geoLocation: '2dsphere'})
 
-module.exports = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
