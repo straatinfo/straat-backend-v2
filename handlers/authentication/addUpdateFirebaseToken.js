@@ -42,6 +42,7 @@ function validateBody (req, res, next) {
 }
 
 function validateReporter (req, res, next) {
+  console.log(1)
   const reporterId = req.body.reporterId;
   return req.db.User.findOne({ _id: reporterId })
     .then((reporter) => {
@@ -60,8 +61,8 @@ function validateReporter (req, res, next) {
 }
 
 function logic (req, res) {
-  const { reporterId, deviceId, token } = req.body;
-  return req.db.User.addOrUpdateDevice({ reporterId, deviceId, token })
+  const { reporterId, deviceId, token, platform } = req.body;
+  return req.db.User.addOrUpdateDevice({ reporterId, deviceId, token, platform })
     .then(reporter => {
       const response = {
         status: 'SUCCESS',

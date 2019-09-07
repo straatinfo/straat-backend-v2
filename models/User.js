@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcrypt-nodejs');
+const _ = require('lodash');
 
 const userSchema = new Schema({
   hostName: { type: String, indexed: true },
@@ -89,6 +90,7 @@ userSchema.methods.encryptPassword = function(password) {
 };
 
 userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, platform }) => {
+  console.log('loading')
   try {
     const user = await User.findOne({ _id: reporterId }).populate('firebaseTokens');
     const firebaseTokens = user.firebaseTokens || [];
@@ -115,6 +117,7 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
         $addToSet: { firebaseTokens: { deviceId: deviceId, token: token, platform: platform || 'ANDROID' }}
       });
     }
+    console.log(update.firebaseTokens);
     return update;
   }
   catch (e) {
@@ -124,4 +127,6 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
 
 userSchema.index({geoLocation: '2dsphere'})
 
-module.exports = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;

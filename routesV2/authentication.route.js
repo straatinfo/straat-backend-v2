@@ -39,7 +39,7 @@ AuthRoute.route('/v3/api/auth/firebase')
     requireAuth,
     authHandlers.refresh.validateUserParams,
     authHandlers.addUpdateFirebaseToken.validateBody,
-    authHandlers.addUpdateFirebaseToken.validateReporter,
+    // authHandlers.addUpdateFirebaseToken.validateReporter,
     authHandlers.addUpdateFirebaseToken.logic
   );
 
