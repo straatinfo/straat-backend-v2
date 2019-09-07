@@ -1,2 +1,5 @@
 /node_modules
 yarn.lock
+service-account.json
+service-json-string.txt
+config-dev.js

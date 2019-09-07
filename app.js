@@ -38,6 +38,7 @@ app.use(function(req, res, next) {
 app.use((req, res, next) => {
   req.$scope = {};
   req.db = require('./models');
+  req.lib = require('./lib');
   next();
 });
 

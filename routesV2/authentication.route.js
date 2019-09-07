@@ -34,4 +34,13 @@ AuthRoute.route('/v3/api/auth/refresh')
     authHandlers.refresh.refreshUserData
   );
 
+AuthRoute.route('/v3/api/auth/firebase')
+  .post(
+    requireAuth,
+    authHandlers.refresh.validateUserParams,
+    authHandlers.addUpdateFirebaseToken.validateBody,
+    authHandlers.addUpdateFirebaseToken.validateReporter,
+    authHandlers.addUpdateFirebaseToken.logic
+  );
+
 module.exports = AuthRoute;

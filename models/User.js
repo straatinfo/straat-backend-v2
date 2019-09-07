@@ -76,11 +76,50 @@ const userSchema = new Schema({
   }],
   messages: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'Message'
+  }],
+  firebaseTokens: [{
+    deviceId: { type: String, required: true, index: true },
+    platform: { type: String, enum: ['IOS', 'ANDROID', 'WEB'], default: 'ANDROID' },
+    token: { type: String, required: true, index: true }
   }]
 }, {timestamps: true});
 
 userSchema.methods.encryptPassword = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+};
+
+userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, platform }) => {
+  try {
+    const user = await User.findOne({ _id: reporterId }).populate('firebaseTokents');
+    const firebaseTokens = user.firebaseTokens || [];
+    const firebaseToken = _.find(firebaseTokens, (fbt) => {
+      return fbt.deviceId === deviceId;
+    });
+    let newFirebaseTokens;
+    if (firebaseToken) {
+      newFirebaseTokens = firebaseTokens.reduce((pv, cv) => {
+        if (cv.deviceId === deviceId) {
+          return pv.concat([{ deviceId: cv.deviceId, token: token, platform: cv.platform || 'ANDROID' }]);
+        } else {
+          return pv.concat([{ deviceId: cv.deviceId, token: cv.token, platform: cv.platform || 'ANDROID' }]);
+        }
+      }, []);
+    }
+    let update;
+    if (newFirebaseTokens && Array.isArray(newFirebaseTokens)) {
+      update = await User.findOneAndUpdate({ _id: reporterId }, {
+        firebaseTokens: newFirebaseTokens
+      });
+    } else {
+      update = await User.findOneAndUpdate({ _id: reporterId }, {
+        $addToSet: { firebaseTokens: { deviceId: deviceId, token: token, platform: platform || 'ANDROID' }}
+      });
+    }
+    return update;
+  }
+  catch (e) {
+    throw e;
+  }
 };
 
 userSchema.index({geoLocation: '2dsphere'})
