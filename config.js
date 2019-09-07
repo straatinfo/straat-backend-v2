@@ -1,27 +1,27 @@
 module.exports = {
-  DATA_BASE: process.env.MONGODB_URI || 'mongodb://heroku_3mjfnk1l:iqi60fhdgbgab2ffmf3vovlff5@ds121268.mlab.com:21268/heroku_3mjfnk1l',
+  DATA_BASE: process.env.MONGODB_URI,
   // DATA_BASE: 'mongodb://localhost:27017/straat',
-  SESSION_SECRET: process.env.SESSION_SECRET || 'mysupersecretkey',
+  SESSION_SECRET: process.env.SESSION_SECRET,
   CLOUDINARY: {
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'hvina6sjo',
-    api_key: process.env.CLOUDINARY_API_KEY || '485521389972512',
-    api_secret: process.env.CLOUDINARY_API_SECRET || 'QOaJKE9sXc1qe4GHFYjNSFkFT68',
-    url: process.env.CLOUDINARY_URL || 'cloudinary://485521389972512:QOaJKE9sXc1qe4GHFYjNSFkFT68@hvina6sjo'
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+    url: process.env.CLOUDINARY_URL
   },
   SENDGRID: {
-    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY || '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',
-    SENDGRID_PASSWORD: process.env.SENDGRID_PASSWORD || 'pp5ohrek8906',
-    SENDGRID_USERNAME: process.env.SENDGRID_USERNAME || 'app86892324@heroku.com'
+    SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+    SENDGRID_PASSWORD: process.env.SENDGRID_PASSWORD,
+    SENDGRID_USERNAME: process.env.SENDGRID_USERNAME
   },
   EMAIL_ADDRESSES: {
-    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL || 'johnhiggins.avila@gmail.com',
+    STRAAT_INFO_EMAIL: process.env.STRAAT_INFO_EMAIL,
     NO_REPLY: 'no-reply@straat.info',
-    NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST || 'jaylord@globalbrainforce.com', // 'jaylord@globalbrainforce.com'
-    UPDATE_REQUEST_EMAIL: process.env.UPDATE_REQUEST_EMAIL || 'updaterequest@straat.info',
-    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL || 'seqretary@gmail.com', // 'johnhiggins.avila@gmail.com'
-    DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL || 'deletedEmailTema@info.com', // 'deletedteaam@straat.info'
-    FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL || 'feedback@straat.info',
-    DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL || 'mikusobrown@gmail.com',
+    NEW_TEAM_REQUEST: process.env.NEW_TEAM_REQUEST,
+    UPDATE_REQUEST_EMAIL: process.env.UPDATE_REQUEST_EMAIL,
+    SEQRETARY_EMAIL: process.env.SEQRETARY_EMAIL,
+    DELETED_TEAM_EMAIL: process.env.DELETED_TEAM_EMAIL,
+    FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL,
+    DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL,
     TEST_HOST_EMAIL: process.env.TEST_HOST_EMAIL
   },
   GOOGLE: {
@@ -32,11 +32,22 @@ module.exports = {
 
   // postcode.ru
   POSTCODE: {
-    POSTCODE_API_KEY: process.env.POSTCODE_API_KEY || 'gvuwmtomsB8eRf5Zgsfnj7zs8DE2ihC79DlEbQnb' // 'uBN0JsxZOIvnr034fj7W5uNjTIiI8et6AZ8OQi50'
+    POSTCODE_API_KEY: process.env.POSTCODE_API_KEY
   },
 
   SERVER_API: {
     INTERNAL: process.env.SERVER_API_INTERNAL || `http://127.0.0.1:${process.env.PORT || 5000}`
+  },
+  FCM: {
+    "type": "service_account",
+    "project_id": process.env.FCM_PROJECT_ID,
+    "private_key_id": process.env.FCM_PRIVATE_KEY_ID,
+    "private_key": process.env.FCM_PRIVATE_KEY,
+    "client_email": process.env.FCM_CLIENT_EMAIL,
+    "client_id": process.env.FCM_CLIENT_ID,
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": process.env.FCM_CLIENT_CERT_URL
   }
-
 }
