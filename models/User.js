@@ -90,7 +90,7 @@ userSchema.methods.encryptPassword = function(password) {
 
 userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, platform }) => {
   try {
-    const user = await User.findOne({ _id: reporterId }).populate('firebaseTokents');
+    const user = await User.findOne({ _id: reporterId }).populate('firebaseTokens');
     const firebaseTokens = user.firebaseTokens || [];
     const firebaseToken = _.find(firebaseTokens, (fbt) => {
       return fbt.deviceId === deviceId;

@@ -9,6 +9,7 @@ internals.catchError = (err, req, res) => {
     httpCode: 500,
     message: 'Internal Server Error'
   };
+  console.log('POST fcm token update', err);
   // req.logger.error(err, 'POST /api/reporters/firebaseToken');
   res.status(error.httpCode).send(error);
 };
