@@ -75,39 +75,41 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
 
       // send message to firebase
       const firebaseTokens = p._user && p._user.firebaseTokens;
+      console.log('firebase tokens', firebaseTokens);
+      if (firebaseTokens && Array.isArray(firebaseTokens)) {
+        
 
-      console.log(firebaseTokens);
-
-      const messages = firebaseTokens.map((ft) = {
-        data: {
-          text, _conversation, _id, _report, _team, type
-        },
-        notification: {
-          title: ``,
-          body: `${userData && userData.username || 'A user'} sent a new message`,
-        },
-        android: {
-          ttl: 3600 * 1000,
+        const messages = firebaseTokens.map((ft) = {
+          data: {
+            text, _conversation, _id, _report, _team, type
+          },
           notification: {
-            icon: 'ic_menu_galery',
-            click_action: '.ReportMessagesActivity',
-            title: `New message received`,
+            title: ``,
             body: `${userData && userData.username || 'A user'} sent a new message`,
-            color: '#f45342',
-            sound : 'default'
-          }
-        },
-        token: ft
-      });
+          },
+          android: {
+            ttl: 3600 * 1000,
+            notification: {
+              icon: 'ic_menu_galery',
+              click_action: '.ReportMessagesActivity',
+              title: `New message received`,
+              body: `${userData && userData.username || 'A user'} sent a new message`,
+              color: '#f45342',
+              sound : 'default'
+            }
+          },
+          token: ft
+        });
 
-      const sentMessages = await Promise.mapSeries(messages, async (msg) => {
-        const sentM = await lib.fcm.sendAsync(msg);
+        const sentMessages = await Promise.mapSeries(messages, async (msg) => {
+          const sentM = await lib.fcm.sendAsync(msg);
 
-        return sentM;
-      });
+          return sentM;
+        });
 
-      console.log(sentMessages);
-      
+        console.log(sentMessages);
+      }
+
       // notify participants that are active
       const findSocket = await SocketHelper.findSocketByUser(p._user)
       console.log('findSocket', p)
