@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 const ConversationHelper = require('../helpers/conversationV2.helper')
 const MessageHelper = require('../helpers/messageV2.helper')
 const SocketHelper = require('../helpers/socket.helper')
@@ -98,7 +100,14 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
         token: ft
       });
 
+      const sentMessages = await Promise.mapSeries(messages, async (msg) => {
+        const sentM = await lib.fcm.sendAsync(msg);
 
+        return sentM;
+      });
+
+      console.log(sentMessages);
+      
       // notify participants that are active
       const findSocket = await SocketHelper.findSocketByUser(p._user)
       console.log('findSocket', p)
