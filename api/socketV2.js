@@ -79,7 +79,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
       if (firebaseTokens && Array.isArray(firebaseTokens)) {
         
 
-        const messages = firebaseTokens.map((ft) = {
+        const messages = firebaseTokens.map((ft) => ({
           data: {
             text, _conversation, _id, _report, _team, type
           },
@@ -99,7 +99,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
             }
           },
           token: ft
-        });
+        }));
 
         const sentMessages = await Promise.mapSeries(messages, async (msg) => {
           const sentM = await lib.fcm.sendAsync(msg);
