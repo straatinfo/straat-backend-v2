@@ -75,11 +75,11 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
 
       // send message to firebase
       const firebaseTokens = p._user && p._user.firebaseTokens;
-      console.log('firebase tokens', firebaseTokens);
+      console.log('firebase tokens', JSON.stringify(firebaseTokens, null, 2));
       if (firebaseTokens && Array.isArray(firebaseTokens)) {
         
 
-        const messages = firebaseTokens.map((ft) = {
+        const messages = firebaseTokens.map((ft) => ({
           data: {
             text, _conversation, _id, _report, _team, type
           },
@@ -99,7 +99,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
             }
           },
           token: ft
-        });
+        }));
 
         const sentMessages = await Promise.mapSeries(messages, async (msg) => {
           const sentM = await lib.fcm.sendAsync(msg);
@@ -107,7 +107,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
           return sentM;
         });
 
-        console.log(sentMessages);
+        console.log('sent messages', sentMessages);
       }
 
       // notify participants that are active
