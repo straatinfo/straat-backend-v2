@@ -12,7 +12,7 @@ const reportSchema = new Schema({
   status: { type: String, enum: [ 'NEW', 'INPROGRESS', 'DONE', 'EXPIRED'], default: 'NEW' },
   isUrgent: { type: Boolean, default: false },
   isPublic: { type: Boolean, default: false },
-
+  isInMap: { type: Boolean, default: true },
   isVehicleInvolved: { type: Boolean, default: false },
   vehicleInvolvedCount: { type: Number, default: 0 },
   vehicleInvolvedDescription: { type: String, default: '' },

@@ -19,9 +19,9 @@ CronRoute.route('/v3/api/cronJobs/reports')
     handlers.cronJobs.purgeReports.getReportIds,
     handlers.cronJobs.purgeReports.getAllConversationIds,
     handlers.cronJobs.purgeReports.getMessagesIds,
-    handlers.cronJobs.purgeReports.deleteAllMessages,
-    handlers.cronJobs.purgeReports.deleteAllConversation,
-    handlers.cronJobs.purgeReports.deleteAllHostReportsAndReporterReports,
+    // handlers.cronJobs.purgeReports.deleteAllMessages,
+    // handlers.cronJobs.purgeReports.deleteAllConversation,
+    // handlers.cronJobs.purgeReports.deleteAllHostReportsAndReporterReports,
     handlers.cronJobs.purgeReports.logic
   );
 

@@ -29,6 +29,7 @@ function createQuery (req, res, next) {
       }
     ]
   };
+
   req.$scope.reportQuery = query;
   next();
 }
@@ -149,12 +150,14 @@ function deleteAllHostReportsAndReporterReports (req, res, next) {
 function logic (req, res, next) {
   const reportIds = req.$scope.reportIds;
 
-  return req.db.Report.remove({
+  return req.db.Report.updateMany({
     _id: {
       $in: reportIds
     }
+  }, {
+    isInMap: false
   })
-    .then(() => {
+    .then((reports) => {
       return res.status(200).send({
         status: 'SUCCESS',
         httpCode: 200,

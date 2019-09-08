@@ -578,6 +578,11 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
       $and: [
         near,
         status,
+        {
+          isInMap: {
+            $eq: true
+          }
+        },
         {$or: [
           {isPublic: true},
           {_reporter: _reporter},
