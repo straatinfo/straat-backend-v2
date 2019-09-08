@@ -77,32 +77,40 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
       const firebaseTokens = p._user && p._user.firebaseTokens;
       console.log('firebase tokens', JSON.stringify(firebaseTokens, null, 2));
       if (firebaseTokens) {
-        const messages = firebaseTokens.map((ft) => ({
-          data: {
-            text, _conversation, _id, _report, _team, type
-          },
-          notification: {
-            title: ``,
-            body: `${userData && userData.username || 'A user'} sent a new message`,
-          },
-          android: {
-            ttl: 3600 * 1000,
+        const messages = firebaseTokens.map((ft) => {
+          console.log('ft', ft);
+
+          return {
+            data: {
+              text, _conversation, _id, _report, _team, type
+            },
             notification: {
-              icon: 'ic_menu_galery',
-              click_action: '.ReportMessagesActivity',
-              title: `New message received`,
+              title: ``,
               body: `${userData && userData.username || 'A user'} sent a new message`,
-              color: '#f45342',
-              sound : 'default'
-            }
-          },
-          token: ft.token
-        }));
+            },
+            android: {
+              ttl: 3600 * 1000,
+              notification: {
+                icon: 'ic_menu_galery',
+                click_action: '.ReportMessagesActivity',
+                title: `New message received`,
+                body: `${userData && userData.username || 'A user'} sent a new message`,
+                color: '#f45342',
+                sound : 'default'
+              }
+            },
+            token: ft.token
+          }
+        });
 
         console.log(JSON.stringify(messages, null, 2));
 
-        const sentMessages = await Promise.mapSeries(messages, async (msg) => {
-          const sentM = await lib.fcm.sendAsync(msg);
+        const sentMessages = await Promise.map(messages, async (msg) => {
+          const sentM = await lib.fcm.sendAsync(msg).then((m) => {
+            console.log(m);
+
+            return m;
+          });
 
           return sentM;
         });
