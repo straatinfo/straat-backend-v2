@@ -95,15 +95,15 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
             },
             notification: {
               title: `New report update`,
-              body: `${userData && userData.username || 'A user'} sent a new message`,
+              body: ``,
             },
             android: {
               ttl: 3600 * 1000,
               notification: {
                 icon: 'ic_menu_galery',
-                click_action: '.ReportMessagesActivity',
+                click_action: '.ReportsActivity',
                 title: `New report update`,
-                body: `${userData && userData.username || 'A user'} sent a new message`,
+                body: ``,
                 color: '#f45342',
                 sound : 'default'
               }
