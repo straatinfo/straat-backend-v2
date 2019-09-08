@@ -74,7 +74,8 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
 
 
       // send message to firebase
-      const firebaseTokens = p._user && p._user.firebaseTokens;
+      let firebaseTokens = p._user && p._user.firebaseTokens;
+      firebaseTokens = firebaseTokens.toObect ? firebaseTokens.toObject() : firebaseTokens
       console.log('firebase tokens', JSON.stringify(firebaseTokens, null, 2));
       if (firebaseTokens) {
         const messages = firebaseTokens.map((ft) => {
