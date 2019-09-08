@@ -86,10 +86,15 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
 
           return {
             data: {
-              text, _conversation, _id, _report, _team, type
+              text: text || '',
+              _conversation: _conversation || '',
+              _id: _id || '',
+              _report: _report || '',
+              _team: _team || '',
+              type: type || ''
             },
             notification: {
-              title: ``,
+              title: `New report update`,
               body: `${userData && userData.username || 'A user'} sent a new message`,
             },
             android: {
@@ -97,7 +102,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
               notification: {
                 icon: 'ic_menu_galery',
                 click_action: '.ReportMessagesActivity',
-                title: `New message received`,
+                title: `New report update`,
                 body: `${userData && userData.username || 'A user'} sent a new message`,
                 color: '#f45342',
                 sound : 'default'
