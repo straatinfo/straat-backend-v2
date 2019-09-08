@@ -3,6 +3,7 @@ const MessageHelper = require('../helpers/messageV2.helper')
 const SocketHelper = require('../helpers/socket.helper')
 const User = require('../models/User');
 const UnreadMessage = require('../models/UnreadMessage');
+const lib = require('../lib');
 
 const onSendMessage = async (io, socket, userData, args = {}, callback) => {
   console.log('onSendMessage: ', args)
@@ -68,6 +69,34 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
           // ignore error
         }
       }
+
+
+      // send message to firebase
+      const firebaseTokens = p._user && p._user.firebaseTokens;
+
+      console.log(firebaseTokens);
+
+      const messages = firebaseTokens.map((ft) = {
+        data: {
+          text, _conversation, _id, _report, _team, type
+        },
+        notification: {
+          title: ``,
+          body: `${userData && userData.username || 'A user'} sent a new message`,
+        },
+        android: {
+          ttl: 3600 * 1000,
+          notification: {
+            icon: 'ic_menu_galery',
+            click_action: '.ReportMessagesActivity',
+            title: `New message received`,
+            body: `${userData && userData.username || 'A user'} sent a new message`,
+            color: '#f45342',
+            sound : 'default'
+          }
+        },
+        token: ft
+      });
 
 
       // notify participants that are active

@@ -129,7 +129,7 @@ async function __getConversationById (_conversation) {
     })
     .populate({
       path: 'participants._user',
-      select: {_id: true, username: true},
+      select: {_id: true, username: true, firebaseTokens: true},
       populate: {
         path: '_profilePic',
         select: {_id: true, secure_url: true}
