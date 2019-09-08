@@ -76,9 +76,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
       // send message to firebase
       const firebaseTokens = p._user && p._user.firebaseTokens;
       console.log('firebase tokens', JSON.stringify(firebaseTokens, null, 2));
-      if (firebaseTokens && Array.isArray(firebaseTokens)) {
-        
-
+      if (firebaseTokens) {
         const messages = firebaseTokens.map((ft) => ({
           data: {
             text, _conversation, _id, _report, _team, type
@@ -98,8 +96,10 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
               sound : 'default'
             }
           },
-          token: ft
+          token: ft.token
         }));
+
+        console.log(JSON.stringify(messages, null, 2));
 
         const sentMessages = await Promise.mapSeries(messages, async (msg) => {
           const sentM = await lib.fcm.sendAsync(msg);
