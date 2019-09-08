@@ -74,12 +74,15 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
 
 
       // send message to firebase
-      let firebaseTokens = p._user && p._user.firebaseTokens;
-      firebaseTokens = firebaseTokens && firebaseTokens.toObect ? firebaseTokens.toObject() : firebaseTokens
-      console.log('firebase tokens', JSON.stringify(firebaseTokens, null, 2));
+      let userFC = await User.findById(p._user);
+      userFC = userFC.toObject ? userFC.toObject() : userFC;
+      let firebaseTokens = userFC.firebaseTokens;
+      // firebaseTokens = firebaseTokens && firebaseTokens.toObect ? firebaseTokens.toObject() : firebaseTokens
+      console.log('firebase tokens', firebaseTokens);
+      console.log('Firebase token type', typeof firebaseTokens);
       if (firebaseTokens) {
         const messages = firebaseTokens.map((ft) => {
-          console.log('ft', ft);
+          console.log('fcmToken', ft);
 
           return {
             data: {
@@ -104,7 +107,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
           }
         });
 
-        console.log(JSON.stringify(messages, null, 2));
+        console.log(messages);
 
         const sentMessages = await Promise.map(messages, async (msg) => {
           const sentM = await lib.fcm.sendAsync(msg).then((m) => {
