@@ -117,7 +117,7 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
         $addToSet: { firebaseTokens: { deviceId: deviceId, token: token, platform: platform || 'ANDROID' }}
       });
     }
-    console.log(update.firebaseTokens);
+    console.log(update);
     return update;
   }
   catch (e) {
