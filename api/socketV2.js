@@ -100,7 +100,7 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
             android: {
               ttl: 3600 * 1000,
               notification: {
-                icon: 'ic_map_pointer_a',
+                icon: 'ic_launcher_foreground',
                 click_action: '.ReportsActivity',
                 title: `New report update`,
                 body: ``,
