@@ -94,13 +94,17 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
               type: type || ''
             },
             notification: {
+              icon: 'ic_map_pointer_a',
+              click_action: '.ReportsActivity',
               title: `New report update`,
               body: ``,
+              // color: '#f45342',
+              sound : 'default'
             },
             android: {
               ttl: 3600 * 1000,
               notification: {
-                icon: 'ic_launcher',
+                icon: 'ic_map_pointer_a',
                 click_action: '.ReportsActivity',
                 title: `New report update`,
                 body: ``,
