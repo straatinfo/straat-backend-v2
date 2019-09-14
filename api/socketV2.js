@@ -100,12 +100,12 @@ const onSendMessage = async (io, socket, userData, args = {}, callback) => {
             android: {
               ttl: 3600 * 1000,
               notification: {
-                icon: process.env.DEFAULT_ANDROID_NOTIF_ICON || 'ic_logo',
+                icon: process.env.DEFAULT_ANDROID_NOTIF_ICON,
                 click_action: '.ReportsActivity',
                 title: `New report update`,
                 body: ``,
-                // color: '#f45342',
-                sound : 'default'
+                color: process.env.DEFAULT_ANDROID_NOTIF_COLOR,
+                sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND
               }
             },
             token: ft.token
