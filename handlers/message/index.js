@@ -1,3 +1,4 @@
 module.exports = {
-  unread: require('./unread')
+  unread: require('./unread'),
+  sendMessage: require('./sendMessage')
 };
