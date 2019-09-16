@@ -125,16 +125,18 @@ function createUnreadMessages (req, res, next) {
   const { user, _conversation, text, _team, _report, type } = req.body;
   const message = req.$scope.message;
   const conversation = req.$scope.conversation;
-
   return Promise.mapSeries(conversation.participants, async (participant) => {
-    const unreadMessage = await req.db.UnreadMessage.create({
-      _message: message && message._id,
-      _conversation: _conversation,
-      _user: participant._user,
-      type: type,
-      _team: _team,
-      _report: _report
-    });
+    let unreadMessage;
+    if (participant && participant._user) {
+      unreadMessage = await req.db.UnreadMessage.create({
+        _message: message && message._id,
+        _conversation: _conversation,
+        _user: participant._user,
+        type: type,
+        _team: _team,
+        _report: _report
+      });
+    }
   
     return unreadMessage;
   })
@@ -151,38 +153,40 @@ function broadcastMessage (req, res, next) {
   const conversation = req.$scope.conversation;
 
   return Promise.mapSeries(conversation.participants, async (participant) => {
-    let userFC = await req.db.User.findById(participant._user);
-    userFC = userFC.toObject ? userFC.toObject() : userFC;
-    let firebaseTokens = userFC.firebaseTokens;
     let sentMessages;
-    if (firebaseTokens) {
-      const tokens = firebaseTokens.map((ft) => ft.token);
-      const message = {
-        data: {
-          text: text || '',
-          _conversation: _conversation || '',
-          _report: _report || '',
-          _team: _team || '',
-          type: type || ''
-        },
-        notification: {
-          title: `New report update`,
-          body: ``
-        },
-        android: {
-          ttl: 3600 * 1000,
+    if (participant && participant._user) {
+      let userFC = await req.db.User.findById(participant._user);
+      userFC = userFC && userFC.toObject ? userFC.toObject() : userFC;
+      let firebaseTokens = userFC.firebaseTokens;
+      if (firebaseTokens) {
+        const tokens = firebaseTokens.map((ft) => ft.token);
+        const message = {
+          data: {
+            text: text || '',
+            _conversation: _conversation || '',
+            _report: _report || '',
+            _team: _team || '',
+            type: type || ''
+          },
           notification: {
-            icon: process.env.DEFAULT_ANDROID_NOTIF_ICON,
-            click_action: '.ReportsActivity',
             title: `New report update`,
-            body: ``,
-            color: process.env.DEFAULT_ANDROID_NOTIF_COLOR,
-            sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND
+            body: ``
+          },
+          android: {
+            ttl: 3600 * 1000,
+            notification: {
+              icon: process.env.DEFAULT_ANDROID_NOTIF_ICON,
+              click_action: '.ReportsActivity',
+              title: `New report update`,
+              body: ``,
+              color: process.env.DEFAULT_ANDROID_NOTIF_COLOR,
+              sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND
+            }
           }
-        }
-      };
-
-      sentMessages = await req.lib.fcm.sendToMultipleTokenAsync(message, tokens);
+        };
+  
+        sentMessages = await req.lib.fcm.sendToMultipleTokenAsync(message, tokens);
+      }
     }
     return sentMessages;
   })
