@@ -30,4 +30,16 @@ MessageRoute.route('/v3/api/message/unread/report/count/:userId')
       handlers.message.unread.getUnreadMessageCountGroupByReportType
     )
 
+MessageRoute.route('/v3/api/message/send')
+  .post(
+    // requireAuth,
+    handlers.message.sendMessage.validateParams,
+    handlers.message.sendMessage.getUser,
+    handlers.message.sendMessage.getConversation,
+    handlers.message.sendMessage.createNewMessage,
+    handlers.message.sendMessage.createUnreadMessages,
+    handlers.message.sendMessage.broadcastMessage,
+    handlers.message.sendMessage.respond
+  );
+
 module.exports = MessageRoute;
