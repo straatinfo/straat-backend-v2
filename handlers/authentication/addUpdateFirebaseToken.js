@@ -34,6 +34,7 @@ function validateBody (req, res, next) {
   const validationErrors = req.validationErrors();
   if (validationErrors) {
     const errorObject = lib.errorResponses.validationError(validationErrors);
+    console.log(errorObject);
     // req.logger.warn('POST /api/reporters/firebaseToken', errorObject);
     return res.status(errorObject.httpCode).send(errorObject);
   } else {
@@ -42,7 +43,7 @@ function validateBody (req, res, next) {
 }
 
 function validateReporter (req, res, next) {
-  console.log(1)
+  console.log('firebase input: ', req.body);
   const reporterId = req.body.reporterId;
   return req.db.User.findOne({ _id: reporterId })
     .then((reporter) => {
