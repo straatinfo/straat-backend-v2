@@ -166,7 +166,8 @@ function broadcastMessage (req, res, next) {
             _conversation: _conversation || '',
             _report: _report || '',
             _team: _team || '',
-            type: type || ''
+            type: type || '',
+            _author: user || ''
           },
           notification: {
             title: `New report update`,
