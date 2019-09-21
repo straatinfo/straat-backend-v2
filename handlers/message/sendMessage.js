@@ -142,6 +142,11 @@ function createUnreadMessages (req, res, next) {
   })
     .then((unreadMessages) => {
       req.$scope.unreadMessages = unreadMessages;
+      res.status(200).send({
+        status: 'SUCCESS',
+        statusCode: 0,
+        httpCode: 200
+      });
       next();
     })
     .catch((err) => internals.catchError(err, req, res));
@@ -205,11 +210,11 @@ function broadcastMessage (req, res, next) {
 }
 
 function respond (req, res, next) {
-  res.status(200).send({
-    status: 'SUCCESS',
-    statusCode: 0,
-    httpCode: 200
-  });
+  // res.status(200).send({
+  //   status: 'SUCCESS',
+  //   statusCode: 0,
+  //   httpCode: 200
+  // });
 }
 
 module.exports = {
