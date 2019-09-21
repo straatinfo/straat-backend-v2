@@ -196,6 +196,7 @@ function broadcastMessage (req, res, next) {
     return sentMessages;
   })
     .then((sentMessages) => {
+      console.log('SEND MESSAGE STATUS: ', sentMessages);
       req.$scope.sentMessages = sentMessages;
       next();
     })
