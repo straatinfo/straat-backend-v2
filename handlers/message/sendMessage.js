@@ -155,13 +155,13 @@ function broadcastMessage (req, res, next) {
   return Promise.mapSeries(conversation.participants, async (participant) => {
     let sentMessages;
     if (participant && participant._user) {
-      let userFC = await req.db.User.findById(participant._user);
+      let userFC = await req.db.User.findById(participant._user && participant._user._id ? participant._user._id : participant._user);
       userFC = userFC && userFC.toObject ? userFC.toObject() : userFC;
       let firebaseTokens = userFC.firebaseTokens;
       const unreadMessages = await req.db.UnreadMessage.find({
         _user: participant._user
       });
-      console.log('\n\n\n\n\nPARTICIPANT_DETAILS: ', participant._user, unreadMessages);
+      // console.log('\n\n\n\n\nPARTICIPANT_DETAILS: ', participant._user, unreadMessages);
       if (firebaseTokens) {
         const tokens = firebaseTokens.map((ft) => ft.token);
         const message = {
@@ -175,7 +175,7 @@ function broadcastMessage (req, res, next) {
           },
           notification: {
             title: `New report update`,
-            body: unreadMessages && unreadMessages.count > 0 ? `You have ${unreadMessages.count} new messages` :``,
+            body: unreadMessages && unreadMessages.length > 0 ? `You have ${unreadMessages.length} new messages` :``,
           },
           android: {
             ttl: 3600 * 1000,
@@ -183,7 +183,7 @@ function broadcastMessage (req, res, next) {
               icon: process.env.DEFAULT_ANDROID_NOTIF_ICON,
               click_action: '.ReportsActivity',
               title: `New report update`,
-              body: unreadMessages && unreadMessages.count > 0 ? `You have ${unreadMessages.count} new messages` :``,
+              body: unreadMessages && unreadMessages.length > 0 ? `You have ${unreadMessages.length} new messages` :``,
               color: process.env.DEFAULT_ANDROID_NOTIF_COLOR,
               sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND,
               tag: 'NEW_REPORT_UPDATE'
