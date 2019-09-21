@@ -158,8 +158,8 @@ function broadcastMessage (req, res, next) {
       let userFC = await req.db.User.findById(participant._user);
       userFC = userFC && userFC.toObject ? userFC.toObject() : userFC;
       let firebaseTokens = userFC.firebaseTokens;
-      const unreadMessages = req.db.UnreadMessage.find({
-        _user: participant._user.toString()
+      const unreadMessages = await req.db.UnreadMessage.find({
+        _user: participant._user
       });
       if (firebaseTokens) {
         const tokens = firebaseTokens.map((ft) => ft.token);
