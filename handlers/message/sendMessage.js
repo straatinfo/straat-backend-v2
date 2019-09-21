@@ -159,7 +159,7 @@ function broadcastMessage (req, res, next) {
       userFC = userFC && userFC.toObject ? userFC.toObject() : userFC;
       let firebaseTokens = userFC.firebaseTokens;
       const unreadMessages = req.db.UnreadMessage.find({
-        _user: user
+        _user: participant._user.toString()
       });
       if (firebaseTokens) {
         const tokens = firebaseTokens.map((ft) => ft.token);
@@ -175,7 +175,6 @@ function broadcastMessage (req, res, next) {
           notification: {
             title: `New report update`,
             body: unreadMessages && unreadMessages.count > 0 ? `You have ${unreadMessages.count} new messages` :``,
-            tag: process.env.DEFAULT_ANDROID_NOTIF_TAG || `New report update`
           },
           android: {
             ttl: 3600 * 1000,
@@ -185,7 +184,8 @@ function broadcastMessage (req, res, next) {
               title: `New report update`,
               body: unreadMessages && unreadMessages.count > 0 ? `You have ${unreadMessages.count} new messages` :``,
               color: process.env.DEFAULT_ANDROID_NOTIF_COLOR,
-              sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND
+              sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND,
+              tag: 'NEW_REPORT_UPDATE'
             }
           }
         };
