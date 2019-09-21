@@ -161,6 +161,7 @@ function broadcastMessage (req, res, next) {
       const unreadMessages = await req.db.UnreadMessage.find({
         _user: participant._user
       });
+      console.log('\n\n\n\n\nPARTICIPANT_DETAILS: ', participant._user, unreadMessages);
       if (firebaseTokens) {
         const tokens = firebaseTokens.map((ft) => ft.token);
         const message = {
