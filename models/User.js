@@ -93,20 +93,32 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
   console.log('loading')
   try {
     const user = await User.findOne({ _id: reporterId }).populate('firebaseTokens');
-    const firebaseTokens = user.firebaseTokens;
-    const firebaseToken = _.find(firebaseTokens, (fbt) => {
-      return fbt.deviceId === deviceId;
-    });
-    let newFirebaseTokens;
-    if (firebaseToken) {
-      newFirebaseTokens = firebaseTokens.reduce((pv, cv) => {
-        if (cv.deviceId === deviceId) {
-          return pv.concat([{ deviceId: cv.deviceId, token: token, platform: cv.platform || 'ANDROID' }]);
+    const firebaseTokens = user.firebaseTokens || [];
+    // const oldToken = _.find(firebaseTokens, (fbt) => {
+    //   return fbt.deviceId === deviceId;
+    // });
+    // const firebaseToken = _.find(firebaseTokens, (fbt) => {
+    //   return fbt.deviceId === deviceId;
+    // });
+    const newFirebaseTokens = firebaseTokens
+      .reduce((pv, cv) => {
+        if (cv.deviceId == deviceId) {
+          return pv;
         } else {
-          return pv.concat([{ deviceId: cv.deviceId, token: cv.token, platform: cv.platform || 'ANDROID' }]);
+          return pv.concat([cv])
         }
       }, []);
-    }
+    newFirebaseTokens.concat([{ deviceId: cv.deviceId, token: cv.token, platform: cv.platform || 'ANDROID' }]);
+    console.log('NEW_FIREBASE_TOKEN: ', newFirebaseTokens)
+    // if (firebaseToken) {
+    //   newFirebaseTokens = firebaseTokens.reduce((pv, cv) => {
+    //     if (cv.deviceId === deviceId) {
+    //       return pv.concat([{ deviceId: cv.deviceId, token: token, platform: cv.platform || 'ANDROID' }]);
+    //     } else {
+    //       return pv.concat([{ deviceId: cv.deviceId, token: cv.token, platform: cv.platform || 'ANDROID' }]);
+    //     }
+    //   }, []);
+    // }
     let update;
     if (newFirebaseTokens && Array.isArray(newFirebaseTokens)) {
       update = await User.findOneAndUpdate({ _id: reporterId }, {
