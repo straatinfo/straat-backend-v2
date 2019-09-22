@@ -202,7 +202,7 @@ function broadcastMessage (req, res, next) {
     return sentMessages;
   })
     .then((sentMessages) => {
-      console.log('SEND MESSAGE STATUS: ', sentMessages);
+      // console.log('SEND MESSAGE STATUS: ', sentMessages);
       req.$scope.sentMessages = sentMessages;
       next();
     })
@@ -210,6 +210,7 @@ function broadcastMessage (req, res, next) {
 }
 
 function respond (req, res, next) {
+  res.end();
   // res.status(200).send({
   //   status: 'SUCCESS',
   //   statusCode: 0,
