@@ -108,7 +108,7 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
           return pv.concat([cv])
         }
       }, []);
-    newFirebaseTokens.concat([{ deviceId: cv.deviceId, token: cv.token, platform: cv.platform || 'ANDROID' }]);
+    newFirebaseTokens.concat([{ deviceId: deviceId, token: token, platform: platform || 'ANDROID' }]);
     console.log('NEW_FIREBASE_TOKEN: ', newFirebaseTokens)
     // if (firebaseToken) {
     //   newFirebaseTokens = firebaseTokens.reduce((pv, cv) => {
