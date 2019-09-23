@@ -90,7 +90,6 @@ userSchema.methods.encryptPassword = function(password) {
 };
 
 userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, platform }) => {
-  console.log('loading')
   try {
     const user = await User.findOne({ _id: reporterId }).populate('firebaseTokens');
     const firebaseTokens = user.firebaseTokens || [];
@@ -108,7 +107,7 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
           return pv.concat([cv])
         }
       }, []);
-    newFirebaseTokens.concat([{ deviceId: deviceId, token: token, platform: platform || 'ANDROID' }]);
+    newFirebaseTokens.push({ deviceId: deviceId, token: token, platform: platform || 'ANDROID' });
     console.log('NEW_FIREBASE_TOKEN: ', newFirebaseTokens)
     // if (firebaseToken) {
     //   newFirebaseTokens = firebaseTokens.reduce((pv, cv) => {
@@ -129,7 +128,7 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
         $addToSet: { firebaseTokens: { deviceId: deviceId, token: token, platform: platform || 'ANDROID' }}
       });
     }
-    console.log(update);
+    // console.log(update);
     return update;
   }
   catch (e) {
