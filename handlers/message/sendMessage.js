@@ -194,6 +194,16 @@ function broadcastMessage (req, res, next) {
               sound : process.env.DEFAULT_ANDROID_NOTIF_SOUND,
               tag: 'NEW_REPORT_UPDATE'
             }
+          },
+          apns: {
+            payload: {
+              aps: {
+                'content-available': 1,
+                alert: `New report update`,
+                badge: unreadMessages && unreadMessages.length > 0 ? unreadMessages : '',
+                sound: 'default'
+              }
+            }
           }
         };
   
