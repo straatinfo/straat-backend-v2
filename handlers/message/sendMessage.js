@@ -200,7 +200,7 @@ function broadcastMessage (req, res, next) {
               aps: {
                 'content-available': 1,
                 alert: `New report update`,
-                badge: unreadMessages && unreadMessages.length > 0 ? unreadMessages : '',
+                badge: unreadMessages && unreadMessages.length || 0,
                 sound: 'default'
               }
             }
