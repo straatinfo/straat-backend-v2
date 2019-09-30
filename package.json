@@ -57,7 +57,8 @@
     "sendgrid": "^5.2.3",
     "sequelize": "^4.13.10",
     "socket.io": "2.1.0",
-    "xlsx-stream-reader": "^1.1.0"
+    "xlsx-stream-reader": "^1.1.0",
+    "xlsx-to-json": "^0.3.0"
   },
   "devDependencies": {
     "eslint-config-google": "^0.9.1"

@@ -176,7 +176,8 @@ function broadcastMessage (req, res, next) {
             _report: _report || '',
             _team: _team || '',
             type: type || '',
-            _author: user || ''
+            _author: user || '',
+            customPayloadId: 'SENDMESSAGE_NOTIFICATION_GROUP'
           },
           notification: {
             title: `New report update`,
