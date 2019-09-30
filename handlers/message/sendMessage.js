@@ -199,7 +199,7 @@ function broadcastMessage (req, res, next) {
             payload: {
               aps: {
                 'content-available': 1,
-                alert: `New report update`,
+                alert: unreadMessages && unreadMessages.length > 0 ? `New report update\nYou have ${unreadMessages.length} new messages` :`New report update`,
                 badge: unreadMessages && unreadMessages.length || 0,
                 sound: 'default'
               }
