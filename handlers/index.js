@@ -6,5 +6,6 @@ module.exports = {
   utility: require('./utility'),
   message: require('./message'),
   report: require('./report'),
-  cronJobs: require('./cronJobs')
+  cronJobs: require('./cronJobs'),
+  team: require('./team')
 };
