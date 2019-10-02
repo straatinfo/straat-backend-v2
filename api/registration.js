@@ -275,6 +275,7 @@ const registerWithCodeV3 = async (req, res, next) => {
     const user = await UserHelper.checkUserByUNameEmail(username, email)
 
     if (user.err) {
+      console.log('\n\n\n\n', user.err, '\n\n\n\n');
       return ErrorHelper.ClientError(res, {error: 'Error in checking username and email validity'}, 400)
     }
 
@@ -291,6 +292,7 @@ const registerWithCodeV3 = async (req, res, next) => {
         return ErrorHelper.ClientError(res, {error: createU.err}, 400)
       }
     }
+    req.$scope.newUser = createU;
     // when code come here that means user already registered ang ready to get a team
     console.log('createU', createU)
     // create or join team
@@ -359,6 +361,7 @@ const registerWithCodeV3 = async (req, res, next) => {
     // give token
     const token = JwtService.tokenForUser(getU.user)
     SuccessHelper.success(res, { user: getU.user, token: token })
+    next();
   } catch (e) {
     console.log(e)
     ErrorHelper.ServerError(res)

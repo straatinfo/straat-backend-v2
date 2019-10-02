@@ -6,6 +6,7 @@ const Registration = require('../api/registration');
 const RegistrationRoute = express.Router();
 const RegistrationValidator = require('../validator/registration.validator');
 const CloudinaryService = require('../service/cloudinary.service');
+const handlers = require('../handlers');
 
 RegistrationRoute.route('/')
 .post(RegistrationValidator.accessCodeRequestFormValidator, Registration.requestForCode);
@@ -23,7 +24,9 @@ RegistrationRoute.route('/signupV2')
 RegistrationRoute.route('/signupV3')
 .post(
   RegistrationValidator.registerWithCodeFormValidatorV2,
-  Registration.registerWithCodeV3
+  Registration.registerWithCodeV3,
+  handlers.team.joinTeamRequest.getTeamData,
+  handlers.team.joinTeamRequest.sendNotification
 );
 
 RegistrationRoute.route('/validation')
