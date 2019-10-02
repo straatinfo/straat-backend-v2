@@ -53,7 +53,7 @@ async function sendNotification (req, res, next) {
         ttl: 3600 * 1000,
         notification: {
           icon: process.env.DEFAULT_ANDROID_NOTIF_ICON,
-          click_action: '.ReportsActivity',
+          click_action: '.MyTeamActivity',
           title: `New request to join team`,
           body: teamRequests && teamRequests.length > 0 ? `There are ${teamRequests.length} new requests` :``,
           color: process.env.DEFAULT_ANDROID_NOTIF_COLOR,
