@@ -141,10 +141,12 @@ const updateHost = (_id, input) => {
       email, username, lname, fname, hostPersonalEmail, houseNumber, city, state, streetName, country, postalCode, phoneNumber, long, lat
     } = input
 
-    input.geoLocation = {
-      type: 'Point',
-      coordinates: [long, lat]
-    };
+    if (input.long && input.lat) {
+      input.geoLocation = {
+        type: 'Point',
+        coordinates: [long, lat]
+      };
+    }
     User.findByIdAndUpdate(_id, hostData, async(err, host) => {
       if (err) {
         return resolve({err: err})
