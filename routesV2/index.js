@@ -4,5 +4,6 @@ module.exports = (app) => {
   app.use(require('./registration.route'));
   app.use(require('./host.route'));
   app.use(require('./message.route'));
-  app.use(require('./cronJobs.route'))
+  app.use(require('./cronJobs.route'));
+  app.use(require('./team.route'));
 };

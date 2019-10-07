@@ -1,3 +1,4 @@
 module.exports = {
-  joinTeamRequest: require('./joinTeamRequest')
+  joinTeamRequest: require('./joinTeamRequest'),
+  teamRequestCount: require('./teamRequestCount')
 };
