@@ -47,6 +47,7 @@ const sendNewTeamRequestNotif = (teamDetails, userData) => {
 
 // report A nofication
 const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEmail, text, category1, category2 = null, location, reportDeepLink, language) => {
+  const cc = [Config.EMAIL_ADDRESSES.HOST_EMAIL_CC];
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = hostEmail;
   const subject = L(language, 'newNotificationOfPublicSpace')
@@ -54,7 +55,7 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
   // console.log('SendGridService.basicMail(sender, receiver, subject, mailBody);', sender, receiver, subject, mailBody) 
   return new Promise(async(resolve, reject) => {
     try {
-      const sendBasicMail = await SendGridService.basicMail(sender, receiver, subject, mailBody);
+      const sendBasicMail = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, CC, sender);
       if (sendBasicMail.err) {
         return resolve({err: sendBasicMail.err});
       }
