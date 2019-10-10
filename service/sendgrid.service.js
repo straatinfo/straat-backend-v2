@@ -26,6 +26,29 @@ const basicMail = (sender = 'Straat.info No reply', receiver, subject, message) 
   });
 }
 
+const basicMailWithCC = (sender = 'Straat.info No reply', receiver, subject, message, bcc) => {
+  return new Promise(async(resolve, reject) => {
+    const msg = {
+      to: receiver,
+      from: sender,
+      subject: subject,
+      html: message,
+      bcc: bcc && Array.isArray(bcc) ? bcc : []
+    };
+    try {
+      sgMail.setApiKey(Config.SENDGRID.SENDGRID_API_KEY);
+      const mailResponse = await sgMail.send(msg);
+      if (!mailResponse) {
+        return resolve({err: 'Cannot send email'});
+      }
+      resolve({err: null, message: `Success` });
+    }
+    catch (e) {
+      reject(e);
+    }
+  });
+}
+
 const mailWithCC = (sender, receiver, subject, message, cc = [], senderName = null) => {
   return new Promise(async(resolve, reject) => {
     const sgSender = new sgMailHelper.Email(sender, senderName||'');
@@ -58,5 +81,6 @@ const mailWithCC = (sender, receiver, subject, message, cc = [], senderName = nu
 
 module.exports = {
   basicMail: basicMail,
-  mailWithCC: mailWithCC
+  mailWithCC: mailWithCC,
+  basicMailWithCC
 };
