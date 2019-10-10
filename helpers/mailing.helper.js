@@ -55,7 +55,7 @@ const sendReportANotifToHost = (username, hostName, hostEmail, teamName, teamEma
   // console.log('SendGridService.basicMail(sender, receiver, subject, mailBody);', sender, receiver, subject, mailBody) 
   return new Promise(async(resolve, reject) => {
     try {
-      const sendBasicMail = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, CC, sender);
+      const sendBasicMail = await SendGridService.mailWithCC(sender, receiver, subject, mailBody, cc, sender);
       if (sendBasicMail.err) {
         return resolve({err: sendBasicMail.err});
       }
