@@ -147,6 +147,7 @@ const validatePostalCode = (postalCode) => {
 }
 
 const validateNumber = (postalCode, number) => {
+  postalCode = postalCode.replace(/ /g,'')
   return new Promise(async(resolve, reject) => {
     try {
       const postcodeData = await CityAreaHelper.validateNumber(postalCode, number)
