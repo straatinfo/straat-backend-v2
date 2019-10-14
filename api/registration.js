@@ -270,6 +270,9 @@ const registerWithCodeV3 = async (req, res, next) => {
       '_host': getHost._host
     };
     */
+   if (req.body.postalCode) {
+     req.body.postalCode = req.body.postalCode.replace(/ /g,'');
+   }
     const input = { ...req.body }
 
     const user = await UserHelper.checkUserByUNameEmail(username, email)
