@@ -30,6 +30,9 @@ module.exports = {
     apiKey: 'AIzaSyCYDM_gyqp1UGVClhh05ek_4G0zr4n55xA',
     fcmKey: 'AAAAWIq665Q:APA91bERF8GwK4Z2RhUPeXvzWaUSMtXkqxFXDPu4GZa7CJFRNvBbLqSEEcxZ9phyGacvevatkiCuIVhl3oJqO51tUNfzrKcgPSrNKS9gcwYORcdKKHvfZTc0wkO-1IWdmzKZbagCdl5R'
   },
+  URLS: {
+    FRONT_END_URL: process.env.FRONT_END_URL
+  },
 
   // postcode.ru
   POSTCODE: {
