@@ -37,7 +37,7 @@ const basicMailWithCC = (sender = 'Straat.info No reply', receiver, subject, mes
     };
     try {
       sgMail.setApiKey(Config.SENDGRID.SENDGRID_API_KEY);
-      const mailResponse = await sgMail.send(msg);
+      const mailResponse = await sgMail.send(msg).then(res => console.log(JSON.stringify(res)));
       if (!mailResponse) {
         return resolve({err: 'Cannot send email'});
       }
@@ -58,8 +58,9 @@ const mailWithCC = (sender, receiver, subject, message, cc = [], senderName = nu
     let mailObj = new sgMailHelper.Mail(sgSender, sgSubject, sgReceiver, sgContent);
     try {
       for (let i = 0; i > cc.length; i++) {
-        mailObj.personalizations[i].addCc(new sgMailHelper.Email(cc[i]));
+        mailObj.personalizations[0].addCc(new sgMailHelper.Email(cc[i]));
       }
+      console.log(mailObj);
       const request = sg.emptyRequest({
         method: 'POST',
         path: '/v3/mail/send',
@@ -69,6 +70,7 @@ const mailWithCC = (sender, receiver, subject, message, cc = [], senderName = nu
         if(err) {         
           resolve({err: err});
         } else {
+          console.log(response);
           resolve({err: null, message: 'Success'});
         }
       });
