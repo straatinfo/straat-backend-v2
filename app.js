@@ -21,6 +21,8 @@ const expressValidator = require('express-validator');
 
 const app = express();
 
+const SendgrdiService = require('./service/sendgrid.service');
+
 mongoose.Promise = global.Promise;
 mongoose.connect(Config.DATA_BASE, {useMongoClient: true});
     
@@ -77,5 +79,19 @@ setInterval(function () {
 setInterval(function () {
   ReportHousekeeping.backupDB();
 }, 1000 * 60 * 60 * 6);
+
+// async function testMail () {
+//   const delft = 'delft@straat.info';
+//   const myE = 'johnhiggins.avila@gmail.com';
+//   const BCC = ['denhaag@straat.info', myE];
+
+//   try {
+//     const msgSend = await SendgrdiService.basicMailWithCC('no-reply@test.com', delft, 'TEST EMAIL', 'This is a test email', BCC);
+//   } catch (e) {
+//     console.log(JSON.stringify(e, null, 2));
+//   }
+// }
+
+// testMail();
 
 module.exports = app;
