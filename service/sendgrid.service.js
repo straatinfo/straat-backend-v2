@@ -37,13 +37,14 @@ const basicMailWithCC = (sender = 'Straat.info No reply', receiver, subject, mes
     };
     try {
       sgMail.setApiKey(Config.SENDGRID.SENDGRID_API_KEY);
-      const mailResponse = await sgMail.send(msg).then(res => console.log(JSON.stringify(res)));
+      const mailResponse = await sgMail.send(msg).then(res => console.log('SENDGRID_SUCCESS', JSON.stringify(res)));
       if (!mailResponse) {
         return resolve({err: 'Cannot send email'});
       }
       resolve({err: null, message: `Success` });
     }
     catch (e) {
+      console.log('SENDGRID_ERROR', e);
       reject(e);
     }
   });
