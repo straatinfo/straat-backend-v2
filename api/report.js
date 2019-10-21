@@ -198,6 +198,7 @@ const createReportV2 = async (req, res, next) => {
       case 'A':
         const reportDeeplink = `${config.URLS.FRONT_END_URL}/public/report/${createR.report._id}`;
         // const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, null, mainName, subName, location, reportDeeplink, lang);
+        console.log('\n\n\n\n\n\n\n\nHOST_DETAILS', _host, '\n\n\n\n\n\n\n\n');
         const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         // const sendReportANotifToHostTest = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, config.EMAIL_ADDRESSES.TEST_HOST_EMAIL, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
