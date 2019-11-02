@@ -54,7 +54,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "sendgrid": "^5.2.3",
-    "sequelize": "^4.13.10",
+    "sequelize": "^5.15.1",
     "socket.io": "2.1.0",
     "xlsx-stream-reader": "^1.1.0"
   },
