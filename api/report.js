@@ -12,6 +12,7 @@ const Translator = require('./../middleware/translator');
 const Languages = require('./../assets/jsonfiles/constants').Langauges
 const SSS = require('../service/ServerSocketService');
 const config = require('../config');
+const _ = require('lodash');
 
 const getReports = async (req, res, next) => {
   try {
@@ -191,9 +192,10 @@ const createReportV2 = async (req, res, next) => {
     const teamLeadersEmail = _team ? TeamTransform.getEmail({model: 'teamLeaders', data: team.teamLeaders, isArray: true}) : []
     // get trans of this
     const { code } = _reportType
-    const mainName = _mainCategory ? _mainCategory.name : ''
-    const subName = _subCategory ? _subCategory.name: ''
-  
+    let mainName = _mainCategory && _mainCategory.translations &&  _mainCategory.translations.length > 1 &&  _.find(_mainCategory.translations, (mc) => mc.code == 'nl') ?  _.find(_mainCategory.translations, (mc) => mc.code == 'nl').word : _subCategory.name;
+    let subName = _subCategory && _subCategory.translations &&  _subCategory.translations.length > 1 &&  _.find(_subCategory.translations, (mc) => mc.code == 'nl') ?  _.find(_subCategory.translations, (mc) => mc.code == 'nl').word : _subCategory.name;
+    mainName = mainName ? mainName : '';
+    mainName = subName ? subName : '';
     switch (code.toUpperCase()) {
       case 'A':
         const reportDeeplink = `${config.URLS.FRONT_END_URL}/public/report/${createR.report._id}`;
