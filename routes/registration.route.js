@@ -23,6 +23,7 @@ RegistrationRoute.route('/signupV2')
 
 RegistrationRoute.route('/signupV3')
 .post(
+  CloudinaryService.singleUpload('team-logo', 'team'),
   RegistrationValidator.registerWithCodeFormValidatorV2,
   Registration.registerWithCodeV3,
   handlers.team.joinTeamRequest.getTeamData,

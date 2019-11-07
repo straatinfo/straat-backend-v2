@@ -23,7 +23,8 @@ module.exports = {
     FEED_BACK_EMAIL: process.env.FEED_BACK_EMAIL,
     DB_BACKUP_EMAIL: process.env.DB_BACKUP_EMAIL,
     TEST_HOST_EMAIL: process.env.TEST_HOST_EMAIL,
-    HOST_EMAIL_CC: process.env.HOST_EMAIL_CC
+    HOST_EMAIL_CC: process.env.HOST_EMAIL_CC,
+    NEW_HOST_DEFAULT_EMAIL: process.env.NEW_HOST_DEFAULT_EMAIL
   },
   GOOGLE: {
     // used in app
