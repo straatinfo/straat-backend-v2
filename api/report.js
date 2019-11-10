@@ -193,7 +193,7 @@ const createReportV2 = async (req, res, next) => {
     // get trans of this
     const { code } = _reportType
     let mainName = _mainCategory && _mainCategory.translations &&  _mainCategory.translations.length > 1 &&  _.find(_mainCategory.translations, (mc) => mc.code == 'nl') ?  _.find(_mainCategory.translations, (mc) => mc.code == 'nl').word : _subCategory.name;
-    let subName = _subCategory && _subCategory.translations &&  _subCategory.translations.length > 1 &&  _.find(_subCategory.translations, (mc) => mc.code == 'nl') ?  _.find(_subCategory.translations, (mc) => mc.code == 'nl').word : _subCategory.name;
+    let subName = _subCategory && _subCategory.translations &&  _subCategory.translations.length > 1 &&  _.find(_subCategory.translations, (mc) => mc.code == 'nl') ?  _.find(_subCategory.translations, (mc) => mc.code == 'nl').word : (_subCategory && _subCategory.name ? _subCategory.name : '-');
     mainName = mainName ? mainName : '';
     mainName = subName ? subName : '';
     switch (code.toUpperCase()) {
