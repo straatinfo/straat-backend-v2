@@ -203,11 +203,11 @@ const createReportV2 = async (req, res, next) => {
         console.log('\n\n\n\n\n\n\n\nHOST_DETAILS', _host, '\n\n\n\n\n\n\n\n');
         let hostEmail = _host.isSpecific ? _host.email : config.EMAIL_ADDRESSES.NEW_HOST_DEFAULT_EMAIL;
         const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
-        let sendReportANotifToHostPersonalMail;
+
         if (_host && _host.hostPersonalEmail) {
-          sendReportANotifToHostPersonalMail = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.hostPersonalEmail, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
+          if (_host.hostPersonalEmail != _host.email) await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.hostPersonalEmail, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         } else {
-          sendReportANotifToHostPersonalMail = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, config.EMAIL_ADDRESSES.NEW_HOST_DEFAULT_EMAIL, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
+          await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, config.EMAIL_ADDRESSES.NEW_HOST_DEFAULT_EMAIL, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         }
         // const sendReportANotifToHostTest = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, config.EMAIL_ADDRESSES.TEST_HOST_EMAIL, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
