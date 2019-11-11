@@ -1,6 +1,7 @@
 const SendGridService = require('../service/sendgrid.service');
 const Config = require('../config');
 const MailTemplates = require('../assets/mail-templates/simple-mails');
+const ReportMailTemplates = require('../assets/mail-templates/formats/reports');
 const L = require('./../assets/dictionary')
 
 // access code for android
@@ -73,7 +74,7 @@ const sendReportANotifToReporter = (reporterUsername, reporterLastname, reporter
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY
   // const receiver = reporterEmail
   const subject = L(language, 'yourNewNotificationPublicSpace')
-  const mailBody = MailTemplates.sendReportANotifToReporter(reporterUsername, reporterLastname, location, date, category1, category2, text, language)
+  const mailBody = ReportMailTemplates.sendReportANotifToReporter(reporterUsername, reporterLastname, location, date, category1, category2, text, language)
   if (teamLeaderEmail.length > 0) {
     CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL, ...teamLeaderEmail] // reporterEmail];
   } else {
@@ -102,11 +103,11 @@ const sendReportANotifForTeamLeader = () => {
 };
 
 // report B notification
-const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, location, text) => {
+const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, location, text, language = 'nl') => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = reporterEmail;
   const subject = 'Report B';
-  const mailBody = MailTemplates.sendReportBNotifToReporter(date, mainCategoryName, location, text);
+  const mailBody = ReportMailTemplates.sendReportBNotifToReporter(location, date, mainCategoryName, text, language);
   const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL];
   return new Promise(async(resolve, reject) => {
     try {
@@ -123,11 +124,11 @@ const sendReportBNotifToReporter = (reporterEmail, date, mainCategoryName, locat
 };
 
 // report C notification
-const sendReportCNotifToReporter = (reporterEmail, date, mainCategoryName, location, text) => {
+const sendReportCNotifToReporter = (reporterEmail, date, mainCategoryName, location, text, language = 'nl') => {
   const sender = Config.EMAIL_ADDRESSES.NO_REPLY;
   const receiver = reporterEmail;
   const subject = 'Report C';
-  const mailBody = MailTemplates.sendReportBNotifToReporter(date, mainCategoryName, location, text);
+  const mailBody = ReportMailTemplates.sendReportBNotifToReporter(location, date, mainCategoryName, text, language);
   const CC = [Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL];
   return new Promise(async(resolve, reject) => {
     try {
