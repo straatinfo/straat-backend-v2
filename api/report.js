@@ -201,7 +201,7 @@ const createReportV2 = async (req, res, next) => {
         const reportDeeplink = `${config.URLS.FRONT_END_URL}/public/report/${createR.report._id}`;
         // const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, _host.email, teamName, teamEmail, null, mainName, subName, location, reportDeeplink, lang);
         console.log('\n\n\n\n\n\n\n\nHOST_DETAILS', _host, '\n\n\n\n\n\n\n\n');
-        let hostEmail = _host.isActivated ? _host.email : config.EMAIL_ADDRESSES.NEW_HOST_DEFAULT_EMAIL;
+        let hostEmail = _host.isSpecific ? _host.email : config.EMAIL_ADDRESSES.NEW_HOST_DEFAULT_EMAIL;
         const sendReportANotifToHost = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, hostEmail, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         // const sendReportANotifToHostTest = await MailingHelper.sendReportANotifToHost(_reporter.username, _host.hostName, config.EMAIL_ADDRESSES.TEST_HOST_EMAIL, teamName, teamEmail, description, mainName, subName, location, reportDeeplink, lang);
         // sendReportANotifToReporter (reporterEmail, teamLeaderEmail, location, date, category1, category2 = null, text = null)
@@ -218,14 +218,14 @@ const createReportV2 = async (req, res, next) => {
       break; 
       case 'B':
         // const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location);
-        const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location, description);
+        const sendReportBNotifToReporter = await MailingHelper.sendReportBNotifToReporter(_reporter.email, createdAt, mainName, location, description, 'nl');
         if (sendReportBNotifToReporter.err) {
           console.log('sendReportBNotifToReporter.err', sendReportBNotifToReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);
         }
       break;
       case 'C':
-        const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, mainName, location, description);
+        const sendReportCNotifToReporter = await MailingHelper.sendReportCNotifToReporter(_reporter.email, createdAt, mainName, location, description, 'nl');
         if (sendReportCNotifToReporter.err) {
           console.log('sendReportBNotifToReporter.err', sendReportBNotifToReporter.err)
           // return ErrorHelper.ClientError(res, {error: 'Unable to send mail notifications at this time'}, 400);

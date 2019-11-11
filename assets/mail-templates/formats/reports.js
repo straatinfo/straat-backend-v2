@@ -1,4 +1,5 @@
 const { Langauges } = require('./../../jsonfiles/constants')
+const moment = require('moment');
 
 const __toHtml = (arrayOfDeviceInfo) => {
   if (!arrayOfDeviceInfo.map) {
@@ -86,7 +87,7 @@ const sendReportANotifToReporter = (username, lastname, location, date, category
 
   return `
   <p>Geachte mevrouw / mijnheer </p>
-  <p>U heeft met de app straat.info op ${date} een nieuwe melding gedaan met de volgende gegevens: </p>
+  <p>U heeft met de app straat.info op ${moment(date).format('DD-MMM-YYYY')} een nieuwe melding gedaan met de volgende gegevens: </p>
   <p>Locatie: ${location} </p>
   <p>Melding: ${category1} ${category2 || '-'} </p>
   <p>Uw eventuele toelichting: ${text || '-'} </p>
@@ -102,7 +103,43 @@ const sendReportANotifToReporter = (username, lastname, location, date, category
 `
 }
 
+const sendReportBNotifToReporter = (location, date, category1, text = null, language) => {
+  // English
+  if (language === Langauges.en) {
+    return `
+      <p>Dear madam, sir, </p>
+      <p>You just made a report ${date} </p>
+      <p>Notification category 1: ${category1} </p>
+      <p>Any explanation: ${text || '-'} </p>
+      <p>Location: ${location} </p>
+      </br>
+      <p>This report has been sent to the relevant host. </p>
+      <p>Thank you for using straat.info </p>
+      </br>
+      <p>If you have any questions or ideas, could you please use the feedback form in the app? </p>
+    `
+  }
+
+  return `
+  <p>Geachte mevrouw / mijnheer </p>
+  <p>U heeft met de app straat.info op ${moment(date).format('DD-MMM-YYYY')} een nieuwe melding gedaan met de volgende gegevens: </p>
+  <p>Locatie: ${location} </p>
+  <p>Melding: ${category1} </p>
+  <p>Uw eventuele toelichting: ${text || '-'} </p>
+  
+  </br>
+  <p>De melding is naar de gemeente gestuurd met het verzoek om de melding af te handelen.</p>
+  <p>Dank voor het gebruiken van straat.info!</p>
+  </br>
+  <p>Vriendelijke groet</p>
+  <p>Het straat.info team</p>
+  </br>
+  <p>PS als u vragen of ideeën voor verbetering heeft, zou u die dan aan ons willen doorgeven via het feedback formulier in het menu van de app?</p>
+`
+}
+
 module.exports = {
   sendReportAToHost,
-  sendReportANotifToReporter
+  sendReportANotifToReporter,
+  sendReportBNotifToReporter
 }
