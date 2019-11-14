@@ -14,4 +14,13 @@ TeamRoute.route('/v3/api/teams/requestCount/:userId')
     handlers.team.teamRequestCount.response
   );
 
+TeamRoute.route('/v3/api/teams/chat/:teamId/:userId')
+    .get(
+      handlers.team.teamMateChats.getTeam,
+      handlers.team.teamMateChats.populateConversation,
+      handlers.team.teamMateChats.populateUnreadChat,
+      handlers.team.teamMateChats.getLatestChat,
+      handlers.team.teamMateChats.respond
+    );
+
 module.exports = TeamRoute;

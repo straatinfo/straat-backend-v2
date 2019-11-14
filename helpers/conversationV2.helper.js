@@ -163,11 +163,29 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
     const membersArray = [_chatee, _chater];
     const sortedChatArray = membersArray.sort();
     const title = membersArray[0] + '|' + membersArray[1];
-    const checkConvo = await Conversation.findOne({'title': title});
+    const checkConvo = await Conversation.findOne({'title': title})
+      .populate('_profilePic')
+      .populate('_author', ['_id', 'username'])
+      .populate({path: '_report', select: ['_id', '_reportType'], populate: {path: '_reportType', select: ['_id', 'name', 'code']}})
+      .populate({
+        path: 'messages',
+        populate: {
+          path: '_author',
+          select: {_id: true, username: true}
+        }
+      })
+      .populate({
+        path: 'participants._user',
+        select: {_id: true, username: true, firebaseTokens: true},
+        populate: {
+          path: '_profilePic',
+          select: {_id: true, secure_url: true}
+        }
+      });
     let newConversation;
     if (checkConvo) {
       newConversation = checkConvo;
-      Rconversation = await __getConversationById(checkConvo._id);
+      Rconversation = checkConvo // await __getConversationById(checkConvo._id);
       return Promise.resolve(Rconversation);
     }
     else if (_profilePic) {
@@ -200,7 +218,6 @@ async function __createPrivateConversation(_chater, _chatee, _profilePic = null)
     Rconversation = await __getConversationById(conversation._id);
 
     return Promise.resolve(Rconversation);
-    return Promise.resolve();
   }
   catch (e) {
     return Promise.reject(e);
