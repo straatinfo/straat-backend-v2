@@ -1,4 +1,6 @@
 const Promise = require('bluebird');
+const _ = require('lodash');
+
 const conversationHelper = require('../../helpers/conversationV2.helper');
 const internals = {};
 
@@ -43,6 +45,32 @@ function getTeam (req, res, next) { // populate team mates
     .catch(e => internals.catchError(e, req, res));
 }
 
+function getTeamConvoPreview (req, res, next) {
+  const convoId = req.$scope.team && req.$scope.team._conversation;
+  return req.db.Message.find({_conversation: convoId})
+    .populate('_author')
+    .sort({ createdAt: -1 })
+    .limit(1)
+    .then((convos) => {
+      if (convos[0]) {
+        const convo = convos[0];
+        const teamMessagePreview = {
+          body: convo.body,
+          createdAt: convo.createdAt,
+          author: convo._author && convo._author.username,
+          authorId: convo._author && convo._author._id
+        };
+
+        console.log(teamMessagePreview);
+
+        req.$scope.teamMessagePreview = teamMessagePreview;
+      }
+
+      next();
+    })
+    .catch(e => internals.catchError(e, req, res));
+}
+
 function populateConversation (req, res, next) { // populate conversation, if no conversation, create, need userId
   const userId = req.params.userId;
   const teamMembers = req.$scope.teamMembers;
@@ -60,7 +88,11 @@ function populateConversation (req, res, next) { // populate conversation, if no
               authorId: convo.messages[0]._author && convo.messages[0]._author._id
             } : null;
 
-          return {...convo.toObject(), messagePreview};
+          const chatMate = _.find(convo.participants, (p) => {
+            return p._user && p._user._id.toString() != userId;
+          });
+
+          return {...convo.toObject(), messagePreview, chatMate: chatMate && chatMate._user};
         });
         req.$scope.conversations = convos;
         next();
@@ -81,17 +113,20 @@ function getLatestChat (req, res, next) { // get latest chats
 
 function respond (req, res) {
   const conversations = req.$scope.conversations;
+  const teamMessagePreview = req.$scope.teamMessagePreview;
 
   res.status(200).send({
     status: 'SUCCESS',
     statusCode: 0,
     httpCode: 200,
-    conversations
+    conversations,
+    teamMessagePreview
   });
 }
 
 module.exports = {
   getTeam,
+  getTeamConvoPreview,
   populateConversation,
   populateUnreadChat,
   getLatestChat,
