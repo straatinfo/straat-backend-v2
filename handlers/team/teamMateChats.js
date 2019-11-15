@@ -86,7 +86,7 @@ function populateConversation (req, res, next) { // populate conversation, if no
               createdAt: convo.messages[0].createdAt,
               author: convo.messages[0]._author && convo.messages[0]._author.username,
               authorId: convo.messages[0]._author && convo.messages[0]._author._id
-            } : null;
+            } : {};
 
           const chatMate = _.find(convo.participants, (p) => {
             return p._user && p._user._id.toString() != userId;
@@ -120,7 +120,7 @@ function respond (req, res) {
     statusCode: 0,
     httpCode: 200,
     conversations,
-    teamMessagePreview
+    teamMessagePreview: teamMessagePreview || {}
   });
 }
 
