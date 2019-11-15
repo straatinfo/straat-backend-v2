@@ -80,13 +80,17 @@ function populateConversation (req, res, next) { // populate conversation, if no
     )
       .then((conversations) => {
         convos = conversations.map((convo) => {
-          const messagePreview = convo && convo.messages && convo.messages[0] ?
-            {
-              body: convo.messages[0].body,
-              createdAt: convo.messages[0].createdAt,
-              author: convo.messages[0]._author && convo.messages[0]._author.username,
-              authorId: convo.messages[0]._author && convo.messages[0]._author._id
-            } : {};
+          let messagePreview = {}
+          let messages = convo && convo.messages
+          if (messages.length > 0) {
+            messages = messages.reverse();
+            messagePreview = {
+              body: messages[0].body,
+              createdAt: messages[0].createdAt,
+              author: messages[0]._author && convo.messages[0]._author.username,
+              authorId: messages[0]._author && convo.messages[0]._author._id
+            };
+          }
 
           const chatMate = _.find(convo.participants, (p) => {
             return p._user && p._user._id.toString() != userId;
