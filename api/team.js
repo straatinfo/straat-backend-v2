@@ -132,11 +132,15 @@ const getNonVolTeamListByHost = async (req, res, next) => {
 const getTeamWithFilter = async (req, res, next) => {
   const { queryObject } = req.body;
   console.log(queryObject);
+  // for now only host and isVolunteer filter will work
+  let query = {};
   try {
-    if (!queryObject || !queryObject._host || queryObject.isVolunteer === null) {
+    if (!queryObject || !queryObject._host) {
       ErrorHelper.ClientError(res, {error: 'Invalid queryObject'}, 400);
     }
-    const getTeamWF = await TeamHelper.getTeamWithFilter(queryObject);
+    if (queryObject._host) query._host = queryObject._host;
+    if (queryObject.isVolunteer != null) query.isVolunteer = queryObject.isVolunteer;
+    const getTeamWF = await TeamHelper.getTeamWithFilter(query);
     if (getTeamWF.err) {
       ErrorHelper.ClientError(res, {error: getTeamWF.err}, 400);
     }
