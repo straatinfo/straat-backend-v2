@@ -24,6 +24,7 @@ const getTeams = () => {
 const getTeamWithFilter = (queryObject) => {
   return new Promise((resolve, reject) => {
     Team.find({...queryObject, 'softRemoved': false})
+    .populate("_conversation")
     .populate('teamLeaders')
     .populate('teamMembers')
     .populate('_profilePic')
