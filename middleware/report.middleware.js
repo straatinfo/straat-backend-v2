@@ -75,14 +75,14 @@ const createReportTypeC = async (req, res, next) => {
       isInMap: req.body.isInMap,
       '_team': req.body._team,
       generatedReportId: getGeneratedCode.generatedReportId,
-      teams: req.body.teamIds
+      teams: teamList
     });
 
     if (createR.err) return Promise.reject({success: false, error: 'Unable to create report'});
 
-    const { _user, _team, teamIds} = req.body;
+    const { _user, _team} = req.body;
 
-    const conversation = await conversationHelper.__createReportCChat(_user, _team, createR.report._id, teamIds);
+    const conversation = await conversationHelper.__createReportCChat(_user, _team, createR.report._id, teamList);
 
 
     // send email
