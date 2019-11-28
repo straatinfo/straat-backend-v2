@@ -641,6 +641,7 @@ module.exports = {
   __removeParticipant,
   __addParticipant,
   __setUserActivity,
+  __createReportCChat,
   getConversation,
   createConversation,
   updateConversation,
