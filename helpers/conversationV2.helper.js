@@ -14,6 +14,7 @@ const TeamMember = require('../models/TeamMember');
 const Report = require('../models/Report');
 const ReportTrans = require('../transform/report.trans');
 const _ = require('lodash');
+const Promise = require('bluebird');
 
 // private functions
 async function __getUserConversation(_user) {
@@ -335,6 +336,47 @@ async function __createReportChat (_user, _team, _report, _profilePic) {
     return Promise.resolve(Rconversation);
   }
   catch (e) {
+    return Promise.reject(e);
+  }
+}
+
+async function __createReportCChat (_user, _team, _report, teamIds) {
+  try {
+    const checkConvo = await Conversation.findOne({_report: _report}, {_id: true});
+    if (checkConvo) return checkConvo;
+
+    const teamMembers = await TeamMember.find({ _team: { $in: teamIds } });
+
+    // get report chat ttile first
+    const report = await Report.findById(_report).populate('_mainCategory', ['name'])
+    const title = ReportTrans.getReportChatTitle(report)
+
+    const participants = _.map(teamMembers, (tm) => {
+      return {
+        _user: tm._user,
+        isActive: false
+      }
+    });
+
+    const newConvo = new Conversation({
+      'title': title,
+      'type': 'REPORT',
+      '_author': _user,
+      '_report': _report,
+      '_profilePic': _profilePic,
+      'participants': participants
+    });
+
+    const conversation = await newConvo.save();
+    const updateReport = await Report.findByIdAndUpdate(_report, {'_conversation': conversation._id});
+    const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
+      const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
+    }));
+
+    const Rconversation = await __getConversationById(conversation._id);
+    return Promise.resolve(Rconversation);
+    
+  } catch (e) {
     return Promise.reject(e);
   }
 }

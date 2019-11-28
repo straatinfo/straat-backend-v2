@@ -37,7 +37,10 @@ const reportSchema = new Schema({
   _mainCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory' },
   _subCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' },
   _team: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },
-  _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' }
+  _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation' },
+  teams: [
+    { type: mongoose.Schema.Types.ObjectId, ref: 'Team' } // used for report type c reporting
+  ]
 }, { timestamps: true })
 
 reportSchema.index({reportCoordinate: '2dsphere'})
