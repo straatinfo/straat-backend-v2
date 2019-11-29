@@ -75,7 +75,8 @@ const createReportTypeC = async (req, res, next) => {
       isInMap: req.body.isInMap,
       '_team': req.body._team,
       generatedReportId: getGeneratedCode.generatedReportId,
-      teams: teamList
+      teams: teamList,
+      isPublic: true
     });
 
     if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {

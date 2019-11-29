@@ -8,6 +8,7 @@ const CategoryHelper = require('./category.helper');
 const ConversationHelper = require('./conversationV2.helper');
 const Team = require('../models/Team');
 const User = require('../models/User');
+const ReportType = require('../models/ReportType');
 const _ = require('lodash'); 
 
 const getReportDateRange = (date) => {
@@ -539,12 +540,38 @@ const getPublicReports = async (_reporter, _reportType = null) => {
 
     const extendParam = _reportType ? {_reportType: _reportType} : {}
 
-    const publicReports = {
+
+
+    console.log('TEAM_LIST', teamList)
+
+    let publicReports = {
       $and: [
         {_host: _host, ...extendParam},
-        {'$or': [{isPublic: true}, {_reporter: _reporter}, {_team: {$in: teamList}}]}
+        {
+          '$or': [
+            {isPublic: true},
+            {_reporter: _reporter},
+            {_team: {
+              $in: teamList
+            }}
+          ]
+        }
       ]
     }
+
+    const reportType = await ReportType.findById(_reportType);
+
+    if (reportType && reportType.code == 'C') {
+      publicReports = {
+        teams: {
+          $elemMatch: {
+            $in: teamList
+          }
+        }
+      };
+    }
+
+    console.log('REPORT_TYPE_QUERY', JSON.stringify(publicReports, null, 2));
     const reports = await getReportByQueryObjectClean(publicReports);
     return Promise.resolve(reports)
   }
@@ -586,8 +613,14 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
         {$or: [
           {isPublic: true},
           {_reporter: _reporter},
-          {_team: {$in: teamList}
-        }]}
+          {_team: {$in: teamList}},
+          {
+            teams: {
+              $elemMatch: {
+                $in: teamList
+              }
+            }
+          }]}
       ]
     };
     console.log(publicReports);
