@@ -621,13 +621,14 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
           {isPublic: true},
           {_reporter: _reporter},
           {_team: {$in: teamList}},
-          {
-            teams: {
-              $elemMatch: {
-                $in: teamList
-              }
-            }
-          }]}
+          // {
+          //   teams: {
+          //     $elemMatch: {
+          //       $in: teamList
+          //     }
+          //   }
+          // }
+        ]}
       ]
     };
     console.log(publicReports);
