@@ -6,6 +6,13 @@ const handlers = require('../handlers');
 
 const TeamRoute = express.Router();
 
+TeamRoute.route('/v3/api/teams/list')
+  .get(
+    // requireAuth,
+    handlers.team.teamList.getTeams,
+    handlers.team.teamList.respond
+  );
+
 TeamRoute.route('/v3/api/teams/requestCount/:userId')
   .get(
     // requireAuth,

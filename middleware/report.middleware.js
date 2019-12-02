@@ -75,8 +75,18 @@ const createReportTypeC = async (req, res, next) => {
       isInMap: req.body.isInMap,
       '_team': req.body._team,
       generatedReportId: getGeneratedCode.generatedReportId,
-      teams: teamList
+      teams: teamList,
+      isPublic: true
     });
+
+    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
+      const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
+        // there is somehtin wrong saving here couse in public_id
+        // wil be return after change the model in public_id to not unique
+        const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, {...photo, public_id: photo.public_id + '##' + createR.report._id});
+      }));
+      // return success.push(createR.report);
+    }
 
     if (createR.err) return Promise.reject({success: false, error: 'Unable to create report'});
 

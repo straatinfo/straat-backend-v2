@@ -1,5 +1,6 @@
 module.exports = {
   joinTeamRequest: require('./joinTeamRequest'),
   teamRequestCount: require('./teamRequestCount'),
-  teamMateChats: require('./teamMateChats')
+  teamMateChats: require('./teamMateChats'),
+  teamList: require('./teamList')
 };
