@@ -71,8 +71,24 @@ const getTeamInfoById = (_id) => {
     .populate({
       path: 'teamMembers',
       populate: {
-        select: { username: true, _id: 1, fname: true, lname: true },
-        path: '_user'
+        select: {
+          username: true,
+          _id: 1,
+          fname: true,
+          lname: true,
+          houseNumber: true,
+          streetName: true,
+          city: true,
+          postalCode: true,
+          country: true,
+          phoneNumber: true,
+          _profilePic: true,
+          _team: true
+        },
+        path: '_user',
+        populate: {
+          path: '_profilePic'
+        }
       }
     })
     .populate('_profilePic')
