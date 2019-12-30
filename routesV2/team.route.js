@@ -31,5 +31,18 @@ TeamRoute.route('/v3/api/teams/chat/:teamId/:userId')
       handlers.team.teamMateChats.respond
     );
 
+TeamRoute.route('/v3/api/teams/member/:teamId/:userId')
+    .delete(
+      requireAuth,
+      handlers.team.teamMateChats.getTeam,
+      handlers.team.removeTeamMember.checkTeamLeader,
+      handlers.team.removeTeamMember.checkMember,
+      handlers.team.removeTeamMember.removeTeamMember,
+      handlers.team.removeTeamMember.removeTeamLeader,
+      handlers.team.removeTeamMember.updateTeam,
+      handlers.team.removeTeamMember.updateUser,
+      handlers.team.removeTeamMember.respond
+    )
+
 module.exports = TeamRoute;
  
