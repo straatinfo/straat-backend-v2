@@ -50,6 +50,7 @@ function getTeam (req, res, next) { // populate team mates
 
       req.$scope.team = team;
       req.$scope.teamMembers = team && team.teamMembers;
+      req.$scope.teamLeaders = team && team.teamLeaders;
       next();
     })
     .catch(e => internals.catchError(e, req, res));

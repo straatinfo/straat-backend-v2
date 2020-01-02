@@ -22,27 +22,41 @@ TeamRoute.route('/v3/api/teams/requestCount/:userId')
   );
 
 TeamRoute.route('/v3/api/teams/chat/:teamId/:userId')
-    .get(
-      handlers.team.teamMateChats.getTeam,
-      handlers.team.teamMateChats.populateConversation,
-      handlers.team.teamMateChats.getTeamConvoPreview,
-      handlers.team.teamMateChats.populateUnreadChat,
-      handlers.team.teamMateChats.getLatestChat,
-      handlers.team.teamMateChats.respond
-    );
+  .get(
+    handlers.team.teamMateChats.getTeam,
+    handlers.team.teamMateChats.populateConversation,
+    handlers.team.teamMateChats.getTeamConvoPreview,
+    handlers.team.teamMateChats.populateUnreadChat,
+    handlers.team.teamMateChats.getLatestChat,
+    handlers.team.teamMateChats.respond
+  );
 
 TeamRoute.route('/v3/api/teams/member/:teamId/:userId')
-    .delete(
-      requireAuth,
-      handlers.team.teamMateChats.getTeam,
-      handlers.team.removeTeamMember.checkTeamLeader,
-      handlers.team.removeTeamMember.checkMember,
-      handlers.team.removeTeamMember.removeTeamMember,
-      handlers.team.removeTeamMember.removeTeamLeader,
-      handlers.team.removeTeamMember.updateTeam,
-      handlers.team.removeTeamMember.updateUser,
-      handlers.team.removeTeamMember.respond
-    )
+  .delete(
+    requireAuth,
+    handlers.team.teamMateChats.getTeam,
+    handlers.team.removeTeamMember.checkTeamLeader,
+    handlers.team.removeTeamMember.checkMember,
+    handlers.team.removeTeamMember.removeTeamMember,
+    handlers.team.removeTeamMember.removeTeamLeader,
+    handlers.team.removeTeamMember.updateTeam,
+    handlers.team.removeTeamMember.updateUser,
+    handlers.team.removeTeamMember.respond
+  );
+
+TeamRoute.route('/v3/api/teams/leader/:teamId')
+  .get(
+    // requireAuth,
+    handlers.team.teamMateChats.getTeam,
+    handlers.team.getTeamLeaders.getTeamLeaders
+  );
+
+TeamRoute.route('/v3/api/teams/leader/:teamId/:leaderId')
+  .get(
+    // requireAuth,
+    handlers.team.teamMateChats.getTeam,
+    handlers.team.getTeamLeaders.getTeamLeader
+  );
 
 module.exports = TeamRoute;
  

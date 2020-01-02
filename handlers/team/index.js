@@ -3,5 +3,6 @@ module.exports = {
   teamRequestCount: require('./teamRequestCount'),
   teamMateChats: require('./teamMateChats'),
   teamList: require('./teamList'),
-  removeTeamMember: require('./removeTeamMember')
+  removeTeamMember: require('./removeTeamMember'),
+  getTeamLeaders: require('./getTeamLeaders')
 };
