@@ -563,17 +563,22 @@ const getPublicReports = async (_reporter, _reportType = null) => {
 
     if (reportType && reportType.code == 'C') {
       publicReports = {
-        $or: [
+        $and: [
+          {_host: _host, ...extendParam},
           {
-            teams: {
-              $elemMatch: {
+            $or: [
+              {
+                teams: {
+                  $elemMatch: {
+                    $in: teamList
+                  }
+                }
+              },
+              {_team: {
                 $in: teamList
-              }
-            }
-          },
-          {_team: {
-            $in: teamList
-          }}
+              }}
+            ]
+          }
         ]
       };
     }
