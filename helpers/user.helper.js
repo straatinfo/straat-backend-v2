@@ -458,7 +458,8 @@ async function getActiveTeam (user) {
         .populate('_profilePic')
     }
     _activeTeam = _activeTeam.toObject();
-    _activeTeam.isLeader = _activeTeam.teamLeaders.length > 0;
+    _activeTeam.isLeader = _activeTeam.teamLeaders
+      .map(tl => tl._user.toString() == user._id.toString()).length > 0;
 
     return _activeTeam;
   } catch (e) {
