@@ -66,11 +66,13 @@ async function refreshUserData (req, res, next) {
 
     // start
     const user = await userHelper.findUserById(req.user._id)
+    const _activeTeam = await userHelper.getActiveTeam(user.user);
     const data = {
       user: user.user,
       setting: user.user.setting,
       token: jwtService.tokenForUser(user.user),
-      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null
+      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null,
+      _activeTeam
     }
     res.status(200).send({
       status: 'SUCCESS',
