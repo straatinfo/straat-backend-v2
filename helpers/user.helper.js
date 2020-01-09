@@ -338,7 +338,7 @@ const updateIsOnlineBySocketToken = (token, isOnline) => {
     try {
       // update user password
       const updateU = await User.findOneAndUpdate({socketToken: token}, {isOnline: isOnline})
-      if (updateU.err) {
+      if (updateU && updateU.err) {
         return resolve({err: updateU.err})
       }
       resolve({ err: null, data: 'success' })
@@ -459,7 +459,10 @@ async function getActiveTeam (user) {
     }
     _activeTeam = _activeTeam.toObject();
     _activeTeam.isLeader = _activeTeam.teamLeaders
-      .map(tl => tl._user.toString() == user._id.toString()).length > 0;
+      .filter(tl => tl._user.toString() == user._id.toString()).length > 0;
+
+    console.log(_activeTeam.teamLeaders
+      .filter(tl => tl._user.toString() == user._id.toString()))
 
     return _activeTeam;
   } catch (e) {
