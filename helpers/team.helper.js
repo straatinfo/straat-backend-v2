@@ -77,6 +77,7 @@ const getTeamInfoById = (_id) => {
             _id: 1,
             fname: true,
             lname: true,
+            email: true,
             houseNumber: true,
             streetName: true,
             city: true,
