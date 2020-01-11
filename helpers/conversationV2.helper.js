@@ -363,7 +363,7 @@ async function __createReportCChat (_user, _team, _report, teamIds) {
       'type': 'REPORT',
       '_author': _user,
       '_report': _report,
-      '_profilePic': _profilePic,
+      '_profilePic': null, // _profilePic,
       'participants': participants
     });
 

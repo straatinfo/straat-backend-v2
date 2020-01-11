@@ -29,6 +29,7 @@ ReportRoute.route('/V2')
 .post(
   /* requireAuth, */
   ReportFormValidator.reportFormValidator,
+  handlers.report.createReport.checkReportDuplicate,
   Report.createReportV2,
   ReportMiddleware.createReportTypeC
 );
