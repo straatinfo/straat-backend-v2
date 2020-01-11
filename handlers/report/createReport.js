@@ -26,7 +26,7 @@ function checkReportDuplicate (req, res, next) {
       select: {messages: true, _id: true}
     })
     .populate('attachments', ['_id', 'secure_url'])
-    .then(report => {
+    .then(async (report) => {
       if (report) {
         let result = report
     
