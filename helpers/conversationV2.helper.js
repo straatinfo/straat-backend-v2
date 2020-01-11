@@ -369,7 +369,7 @@ async function __createReportCChat (_user, _team, _report, teamIds) {
 
     const conversation = await newConvo.save();
     const updateReport = await Report.findByIdAndUpdate(_report, {'_conversation': conversation._id});
-    const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
+    const updateUsers = await Promise.all(teamMembers.teamMembers.map(async (tm) => {
       const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
     }));
 
