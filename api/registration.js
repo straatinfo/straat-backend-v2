@@ -363,7 +363,9 @@ const registerWithCodeV3 = async (req, res, next) => {
     const getU = await UserHelper.findUserById(createU.user._id)
     // give token
     const token = JwtService.tokenForUser(getU.user)
-    SuccessHelper.success(res, { user: getU.user, token: token })
+    req.$scope.userData = getU.user;
+    req.$scope.token = token;
+    // SuccessHelper.success(res, { user: getU.user, token: token })
     next();
   } catch (e) {
     console.log(e)
