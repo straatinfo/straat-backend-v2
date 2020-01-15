@@ -2,6 +2,8 @@
 const SuccessHelper = require('../../helpers/success.helper');
 
 function getTeamData (req, res, next) {
+  const user = req.$scope.userData;
+  const token = req.$scope.token;
   const teamId = req.body._team || req.body.teamId;
   if (teamId) {
     return req.db.Team.findOne({ _id: teamId })
@@ -31,8 +33,9 @@ function getTeamData (req, res, next) {
         console.log('\n\nERROR: ', e, '\n\n');
         res.end();
       });
+  } else {
+    SuccessHelper.success(res, { user: user, token: token })
   }
-  res.end();
 }
 
 async function sendNotification (req, res, next) {

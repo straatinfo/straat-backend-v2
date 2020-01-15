@@ -356,7 +356,9 @@ const registerWithCodeV3 = async (req, res, next) => {
         sendNewTeamRequest = await MailingHelper.sendNewTeamRequestNotif(createT, {fname, lname, phoneNumber})
       }
       if (sendNewTeamRequest && sendNewTeamRequest.err) {
-        return resolve({err: 'team was created but request to approve was not sent'})
+        console.log({err: 'team was created but request to approve was not sent'});
+        return ErrorHelper.ServerError(res);
+        // return resolve({err: 'team was created but request to approve was not sent'})
       }
     }
 
