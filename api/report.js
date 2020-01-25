@@ -250,7 +250,7 @@ const createReportV2 = async (req, res, next) => {
     }
     console.log(req.body.reportUploadedPhotos);
 
-    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
+    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length > 0) {
       const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
         const savePhoto = await ReportHelper.saveUploadedPhotoReport(createR.report._id, photo);
         if (savePhoto.err) {

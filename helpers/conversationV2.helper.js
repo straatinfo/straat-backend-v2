@@ -363,13 +363,13 @@ async function __createReportCChat (_user, _team, _report, teamIds) {
       'type': 'REPORT',
       '_author': _user,
       '_report': _report,
-      '_profilePic': _profilePic,
+      '_profilePic': null, // _profilePic,
       'participants': participants
     });
 
     const conversation = await newConvo.save();
     const updateReport = await Report.findByIdAndUpdate(_report, {'_conversation': conversation._id});
-    const updateUsers = await Promise.all(team.teamMembers.map(async (tm) => {
+    const updateUsers = await Promise.all(teamMembers.map(async (tm) => {
       const updateChater = await User.update({'_id': tm._user}, { '$addToSet': { 'conversations': conversation._id } });
     }));
 

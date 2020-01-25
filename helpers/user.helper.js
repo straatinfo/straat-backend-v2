@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const ErrorHelper = require('./error.helper');
 const bcrypt = require('bcrypt-nodejs');
-
+const Team = require('../models/Team');
 
 const checkUserByCredentials = (loginName) => {
   return new Promise((resolve, reject) => {
@@ -338,7 +338,7 @@ const updateIsOnlineBySocketToken = (token, isOnline) => {
     try {
       // update user password
       const updateU = await User.findOneAndUpdate({socketToken: token}, {isOnline: isOnline})
-      if (updateU.err) {
+      if (updateU && updateU.err) {
         return resolve({err: updateU.err})
       }
       resolve({ err: null, data: 'success' })
@@ -431,6 +431,46 @@ const changeViewed = async (id) => {
   });
 }
 
+async function getActiveTeam (user) {
+  try {
+    let _activeTeam = user._activeTeam;
+    if (!_activeTeam) {
+      if (user.teamLeaders.length > 0) {
+        await setActiveTeam(user._id, user.teamLeaders[0]._team)
+        _activeTeam = await Team.findById(user.teamLeaders[0]._team)
+        .select('-reports')
+        .populate('teamMembers')
+        .populate('teamLeaders')
+        .populate('_profilePic')
+      } else if (user.teamMembers.length > 0) {
+        await setActiveTeam(user._id, user.teamMembers[0]._team)
+        _activeTeam = await await Team.findById(user.teamMembers[0]._team)
+        .select('-reports')
+        .populate('teamMembers')
+        .populate('teamLeaders')
+        .populate('_profilePic')
+      }
+    } else {
+      _activeTeam = await Team.findById(_activeTeam._id)
+        .select('-reports')
+        .populate('teamMembers')
+        .populate('teamLeaders')
+        .populate('_profilePic')
+    }
+    _activeTeam = _activeTeam.toObject();
+    _activeTeam.isLeader = _activeTeam.teamLeaders
+      .filter(tl => tl._user.toString() == user._id.toString()).length > 0;
+
+    console.log(_activeTeam.teamLeaders
+      .filter(tl => tl._user.toString() == user._id.toString()))
+
+    return _activeTeam;
+  } catch (e) {
+    console.log(e);
+    throw e;
+  }
+}
+
 module.exports = {
   checkUserByCredentials: checkUserByCredentials,
   findUserById: findUserById,
@@ -453,4 +493,5 @@ module.exports = {
   updateIsOnlineBySocketToken,
   mapRadiusSetting: mapRadiusSetting,
   changeViewed: changeViewed,
+  getActiveTeam
 };

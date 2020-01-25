@@ -1,5 +1,9 @@
 
+const SuccessHelper = require('../../helpers/success.helper');
+
 function getTeamData (req, res, next) {
+  const user = req.$scope.userData;
+  const token = req.$scope.token;
   const teamId = req.body._team || req.body.teamId;
   if (teamId) {
     return req.db.Team.findOne({ _id: teamId })
@@ -29,11 +33,14 @@ function getTeamData (req, res, next) {
         console.log('\n\nERROR: ', e, '\n\n');
         res.end();
       });
+  } else {
+    SuccessHelper.success(res, { user: user, token: token })
   }
-  res.end();
 }
 
 async function sendNotification (req, res, next) {
+  const user = req.$scope.userData;
+  const token = req.$scope.token;
   try {
     const fcmTokens = req.$scope.fcmTokens || [];
     console.log('\n\n\nTOKENS: ', fcmTokens, '\n\n\n')
@@ -75,10 +82,12 @@ async function sendNotification (req, res, next) {
 
     const sendMessages = await req.lib.fcm.sendToMultipleTokenAsync(message, fcmTokens);
     console.log(sendMessages);
-    res.end();
+    SuccessHelper.success(res, { user: user, token: token })
+    // res.end();
   } catch (e) {
     console.log('\n\nERROR: ', e, '\n\n');
-    res.end();
+    SuccessHelper.success(res, { user: user, token: token })
+    // res.end();
   }
 }
 

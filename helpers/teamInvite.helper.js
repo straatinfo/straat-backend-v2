@@ -17,13 +17,17 @@ const checkInviteExist = (_team, _user) => {
 const getInviteListByTeam = (_team, isRequest = false) => {
   return new Promise((resolve, reject) => {
     TeamInvite.find({'_team': _team, isRequest: isRequest})
-    .populate('_team')
-    .populate('_user', [
-      '_id', 'fname', 'lname', 'email', 'gender',
-      'username', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber'
+    .populate('_team', [
+      '_id', '_host', 'teamName', 'teamEmail', 'isDeclined', 'isApproved', 'isVolunteer', 'profilePic'
     ])
+    .populate({
+      path: '_user',
+      select: '-password -firebaseTokens -messages -conversations',
+      populate: {
+        path: '_profilePic',
+        select: { _id: true, secure_url: true }
+      }
+    })
     .exec((err, teamInvites) => {
       if (err) {
         return resolve({err: err});
@@ -37,13 +41,17 @@ const getInviteListByTeam = (_team, isRequest = false) => {
 const getRequestListByUser = (_user, isRequest = true) => {
   return new Promise((resolve, reject) => {
     TeamInvite.find({'_user': _user, isRequest: isRequest })
-    .populate('_team')
-    .populate('_user', [
-      '_id', 'fname', 'lname', 'email', 'gender',
-      'username', 'houseNumber', 'streetName',
-      'city', 'state', 'country', 'postalCode',
-      'phoneNumber'
+    .populate('_team', [
+      '_id', '_host', 'teamName', 'teamEmail', 'isDeclined', 'isApproved', 'isVolunteer', 'profilePic'
     ])
+    .populate({
+      path: '_user',
+      select: '-password -firebaseTokens -messages -conversations',
+      populate: {
+        path: '_profilePic',
+        select: { _id: true, secure_url: true }
+      }
+    })
     .exec((err, teamInvites) => {
       if (err) {
         return resolve({err: err});

@@ -70,10 +70,44 @@ const getTeamInfoById = (_id) => {
     }) 
     .populate({
       path: 'teamMembers',
-      populate: {
-        select: { username: true, _id: 1, fname: true, lname: true },
-        path: '_user'
-      }
+      populate: [
+        {
+          select: {
+            username: true,
+            _id: 1,
+            fname: true,
+            lname: true,
+            email: true,
+            houseNumber: true,
+            streetName: true,
+            city: true,
+            postalCode: true,
+            country: true,
+            phoneNumber: true,
+            _profilePic: true,
+            _team: true
+          },
+          path: '_user',
+          populate: {
+            path: '_profilePic'
+          }
+        },
+        {
+          select: {
+            _id: 1,
+            teamName: true,
+            teamEmail: true,
+            _profilePic: true,
+            isVolunteer: true,
+            isApproved: true,
+            _conversation: true
+          },
+          path: '_team',
+          populate: {
+            path: '_profilePic'
+          }
+        }
+      ]
     })
     .populate('_profilePic')
     .populate('_host', [ '_id', 'hostName', 'email' ])

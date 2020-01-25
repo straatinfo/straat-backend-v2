@@ -1,3 +1,4 @@
 module.exports = {
-  getUnreadMessage: require('./getUnreadMessage')
+  getUnreadMessage: require('./getUnreadMessage'),
+  createReport: require('./createReport')
 };

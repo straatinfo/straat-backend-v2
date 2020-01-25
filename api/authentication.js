@@ -43,7 +43,8 @@ const login = async (req, res, next) => {
       user: user.user,
       setting: user.user.setting,
       token: JwtService.tokenForUser(user.user),
-      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null
+      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null,
+      _activeTeam: await UserHelper.getActiveTeam(user.user)
     }
     SuccessHelper.success(res, data)
   } catch (e) {
@@ -61,7 +62,10 @@ const register = async (req, res, next) => {
     const user = await UserHelper.findUserById(newUser.user._id)
     const data = {
       user: user,
-      token: JwtService.tokenForUser(user)
+      setting: user.user.setting,
+      token: JwtService.tokenForUser(user),
+      _activeDesign: (user.user.toObject()._host && user.user.toObject()._host._activeDesign) ? user.user.toObject()._host._activeDesign : null,
+      _activeTeam: await UserHelper.getActiveTeam(user.user)
     }
     SuccessHelper.success(res, data)
   } catch (e) {

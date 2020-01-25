@@ -563,17 +563,22 @@ const getPublicReports = async (_reporter, _reportType = null) => {
 
     if (reportType && reportType.code == 'C') {
       publicReports = {
-        $or: [
+        $and: [
+          {_host: _host, ...extendParam},
           {
-            teams: {
-              $elemMatch: {
+            $or: [
+              {
+                teams: {
+                  $elemMatch: {
+                    $in: teamList
+                  }
+                }
+              },
+              {_team: {
                 $in: teamList
-              }
-            }
-          },
-          {_team: {
-            $in: teamList
-          }}
+              }}
+            ]
+          }
         ]
       };
     }
@@ -617,10 +622,10 @@ const getNearbyReports = async (_reporter, long, lat, radius, reportId) => {
             $eq: true
           }
         },
+        {_team: {$in: teamList}},
         {$or: [
           {isPublic: true},
           {_reporter: _reporter},
-          {_team: {$in: teamList}},
           // {
           //   teams: {
           //     $elemMatch: {

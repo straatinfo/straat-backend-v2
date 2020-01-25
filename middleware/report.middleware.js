@@ -79,7 +79,13 @@ const createReportTypeC = async (req, res, next) => {
       isPublic: true
     });
 
-    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length !== 0) {
+    try {
+      req.body.reportUploadedPhotos = JSON.parse(req.body.reportUploadedPhotos)
+    } catch (e) {
+      req.body.reportUploadedPhotos = req.body.reportUploadedPhotos;
+    }
+
+    if (req.body.reportUploadedPhotos && req.body.reportUploadedPhotos.length > 0) {
       const saveReportUploadedPhotos = await Promise.all(req.body.reportUploadedPhotos.map(async(photo) => {
         // there is somehtin wrong saving here couse in public_id
         // wil be return after change the model in public_id to not unique

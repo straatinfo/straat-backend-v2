@@ -28,6 +28,16 @@ function getTeam (req, res, next) { // populate team mates
         }
       }
     })
+    .populate({
+      path: 'teamLeaders',
+      populate: {
+        path: '_user',
+        select: '_id email username fname lname gender _profilePic',
+        populate: {
+          path: '_profilePic'
+        }
+      }
+    })
     .then((team) => {
       if (!team) {
         return res.status({
@@ -40,6 +50,7 @@ function getTeam (req, res, next) { // populate team mates
 
       req.$scope.team = team;
       req.$scope.teamMembers = team && team.teamMembers;
+      req.$scope.teamLeaders = team && team.teamLeaders;
       next();
     })
     .catch(e => internals.catchError(e, req, res));
