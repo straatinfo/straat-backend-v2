@@ -20,5 +20,6 @@ module.exports = {
   TeamLeader: require('./TeamLeader'),
   TeamMember: require('./TeamMember'),
   User: require('./User'),
-  UnreadMessage: require('./UnreadMessage')
+  UnreadMessage: require('./UnreadMessage'),
+  Feedback: require('./Feedback')
 };

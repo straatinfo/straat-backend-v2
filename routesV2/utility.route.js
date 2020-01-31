@@ -17,4 +17,12 @@ UtilityRoute.route('/v3/api/utility/postcode')
   handlers.host.getHost.appendHostToAddress
 );
 
+UtilityRoute.route('/v3/api/utility/feedback')
+  .post(
+    requireAuth,
+    handlers.utility.feedback.validateParams,
+    handlers.utility.feedback.saveFeedback,
+    handlers.utility.feedback.sendFeedbackNotification
+  );
+
 module.exports = UtilityRoute;

@@ -164,6 +164,16 @@ const sendFeedBackNotif = (reporterName, reporterEmail, feedback, info) => {
   });
 };
 
+// feedback V2
+function sendFeedBackNotifV2 (reporterName, reporterEmail, feedback, deviceInfo) {
+  const sender = Config.EMAIL_ADDRESSES.FEED_BACK_EMAIL;
+  const receiver = Config.EMAIL_ADDRESSES.SEQRETARY_EMAIL;
+  const subject = 'FEEDBACK SEND TROUGH APP';
+  const mailBody = MailTemplates.sendFeedBackNotifV2(feedback, reporterName, reporterEmail, deviceInfo);
+
+  return SendGridService.basicMail(sender, receiver, subject, mailBody);
+}
+
 // delete team notif
 const deleteTeamNotif = () => {
   return new Promise((resolve, reject) => {
@@ -251,5 +261,6 @@ module.exports = {
   // deleteTeamNotif: deleteTeamNotif,
   forgotPasswordNotif: forgotPasswordNotif,
   activateHostNotif,
-  databaseBackup
+  databaseBackup,
+  sendFeedBackNotifV2
 };
