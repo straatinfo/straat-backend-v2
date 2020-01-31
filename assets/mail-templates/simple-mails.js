@@ -131,6 +131,21 @@ module.exports = {
     `;
   },
 
+  sendFeedBackNotifV2: (feedBackMessage, reporterName, reporterEmail, deviceInfo) => {
+    return `
+      <p>Greetings!</p>
+      <p>You receive a new feed back from ${reporterName}</p>
+      <p>Email: ${reporterEmail}</p>
+      <h5>Feedback:</h5>
+      <p>${feedBackMessage}</p>
+      <h5>Device Info:</h5>
+      <p>${deviceInfo}</p>
+
+      </br></br></br>
+      <p>Thank you.</p>
+    `;
+  },
+
   fogotPasswordNotif: (newPassword) => {
     return `
     <p>Geachte mevrouw, mijnheer,</p>
