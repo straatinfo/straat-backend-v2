@@ -1,6 +1,6 @@
 module.exports = {
   db: process.env.MONGODB_URI,
-  session_secret: process.env.SESSION_SECRET || 'mysupersecretkey',
+  session_secret: process.env.SESSION_SECRET,
   coudinary: {
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
@@ -26,8 +26,8 @@ module.exports = {
   },
   google: {
     // used in app
-    apiKey: 'AIzaSyCYDM_gyqp1UGVClhh05ek_4G0zr4n55xA',
-    fcmKey: 'AAAAWIq665Q:APA91bERF8GwK4Z2RhUPeXvzWaUSMtXkqxFXDPu4GZa7CJFRNvBbLqSEEcxZ9phyGacvevatkiCuIVhl3oJqO51tUNfzrKcgPSrNKS9gcwYORcdKKHvfZTc0wkO-1IWdmzKZbagCdl5R'
+    apiKey: process.env.GOOGLE_APP_API_KEY,
+    fcmKey: process.env.GOOGLE_APP_FCM_KEY
   },
 
   urls: {
