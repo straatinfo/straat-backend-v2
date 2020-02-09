@@ -13,15 +13,6 @@ const teamSchema = new Schema({
   creationMethod: { type: String, default: 'MOBILE' },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
-  teamLeaders: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
-  }],
-  teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
-  }],
-  reports: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
-  }],
   _conversation: { type: mongoose.Schema.Types.ObjectId, ref: 'Conversation'}
 }, { timestamps: true });
 

@@ -1,31 +1,26 @@
 const express = require('express');
 const path = require('path');
-const logger = require('morgan');
+const validator = require('express-validator');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const session = require('express-session');
 const passport = require('passport');
-const flash = require('connect-flash');
-const validator = require('express-validator');
-const MongoStore = require('connect-mongo')(session);
-const morgan = require('morgan');
-const Route = require('./routes');
-const RouteV2 = require('./routesV2');
-const TokenService = require('./service/token.service');
-const ReportHousekeeping = require('./middleware/housekeeping/report.housekeeping');
+const route = require('./routes');
 const cors = require('cors');
-const Config = require('./config');
-var Boom = require('./middleware/error-handling/boom');
-const expressValidator = require('express-validator');
+const config = require('./config');
+const bunyan = require('bunyan');
+
+const log = bunyan.createLogger({
+  name: 'straat.info-backend',
+  stream: process.stdout,
+  level: 'info'
+});
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-const SendgrdiService = require('./service/sendgrid.service');
+mongoose.connect(config.db, { useNewUrlParser: true, retryWrites: false });
 
-mongoose.Promise = global.Promise;
-mongoose.connect(Config.DATA_BASE, {useMongoClient: true});
-    
 const Role = require('./models/Role');
 app.use(cors());
 app.use(function(req, res, next) {
@@ -35,63 +30,27 @@ app.use(function(req, res, next) {
   next();
 });
 
-// app.use(expressValidator({}));
-
 app.use((req, res, next) => {
   req.$scope = {};
   req.db = require('./models');
   req.lib = require('./lib');
+  req.log = log;
+  req.$middlewares = {};
   next();
 });
 
-app.use(logger('dev'));
-app.use(morgan());
+app.use(validator());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(validator());
 app.use(cookieParser());
-app.use(session({
-  secret: Config.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: new MongoStore({ mongooseConnection: mongoose.connection }),
-  cookie: { maxAge: 180 * 60 * 1000 }
-}));
-app.use(TokenService.tokenTrimmer);
-app.use(flash());
+app.use(require('./utils/tokenTrimmer'));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(function(req, res, next) {
-  // res.locals.login = req.isAuthenticated();
-  // res.locals.session = req.session;
-  next();
+route(app);
+
+app.listen(PORT, () => {
+  log.info(`Server is listening on port: ${PORT}`);
 });
-
-Route(app); // backwards compatible
-RouteV2(app); // optimized and refractored version of routes
-app.use(Boom);
-
-setInterval(function () {
-  ReportHousekeeping.updateExpiredReports();
-}, 43200000);
-
-setInterval(function () {
-  ReportHousekeeping.backupDB();
-}, 1000 * 60 * 60 * 6);
-
-// async function testMail () {
-//   const delft = 'delft@straat.info';
-//   const myE = 'johnhiggins.avila@gmail.com';
-//   const BCC = ['denhaag@straat.info', myE];
-
-//   try {
-//     const msgSend = await SendgrdiService.basicMailWithCC('no-reply@test.com', delft, 'TEST EMAIL', 'This is a test email', BCC);
-//   } catch (e) {
-//     console.log(JSON.stringify(e, null, 2));
-//   }
-// }
-
-// testMail();
-
-module.exports = app;

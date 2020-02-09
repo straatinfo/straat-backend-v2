@@ -1,15 +1,32 @@
 const express = require('express');
 const passport = require('passport');
-require('../service/passport.service');
+require('../utils/passport');
 const requireSignin = passport.authenticate('local', { session: false });
-const Authentication = require('../api/authentication');
-const AuthRoute = express.Router();
-const UserValidator = require('../validator/user.validator');
+const handlers = require('../handlers');
 
-AuthRoute.route('/login')
-.post(requireSignin, Authentication.login);
+const authenticationRoute = express.Router();
 
-AuthRoute.route('/register')
-.post(UserValidator.registrationFormValidator, Authentication.register);
+authenticationRoute.route('/v4/api/authentication/signup')
+  .post(
+    handlers.authentication.signup.validateUserParams,
+    handlers.authentication.signup.validateEmail,
+    handlers.authentication.signup.checkHost,
+    handlers.authentication.signup.checkTeam,
+    handlers.authentication.signup.getUserRole,
+    handlers.authentication.signup.createUser,
+    handlers.authentication.signup.joinTeam,
+    handlers.authentication.signup.createTeam,
+    handlers.authentication.signup.commitTransaction,
+    handlers.authentication.signup.sendTeamRequest,
+    handlers.authentication.signup.getUserData,
+    handlers.authentication.signup.getTeamData,
+    handlers.authentication.signup.sendNotification,
+    handlers.authentication.signup.respond
+  );
 
-module.exports = AuthRoute;
+authenticationRoute.route('/v4/api/authentication/signin')
+  .post(
+    requireSignin,
+    handlers.authentication.signin
+  );
+module.exports = authenticationRoute;

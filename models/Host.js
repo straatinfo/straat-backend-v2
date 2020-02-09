@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const bcrypt = require('bcrypt-nodejs');
 
 const HostSchema = new Schema({
   hostName: { type: String, indexed: true },
@@ -10,7 +11,6 @@ const HostSchema = new Schema({
   password: { type: String },
   fname: { type: String },
   lname: { type: String },
-  gender: { type: String },
   houseNumber: { type: String },
   streetName: { type: String },
   city: { type: String },
@@ -32,50 +32,14 @@ const HostSchema = new Schema({
     isNotified: { type: Boolean },
   },
   language: { type: String, default: 'nl' },
-  fcmToken: { type: String, default: null },                                 // fcm token: use for kiled, background notification for user
-  socketToken: { type: String, default: null },                              // soket token: use for websocket live connection broadcast
   isVolunteer: { type: Boolean, default: false },
-  isOnline: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
-  isPatron: { type: Boolean, default: false },
   isActivated: { type: Boolean, default: false },                            // this is for host
   isSpecific: { type: Boolean, default: false },
   softRemoved: { type: Boolean, default: false },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
-  _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' },    // for host
+  _design: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' },    // for host
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
-  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  _activeTeam: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },        // for Reporters/ordinary user
-  reporters: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'User'
-  }],
-  teams: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Team'
-  }],
-  teamLeaders: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
-  }],
-  teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
-  }],
-  designs: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Design'
-  }],
-  mainCategories: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
-  }],
-  hostReports: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
-  }],
-  reporterReports: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
-  }],
-  conversations: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Conversation'
-  }],
-  messages: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Message'
-  }],
   firebaseTokens: [{
     deviceId: { type: String, required: true, index: true },
     platform: { type: String, enum: ['IOS', 'ANDROID', 'WEB'], default: 'ANDROID' },
@@ -84,5 +48,9 @@ const HostSchema = new Schema({
 }, {timestamps: true})
 
 HostSchema.index({geoLocation: '2dsphere'})
+
+HostSchema.methods.encryptPassword = function(password) {
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
+};
 
 module.exports = mongoose.model('Host', HostSchema)

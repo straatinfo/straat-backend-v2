@@ -4,10 +4,7 @@ const bcrypt = require('bcrypt-nodejs');
 const _ = require('lodash');
 
 const userSchema = new Schema({
-  hostName: { type: String, indexed: true },
-  hostAlternateName: { type: String, indexed: true },
   email: { type: String, required: true, indexed: true , unique: true },
-  hostPersonalEmail: { type: String },
   username: { type: String, unique: false },
   password: { type: String },
   fname: { type: String },
@@ -34,50 +31,15 @@ const userSchema = new Schema({
     isNotified: { type: Boolean },
   },
   language: { type: String, default: 'nl' },
-  fcmToken: { type: String, default: null },                                 // fcm token: use for kiled, background notification for user
-  socketToken: { type: String, default: null },                              // soket token: use for websocket live connection broadcast
   isVolunteer: { type: Boolean, default: false },
-  isOnline: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
-  isPatron: { type: Boolean, default: false },
   isActivated: { type: Boolean, default: false },                            // this is for host
   isSpecific: { type: Boolean, default: false },
   softRemoved: { type: Boolean, default: false },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
   _activeDesign: { type: mongoose.Schema.Types.ObjectId, ref: 'Design' },    // for host
   _role: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
-  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  _activeTeam: { type: mongoose.Schema.Types.ObjectId, ref: 'Team' },        // for Reporters/ordinary user
-  reporters: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'User'
-  }],
-  teams: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Team'
-  }],
-  teamLeaders: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamLeader'
-  }],
-  teamMembers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'TeamMember'
-  }],
-  designs: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Design'
-  }],
-  mainCategories: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
-  }],
-  hostReports: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
-  }],
-  reporterReports: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
-  }],
-  conversations: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Conversation'
-  }],
-  messages: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Message'
-  }],
+  _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },       // for Reporters/ordinary user
   firebaseTokens: [{
     deviceId: { type: String, required: true, index: true },
     platform: { type: String, enum: ['IOS', 'ANDROID', 'WEB'], default: 'ANDROID' },

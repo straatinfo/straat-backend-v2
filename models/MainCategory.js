@@ -10,9 +10,6 @@ const mainCategorySchema = new Schema({
   description: { type: String },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   _reportType: { type: mongoose.Schema.Types.ObjectId, ref: 'ReportType', required: true },
-  reports: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'Report'
-  }],
   subCategories: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory'
   }]
