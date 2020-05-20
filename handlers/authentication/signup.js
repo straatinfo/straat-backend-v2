@@ -216,7 +216,7 @@ async function createUser (req, res, next) {
     const userId = await req.$scope.transaction.insert('User', {
       email: req.body.email,
       username: req.body.username,
-      password: req.lib.crypto.hashString(req.body.password),
+      password: req.body.password,
       houseNumber: req.body.houseNumber,
       streetName: req.body.streetName,
       city: req.body.city,
@@ -227,6 +227,7 @@ async function createUser (req, res, next) {
       lname: req.body.lname,
       gender: req.body.gender,
       _host: req.body._host,
+      _role: (await req.db.Role.findOne({ code: 'USER' }))._id,
       isVolunteer: (req.body.isVolunteer !== null) ? req.body.isVolunteer : true
     });
 

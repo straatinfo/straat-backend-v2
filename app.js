@@ -9,6 +9,8 @@ const route = require('./routes');
 const cors = require('cors');
 const config = require('./config');
 const bunyan = require('bunyan');
+const { ApolloServer, gql } = require('apollo-server-express');
+const { typeDefs, resolvers } = require('./graphql_shema');
 
 const log = bunyan.createLogger({
   name: 'straat.info-backend',
@@ -19,6 +21,7 @@ const log = bunyan.createLogger({
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+mongoose.set('debug', (process.env.MONGOOSE_DEBUG == 'true') );
 mongoose.connect(config.db, { useNewUrlParser: true, retryWrites: false });
 
 const Role = require('./models/Role');
@@ -50,6 +53,41 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 route(app);
+
+app.use((req, res, next) => {
+  // req.log.info(req.query, 'query');
+  req.log.info(req.headers, 'request body');
+  next();
+});
+
+passport.initialize()
+
+app.use('/graphql', (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user, info) => {
+    if (user) {
+      req.user = user.toObject();
+      // req.log.info(user.toObject(), 'User Accessing API');
+    }
+
+    next()
+  })(req, res, next)
+})
+
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({req, res}) => {
+    return {
+      req,
+      res,
+
+    };
+  },
+  playground: true
+});
+
+server.applyMiddleware({ app, path: '/graphql' });
 
 app.listen(PORT, () => {
   log.info(`Server is listening on port: ${PORT}`);

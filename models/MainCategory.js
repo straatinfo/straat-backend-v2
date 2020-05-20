@@ -8,11 +8,9 @@ const mainCategorySchema = new Schema({
     word: String
   }],
   description: { type: String },
+  softRemoved: { type: Boolean, default: false },
   _host: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  _reportType: { type: mongoose.Schema.Types.ObjectId, ref: 'ReportType', required: true },
-  subCategories: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory'
-  }]
+  _reportType: { type: mongoose.Schema.Types.ObjectId, ref: 'ReportType', required: true }
 }, {timestamps: true})
 
 //

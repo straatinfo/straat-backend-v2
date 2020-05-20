@@ -4,10 +4,7 @@ const Schema = mongoose.Schema;
 const reportTypeSchema = new Schema({
   code: { type: String, unique: true },
   name: { type: String },
-  description: { type: String },
-  mainCategories: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory'
-  }]
+  description: { type: String }
 }, {timestamps: true});
 
 module.exports = mongoose.model('ReportType', reportTypeSchema);

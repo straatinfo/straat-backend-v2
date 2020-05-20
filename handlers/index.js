@@ -1,3 +1,5 @@
 module.exports = {
-  authentication: require('./authentication')
+  authentication: require('./authentication'),
+  host: require('./host'),
+  role: require('./role')
 };

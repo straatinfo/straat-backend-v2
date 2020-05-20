@@ -3,6 +3,8 @@ const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
   _author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  _receiever: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  isRead: { type: Boolean, default: false },
   body: { type: String },
   attachments: [{
     type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' // attachment links

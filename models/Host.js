@@ -9,8 +9,6 @@ const HostSchema = new Schema({
   hostPersonalEmail: { type: String },
   username: { type: String, unique: false },
   password: { type: String },
-  fname: { type: String },
-  lname: { type: String },
   houseNumber: { type: String },
   streetName: { type: String },
   city: { type: String },
@@ -32,7 +30,6 @@ const HostSchema = new Schema({
     isNotified: { type: Boolean },
   },
   language: { type: String, default: 'nl' },
-  isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
   isActivated: { type: Boolean, default: false },                            // this is for host
   isSpecific: { type: Boolean, default: false },

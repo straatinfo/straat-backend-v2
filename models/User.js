@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const bcrypt = require('bcrypt-nodejs');
 const _ = require('lodash');
+const lib = require('../lib');
 
 const userSchema = new Schema({
   email: { type: String, required: true, indexed: true , unique: true },
@@ -33,7 +33,7 @@ const userSchema = new Schema({
   language: { type: String, default: 'nl' },
   isVolunteer: { type: Boolean, default: false },
   isBlocked: { type: Boolean, default: false },
-  isActivated: { type: Boolean, default: false },                            // this is for host
+  isActivated: { type: Boolean, default: true },                            // this is for host
   isSpecific: { type: Boolean, default: false },
   softRemoved: { type: Boolean, default: false },
   _profilePic: { type: mongoose.Schema.Types.ObjectId, ref: 'MediaUpload' },
@@ -47,20 +47,10 @@ const userSchema = new Schema({
   }]
 }, {timestamps: true});
 
-userSchema.methods.encryptPassword = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
-};
-
 userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, platform }) => {
   try {
     const user = await User.findOne({ _id: reporterId }).populate('firebaseTokens');
     const firebaseTokens = user.firebaseTokens || [];
-    // const oldToken = _.find(firebaseTokens, (fbt) => {
-    //   return fbt.deviceId === deviceId;
-    // });
-    // const firebaseToken = _.find(firebaseTokens, (fbt) => {
-    //   return fbt.deviceId === deviceId;
-    // });
     const newFirebaseTokens = firebaseTokens
       .reduce((pv, cv) => {
         if (cv.deviceId == deviceId) {
@@ -70,16 +60,6 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
         }
       }, []);
     newFirebaseTokens.push({ deviceId: deviceId, token: token, platform: platform || 'ANDROID' });
-    console.log('NEW_FIREBASE_TOKEN: ', newFirebaseTokens)
-    // if (firebaseToken) {
-    //   newFirebaseTokens = firebaseTokens.reduce((pv, cv) => {
-    //     if (cv.deviceId === deviceId) {
-    //       return pv.concat([{ deviceId: cv.deviceId, token: token, platform: cv.platform || 'ANDROID' }]);
-    //     } else {
-    //       return pv.concat([{ deviceId: cv.deviceId, token: cv.token, platform: cv.platform || 'ANDROID' }]);
-    //     }
-    //   }, []);
-    // }
     let update;
     if (newFirebaseTokens && Array.isArray(newFirebaseTokens)) {
       update = await User.findOneAndUpdate({ _id: reporterId }, {
@@ -90,7 +70,6 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
         $addToSet: { firebaseTokens: { deviceId: deviceId, token: token, platform: platform || 'ANDROID' }}
       });
     }
-    // console.log(update);
     return update;
   }
   catch (e) {
@@ -99,6 +78,22 @@ userSchema.statics.addOrUpdateDevice = async ({ reporterId, deviceId, token, pla
 };
 
 userSchema.index({geoLocation: '2dsphere'})
+
+userSchema.pre('save', function (next) {
+
+  if (this.password && this.password !== '') {
+    this.password = lib.crypto.hashString(this.password);
+  }
+
+  if (this.isVolunteer) {
+    this.isBlocked = false
+  } else {
+    this.isBlocked = true
+  }
+
+
+  return next();
+})
 
 const User = mongoose.model('User', userSchema);
 

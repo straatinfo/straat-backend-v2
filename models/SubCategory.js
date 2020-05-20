@@ -8,6 +8,7 @@ const subCategorySchema = new Schema({
     word: String
   }],
   description: { type: String },
+  softRemoved: { type: Boolean, default: false },
   _mainCategory: { type: mongoose.Schema.Types.ObjectId, ref: 'MainCategory' }
 }, {timestamps: true});
 

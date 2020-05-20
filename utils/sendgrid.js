@@ -44,7 +44,7 @@ const basicMailWithCC = (sender = 'Straat.info No reply', receiver, subject, mes
       resolve({err: null, message: `Success` });
     }
     catch (e) {
-      console.log('SENDGRID_ERROR', e);
+      console.log('SENDGRID_ERROR', e && e.response && e.response.body);
       reject(e);
     }
   });
