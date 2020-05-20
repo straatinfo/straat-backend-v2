@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "MONGOOSE_DEBUG=true NODE_ENV=development nodemon app.js",
-    "start": "NODE_ENV=production node app.js"
+    "start": "TZ='Etc/UTC' NODE_ENV=production node app.js"
   },
   "author": "John Higgins Avila",
   "license": "MIT",
