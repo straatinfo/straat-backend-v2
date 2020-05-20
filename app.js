@@ -84,7 +84,8 @@ const server = new ApolloServer({
 
     };
   },
-  playground: true
+  playground: true,
+  introspection: process.env.APOLLO_SERVER_INTROSPECTION == 'true'
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
