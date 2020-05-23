@@ -16,7 +16,7 @@ const data = [
     postalCode: '2500 DJ',
     phoneNumber: '14070',
     _role: '5a75c9de3a06a627a7e8af45',
-    password: newUser.encryptPassword('test')
+    password: 'test'
   },
   {
     _id: '5aab870bce08810014422977',
@@ -29,7 +29,7 @@ const data = [
     postalCode: '3130 EB',
     phoneNumber: '(010) 248 40 00',
     _role: '5a75c9de3a06a627a7e8af45',
-    password: newUser.encryptPassword('test')
+    password: 'test'
   },
   {
     _id: '5a844e1bf154bc463543b987',
@@ -37,7 +37,7 @@ const data = [
     email: 'default_host@test.com',
     username: 'default_host',
     postalCode: '2500 DJ',
-    password: newUser.encryptPassword('test'),
+    password: 'test',
     _role: '5a75c9de3a06a627a7e8af45' // should be changed according to _role in db
   },
   {
@@ -46,7 +46,7 @@ const data = [
     email: 'alblasserdamTest@straat.info',
     username: 'alblasserdam',
     postalCode: '2950 AA',
-    password: newUser.encryptPassword('test'),
+    password: 'test',
     _role: '5a75c9de3a06a627a7e8af45' // should be changed according to _role in db
   },
 ]

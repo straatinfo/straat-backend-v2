@@ -14,6 +14,9 @@ module.exports = {
       if (arg.hostId) {
         query._host = arg.hostId;
       }
+      if (arg.isVolunteer || typeof arg.isVolunteer == 'boolean') {
+        query.isVolunteer = arg.isVolunteer;
+      }
 
       return Team.find(query);
     },

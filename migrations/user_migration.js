@@ -12,7 +12,7 @@ const users = [
     username: 'admin',
     postalCode: 'test',
     _role: '5a75c9de3a06a627a7e8af44',
-    password: newUser.encryptPassword('admin')
+    password: 'admin'
   })
 ];
 

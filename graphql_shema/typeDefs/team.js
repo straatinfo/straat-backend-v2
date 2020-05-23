@@ -3,7 +3,7 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
   extend type Query {
     team (id: ID): Team
-    teams (softRemoved: Boolean, hostId: String): [Team!]!
+    teams (softRemoved: Boolean, hostId: String, isVolunteer: Boolean): [Team!]!
     unJoinedTeams (hostId: String!, userId: String!): [Team!]!
   }
 
