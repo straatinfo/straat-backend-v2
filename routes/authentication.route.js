@@ -24,6 +24,11 @@ authenticationRoute.route('/v4/api/authentication/signup')
     handlers.authentication.signup.respond
   );
 
+authenticationRoute.route('/v4/api/authentication/validateInput')
+  .post(
+    handlers.utility.validateRegistrationInput
+  );
+
 authenticationRoute.route('/v4/api/authentication/signin')
   .post(
     requireSignin,

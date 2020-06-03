@@ -4,5 +4,6 @@ module.exports = (app) => {
   })
   app.use(require('./authentication.route'));
   app.use(require('./role.route'));
-  app.use(require('./host.route'))
+  app.use(require('./host.route'));
+  app.use(require('./utility.route'));
 };

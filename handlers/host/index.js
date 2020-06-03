@@ -1,4 +1,5 @@
 module.exports = {
   gethost: require('./gethost'),
-  getHosts: require('./gethosts')
+  getHosts: require('./gethosts'),
+  appendHostToAddress: require('./appendHostToAddress')
 };

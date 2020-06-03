@@ -1,4 +1,5 @@
 module.exports = {
   getRole: require('./getRole'),
-  getRoles: require('./getRoles')
+  getRoles: require('./getRoles'),
+  getHostRole: require('./getHostRole')
 };
