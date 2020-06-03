@@ -34,4 +34,10 @@ authenticationRoute.route('/v4/api/authentication/signin')
     requireSignin,
     handlers.authentication.signin
   );
+
+authenticationRoute.route('/v4/api/authentication/enterCode')
+  .post(
+    handlers.utility.enterCode
+  );
+
 module.exports = authenticationRoute;

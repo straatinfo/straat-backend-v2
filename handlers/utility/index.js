@@ -1,4 +1,5 @@
 module.exports = {
   getPostCode: require('./getPostCode'),
-  validateRegistrationInput: require('./validateRegistrationInput')
+  validateRegistrationInput: require('./validateRegistrationInput'),
+  enterCode: require('./enterCode')
 };
