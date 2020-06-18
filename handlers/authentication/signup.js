@@ -9,6 +9,17 @@ internals.catchError = async function (err, req, res) {
     req.$scope.transaction.clean();
   }
 
+  if (err.error && err.error.name) {
+    if (err.error.name && err.error.name.toLowerCase() == 'mongoerror' && err.error.code == 11000) {
+      return res.status(400).send({
+        status: 'ERROR',
+        statusCode: 100,
+        httpCode: 400,
+        message: 'There is a duplicate key in the input'
+      });
+    }
+  }
+
   return res.status(500).send({
     status: 'ERROR',
     statusCode: 100,
@@ -210,8 +221,8 @@ function getUserRole (req, res, next) {
 }
 
 async function createUser (req, res, next) {
+  const transaction = new Transaction();
   try {
-    const transaction = new Transaction();
     req.$scope.transaction = transaction;
     const userId = await req.$scope.transaction.insert('User', {
       email: req.body.email,
@@ -236,6 +247,7 @@ async function createUser (req, res, next) {
     next();
   }
   catch (err) {
+    await transaction.rollback();
     internals.catchError(err, req, res)
   }
 }
@@ -256,6 +268,7 @@ async function joinTeam (req, res, next) {
 
     next();
   } catch (err) {
+    await transaction.rollback();
     internals.catchError(err, req, res);
   }
 }
@@ -307,17 +320,19 @@ async function createTeam (req, res, next) {
 
     next();
   } catch (err) {
+    await transaction.rollback();
     internals.catchError(err, req, res)
   }
 }
 
 async function commitTransaction (req, res, next) {
+  const transaction = req.$scope.transaction;
   try {
-    const transaction = req.$scope.transaction;
     await transaction.run();
 
     next();
   } catch (e) {
+    await transaction.rollback();
     internals.catchError(e, req, res);
   }
 }
