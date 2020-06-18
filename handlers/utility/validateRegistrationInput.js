@@ -31,7 +31,7 @@ async function validateRegistrationInput (req, res, next) {
 
   if (teamName && !hasError) {
     const team = await req.db.Team.findOne({ teamName });
-    if (user) {
+    if (team) {
       hasError = true;
       error.statusMessage = 'Invalid Parameter: Team name is already in use';
     }
