@@ -5,6 +5,7 @@ internals.catchError = async function (err, req, res) {
   req.log.error(err, 'POST /v4/api/authentication/signup');
 
   if (req.$scope.transaction && req.$scope.transaction.rollback) {
+    console.log('rolling back');
     await req.$scope.transaction.rollback();
     req.$scope.transaction.clean();
   }
@@ -366,9 +367,9 @@ function getTeamData (req, res, next) {
   }
   const user = req.$scope.userData;
   const token = req.$scope.token;
-  const teamId = req.$scope.teamId;
+  const teamId = req.$scope.teamId || req.body._team;
 
-  return req.db.TeamMember.find({ _team: team._id })
+  return req.db.TeamMember.find({ _team: teamId })
     .populate('_user')
     .then((teamMembers) => {
       const tokens = teamMembers.reduce((pv, cv) => {
