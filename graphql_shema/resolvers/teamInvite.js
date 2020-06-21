@@ -4,21 +4,21 @@ const { Team, User, TeamInvite } = require('../../models');
 
 module.exports = {
   Query: {
-    designs: (root, arg, context, info) => {
+    teamInvites: (root, arg, context, info) => {
       const query = {};
       if (arg.softRemoved != null) {
         query.softRemoved = arg.softRemoved;
       }
       if (arg.userId) {
-        query._user = userId;
+        query._user = arg.userId;
       }
       if (arg.teamId) {
-        query._team = teamId;
+        query._team = arg.teamId;
       }  
 
       return TeamInvite.find(query);
     },
-    design: (root, {id}, context, info) => {
+    teamInvite: (root, {id}, context, info) => {
       const query = {};
       let hasQ = false;
       if (id) {
