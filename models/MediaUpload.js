@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const mediaUploadSchema = new Schema({
+  isUsed: { type: Boolean, default: false },
   public_id: { type: String, unique: true, required: true },
   mimetype: { type: String, required: true },
   url: { type: String, required: true },
@@ -12,4 +13,24 @@ const mediaUploadSchema = new Schema({
   height: Number
 }, { timestamps: true });
 
-module.exports = mongoose.model('MediaUpload', mediaUploadSchema);
+mediaUploadSchema.statics.setToInUse = async function (mediaId) {
+  try {
+    const updatedMediaUpload = await MediaUpload.findOneAndUpdate({ _id: mediaId }, { isUsed: true });
+    return updatedMediaUpload;
+  } catch (e) {
+    throw e;
+  }
+};
+
+mediaUploadSchema.statics.setToInUnUse = async function (mediaId) {
+  try {
+    const updatedMediaUpload = await MediaUpload.findOneAndUpdate({ _id: mediaId }, { isUsed: false });
+    return updatedMediaUpload;
+  } catch (e) {
+    throw e;
+  }
+};
+
+const MediaUpload = mongoose.model('MediaUpload', mediaUploadSchema);
+
+module.exports = MediaUpload;
