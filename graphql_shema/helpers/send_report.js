@@ -32,24 +32,68 @@ async function _createReport(req) {
     hostId,
     reportTypeCode,
     teamId,
-    attachments = []
+    attachments = [],
+    isVehicleInvolved,
+    vehicleInvolvedCount,
+    vehicleInvolvedDescription,
+    isPeopleInvolved,
+    peopleInvolvedCount,
+    peopleInvolvedDescription
   } = req.body;
 
-  const report = await req.db.Report.create({
-    title,
-    description,
-    location,
-    long,
-    lat,
-    _mainCategory: mainCategoryId,
-    _subCategory: subCategoryId,
-    isUrgent,
-    _reporter: reporterId,
-    _host: hostId,
-    _reportType: req.$scope.reportType._id,
-    _team: teamId,
-    attachments
-  });
+  let reportBody;
+
+  if (!reporterId) {
+    reporterId = req.user && req.user._id;
+  }
+
+  switch (reportTypeCode.toUpperCase()) {
+    case 'A': {
+      reportBody = {
+        title,
+        description,
+        location,
+        long,
+        lat,
+        _mainCategory: mainCategoryId,
+        _subCategory: subCategoryId,
+        isUrgent,
+        _reporter: reporterId,
+        _host: hostId,
+        _reportType: req.$scope.reportType._id,
+        _team: teamId,
+        attachments
+      }
+      break;
+    }
+    case 'B': {
+      reportBody = {
+        title,
+        description,
+        location,
+        long,
+        lat,
+        _mainCategory: mainCategoryId,
+        isUrgent,
+        _reporter: reporterId,
+        _host: hostId,
+        _reportType: req.$scope.reportType._id,
+        _team: teamId,
+        attachments,
+        isVehicleInvolved,
+        vehicleInvolvedCount: vehicleInvolvedCount || 0,
+        vehicleInvolvedDescription,
+        isPeopleInvolved,
+        peopleInvolvedCount: peopleInvolvedCount || 0,
+        peopleInvolvedDescription
+      };
+      break;
+    }
+    default:
+      throw new Error('Invalid Report Code');
+  }
+
+  const report = await req.db.Report.create(reportBody);
   req.$scope.report = report;
   return req;
 }
@@ -113,9 +157,29 @@ async function _sendReportTypeADeepLink (req) {
   return req;
 }
 
+async function _sendReportTypeBNotification (req) {
+  const report = req.$scope.report;
+
+  console.log(report);
+
+  let mainName = report._mainCategory && report._mainCategory.translations && report._mainCategory.translations.length > 1 &&  _.find(report._mainCategory.translations, (mc) => mc.code == 'nl') ?  _.find(report._mainCategory.translations, (mc) => mc.code == 'nl').word : '';
+
+  await req.lib.mail.sendReportBNotifToReporter(
+    report._reporter.email,
+    report.createdAt,
+    mainName,
+    report.location,
+    report.description,
+    'nl'
+  );
+
+  return req;
+}
+
 module.exports = {
   _getReportType,
   _createReport,
   _populateReport,
-  _sendReportTypeADeepLink
+  _sendReportTypeADeepLink,
+  _sendReportTypeBNotification
 };

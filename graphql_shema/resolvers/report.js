@@ -72,6 +72,7 @@ module.exports = {
   Mutation: {
     sendReportTypeA: async (root, arg, context, info) => {
       context.req.body = arg;
+      context.req.body.reportTypeCode = 'A';
 
       try {
         const req = await pWaterfall([
@@ -79,6 +80,34 @@ module.exports = {
           sendReport._createReport,
           sendReport._populateReport,
           sendReport._sendReportTypeADeepLink
+        ], context.req);
+        return {
+          status: 'SUCCESS',
+          statusCode: 0,
+          httpCode: 200,
+          message: 'Successfully created a report',
+          id: req.$scope.report && req.$scope.report.generatedReportId
+        };
+      } catch (e) {
+        context.req.log.error(e, 'Create report type A');
+        return {
+          status: 'ERROR',
+          statusCode: 100,
+          httpCode: 500,
+          message: 'Internal server error'
+        };
+      }
+    },
+    sendReportTypeB: async (root, arg, context, info) => {
+      context.req.body = arg;
+      context.req.body.reportTypeCode = 'B';
+
+      try {
+        const req = await pWaterfall([
+          sendReport._getReportType,
+          sendReport._createReport,
+          sendReport._populateReport,
+          sendReport._sendReportTypeBNotification
         ], context.req);
         return {
           status: 'SUCCESS',

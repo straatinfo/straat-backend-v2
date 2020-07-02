@@ -73,12 +73,32 @@ module.exports = gql`
       isUrgent: Boolean,
       reporterId: String,
       hostId: String,
-      reportTypeCode: String,
       teamId: String,
       attachments: [String!]!
     ): Response
-    # sendReportTypeB (): Response
+
+    sendReportTypeB (
+      title: String,
+      description: String,
+      location: String,
+      long: Float,
+      lat: Float,
+      mainCategoryId: String,
+      isUrgent: Boolean,
+      reporterId: String,
+      hostId: String,
+      teamId: String,
+      attachments: [String!]!
+      isVehicleInvolved: Boolean!,
+      vehicleInvolvedCount: Int,
+      vehicleInvolvedDescription: String,
+      isPeopleInvolved: Boolean!,
+      peopleInvolvedCount: Int,
+      peopleInvolvedDescription: String
+    ): Response
+
     # sendReportTypeC (): Response
+
     updateReport (
       id: String!
       isPublic: Boolean
