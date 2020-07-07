@@ -90,6 +90,9 @@ module.exports = {
         };
       } catch (e) {
         context.req.log.error(e, 'Create report type A');
+        if (e && e.status && e.httpCode) {
+          return e;
+        }
         return {
           status: 'ERROR',
           statusCode: 100,
@@ -118,6 +121,9 @@ module.exports = {
         };
       } catch (e) {
         context.req.log.error(e, 'Create report type A');
+        if (e && e.status && e.httpCode) {
+          return e;
+        }
         return {
           status: 'ERROR',
           statusCode: 100,
@@ -143,6 +149,9 @@ module.exports = {
         };
       } catch (e) {
         context.req.log.error(e, 'Update Report Error');
+        if (e && e.status && e.httpCode) {
+          return e;
+        }
         return {
           status: 'ERROR',
           statusCode: 100,

@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const config = require('../../config');
+const mongoose = require('mongoose');
 // send report type A
 /*
   mainCategoryId - id
@@ -45,6 +46,25 @@ async function _createReport(req) {
 
   if (!reporterId) {
     reporterId = req.user && req.user._id;
+  }
+
+  if (!mongoose.isValidObjectId(reporterId)) {
+    throw {
+      status: 'ERROR',
+      statusCode: 101,
+      httpCode: 400,
+      message: 'Invalid Parameter: Reporter ID'
+    };
+  }
+
+  if (attachments && attachments.length > 0) {
+    attachments = attachments.reduce((pv, cv) => {
+      if (mongoose.isValidObjectId(cv)) {
+        pv.push(cv);
+      }
+
+      return pv;
+    }, []);
   }
 
   switch (reportTypeCode.toUpperCase()) {
