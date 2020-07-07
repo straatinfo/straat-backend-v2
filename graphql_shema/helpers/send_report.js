@@ -19,7 +19,7 @@ async function _getReportType (req) {
 }
 
 async function _createReport(req) {
-  const {
+  let {
     title,
     description,
     location,
@@ -159,8 +159,6 @@ async function _sendReportTypeADeepLink (req) {
 
 async function _sendReportTypeBNotification (req) {
   const report = req.$scope.report;
-
-  console.log(report);
 
   let mainName = report._mainCategory && report._mainCategory.translations && report._mainCategory.translations.length > 1 &&  _.find(report._mainCategory.translations, (mc) => mc.code == 'nl') ?  _.find(report._mainCategory.translations, (mc) => mc.code == 'nl').word : '';
 
