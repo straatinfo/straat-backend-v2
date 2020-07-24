@@ -3,7 +3,25 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
   extend type Query {
     report (id: ID, generatedReportId: String): Report
-    reports (userId: String, hostId: String, softRemoved: Boolean): [Report!]!
+    reports (
+      userId: String,
+      hostId: String,
+      softRemoved: Boolean,
+      teamId: String,
+      code: String,
+      isPublic: Boolean
+    ): [Report!]!
+
+    publicReports (
+      code: String,
+    ): [Report!]!
+
+    nearReports (
+      long: Float!,
+      lat: Float!,
+      radius: Float!,
+      userId: String
+    ): [Report!]!
   }
 
   # extend type Mutation {
@@ -56,6 +74,8 @@ module.exports = gql`
     _team: String
     team: Team
     teams: [Team!]!
+    _conversation: String
+    conversation: Conversation
 
     createdAt: String
     updatedAt: String
@@ -97,7 +117,21 @@ module.exports = gql`
       peopleInvolvedDescription: String
     ): Response
 
-    # sendReportTypeC (): Response
+    sendReportTypeC (
+      title: String,
+      description: String,
+      location: String,
+      long: Float,
+      lat: Float,
+      mainCategoryId: String,
+      isUrgent: Boolean,
+      reporterId: String,
+      hostId: String,
+      teamId: String,
+      isInMap: Boolean,
+      attachments: [String!]!,
+      teamList: [String!]!
+    ): Response
 
     updateReport (
       id: String!

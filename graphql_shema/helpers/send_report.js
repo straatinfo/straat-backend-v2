@@ -131,6 +131,46 @@ async function _populateReport (req) {
   return req;
 }
 
+async function _createReportC (req) {
+  let {
+    title,
+    description,
+    location,
+    long,
+    lat,
+    mainCategoryId,
+    isUrgent,
+    reporterId,
+    hostId,
+    teamId,
+    attachments = [],
+    isInMap,
+    teamList
+  } = req.body;
+
+  const reportBody = {
+    title: title,
+    description: description,
+    location: location,
+    long: long,
+    lat: lat,
+    _mainCategory: mainCategoryId,
+    isUrgent: isUrgent,
+    _reporter: reporterId,
+    _host: hostId,
+    _team: teamId,
+    attachments: attachments,
+    isInMap: isInMap,
+    teams: teamList,
+    isPublic: true,
+    _reportType: req.$scope.reportType._id,
+  };
+
+  const report = await req.db.Report.create(reportBody);
+  req.$scope.report = report;
+  return req;
+}
+
 async function _sendReportTypeADeepLink (req) {
   const report = req.$scope.report;
   const url = config.urls.FRONT_END_URL;
@@ -194,10 +234,29 @@ async function _sendReportTypeBNotification (req) {
   return req;
 }
 
+async function _sendReportTypeCNotification (req) {
+  const report = req.$scope.report;
+
+  let mainName = report._mainCategory && report._mainCategory.translations && report._mainCategory.translations.length > 1 &&  _.find(report._mainCategory.translations, (mc) => mc.code == 'nl') ?  _.find(report._mainCategory.translations, (mc) => mc.code == 'nl').word : '';
+
+  await req.lib.mail.sendReportCNotifToReporter(
+    report._reporter.email,
+    report.createdAt,
+    mainName,
+    report.location,
+    report.description,
+    'nl'
+  );
+
+  return req;
+}
+
 module.exports = {
   _getReportType,
   _createReport,
   _populateReport,
   _sendReportTypeADeepLink,
-  _sendReportTypeBNotification
+  _sendReportTypeBNotification,
+  _sendReportTypeCNotification,
+  _createReportC
 };

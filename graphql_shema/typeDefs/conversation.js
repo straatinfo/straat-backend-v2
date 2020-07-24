@@ -17,7 +17,7 @@ module.exports = gql`
     _profilePic: String
     profilePic: MediaUpload
     participants: [User!]!
-    messages: [Message!]!
+    messages (receiverId: String): [Message!]!
 
     createdAt: String
     updatedAt: String

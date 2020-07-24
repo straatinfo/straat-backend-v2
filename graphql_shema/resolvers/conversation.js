@@ -32,9 +32,11 @@ module.exports = {
     }
   },
   Conversation: {
-    participants: (conversation, arg, context, info) =>  {
-      console.log(conversation)
-    },
+    participants: (conversation, arg, context, info) =>  User.find({
+      _id: {
+        $in: conversation.participants.map(id => id.toString())
+      }
+    }),
     messages: async (conversation, arg, context, info) => {
       if (arg && arg.receiverId) {
         return await Message.find({ _conversation: conversation._id, _recevier: arg.receiverId })

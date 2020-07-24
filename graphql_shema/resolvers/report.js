@@ -9,10 +9,16 @@ const {
   Host,
   MainCategory,
   SubCategory,
-  Team
+  Team,
+  Conversation
 } = require('../../models');
 
-const { sendReport, updateReport } = require('../helpers');
+const {
+  nearReports,
+  publicReports,
+  sendReport,
+  updateReport,
+  authorization } = require('../helpers');
 
 module.exports = {
   Query: {
@@ -23,9 +29,57 @@ module.exports = {
       }
       if (arg.hostId) {
         query._host = arg.hostId;
-      }  
+      }
+
+      if (arg.teamId) {
+        query._team = arg.teamId;
+      }
+
+      if (arg.isPublic) {
+        query.isPublic = arg.isPublic;
+      }
+
+      if (arg.code) {
+        const code = arg.code && arg.code.toUpperCase();
+        return ReportType.findOne({ code })
+          .then((reportType) => {
+            if (!reportType || !reportType._id) return [];
+
+            query._reportType = reportType._id;
+            return Report.find(query);
+          });
+      }
 
       return Report.find(query);
+    },
+    publicReports: async (root, arg, context, info) => {
+      context.req.body = arg;
+
+      try {
+        const req = await pWaterfall([
+          authorization._isAuthenticated,
+          publicReports._verifyReporter,
+          publicReports._getReports
+        ], context.req);
+        return req.$scope.reports || [];
+      } catch (e) {
+        context.req.log.error(e, 'Public Reports Query Error');
+        return []
+      }
+    },
+    nearReports: async (root, arg, context, info) => {
+      context.req.body = arg;
+
+      try {
+        const req = await pWaterfall([
+          authorization._isAuthenticated,
+          nearReports._getReports
+        ], context.req);
+        return req.$scope.reports || [];
+      } catch (e) {
+        context.req.log.error(e, 'Near Reports Query Error');
+        return [];
+      }
     },
     report: (root, {id, generatedReportId}, context, info) => {
       const query = {};
@@ -68,6 +122,7 @@ module.exports = {
       const r = await Report.findById(report._id).populate('teams');
       return r.attachments;
     },
+    conversation: (report, arg, context, info) => Conversation.findById(report._conversation)
   },
   Mutation: {
     sendReportTypeA: async (root, arg, context, info) => {
@@ -121,6 +176,37 @@ module.exports = {
         };
       } catch (e) {
         context.req.log.error(e, 'Create report type A');
+        if (e && e.status && e.httpCode) {
+          return e;
+        }
+        return {
+          status: 'ERROR',
+          statusCode: 100,
+          httpCode: 500,
+          message: 'Internal server error'
+        };
+      }
+    },
+    sendReportTypeC: async (root, arg, context, info) => {
+      context.req.body = arg;
+      context.req.body.reportTypeCode = 'C';
+
+      try {
+        const req = await pWaterfall([
+          sendReport._getReportType,
+          sendReport._createReportC,
+          sendReport._populateReport,
+          sendReport._sendReportTypeCNotification
+        ], context.req);
+        return {
+          status: 'SUCCESS',
+          statusCode: 0,
+          httpCode: 200,
+          message: 'Successfully created a report',
+          id: req.$scope.report && req.$scope.report.generatedReportId
+        };
+      } catch (e) {
+        context.req.log.error(e, 'Create report type C');
         if (e && e.status && e.httpCode) {
           return e;
         }

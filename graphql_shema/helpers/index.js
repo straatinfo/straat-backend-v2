@@ -8,5 +8,7 @@ module.exports = {
   host: require('./host'),
   mainCategory: require('./main_category'),
   subCategory: require('./sub_category'),
-  design: require('./design')
+  design: require('./design'),
+  publicReports: require('./public_reports'),
+  nearReports: require('./near_reports')
 };

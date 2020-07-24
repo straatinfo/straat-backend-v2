@@ -111,6 +111,20 @@ module.exports = {
       <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
     `;
   },
+  sendReportCNotifToReporter: (date, mainCategoryName, location, text = null) => {
+    return `
+      <p>Dear madam, sir,</p>
+      <p> You just made a report ${date} </p>
+      <p>Meldingscategorie 1: ${mainCategoryName}</p>
+      <p>Eventuele toelichting: ${(text) ? text : '-'}</p>
+      <p>Locatie: ${location}</p>
+      </br>
+      <p>This report has been sent to the relevant host.</p>
+      <p>Thank you for using straat.info</p>
+      </br>
+      <p>If you have any questions or ideas, could you please use the feedback form in the app?</p>
+    `;
+  },
   sendReportBNotifToHost: () => {
 
   },
