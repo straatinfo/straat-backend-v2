@@ -14,9 +14,11 @@ module.exports = gql`
 
     publicReports (
       code: String,
+      hostId: String
     ): [Report!]!
 
     nearReports (
+      hostId: String,
       long: Float!,
       lat: Float!,
       radius: Float!,

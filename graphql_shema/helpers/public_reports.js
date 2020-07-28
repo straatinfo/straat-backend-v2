@@ -8,7 +8,7 @@ async function verifyReporter (req) {
 }
 
 async function getReports (req) {
-  const { code } = req.body;
+  const { code, hostId } = req.body;
   const user = req.user;
 
   // get teams
@@ -26,10 +26,14 @@ async function getReports (req) {
     }
   }
 
+  // if hostId is Specified, filter by host
+  if (hostId) {
+    extendParam._host = hostId;
+  }
 
   let publicReports = {
     $and: [
-      {_host: user._host, ...extendParam},
+      { ...extendParam},
       {
         '$or': [
           {isPublic: true},
@@ -45,7 +49,7 @@ async function getReports (req) {
   if (reportType && reportType.code == 'C') {
     publicReports = {
       $and: [
-        {_host: user._host, ...extendParam},
+        { ...extendParam},
         {
           $or: [
             {
