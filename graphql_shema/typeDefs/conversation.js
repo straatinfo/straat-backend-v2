@@ -6,9 +6,10 @@ module.exports = gql`
     conversations (userId: String): [Conversation!]!
   }
 
-  # extend type Mutation {
-  #   sendMessage(email: String!, username: String!, name: String): 
-  # }
+  extend type Mutation {
+    # sendMessage(email: String!, username: String!, name: String):
+    joinConversation (id: String!, userId: String!): Response
+  }
 
   type Conversation {
     id: ID!

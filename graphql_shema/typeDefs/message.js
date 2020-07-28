@@ -6,9 +6,19 @@ module.exports = gql`
     messages (conversationId: String, userId: String): [Message!]!
   }
 
-  # extend type Mutation {
-  #   signUp(email: String!, username: String!, name: String): User
-  # }
+  extend type Mutation {
+    sendMessage(
+      conversationId: String!,
+      type: String!,
+      reportId: String,
+      teamId: String,
+      body: String,
+      attachments: [String!]): Response
+    editMessage(messageId: String, body: String): Response
+    deleteMessage(messageId: String): Response
+    # readMessages(userId: String, conversationId: String): Response
+    # readAllMessages(userId: String): Response
+  }
 
   type Message {
     id: ID!

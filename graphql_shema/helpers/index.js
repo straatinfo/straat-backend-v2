@@ -10,5 +10,9 @@ module.exports = {
   subCategory: require('./sub_category'),
   design: require('./design'),
   publicReports: require('./public_reports'),
-  nearReports: require('./near_reports')
+  nearReports: require('./near_reports'),
+  joinConversation: require('./join_conversation'),
+  sendMessage: require('./send_message'),
+  editMessage: require('./edit_message'),
+  deleteMessage: require('./delete_message')
 };
