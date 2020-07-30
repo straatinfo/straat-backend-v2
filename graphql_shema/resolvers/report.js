@@ -120,7 +120,7 @@ module.exports = {
     team: (report, arg, context, info) => Team.findById(report._team),
     teams: async (report, arg, context, info) => {
       const r = await Report.findById(report._id).populate('teams');
-      return r.attachments;
+      return r.teams;
     },
     conversation: (report, arg, context, info) => Conversation.findById(report._conversation)
   },
@@ -132,6 +132,7 @@ module.exports = {
       try {
         const req = await pWaterfall([
           sendReport._getReportType,
+          sendReport._checkTeamValidity,
           sendReport._createReport,
           sendReport._populateReport,
           sendReport._sendReportTypeADeepLink
@@ -163,6 +164,7 @@ module.exports = {
       try {
         const req = await pWaterfall([
           sendReport._getReportType,
+          sendReport._checkTeamValidity,
           sendReport._createReport,
           sendReport._populateReport,
           sendReport._sendReportTypeBNotification

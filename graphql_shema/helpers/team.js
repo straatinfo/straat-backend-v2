@@ -93,6 +93,7 @@ async function _softRemoveTeam (req) {
 
 async function _createTeam (req) {
   const { teamName, teamEmail, profilePic, hostId, creationMethod, reporterId } = req.body;
+  const user = req.user;
   let insertObj = {
     teamEmail,
     teamName,
@@ -104,6 +105,11 @@ async function _createTeam (req) {
   try {
     const conversationId = await transaction.insert('Conversation', {});
     const teamId = await transaction.insert('Team', insertObj);
+    const teamMemberId = await transaction.insert('TeamMember', {
+      _user: user._id,
+      _team: teamId,
+      isLeader: true
+    });
     await transaction.run();
 
     req.$scope.teamId = teamId;

@@ -19,6 +19,27 @@ async function _getReportType (req) {
   return req;
 }
 
+async function _checkTeamValidity (req) {
+  const { teamId } = req.body;
+  const user = req.user;
+  const teamMemberships = await req.db.TeamMember.find({ _user: user._id }).populate('_team');
+
+  const validTeam = _.find(teamMemberships, (tm) => {
+    return tm.team && tm.team._id && tm.team._team.toString() == teamId;
+  });
+
+  if (!validTeam) {
+    throw {
+      status: 'ERROR',
+      statusCode: 101,
+      httpCode: 400,
+      message: 'Invalid Parameter: Team ID'
+    };
+  }
+
+  return req;
+}
+
 async function _createReport(req) {
   let {
     title,
@@ -253,6 +274,7 @@ async function _sendReportTypeCNotification (req) {
 
 module.exports = {
   _getReportType,
+  _checkTeamValidity,
   _createReport,
   _populateReport,
   _sendReportTypeADeepLink,
