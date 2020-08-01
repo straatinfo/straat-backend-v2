@@ -49,8 +49,14 @@ module.exports = {
             return Report.find(query);
           });
       }
+      let reportQuery = Report.find(query);
+      if (arg.sort && arg.sort.field) {
+        const order = arg.sort && arg.sort.asc ? 1 : -1;
+        const field = arg.sort.field;
+        reportQuery = reportQuery.sort([field, order]);
+      }
 
-      return Report.find(query);
+      return reportQuery;
     },
     publicReports: async (root, arg, context, info) => {
       context.req.body = arg;

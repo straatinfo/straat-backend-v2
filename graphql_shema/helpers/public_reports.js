@@ -8,7 +8,7 @@ async function verifyReporter (req) {
 }
 
 async function getReports (req) {
-  const { code, hostId } = req.body;
+  const { code, hostId, sort } = req.body;
   const user = req.user;
 
   // get teams
@@ -67,8 +67,15 @@ async function getReports (req) {
       ]
     };
   }
+  let reportQuery = req.db.Report.find(publicReports);
 
-  const reports = await req.db.Report.find(publicReports);
+  if (sort && sort.field) {
+    const order = sort && sort.asc ? 1 : -1;
+    const field = sort.field;
+    reportQuery = reportQuery.sort({ [field]: order });
+  }
+
+  const reports = await reportQuery;
   req.$scope.reports = reports;
   return req;
 };

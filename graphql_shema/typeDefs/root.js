@@ -12,4 +12,17 @@ module.exports = gql`
     _: String
   }
 
+  input Sort {
+    field: String,
+    asc: Boolean
+  }
+
+  type Response {
+    status: String
+    statusCode: Int
+    httpCode: Int
+    message: String
+    id: String
+  }
+
 `;

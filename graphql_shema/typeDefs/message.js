@@ -3,7 +3,7 @@ const { gql } = require('apollo-server-express');
 module.exports = gql`
   extend type Query {
     message (id: ID): Message
-    messages (conversationId: String, userId: String): [Message!]!
+    messages (conversationId: String, userId: String, sort: Sort): [Message!]!
   }
 
   extend type Mutation {

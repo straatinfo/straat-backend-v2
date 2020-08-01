@@ -9,12 +9,14 @@ module.exports = gql`
       softRemoved: Boolean,
       teamId: String,
       code: String,
-      isPublic: Boolean
+      isPublic: Boolean,
+      sort: Sort
     ): [Report!]!
 
     publicReports (
       code: String,
-      hostId: String
+      hostId: String,
+      sort: Sort
     ): [Report!]!
 
     nearReports (
@@ -22,21 +24,14 @@ module.exports = gql`
       long: Float!,
       lat: Float!,
       radius: Float!,
-      userId: String
+      userId: String,
+      sort: Sort
     ): [Report!]!
   }
 
   # extend type Mutation {
   #   signUp(email: String!, username: String!, name: String): User
   # }
-
-  type Response {
-    status: String
-    statusCode: Int
-    httpCode: Int
-    message: String
-    id: String
-  }
 
   type Report {
     id: ID!

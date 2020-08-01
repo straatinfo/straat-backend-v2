@@ -23,8 +23,15 @@ module.exports = {
       if (arg.conversationId) {
         query._conversation = conversationId;
       }
+      let messageQuery = Message.find(query);
 
-      return Message.find(query);
+      if (arg.sort && arg.sort.field) {
+        const order = arg.sort && arg.sort.asc ? 1 : -1;
+        const field = arg.sort.field;
+        messageQuery = messageQuery.sort([field, order]);
+      }
+
+      return messageQuery;
     },
     message: (root, {id}, context, info) => {
       const query = {};

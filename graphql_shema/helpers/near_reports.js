@@ -1,6 +1,6 @@
 
 async function _getReports (req) {
-  const { radius, lat, long } = req.body;
+  const { radius, lat, long, sort } = req.body;
   const reporterId = req.body.userId || req.user._id;
   // get teams
   const teamMembers = await req.db.TeamMember.find({ _user: reporterId });
@@ -45,7 +45,15 @@ async function _getReports (req) {
     ]
   };
 
-  const reports = await req.db.Report.find(publicReports);
+  let reportQuery = req.db.Report.find(publicReports);
+
+  if (sort && sort.field) {
+    const order = sort && sort.asc ? 1 : -1;
+    const field = sort.field;
+    reportQuery = reportQuery.sort({ [field]: order });
+  }
+
+  const reports = await reportQuery;
   req.$scope.reports = reports;
   return req;
 }
