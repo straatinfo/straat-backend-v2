@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Promise = require('bluebird');
+const _ = require('lodash');
 
 async function _verifyType (req) {
   const { type } = req.body;
@@ -15,8 +16,8 @@ async function _verifyType (req) {
   return req;
 }
 
-async function _verifyConversation (req) {
-  const { conversationId } = req.body;
+async function _verifyConversationOrCreate (req) {
+  let { conversationId, participants = [] } = req.body;
   const isValidId = mongoose.isValidObjectId(conversationId);
   const error = {
     status: 'ERROR',
@@ -25,14 +26,39 @@ async function _verifyConversation (req) {
     message: 'Invalid Parameter: Conversation ID'
   };
 
+  let conversation;
+
   if (!conversationId || !isValidId) {
-    throw error;
-  }
+    // create conversation using participants;
 
-  const conversation = await req.db.Conversation.findById(conversationId);
+    if (participants.length < 1) {
+      throw {
+        ...error,
+        message: 'Invalid Parameter: Participants'
+      };
+    }
 
-  if (!conversation) {
-    throw error;
+    participants
+      = _.find(participants, (p) => p == req.user._id.toString()) !== null
+      ? participants
+      : [...participants, req.user._id.toString()];
+
+    conversation = await req.db.Conversation.findOne({
+      participants: {
+        $all: participants
+      }
+    });
+
+    if (!conversation) {
+      conversation = await req.db.Conversation.create({ participants });
+    }
+
+  } else {
+    conversation = await req.db.Conversation.findById(conversationId);
+
+    if (!conversation) {
+      throw error;
+    }
   }
 
   req.$scope.conversation = conversation;
@@ -99,7 +125,7 @@ async function _broadCast (req) {
 
 module.exports = {
   _verifyType,
-  _verifyConversation,
+  _verifyConversationOrCreate,
   _createMessage,
   _createUnreadMessages,
   _broadCast

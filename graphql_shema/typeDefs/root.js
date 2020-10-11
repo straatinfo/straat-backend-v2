@@ -25,4 +25,13 @@ module.exports = gql`
     id: String
   }
 
+  type MessageResponse {
+    status: String
+    statusCode: Int
+    httpCode: Int
+    message: String
+    id: String
+    conversationId: String
+  }
+
 `;

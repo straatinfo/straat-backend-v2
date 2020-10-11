@@ -8,12 +8,13 @@ module.exports = gql`
 
   extend type Mutation {
     sendMessage(
-      conversationId: String!,
+      conversationId: String,
       type: String!,
       reportId: String,
       teamId: String,
       body: String,
-      attachments: [String!]): Response
+      participants: [String!]
+      attachments: [String!]): MessageResponse
     editMessage(messageId: String, body: String): Response
     deleteMessage(messageId: String): Response
     # readMessages(userId: String, conversationId: String): Response

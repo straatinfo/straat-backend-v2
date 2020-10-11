@@ -65,7 +65,7 @@ module.exports = {
         const req = await pWaterfall([
           authorization._isAuthenticated,
           sendMessage._verifyType,
-          sendMessage._verifyConversation,
+          sendMessage._verifyConversationOrCreate,
           sendMessage._createMessage,
           sendMessage._createUnreadMessages,
           sendMessage._broadCast
@@ -75,7 +75,8 @@ module.exports = {
           statusCode: 0,
           httpCode: 200,
           message: 'Successfully sent a message',
-          id: req.$scope.message && req.$scope.message._id
+          id: req.$scope.message && req.$scope.message._id,
+          conversationId: req.$scope.conversation && req.$scope.conversation._id
         };
       } catch (e) {
         context.req.log.error(e, 'Send Message');
