@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { gql } = require('apollo-server-express');
 const { Message, MediaUpload, User, Conversation } = require('../../models');
+const pWaterfall = require('p-waterfall');
 
 const {
   authorization,

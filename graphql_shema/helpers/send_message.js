@@ -109,8 +109,8 @@ async function _createUnreadMessages (req) {
   }
 
   const unreadMessages = await Promise.mapSeries(participants, async (participant) => {
-    unreadMessage._user = participant;
-    const unreadMessage = await req.db.UnreadMessge.create(unreadMessage);
+    newUnreadMessage._user = participant;
+    const unreadMessage = await req.db.UnreadMessage.create(newUnreadMessage);
     return unreadMessage;
   });
 

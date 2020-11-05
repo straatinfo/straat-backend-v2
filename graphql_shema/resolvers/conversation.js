@@ -49,11 +49,7 @@ module.exports = {
       }
     }),
     messages: async (conversation, arg, context, info) => {
-      if (arg && arg.receiverId) {
-        return await Message.find({ _conversation: conversation._id, _recevier: arg.receiverId })
-      } else {
-        return [];
-      }
+      return await Message.find({ _conversation: conversation._id })
     },
   },
   Mutation: {
@@ -68,7 +64,7 @@ module.exports = {
           status: 'SUCCESS',
           statusCode: 0,
           httpCode: 200,
-          message: 'Successfully created a report',
+          message: 'Successfully created a conversation',
           id: req.$scope.conversation && req.$scope.conversation._id
         };
       } catch (e) {
